@@ -1,0 +1,22 @@
+     
+     ----------- 
+ A0 -           - D0 
+  G -           - D1      > I2C-CLK
+ VU -           - D2     <> I2C-DATA
+ S3 -           - D3      < FLASH/BTN
+ S2 -  NodeMcu  - D4     <> DIN-ONEWIRE
+ S1 -           - 3V        +
+ SC -  (Lolin)  - G         x/GND
+ S0 -           - D5      > SPI-CLK
+ SK -           - D6        CS2 
+  G -           - D7     <> SPI-DATA
+ 3V -           - D8      > SPI-CS1
+ EN -           - RX      > RX
+RST -           - TX      < TX
+  G -           - G         GND
+VIN -           - 3V        +
+     -----------
+
+
+
+WITTY RGB: 12,13,15 == SPI
