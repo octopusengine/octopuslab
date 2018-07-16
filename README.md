@@ -8,13 +8,13 @@ devBoards for:
 <br />
 <hr />
 <b>Boards</b>
-General Shield RPi - gsR<br />
+General Shield RPi - gsR [Pic1] testing PoC<br />
 General Shield ESP - gsE1 (ESP8266) gsE2 (ESP32) <br />
 Dev board basic<br />
 I2C board<br />
 Power board<br />
-#tickernator (basic SPI &I2C)<br />
-Big displya<br />
+#tickernator (basic SPI &I2C) [Pic3]<br />
+Big display [Pic2]<br />
 Mechatronic1 - I2C 8bit-expander & darlington bus ULN<br />
 <br />
 
