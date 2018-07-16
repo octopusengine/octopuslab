@@ -1,4 +1,7 @@
-# octopuslab
+# oeLAB
+<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oelab1.png" alt="oeLab" width="390">
+
+
 devBoards for:
 - ESP8266/32 - NodeMcu (LoLin) and octopus ESP-interface-board 
 - Raspberry Pi 2/3/ZERO
@@ -19,6 +22,11 @@ Mechatronic1 - I2C 8bit-expander & darlington bus ULN<br />
 <br />
 
 <hr />
+
+
+
+
+
 
 oeLAB - esp8266 pins:<br />
 <pre>
