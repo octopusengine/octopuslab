@@ -9,6 +9,10 @@ devBoards for:
 - Arduino
 - ....
 <br />
+<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oedev0.jpg" alt="dev0" width="390">
+[Pic1]<br />
+<br />
+<br />
 <hr />
 <b>Boards</b>
 General Shield RPi - gsR [Pic1] testing PoC<br />
@@ -21,21 +25,13 @@ Big display [Pic2]<br />
 Mechatronic1 - I2C 8bit-expander & darlington bus ULN<br />
 <br />
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/lab18-bigdisplay.jpg" alt="big display" width="500">
+[Pic2]<br />
 <br />
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/lab18-tickernator.jpg " alt="tickernator" width="500">
-<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oedev0.jpg" alt="dev0" width="390">
+[Pic3]<br />
 <br />
 <br />
-<br />
-2016 first edition:<br />
-<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/ticker05.PNG" alt="first tickernator board" width="390">
 <hr />
-
-
-
-
-
-
 oeLAB - esp8266 pins:<br />
 <pre>
      -----------   (GPIO)
@@ -56,3 +52,7 @@ RST -           - TX(01)   < TX
 VIN -           - 3V         +
      -----------
 </pre>
+
+2016 first edition:<br />
+<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/ticker05.PNG" alt="first tickernator board" width="290">
+
