@@ -1,10 +1,26 @@
 # octopuslab
-octopusLAB - for devBoard ESP8266/32 - NodeMcu (LoLin) and octopus ESP-interface-board 
-
-
+devBoards for:
+- ESP8266/32 - NodeMcu (LoLin) and octopus ESP-interface-board 
+- Raspberry Pi 2/3/ZERO
+- Attiny 85/45
+- Arduino
+- ....
 <br />
 <hr />
-oeLABpins:<br />
+<b>Boards</b>
+General Shield RPi - gsR<br />
+General Shield ESP - gsE1 (ESP8266) gsE2 (ESP32) <br />
+Dev board basic<br />
+I2C board<br />
+Power board<br />
+#tickernator (basic SPI &I2C)<br />
+Big displya<br />
+Mechatronic1 - I2C 8bit-expander & darlington bus ULN<br />
+<br />
+
+<hr />
+
+oeLAB - esp8266 pins:<br />
 <pre>
      -----------   (GPIO)
  A0 -           - D0(16)     PIEZZO 1k 
