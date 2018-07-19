@@ -24,6 +24,7 @@ Atmel - klon Arduino NANO<br />
 <b>Základy programování</b><br />
 ukázka strojového kódu<br />
 arduino C<br />
+Python a mikro Python<br />
 <br />
 
 <b>Raspberry Pi</b><br />
