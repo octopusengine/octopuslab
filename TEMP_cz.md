@@ -3,7 +3,7 @@ temp_cz:<br />
 <br /><br />
 Chcete proniknout jednoduchou formou do tajů moderních technologií?
 (elektronika, robotika, internet věcí...) Na základě odobních zkušeností
-s mírně pokročilými bastlíři vyvvíjíme universální modulární koncept.
+s mírně pokročilými bastlíři vyvvíjíme univerzální modulární koncept.
 <br /><br />
 Hráli jste si někdy s nějakou elektronickou stavebnicí
 a odladili jste nějaký pokusný projekt, který by se vám líbilo mít "na pořád"?
