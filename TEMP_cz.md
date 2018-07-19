@@ -6,10 +6,11 @@ Chcete proniknout jednoduchou formou do tajů moderních technologií?
 s mírně pokročilými bastlíři vyvvíjíme universální modulární koncept.
 <br /><br />
 Hráli jste si někdy s nějakou elektronickou stavebnicí
-a odladili jste nějaký pokusný projekt, který by se vám líbilo mít "trvale"?
+a odladili jste nějaký pokusný projekt, který by se vám líbilo mít "na pořád"?
 Naše moduly by měly být natolik universální, že velkou část odzoušených projektů
 můžete "osadit a zprovoznit" natrvalo.<br /><br />
-
+Připravujeme celou řadu samostatných projektů, jako malé konkrétní stavebnice. Moduly chceme mít kompaktní s možností žazení vedle sebe i nad sebe.
+<br />
 
 <hr />
 
