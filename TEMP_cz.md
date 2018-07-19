@@ -71,5 +71,7 @@ motor<br />
 krokový motor<br />
 <br />
 
-
+<hr />
+Logitronik / Kyber / .... <a href=http://www.nostalcomp.cz/digistav.php>stavebnice</a><br />
+<a href=https://www.stavebnicesaimon.cz/>stavebnicesaimon.cz</a><br />
 
