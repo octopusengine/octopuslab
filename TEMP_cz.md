@@ -34,6 +34,7 @@ komunikace s OLED displejem<br />
 7 segment<br />
 <br />
 
+<a href=https://github.com/octopusengine/octopuslab/tree/master/rpi-python>./octopuslab/raspberryPi</a><br />
 <b>Raspberry Pi</b><br />
 Python<br />
 <br />
