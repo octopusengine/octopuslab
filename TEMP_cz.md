@@ -5,12 +5,12 @@ Začátečník?<br />
 Chcete proniknout jednoduchou formou do tajů moderních technologií?
 (elektronika, robotika, internet věcí...)<br />
 Na základě odobních zkušeností
-s mírně pokročilými bastlíři vyvvíjíme univerzální modulární koncept.
+s mírně pokročilými bastlíři vyvvíjíme výukový modulární koncept.
 <br /><br />
 Mírně pokročilý?<br />
 Hráli jste si někdy s nějakou elektronickou stavebnicí
 a odladili jste nějaký pokusný projekt, který by se vám líbilo mít "na pořád"?<br />
-Naše moduly by měly být natolik universální, že velkou část odzoušených projektů
+Naše moduly jsou natolik univerzální, že velkou část odzoušených projektů
 můžete "osadit a zprovoznit" natrvalo.<br /><br />
 
 bastlíř / kutil?<br />
