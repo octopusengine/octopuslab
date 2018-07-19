@@ -20,7 +20,7 @@ Připravujeme celou řadu samostatných projektů, jako malé konkrétní staveb
 
 <hr />
 
-<b>Základy elektroniky</b>
+<b>Základy elektroniky</b><br />
 LED, tlačítko, drát/propojka, dioda, zdroj/ baterka<br />
 <br />
 
