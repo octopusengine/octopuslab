@@ -1,2 +1,0 @@
-# octopuslab
-temp_cz
