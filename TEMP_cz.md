@@ -2,50 +2,61 @@
 temp_cz
 
 <hr />
+
 <b>Základy elektroniky</b>
-LED, tlačítko
-drát/propojka, dioda
-zdroj/ baterka
+LED, tlačítko<br />
+drát/propojka, dioda<br />
+zdroj/ baterka<br />
+<br />
 
-<b>Základy číslicové techniky</b>
-BOOL 0/1
-logická hradla
-7400 - AND/NAND/KO/RSKO/AKO 
-(IO + kondenzátor)
+<b>Základy číslicové techniky</b><br />
+BOOL 0/1<br />
+logická hradla<br />
+7400 - AND/NAND/KO/RSKO/AKO<br /> 
+(IO + kondenzátor)<br />
+<br />
 
-<b>Úvod do jednočipových mikroporocesor</b>
-Attiny
-Atmel - klon Arduino NANO
+<b>Úvod do jednočipových mikroporocesor</b><br />
+Attiny<br />
+Atmel - klon Arduino NANO<br />
+<br />
 
-<b>Základy programování</b>
-ukázka strojového kúdu
-arduino C
+<b>Základy programování</b><br />
+ukázka strojového kódu<br />
+arduino C<br />
+<br />
 
-<b>Raspberry Pi</b>
+<b>Raspberry Pi</b><br />
+<br />
 
-<b>Sběrnice - UART / I2C / SPI / ...</b>
-komunikace s OLED displejem
-7 segment
+<br /><b>Sběrnice - UART / I2C / SPI / ...</b><br />
+komunikace s OLED displejem<br />
+7 segment<br />
+<br />
 
-<b>Raspberry Pi</b>
-Python
+<b>Raspberry Pi</b><br />
+Python<br />
+<br />
 
-<b>ESP - C</b>
-C
+<b>ESP - C</b><br />
+C<br />
+<br />
 
-<b>ESP -uPy</b>
-mikro Python
+<b>ESP -uPy</b><br />
+mikro Python<br />
+<br />
 
-<b>Pokročilejší projekty</b>
-relé
-ULN
-I2C expander
+<b>Pokročilejší projekty</b><br />
+relé<br />
+ULN<br />
+I2C expander<br />
+<br />
 
-<b>Mechatronika</b>
-servo
-motor
-krokový motor
-
+<b>Mechatronika</b><br />
+servo<br />
+motor<br />
+krokový motor<br />
+<br />
 
 
 
