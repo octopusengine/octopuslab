@@ -32,6 +32,6 @@ Mechatronic1 - I2C 8bit-expander & darlington bus ULN<br />
 <br />
 
 
-2016 first edition:<br />
+...first edition PCB:<br />
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/ticker05.PNG" alt="first tickernator board" width="290">
 
