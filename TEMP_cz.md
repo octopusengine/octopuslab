@@ -6,15 +6,15 @@ Chcete proniknout jednoduchou formou do tajů moderních technologií?
 (elektronika, robotika, internet věcí...)<br />
 Na základě odobních zkušeností
 s mírně pokročilými bastlíři vyvvíjíme výukový modulární koncept, na kterém si lze začít s úplnými základy
-a postupně přecházet ke složitějším projektům.
-<br /><br />
+a postupně přecházet ke složitějším projektům.<br /><br />
+
 Mírně pokročilý?<br />
 Hráli jste si někdy s nějakou elektronickou stavebnicí
 a odladili jste program pro nějaké jednoduché pokusné zapojení, které by se vám líbilo mít "na pořád"?<br />
 Naše moduly jsou natolik univerzální, že velkou část odzoušených projektů
 můžete "osadit a zprovoznit" natrvalo.<br /><br />
 
-bastlíř / kutil?<br />
+Bastlíř / kutil?<br />
 Připravujeme celou řadu samostatných projektů, jako malé konkrétní stavebnice. Moduly chceme mít kompaktní s možností žazení vedle sebe i nad sebe.
 <br />
 
