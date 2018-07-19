@@ -21,21 +21,16 @@ Připravujeme celou řadu samostatných projektů, jako malé konkrétní staveb
 <hr />
 
 <b>Základy elektroniky</b>
-LED, tlačítko<br />
-drát/propojka, dioda<br />
-zdroj/ baterka<br />
+LED, tlačítko, drát/propojka, dioda, zdroj/ baterka<br />
 <br />
 
 <b>Základy číslicové techniky</b><br />
-BOOL 0/1<br />
-logická hradla<br />
-7400 - AND/NAND/KO/RSKO/AKO<br /> 
+BOOL 0/1, logická hradla, 7400 - AND/NAND/KO/RSKO/AKO<br /> 
 (IO + kondenzátor)<br />
 <br />
 
-<b>Úvod do jednočipových mikroporocesor</b><br />
-Attiny<br />
-Atmel - klon Arduino NANO<br />
+<b>Úvod do jednočipových mikroporocesorú</b><br />
+Attiny, Atmel - klon Arduino NANO<br />
 <br />
 
 <b>Základy programování</b><br />
