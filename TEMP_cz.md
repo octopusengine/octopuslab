@@ -1,5 +1,15 @@
 # octopuslab
-temp_cz
+temp_cz:<br />
+<br /><br />
+Chcete proniknout jednoduchou formou do tajů moderních techniologií?
+(elektronika, robotika, internet věcí...) Na základě odobních zkušeností
+s mírně pokročilými bastlíři vyvvíjíme universální modulární koncept.
+<br /><br />
+Hráli jste si někdy s nějakou elektronickou stavebnicí
+a odladili jste nějaký pokusný projekt, který by se vám líbilo mít "trvale"?
+Naše moduly by měly být natolik universální, že velkou část odzoušených projektů
+můžete "osadit a zprovoznit" natrvalo.<br /><br />
+
 
 <hr />
 
