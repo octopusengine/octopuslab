@@ -34,13 +34,13 @@ komunikace s OLED displejem<br />
 7 segment<br />
 <br />
 
-<a href=https://github.com/octopusengine/octopuslab/tree/master/rpi-python>./octopuslab/raspberryPi</a><br />
 <b>Raspberry Pi</b><br />
+<a href=https://github.com/octopusengine/octopuslab/tree/master/rpi-python>./octopuslab/raspberryPi</a><br />
 Python<br />
 <br />
 
-<a href=https://github.com/octopusengine/octopuslab/tree/master/esp8266>./octopuslab/esp8266</a><br />
 <b>ESP - C</b><br />
+<a href=https://github.com/octopusengine/octopuslab/tree/master/esp8266>./octopuslab/esp8266</a><br />
 C<br />
 <br />
 
