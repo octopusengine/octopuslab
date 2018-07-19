@@ -1,14 +1,18 @@
 # octopuslab
 temp_cz:<br />
 <br /><br />
+Začátečník?<br />
 Chcete proniknout jednoduchou formou do tajů moderních technologií?
 (elektronika, robotika, internet věcí...) Na základě odobních zkušeností
 s mírně pokročilými bastlíři vyvvíjíme univerzální modulární koncept.
 <br /><br />
+Mírně pokročilý?<br />
 Hráli jste si někdy s nějakou elektronickou stavebnicí
 a odladili jste nějaký pokusný projekt, který by se vám líbilo mít "na pořád"?
 Naše moduly by měly být natolik universální, že velkou část odzoušených projektů
 můžete "osadit a zprovoznit" natrvalo.<br /><br />
+
+bastlíř / kutil?<br />
 Připravujeme celou řadu samostatných projektů, jako malé konkrétní stavebnice. Moduly chceme mít kompaktní s možností žazení vedle sebe i nad sebe.
 <br />
 
