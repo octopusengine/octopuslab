@@ -2,7 +2,7 @@
 temp_cz
 
 <pre>
- Pin 1 Pin2
+               Pin 1 Pin2
            +3V3 [ ] [ ] +5V
  SDA1 / GPIO  2 [ ] [ ] +5V
  SCL1 / GPIO  3 [ ] [ ] GND
