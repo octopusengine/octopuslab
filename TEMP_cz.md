@@ -1,7 +1,7 @@
 # octopuslab
 temp_cz:<br />
 <br /><br />
-Chcete proniknout jednoduchou formou do tajů moderních techniologií?
+Chcete proniknout jednoduchou formou do tajů moderních technologií?
 (elektronika, robotika, internet věcí...) Na základě odobních zkušeností
 s mírně pokročilými bastlíři vyvvíjíme universální modulární koncept.
 <br /><br />
