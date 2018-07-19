@@ -29,23 +29,23 @@ ID_SD / GPIO  0 [ ] [ ] GPIO  1 / ID_SC
 
 <hr />
 "OLD" Model A
-<pre>
 
-Pin 1 Pin2
-           +3V3 [ ] [ ] +5V
- SDA1 / GPIO  2 [ ] [ ] +5V
- SCL1 / GPIO  3 [ ] [ ] GND
-        GPIO  4 [ ] [ ] GPIO 14 / TXD0
-            GND [ ] [ ] GPIO 15 / RXD0
-        GPIO 17 [ ] [ ] GPIO 18
-        GPIO 27 [ ] [ ] GND
-        GPIO 22 [ ] [ ] GPIO 23
-           +3V3 [ ] [ ] GPIO 24
- MOSI / GPIO 10 [ ] [ ] GND
- MISO / GPIO  9 [ ] [ ] GPIO 25
- SCLK / GPIO 11 [ ] [ ] GPIO  8 / CE0#
-            GND [ ] [ ] GPIO  7 / CE1#
-             Pin 25 Pin 26
+<pre>
+              Pin 1 Pin2
+          +3V3 [ ] [ ] +5V
+SDA1 / GPIO  2 [ ] [ ] +5V
+SCL1 / GPIO  3 [ ] [ ] GND
+       GPIO  4 [ ] [ ] GPIO 14 / TXD0
+           GND [ ] [ ] GPIO 15 / RXD0
+       GPIO 17 [ ] [ ] GPIO 18
+       GPIO 27 [ ] [ ] GND
+       GPIO 22 [ ] [ ] GPIO 23
+          +3V3 [ ] [ ] GPIO 24
+MOSI / GPIO 10 [ ] [ ] GND
+MISO / GPIO  9 [ ] [ ] GPIO 25
+SCLK / GPIO 11 [ ] [ ] GPIO  8 / CE0#
+           GND [ ] [ ] GPIO  7 / CE1#
+            Pin 25 Pin 26
 </pre>             
              
              
