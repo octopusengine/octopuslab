@@ -5,7 +5,8 @@ Začátečník?<br />
 Chcete proniknout jednoduchou formou do tajů moderních technologií?
 (elektronika, robotika, internet věcí...)<br />
 Na základě odobních zkušeností
-s mírně pokročilými bastlíři vyvvíjíme výukový modulární koncept.
+s mírně pokročilými bastlíři vyvvíjíme výukový modulární koncept, na kterém si lze začít s úplnými základy
+a postupně přecházet ke složitějším projektům.
 <br /><br />
 Mírně pokročilý?<br />
 Hráli jste si někdy s nějakou elektronickou stavebnicí
