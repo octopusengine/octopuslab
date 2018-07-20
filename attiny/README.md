@@ -9,4 +9,5 @@ temp_cz
            GND =     = P0 / pinTX >         (1) i2c Data 
 <//pre>
 <hr />
+<a href=https://www.arduinoslovakia.eu/page/attiny85>https://www.arduinoslovakia.eu/page/attiny85</a><br />
 <a href=https://www.hackster.io/atmel/products/attiny85>https://www.hackster.io/atmel/products/attiny85</a><br />
