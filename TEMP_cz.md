@@ -12,10 +12,10 @@ a postupně přecházet ke složitějším projektům.<br /><br />
 Hráli jste si někdy s nějakou elektronickou stavebnicí
 a odladili jste program pro jednoduché pokusné zapojení, které by se vám líbilo mít "na pořád"?<br />
 Naše moduly jsou natolik univerzální, že velkou část odzoušených projektů
-můžete "osadit a zprovoznit" natrvalo.<br /><br />
+můžete "osadit a zprovoznit" natrvalo. A výhodou je i možnost jednotlivé oživené moduly mezi sebou propojovat.<br /><br />
 
 <h3>Bastlíř / kutil?</h3>
-Připravujeme celou řadu samostatných projektů, jako malé konkrétní stavebnice. Moduly chceme mít kompaktní s možností žazení vedle sebe i nad sebe.
+Připravujeme celou řadu samostatných projektů, jako malé konkrétní stavebnice. Moduly chceme mít kompaktní s možností žazení vedle sebe i nad sebe. V případě připojení k Raspberry Pi je možné osadit na "velké" RPi nebo "malé" Ras
 <br />
 <br />
 <i>
