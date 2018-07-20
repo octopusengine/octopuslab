@@ -1,5 +1,6 @@
 # oeLAB
 temp_cz:<br />
+<a href=http://www.octopusengine.org/oelab_cz/>http://www.octopusengine.org/oelab_cz/</a><br />
 <br /><br />
 <h3>Začátečník?</h3>
 Chcete proniknout jednoduchou formou do tajů moderních technologií?
