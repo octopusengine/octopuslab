@@ -12,5 +12,5 @@ temp_cz
 <a href=https://www.arduinoslovakia.eu/page/attiny85>https://www.arduinoslovakia.eu/page/attiny85</a><br />
 <a href=https://www.hackster.io/atmel/products/attiny85>https://www.hackster.io/atmel/products/attiny85</a><br />
 <a href=http://dangerousprototypes.com/blog/tag/attiny/>http://dangerousprototypes.com/blog/tag/attiny/</a><br />
-
+<a href=https://hackaday.com/tag/attiny85/>https://hackaday.com/tag/attiny85/</a><br />
 <a href=https://valentapetr.wordpress.com/2016/02/03/attiny85/>https://valentapetr.wordpress.com/2016/02/03/attiny85/</a><br />
