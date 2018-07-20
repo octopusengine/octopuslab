@@ -1,4 +1,4 @@
-# octopuslab
+# oeLAB
 temp_cz:<br />
 <br /><br />
 <h3>Začátečník?</h3>
