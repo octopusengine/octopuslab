@@ -1,26 +1,25 @@
 # octopuslab
 temp_cz:<br />
 <br /><br />
-Začátečník?<br />
+<h3>Začátečník?</h3><br />
 Chcete proniknout jednoduchou formou do tajů moderních technologií?
 (elektronika, robotika, internet věcí...)<br />
 Na základě odobních zkušeností
 s mírně pokročilými bastlíři vyvvíjíme výukový modulární koncept, na kterém si lze začít s úplnými základy
 a postupně přecházet ke složitějším projektům.<br /><br />
 
-Mírně pokročilý?<br />
+<h3>Mírně pokročilý?</h3><br />
 Hráli jste si někdy s nějakou elektronickou stavebnicí
 a odladili jste program pro nějaké jednoduché pokusné zapojení, které by se vám líbilo mít "na pořád"?<br />
 Naše moduly jsou natolik univerzální, že velkou část odzoušených projektů
 můžete "osadit a zprovoznit" natrvalo.<br /><br />
 
-Bastlíř / kutil?<br />
+<h3>Bastlíř / kutil?</h3><br />
 Připravujeme celou řadu samostatných projektů, jako malé konkrétní stavebnice. Moduly chceme mít kompaktní s možností žazení vedle sebe i nad sebe.
 <br />
-
-
+<br />
 <i>
-Definujeme tři úrovně složitosti projektů (Level):<br />
+Definujeme tedy tři úrovně složitosti projektů (Level):<br />
 oeLAB L3 - začátečník - (úroveň může začínat na "L5 - ignorant".. ale my předpokládáme nějaký zájem a elementární znalosti)<br />
 oeLAB L2 - mírně pokročilý<br />
 oeLAB L1 - středně pokročilý uživatel - ve smyslu používíní oeLab (nepředpokládají se další vyšší dovednosti)<br /> 
