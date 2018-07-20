@@ -89,4 +89,14 @@ Logitronik / Kyber / .... <a href=http://www.nostalcomp.cz/digistav.php>stavebni
 L2: nano: <a href=https://create.arduino.cc/projecthub/arjun/programming-attiny85-with-arduino-uno-afb829>programátor tiny</a>, 
 displej isp - i2c oled, ...<br />
 L3. projekty využívající dovednosti L2<br />
+<hr />
+<pre>
+Arduino Uno – ATtiny85
+5V – Vcc
+Gnd – Gnd
+Pin 13 – Pin 2
+Pin 12 – Pin 1
+Pin 11 – Pin 0
+Pin 10 – Reset
+</pre>
 
