@@ -99,4 +99,6 @@ Pin 12 – Pin 1
 Pin 11 – Pin 0
 Pin 10 – Reset
 </pre>
+na desku DEV BOARD1 neosazovat NIC dalšího! Tiny se programuje při 5V a napájení má 3V
+my musíme provést drobný "nebezpčný hack", kdy pro tiny spojíme 3 na 5...<br />
 
