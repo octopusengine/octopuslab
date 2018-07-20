@@ -14,3 +14,4 @@ temp_cz
 <a href=http://dangerousprototypes.com/blog/tag/attiny/>http://dangerousprototypes.com/blog/tag/attiny/</a><br />
 <a href=https://hackaday.com/tag/attiny85/>https://hackaday.com/tag/attiny85/</a><br />
 <a href=https://valentapetr.wordpress.com/2016/02/03/attiny85/>https://valentapetr.wordpress.com/2016/02/03/attiny85/</a><br />
+<a href=https://github.com/XavierBerger/Arduino/tree/master/ATTiny85>https://github.com/XavierBerger/Arduino/tree/master/ATTiny85</a><br />
