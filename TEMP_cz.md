@@ -18,6 +18,15 @@ Bastlíř / kutil?<br />
 Připravujeme celou řadu samostatných projektů, jako malé konkrétní stavebnice. Moduly chceme mít kompaktní s možností žazení vedle sebe i nad sebe.
 <br />
 
+
+<i>
+Definujeme tři úrovně složitosti projektů (Level):<br />
+L3 - úplný začátečník - (úroveň může začínat na "L5 - ignorant".. ale my předpokládáme nějaký zájem a elementární znalosti)<br />
+L2 - mírně pokročilý<br />
+L1 - pokročilý uživatel - ve smyslu používíní oeLab (nepředpokládají se další vyšší dovednosti)<br /> 
+</i><br /><br />
+projek dále specifikován: součástky, konfigurace (co kam osadit) a zapojení (propojky nebo pájení)<br /><br /><br />
+  
 <hr />
 
 <b>Základy elektroniky</b><br />
