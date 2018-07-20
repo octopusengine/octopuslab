@@ -10,7 +10,7 @@ a postupně přecházet ke složitějším projektům.<br /><br />
 
 <h3>Mírně pokročilý?</h3>
 Hráli jste si někdy s nějakou elektronickou stavebnicí
-a odladili jste program pro nějaké jednoduché pokusné zapojení, které by se vám líbilo mít "na pořád"?<br />
+a odladili jste program pro jednoduché pokusné zapojení, které by se vám líbilo mít "na pořád"?<br />
 Naše moduly jsou natolik univerzální, že velkou část odzoušených projektů
 můžete "osadit a zprovoznit" natrvalo.<br /><br />
 
