@@ -84,5 +84,8 @@ krokový motor<br />
 
 <hr />
 Logitronik / Kyber / .... <a href=http://www.nostalcomp.cz/digistav.php>stavebnice</a><br />
-<a href=https://www.stavebnicesaimon.cz/>stavebnicesaimon.cz</a><br />
+<a href=https://www.stavebnicesaimon.cz/>stavebnicesaimon.cz</a>
+<br /><br /><hr />
+L2: nano: programátor tiny, displej isp - i2c oled, ...<br />
+L3. projekty využívající dovednosti L2<br />
 
