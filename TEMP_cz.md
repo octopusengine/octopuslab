@@ -1,20 +1,20 @@
 # octopuslab
 temp_cz:<br />
 <br /><br />
-<h3>Začátečník?</h3><br />
+<h3>Začátečník?</h3>
 Chcete proniknout jednoduchou formou do tajů moderních technologií?
 (elektronika, robotika, internet věcí...)<br />
 Na základě odobních zkušeností
 s mírně pokročilými bastlíři vyvvíjíme výukový modulární koncept, na kterém si lze začít s úplnými základy
 a postupně přecházet ke složitějším projektům.<br /><br />
 
-<h3>Mírně pokročilý?</h3><br />
+<h3>Mírně pokročilý?</h3>
 Hráli jste si někdy s nějakou elektronickou stavebnicí
 a odladili jste program pro nějaké jednoduché pokusné zapojení, které by se vám líbilo mít "na pořád"?<br />
 Naše moduly jsou natolik univerzální, že velkou část odzoušených projektů
 můžete "osadit a zprovoznit" natrvalo.<br /><br />
 
-<h3>Bastlíř / kutil?</h3><br />
+<h3>Bastlíř / kutil?</h3>
 Připravujeme celou řadu samostatných projektů, jako malé konkrétní stavebnice. Moduly chceme mít kompaktní s možností žazení vedle sebe i nad sebe.
 <br />
 <br />
@@ -27,7 +27,7 @@ oeLAB L1 - středně pokročilý uživatel - ve smyslu používíní oeLab (nep�
 projek dále specifikován: součástky, konfigurace (co kam osadit) a zapojení (propojky nebo pájení)<br /><br /><br />
   
 <hr />
-
+<h3>Jednotlivé hlavní skupiny projektů:</h3>
 <b>Základy elektroniky</b><br />
 LED, tlačítko, drát/propojka, dioda, zdroj/ baterka<br />
 <br />
