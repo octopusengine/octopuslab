@@ -5,7 +5,7 @@
 devBoards for:
 - ESP8266/32 - NodeMcu (LoLin) and octopus ESP-interface-board 
 - Raspberry Pi 2/3/ZERO
-- Attiny 85/45
+- Attiny 85/45/13
 - Arduino
 - ....
 <br />
