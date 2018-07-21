@@ -2,13 +2,13 @@
 temp_cz
 V našich ukázkách budeme používat některý z nejjozšířenějších "osminohých" mikrokotrolerů ATMEL -> Attiny:<br />
 <pre>
-Attiny      13     85
-Flash [kB]   1      8
-SRAM  [B]   64    512 
-EEPROM      64    512 
-HW_UART      x     v   
-HW_SPI       x     v
-HW_I2C       x     v
+Attiny      13     45    85
+Flash [kB]   1      4     8
+SRAM  [B]   64    256   512 
+EEPROM      64    256   512 
+HW_UART      x     v     v   
+HW_SPI       x     v     v
+HW_I2C       x     v     v
 </pre>
 Celá <a href=https://en.wikipedia.org/wiki/Atmel_AVR_ATtiny_comparison_chart>tabulka</a><br />
 Pro jednotlivá samostatná zapojení postačí Attiny13. Pro pokročilejší projekty (propojení po I2C/slave) použijeme Attiny85.<br />
