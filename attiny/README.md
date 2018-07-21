@@ -1,8 +1,19 @@
 # octopuslab - attiny
 temp_cz
-
+V našich ukázkách budem používat některý z nejjozšířenějších "osminohých" mikrokotrolerů ATMEL: Attiny:<br />
 <pre>
-               Attiny85 
+Attiny      13     85
+Flash [kB]   1      8
+SRAM  [B]   64    512 
+EEPROM      64    512 
+HW_UART      x     v   
+HW_SPI       x     v
+HW_I2C       x     v
+</pre>
+Pro jednotlivá samostatná zapojení postačí Attiny13. Pro pokročilejší projekty (propojení po I2C/slave) použijeme Attiny85.<br />
+<br />
+<pre>
+             Attiny 13/85 
            RST =--U--= VCC                  oeLAB dev board1                  
  > pinAn (A)P3 =     = P2 (A1) pinDall      (3) i2c Clock 
  Strobe2 (A)P4 =     = P1 / pinRX           (2) > LED 
@@ -10,6 +21,7 @@ temp_cz
 <//pre>
 <hr />
 <a href=https://www.arduinoslovakia.eu/page/attiny85>https://www.arduinoslovakia.eu/page/attiny85</a><br />
+<a href=http://www.astromik.org/malymenu/menuraspi.htm>http://www.astromik.org/malymenu/menuraspi.htm</a><br />
 <a href=https://www.hackster.io/atmel/products/attiny85>https://www.hackster.io/atmel/products/attiny85</a><br />
 <a href=http://dangerousprototypes.com/blog/tag/attiny/>http://dangerousprototypes.com/blog/tag/attiny/</a><br />
 <a href=https://hackaday.com/tag/attiny85/>https://hackaday.com/tag/attiny85/</a><br />
