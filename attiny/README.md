@@ -1,6 +1,6 @@
 # octopuslab - attiny
 temp_cz
-V našich ukázkách budem používat některý z nejjozšířenějších "osminohých" mikrokotrolerů ATMEL: Attiny:<br />
+V našich ukázkách budeme používat některý z nejjozšířenějších "osminohých" mikrokotrolerů ATMEL -> Attiny:<br />
 <pre>
 Attiny      13     85
 Flash [kB]   1      8
@@ -10,6 +10,7 @@ HW_UART      x     v
 HW_SPI       x     v
 HW_I2C       x     v
 </pre>
+Celá <a href=https://en.wikipedia.org/wiki/Atmel_AVR_ATtiny_comparison_chart>tabulka</a><br />
 Pro jednotlivá samostatná zapojení postačí Attiny13. Pro pokročilejší projekty (propojení po I2C/slave) použijeme Attiny85.<br />
 <br />
 <pre>
