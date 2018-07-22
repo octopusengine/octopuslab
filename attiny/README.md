@@ -19,7 +19,12 @@ Pro jednotlivá samostatná zapojení postačí Attiny13. Pro pokročilejší pr
  > pinAn (A)P3 =     = P2 (A1) pinDall      (3) i2c Clock 
  Strobe2 (A)P4 =     = P1 / pinRX           (2) > LED 
            GND =     = P0 / pinTX >         (1) i2c Data 
-<//pre>
+</pre>
+
+<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-nano-sch2.png " alt="dev0-l3" width="390">
+
+
+
 <hr />
 <a href=https://www.arduinoslovakia.eu/page/attiny85>https://www.arduinoslovakia.eu/page/attiny85</a><br />
 <a href=http://www.astromik.org/malymenu/menuraspi.htm>http://www.astromik.org/malymenu/menuraspi.htm</a><br />
