@@ -24,6 +24,13 @@ Power board<br />
 Big display [Pic2]<br />
 Mechatronic1 - I2C 8bit-expander & darlington bus ULN<br />
 <br />
+<br />
+<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-nano-sch2.png" alt="sch2" width="500">
+<br /><br />
+<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-nano-sch21.png" alt="sch21" width="500">
+<br /><br />
+<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-nano-sch22.png" alt="sch22" width="500">
+<br /><br />
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/lab18-bigdisplay.jpg" alt="big display" width="500">
 [Pic2] big display module<br />
 <br />
