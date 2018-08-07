@@ -1,14 +1,16 @@
 /*
-    Attiny 13/85 
+Octopus engine - lab - 2018/07 TEST
+
+           Attiny 13/85 
            RST =--U--= VCC                  oeLAB dev board1                  
  > pinAn (A)P3 =     = P2 (A1) pinDall      (3) i2c Clock 
  Strobe2 (A)P4 =     = P1 / pinRX           (2) > LED 
            GND =     = P0 / pinTX >         (1) i2c Data 
-
- 
 */
+
 int ledR = 1;
 int ledB = 3;
+
 // the setup function runs once when you press reset or power the board
 void setup() {
   // initialize digital pin LED_BUILTIN as an output.
