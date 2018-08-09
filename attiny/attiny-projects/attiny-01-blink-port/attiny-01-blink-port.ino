@@ -9,15 +9,15 @@ Octopus engine - oeLAB - 2018/07 TEST (484B)
 */
 
 void setup() {
-  DDRB  = 0b00000010;  // nastaveni smeru signalu na portu B ("1" = vystup ; "0" = vstup)
-  //PORTB = 0b00001100;  // pull-up pro vstup (PB2) a zaroven vystupy PB3 rozsvitit a PB4 zhasnout 
+  DDRB  = 0b00000010;  // port B - signal seup ("1" = output ; "0" = input)
+  //PORTB = 0b00001100;  // pull-up fot input
 }
 
 void loop()
 {
 //if ((PINB & 0b00000100) == 0)  
   delay(500); 
-  PORTB &= 0b11111101; // prepnuti vystupu PB3 do LOW - ostatni hodnoty jsou beze zmeny
+  PORTB &= 0b11111101; // only PB1 to LOW 
   delay(500); 
-  PORTB |= 0b00000010; // prepnuti vystupu PB4 do HIGH - ostatni hodnoty jsou beze zmeny  
+  PORTB |= 0b00000010; // only PB1 to HIGH
 }
