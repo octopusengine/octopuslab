@@ -1,5 +1,6 @@
 /*
-Octopus engine - lab - 2018/07 TEST
+attiny-01-blink.ino
+Octopus engine - oeLAB - 2018/07 TEST
 
                 Attiny 13/85 
                 RST =--U--= VCC         oeLAB dev board1                  
