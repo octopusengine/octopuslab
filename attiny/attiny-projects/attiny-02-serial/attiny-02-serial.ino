@@ -1,10 +1,13 @@
 /*
-    Attiny 13/85 
-               RST =--U--= VCC         oeLAB dev board1                  
+attiny-02-serial.ino
+Octopus engine - oeLAB - 2018/07 TEST
+                Attiny 13/85 
+                RST =--U--= VCC         oeLAB dev board1                  
  > pinAn/Rx (A) P3 =     = P2 (A1) (3) i2c Clock 
- Strobe2/Tx (A) P4 =     = P1 /    (2) > LED 
+        /Tx (A) P4 =     = P1 /    (2) > LED 
                GND =     = P0 /  > (1) i2c Data 
-
+               
+> Arduino UNO serial display TTF 320x240                
 */
 
 #include <SoftwareSerial.h>
