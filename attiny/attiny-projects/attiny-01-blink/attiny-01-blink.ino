@@ -8,23 +8,24 @@ Octopus engine - oeLAB - 2018/07 TEST
         /Tx (A) P4 =     = P1 /    (2) > LED 
                GND =     = P0 /  > (1) i2c Data 
 */
-
-int ledR = 1;
-int ledB = 3;
+#define LED1_PIN        1              
+#define LED2_PIN        3  
+//int ledR = 1;
+//int ledB = 3;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
   // initialize digital pin LED_BUILTIN as an output.
-  pinMode(ledR, OUTPUT); //LED_BUILTIN
-  pinMode(ledB, OUTPUT);
+  pinMode(LED1_PIN, OUTPUT); //LED_BUILTIN
+  pinMode(LED2_PIN, OUTPUT);
 }
 
 // the loop function runs over and over again forever
 void loop() {
-  digitalWrite(ledR, HIGH);   // turn the LED on (HIGH is the voltage level)
-  digitalWrite(ledB, LOW);
+  digitalWrite(LED1_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(LED2_PIN, LOW);
   delay(1000);                       // wait for a second
-  digitalWrite(ledR, LOW);    // turn the LED off by making the voltage LOW
-  digitalWrite(ledB, HIGH);
+  digitalWrite(LED1_PIN, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(LED2_PIN, HIGH);
   delay(1000);                       // wait for a second
 }
