@@ -1,6 +1,6 @@
 /*
 attiny-02-serial.ino
-Octopus engine - oeLAB - 2018/07 TEST
+Octopus engine - oeLAB - 2018/07 TEST (5036B)
                 Attiny 13/85 
                 RST =--U--= VCC         oeLAB dev board1                  
  > pinAn/Rx (A) P3 =     = P2 (A1) (3) i2c Clock 
