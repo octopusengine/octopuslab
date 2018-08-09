@@ -1,15 +1,20 @@
-/* ATtiny85 as an I2C Slave  BroHogan 2011/12
- * OCTOPUS ENGINE 2018/07 TEST
+/*
+attiny-05-i2c2timer.ino
+Octopus engine - oeLAB - 2018/07 TEST
+
+ATtiny85 as an I2C Slave  BroHogan 2011/12
  * Example of ATtiny I2C slave receiving and sending data to an Arduino master.
  * SETUP:
  * NOTE! - It's very important to use pullups on the SDA & SCL lines!
  * http://astromik.org/raspi/i2cmultiplex/attiny_1.ino
 
-    Attiny 13/85 
-           RST =--U--= VCC                  oeLAB dev board1                  
- > pinAn (A)P3 =     = P2 (A1) pinDall      (3) i2c Clock 
- Strobe2 (A)P4 =     = P1 / pinRX           (2) > LED 
-           GND =     = P0 / pinTX >         (1) i2c Data 
+                Attiny 85 
+                RST =--U--= VCC         oeLAB dev board1                  
+ > pinAn/Rx (A) P3 =     = P2 (A1) (3) i2c Clock 
+        /Tx (A) P4 =     = P1 /    (2) > LED 
+               GND =     = P0 /  > (1) i2c Data 
+               
+> Arduino UNO serial display TTF 320x240                
 */
 
 #include "TinyWireS.h"                  // wrapper class for I2C slave routines
@@ -37,7 +42,6 @@ void handleTimer1(long timerTime) {
      led.SetHigh();*/  
   }
 }
-
 
 void Blink(byte led, byte times){ // poor man's display
   for (byte i=0; i< times; i++){
@@ -73,5 +77,3 @@ void loop(){
     //Blink(LED1_PIN,1);                  // show we transmitted
   }
 }
-
-
