@@ -12,8 +12,8 @@ Octopus engine - oeLAB - 2018/07 TEST
 
 #include <SoftwareSerial.h>
 
-#define RX    3   // *** D3
-#define TX    4   // *** D4
+#define RX    3  
+#define TX    4  
 SoftwareSerial TSerial(RX, TX); //TSerial for Attiny
 
 #define LED1_PIN        1              
