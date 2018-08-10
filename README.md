@@ -25,7 +25,7 @@ Big display [Pic2]<br />
 Mechatronic1 - I2C 8bit-expander & darlington bus ULN<br />
 <br />
 <br />
-<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-nano-sch2.png" alt="sch2" width="500">
+<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-nano-sch1.png" alt="sch2" width="500">
 <br /><br />
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-nano-sch21.png" alt="sch21" width="500">
 <br /><br />
