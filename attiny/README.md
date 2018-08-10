@@ -16,13 +16,13 @@ Pro jednotlivá samostatná zapojení postačí Attiny13. Pro pokročilejší pr
 <pre>
              Attiny 13/85 
            RST =--U--= VCC                  oeLAB dev board1                  
- > pinAn (A)P3 =     = P2 (A1) pinDall      (3) i2c Clock 
- Strobe2 (A)P4 =     = P1 / pinRX           (2) > LED 
-           GND =     = P0 / pinTX >         (1) i2c Data 
+ > pinAn (A)P3 =     = P2 (A1)pinDall  (3) i2c Clock 
+      Rx (A)P4 =     = P1              (2) > LED 
+           GND =     = P0              (1) i2c Data 
 </pre>
 
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-1808sch-tiny.png" alt="dev0" width="390">
-<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-nano-sch1.png " alt="dev0-l3" width="500">
+<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-nano-sch1.png" alt="dev0-l3" width="500">
 
 <hr />
 <a href=https://www.arduinoslovakia.eu/page/attiny85>https://www.arduinoslovakia.eu/page/attiny85</a><br />
