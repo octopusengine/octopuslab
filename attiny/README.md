@@ -20,10 +20,13 @@ Pro jednotlivá samostatná zapojení postačí Attiny13. Pro pokročilejší pr
       Rx (A)P4 =     = P1              (2) > LED 
            GND =     = P0              (1) i2c Data 
 </pre>
-Zapojení na oeLAB - DEV BOARD:
-<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-nano-sch1.png" alt="dev0-l3" width="500"><br />
-Detailní výřez - jen přímo propojené spoje na desce:
-<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-1808sch-tiny.png" alt="dev0" width="500"><br />
+<br />
+Zapojení na oeLAB - DEV BOARD:<br />
+<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-nano-sch1.png" alt="dev0-l3" width="500">
+<br /><br />
+Detailní výřez - jen přímo propojené spoje na desce:<br />
+<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-1808sch-tiny.png" alt="dev0" width="500">
+<br />
 
 
 <hr />
