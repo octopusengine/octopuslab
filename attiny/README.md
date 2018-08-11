@@ -24,6 +24,21 @@ Pro úvodní výuková zapojení postačí i Attiny13, ale už i pro trochu pokr
            GND =     = P0              (1) i2c Data 
 </pre>
 <br />
+<pre>
+Podporované základní příkazy (Arduino C):
+pinMode(pin,mode)
+digitalWrite(pin,int)
+digitalRead(pin)
+analogRead(pin)
+analogWrite(int)
+shiftOut(int)
+pulseIn(pin)
+Millis(int)
+Micros(int)
+delay(int)
+delayMicroseconds (int)
+</pre>
+<br />
 Zapojení na oeLAB - DEV BOARD:<br />
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-nano-sch1.png" alt="dev0-l3" width="500">
 <br /><br />
