@@ -1,5 +1,5 @@
-# octopuslab - attiny + serial disply
-sérivá komunikace s <a href ="https://github.com/octopusengine/serial-display">displejem</a>
+# octopuslab - attiny + serial display
+sériová komunikace s <a href ="https://github.com/octopusengine/serial-display">displejem</a>
 <pre>
              Attiny 13/85 
            RST =--U--= VCC                  oeLAB dev board1                  
