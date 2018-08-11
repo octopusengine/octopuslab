@@ -1,5 +1,5 @@
-# octopuslab - 555 je retro - přejděte konenečně na attiny!
-temp_cz<br />
+# 555 je retro - přejděte konenečně na attiny!
+octopusLAB - temp_cz<br />
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/attiny-schem3-export1.png" alt="attiny" width="500">
 <br />
 
