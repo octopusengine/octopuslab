@@ -40,3 +40,7 @@ Detailní výřez - jen přímo propojené spoje na desce:<br />
 <a href=https://hackaday.com/tag/attiny85/>https://hackaday.com/tag/attiny85/</a><br />
 <a href=https://valentapetr.wordpress.com/2016/02/03/attiny85/>https://valentapetr.wordpress.com/2016/02/03/attiny85/</a><br />
 <a href=https://github.com/XavierBerger/Arduino/tree/master/ATTiny85>https://github.com/XavierBerger/Arduino/tree/master/ATTiny85</a><br />
+<br />
+Některé základy je dobré vysvětlit i přímo na vnitřní struktuře mikrokontroléru. Nebojte se zdánlivé složitosti. Prostě z paměti programů, čítač postupně bere příkazy, které se dekódují a provádějí - s pomocí registrů, ALU a řídících signálů:<br />
+<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/attiny-schem3-export2.png" alt="attiny" width="500">
+<br />
