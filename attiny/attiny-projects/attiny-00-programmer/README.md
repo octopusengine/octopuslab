@@ -11,7 +11,7 @@ programování Attiny (základ SPI)
 <br />
 1) naprogramujeme NANO:<br />
 <pre>
-Arduino/Soubo/Příklady/ArduinoISP 
+Arduino/Soubor/Příklady/ArduinoISP 
 </pre>
 <br />
 <i>a připojíme kondenzátor 10uF mezi RESEET a GND</i><br />
