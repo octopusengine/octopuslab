@@ -23,9 +23,9 @@ Pro úvodní výuková zapojení postačí i Attiny13, ale už i pro trochu pokr
       Rx (A)P4 =     = P1              (2) > LED 
            GND =     = P0              (1) i2c Data 
 </pre>
-<br />
+<br /><br />
+Podporované základní příkazy (Arduino C):<br />
 <pre>
-Podporované základní příkazy (Arduino C):
 pinMode(pin,mode)
 digitalWrite(pin,int)
 digitalRead(pin)
