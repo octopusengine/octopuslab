@@ -22,7 +22,10 @@ Arduino/Soubor/Příklady/ArduinoISP
 http://honzasmolik.cz/attiny45_85.zip</pre>
 <br />
 <br />
-<br />
+3) Attiny programujeme podle typu - z nabídky Tools–Board, + Arduino jako ISP 
+<br /><br />
+
+<hr />
 <a href=http://honzasmolik.cz/ISPprog.html>Arduino jako ISP programátor > http://honzasmolik.cz/ISPprog.html</a><br />
 
 <br />
