@@ -13,8 +13,10 @@ programování Attiny (základ SPI)
 <pre>
 Arduino/Soubo/Příklady/ArduinoISP 
 </pre>
+<br />
+<br />
 <i>a připojíme kondenzátor 10uF mezi RESEET a GND</i><br />
-2) rozšíříme Arduino vývojové prostředí o Attiny:
+2) rozšíříme Arduino vývojové prostředí o Attiny:<br />
 (jedna z možností attiny45/85)<br />
 <pre>
 http://honzasmolik.cz/attiny45_85.zip</pre>
