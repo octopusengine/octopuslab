@@ -9,4 +9,7 @@ programování Attiny (základ SPI)
         GND =     = P0  ((11)) i2c Data 
 </pre>
 <br />
-<br /><br />
+<br />
+<a href=http://honzasmolik.cz/ISPprog.html>Arduino jako ISP programátor > http://honzasmolik.cz/ISPprog.html</a><br />
+
+<br />
