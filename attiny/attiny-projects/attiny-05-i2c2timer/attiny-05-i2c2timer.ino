@@ -25,7 +25,7 @@ ATtiny85 as an I2C Slave  BroHogan 2011/12
 
 //--------------------------timers
 int num1=0; //timer1
-int timerTempTime1;
+long timerTempTime1;
 
 void handleTimer1(long timerTime) {
  if ((millis() - timerTime)>timerTempTime1)
