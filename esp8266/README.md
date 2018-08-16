@@ -30,7 +30,7 @@ https://github.com/nodemcu/nodemcu-flasher<br /> > flash bin:
 http://micropython.org/download#esp8266<br />
 esp8266-20180511-v1.9.4.bin (elf, map) (latest)<br />
 https://docs.micropython.org/en/latest/esp8266/esp8266/tutorial/intro.html<br />
-putty: COM port / Serial / Speed: 115200 / Flow Control: None<br />
+<a href = https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html>putty</a>: COM port / Serial / Speed: 115200 / Flow Control: None<br />
 <br />
 https://naucse.python.cz/2018/pyladies-brno-podzim/beginners/micropython/<br />
 
