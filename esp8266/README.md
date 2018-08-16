@@ -25,6 +25,8 @@ VIN -           - 3V         +
 </pre>
 <br /><hr />
 Micropython<br />
+win:<br />
+https://github.com/nodemcu/nodemcu-flasher<br /> > flash bin:
 http://micropython.org/download#esp8266<br />
 esp8266-20180511-v1.9.4.bin (elf, map) (latest)<br />
 https://docs.micropython.org/en/latest/esp8266/esp8266/tutorial/intro.html<br />
