@@ -3,6 +3,7 @@
 driver CP2102: https://www.pololu.com/docs/0J7/all
 
 arduino C: https://navody.arduino-shop.cz/navody-k-produktum/vyvojova-deska-esp32.html
+> https://github.com/espressif/arduino-esp32
 
 micropython:
 
