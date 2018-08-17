@@ -1,6 +1,6 @@
 # octopuslab/esp32
 
-driver CP2102: https://www.pololu.com/docs/0J7/all
+driver CP2102: https://www.pololu.com/docs/0J7/all [2018/05-Win10-ok]
 
 arduino C: https://navody.arduino-shop.cz/navody-k-produktum/vyvojova-deska-esp32.html
 > https://github.com/espressif/arduino-esp32
