@@ -7,6 +7,7 @@ a)https://navody.arduino-shop.cz/navody-k-produktum/vyvojova-deska-esp32.html<br
 https://github.com/espressif/arduino-esp32<br />
 b) soubor/vlastosti//správce dalších desek:<br />
 https://dl.espressif.com/dl/package_esp32_index.json<br />
+manažér desek - ESP - by Esperessif System
 
 <br /><br />
 micropython:<br />
