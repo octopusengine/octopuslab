@@ -15,3 +15,5 @@ http://iot-bits.com/esp32/esp32-flash-download-tool-tutorial/<br />
 
 https://www.14core.com/micropython-flashing-programming/<br />
 
+https://micropython.org/download#esp32
+
