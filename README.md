@@ -3,10 +3,10 @@
 
 
 devBoards for:
-- ESP8266/32 - NodeMcu (LoLin) and octopus ESP-interface-board 
+- ESP8266/32 - NodeMcu (LoLin) / WeMos and octopus ESP-interface-board 
 - Raspberry Pi 2/3/ZERO
 - Attiny 85/45/13
-- Arduino
+- Arduino (Nano)
 - ....
 <br />
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oedev0.jpg" alt="dev0" width="390">
