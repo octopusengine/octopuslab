@@ -1,6 +1,6 @@
 # octopuslab - esp8266
 temp_cz
-LoLin / Vemos / ...
+LoLin / Wemos / ...
 
 <br />
 <hr />
@@ -24,7 +24,26 @@ RST -           - TX(01)   < TX
 VIN -           - 3V         +
      -----------
 </pre>
-<br /><hr />
+<br />
+<pre>
+     -----------   (GPIO)
+ TX -           - RST
+ RX -           - A0 / ADC
+ D1 -           - D0
+ D2 -           - D5
+ D3 -   WeMos   - D6
+ D4 -           - D7         
+GND -           - D8          
+ 5V -           - 3V         +
+     -----------
+</pre>
+<br />
+
+
+
+
+
+<hr />
 Micropython<br />
 win:<br />
 https://github.com/nodemcu/nodemcu-flasher<br /> > flash bin:
