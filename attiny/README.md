@@ -17,7 +17,7 @@ Celá <a href=https://en.wikipedia.org/wiki/Atmel_AVR_ATtiny_comparison_chart>ta
 Pro úvodní výuková zapojení postačí i Attiny13, ale už i pro trochu pokročilejší projekty (sérivá komunikace s <a href ="https://github.com/octopusengine/serial-display">displejem</a>, propojení po I2C/slave) použijeme Attiny85.<br />
 <br />
 <pre>
-             Attiny 13/85 
+             Attiny 13/45/85 
            RST +--U--+ VCC                 oeLAB dev board1                  
  > pinAn (A)P3 |     | P2 (A1)pinDall  (3) i2c Clock 
       Rx (A)P4 |     | P1              (2) > LED 
