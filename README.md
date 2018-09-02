@@ -1,7 +1,6 @@
 # oeLAB
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oelab1.png" alt="oeLab" width="390">
 
-
 devBoards for:
 - ESP8266/32 - NodeMcu (LoLin) / WeMos and octopus ESP-interface-board 
 - Raspberry Pi 2/3/ZERO
@@ -14,6 +13,9 @@ devBoards for:
 [Pic1] 2015 testing proof of concept<br />
 <br />
 <br />
+
+<h2>Contribute</h2>
+You are welcome to contribute to this repository by providing documentation to code, submitting issue reports, enhancement requests and pull requests.
 <hr />
 <b>Boards</b>
 General Shield RPi - gsR [Pic1] testing PoC<br />
