@@ -3,10 +3,11 @@
 
 
 devBoards for:
-- ESP8266/32 - NodeMcu (LoLin) and octopus ESP-interface-board 
+- ESP8266/32 - NodeMcu (LoLin) / WeMos and octopus ESP-interface-board 
 - Raspberry Pi 2/3/ZERO
-- Attiny 85/45
-- Arduino
+- Cortex M0/M3
+- Attiny 85/45/13
+- Arduino (Nano)
 - ....
 <br />
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oedev0.jpg" alt="dev0" width="390">
@@ -24,6 +25,13 @@ Power board<br />
 Big display [Pic2]<br />
 Mechatronic1 - I2C 8bit-expander & darlington bus ULN<br />
 <br />
+<br />
+<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-nano-sch1.png" alt="sch2" width="500">
+<br /><br />
+<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-nano-sch21.png" alt="sch21" width="500">
+<br /><br />
+<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oe-lab-nano-sch22.png" alt="sch22" width="500">
+<br /><br />
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/lab18-bigdisplay.jpg" alt="big display" width="500">
 [Pic2] big display module<br />
 <br />

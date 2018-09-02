@@ -1,25 +1,36 @@
-# octopuslab
+# oeLAB
 temp_cz:<br />
+<a href=http://www.octopusengine.org/oelab_cz/>http://www.octopusengine.org/oelab_cz/</a><br />
 <br /><br />
-Začátečník?<br />
+<h3>Začátečník?</h3>
 Chcete proniknout jednoduchou formou do tajů moderních technologií?
 (elektronika, robotika, internet věcí...)<br />
+
 Na základě osobních zkušeností
 s mírně pokročilými bastlíři vyvvíjíme výukový modulární koncept, na kterém si lze začít s úplnými základy
+
 a postupně přecházet ke složitějším projektům.<br /><br />
 
-Mírně pokročilý?<br />
+<h3>Mírně pokročilý?</h3>
 Hráli jste si někdy s nějakou elektronickou stavebnicí
-a odladili jste program pro nějaké jednoduché pokusné zapojení, které by se vám líbilo mít "na pořád"?<br />
+a odladili jste program pro jednoduché pokusné zapojení, které by se vám líbilo mít "na pořád"?<br />
 Naše moduly jsou natolik univerzální, že velkou část odzoušených projektů
-můžete "osadit a zprovoznit" natrvalo.<br /><br />
+můžete "osadit a zprovoznit" natrvalo. A výhodou je i možnost jednotlivé oživené moduly mezi sebou propojovat.<br /><br />
 
-Bastlíř / kutil?<br />
-Připravujeme celou řadu samostatných projektů, jako malé konkrétní stavebnice. Moduly chceme mít kompaktní s možností žazení vedle sebe i nad sebe.
+<h3>Bastlíř / kutil?</h3>
+Připravujeme celou řadu samostatných projektů, jako malé konkrétní stavebnice. Moduly chceme mít kompaktní s možností žazení vedle sebe i nad sebe. V případě připojení k Raspberry Pi je možné osadit na "velké" RPi nebo "malé" Ras
 <br />
-
+<br />
+<i>
+Definujeme tedy tři úrovně složitosti projektů (Level):<br />
+oeLAB L3 - začátečník - (úroveň může začínat na "L5 - ignorant".. ale my předpokládáme nějaký zájem a elementární znalosti)<br />
+oeLAB L2 - mírně pokročilý<br />
+oeLAB L1 - středně pokročilý uživatel - ve smyslu používíní oeLab (nepředpokládají se další vyšší dovednosti)<br /> 
+</i><br /><br />
+projek dále specifikován: součástky, konfigurace (co kam osadit) a zapojení (propojky nebo pájení)<br /><br /><br />
+  
 <hr />
-
+<h3>Jednotlivé hlavní skupiny projektů:</h3>
 <b>Základy elektroniky</b><br />
 LED, tlačítko, drát/propojka, dioda, zdroj/ baterka<br />
 <br />
@@ -75,5 +86,22 @@ krokový motor<br />
 
 <hr />
 Logitronik / Kyber / .... <a href=http://www.nostalcomp.cz/digistav.php>stavebnice</a><br />
-<a href=https://www.stavebnicesaimon.cz/>stavebnicesaimon.cz</a><br />
+<a href=https://www.stavebnicesaimon.cz/>stavebnicesaimon.cz</a>
+<br /><br /><hr />
+L2: nano: <a href=https://create.arduino.cc/projecthub/arjun/programming-attiny85-with-arduino-uno-afb829>programátor tiny</a>, 
+displej isp - i2c oled, ...<br />
+L3. projekty využívající dovednosti L2<br />
+<hr />
+<pre>
+programátor tiny - 5 drátků:
+Arduino Nano – ATtiny85
+5V – Vcc (Attiny má na desce 3V napájecí větev přerušenou "mikro jumperem")
+Pin 13 – Pin 2
+Pin 12 – Pin 1
+Pin 11 – Pin 0
+Pin 10 – Reset
+Gnd = Gnd (to už je propojeno)
+</pre>
+na desku DEV BOARD1 neosazovat NIC dalšího! Tiny se programuje při 5V a napájení má 3V
+my musíme provést drobný "nebezpčný hack", kdy pro tiny spojíme 3 na 5...<br />
 
