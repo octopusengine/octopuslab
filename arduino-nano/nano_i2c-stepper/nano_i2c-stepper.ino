@@ -6,8 +6,7 @@ int speedTime = 500; //300 už nesíhá
 int uhel = 360;
 
 
-void rotacePoSmeru() {
-  step1();
+void rotCV() { //rotacePoSmeru
   step2();
   step3();
   step4();
@@ -17,7 +16,7 @@ void rotacePoSmeru() {
   step8();
 }
 
-void rotaceProtiSmeru() {
+void rotCCV() { //rotaceProtiSmeru
   step8();
   step7();
   step6();
@@ -131,26 +130,26 @@ void loop() {
   digitalWrite(LED_BUILTIN, LOW);
 
   for(int i=0;i<(uhel*64/45);i++){
-    rotaceProtiSmeru();
+    rotCCV();
   } 
   delay(1000);
 
   speedTime = 750;
   for(int i=0;i<(uhel*64/45);i++){
-    rotacePoSmeru();
+    rotCV();
   }
   delay(1000);
  
   digitalWrite(LED_BUILTIN, LOW);
 
   for(int i=0;i<(uhel*64/45);i++){
-    rotaceProtiSmeru();
+    rotCCV();
   } 
   delay(1000);
 
   speedTime = 1000;
   for(int i=0;i<(uhel*64/45);i++){
-    rotacePoSmeru();
+    rotCV();
   }
   delay(1000);
  
