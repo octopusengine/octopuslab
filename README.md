@@ -3,7 +3,7 @@
 
 devBoards for:
 - <a href=https://github.com/octopusengine/octopuslab/tree/master/esp8266>ESP8266</a> - NodeMcu (LoLin) / WeMos and octopus ESP-interface-board 
-- <a href=https://github.com/octopusengine/octopuslab/tree/master/esp8266>ESP32</a> - octopus ESP-interface-board 
+- <a href=https://github.com/octopusengine/octopuslab/tree/master/esp32>ESP32</a> - octopus ESP-interface-board 
 - Raspberry Pi 2/3/ZERO
 - Cortex M0/M3
 - <a href=https://github.com/octopusengine/octopuslab/tree/master/attiny>Attiny</a> 85/45/13
