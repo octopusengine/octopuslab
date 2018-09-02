@@ -2,7 +2,8 @@
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oelab1.png" alt="oeLab" width="390">
 
 devBoards for:
-- ESP8266/32 - NodeMcu (LoLin) / WeMos and octopus ESP-interface-board 
+- ESP8266 - NodeMcu (LoLin) / WeMos and octopus ESP-interface-board 
+- ESP32 - octopus ESP-interface-board 
 - Raspberry Pi 2/3/ZERO
 - Cortex M0/M3
 - Attiny 85/45/13
