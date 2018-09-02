@@ -7,7 +7,7 @@ devBoards for:
 - Raspberry Pi 2/3/ZERO
 - Cortex M0/M3
 - <a href=https://github.com/octopusengine/octopuslab/tree/master/attiny>Attiny</a> 85/45/13
-- Arduino (Nano)
+- <a href=https://github.com/octopusengine/octopuslab/tree/master/arduino-nano>Arduino</a> (Nano)
 - ....
 <br />
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oedev0.jpg" alt="dev0" width="390">
