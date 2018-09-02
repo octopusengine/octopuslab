@@ -8,6 +8,20 @@ programování Attiny (základ SPI)
          P4 =     = P1  ((12)) MISO 
         GND =     = P0  ((11)) MOSI 
 </pre>
+
+<pre>
+programátor tiny - 5 drátků:
+Arduino Nano – ATtiny85
+5V – Vcc (Attiny má na desce 3V napájecí větev přerušenou "mikro jumperem")
+Pin 13 – Pin 2
+Pin 12 – Pin 1
+Pin 11 – Pin 0
+Pin 10 – Reset
+Gnd = Gnd (to už je propojeno)
+</pre>
+na desku DEV BOARD1 neosazovat NIC dalšího! Tiny se programuje při 5V a napájení má 3V
+my musíme provést drobný "nebezpčný hack", kdy pro tiny spojíme 3 na 5...<br />
+
 <br />
 1) naprogramujeme NANO:<br />
 <pre>
