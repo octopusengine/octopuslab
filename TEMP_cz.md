@@ -5,8 +5,10 @@ temp_cz:<br />
 <h3>Začátečník?</h3>
 Chcete proniknout jednoduchou formou do tajů moderních technologií?
 (elektronika, robotika, internet věcí...)<br />
-Na základě odobních zkušeností
-s mírně pokročilými bastlíři vyvvíjíme výukový modulární koncept, na kterém lze začít s úplnými základy
+
+Na základě osobních zkušeností
+s mírně pokročilými bastlíři vyvvíjíme výukový modulární koncept, na kterém si lze začít s úplnými základy
+
 a postupně přecházet ke složitějším projektům.<br /><br />
 
 <h3>Mírně pokročilý?</h3>
