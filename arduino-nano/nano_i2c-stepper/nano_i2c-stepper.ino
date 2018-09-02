@@ -1,9 +1,10 @@
 #include <Wire.h>
 
 int i2cAddr = 0x20;//0x20; //HHH 0x3F/27;//LLL 0x38/20;///?
+
 int i=0;
 int speedTime = 500; //300 už nesíhá
-int uhel = 360;
+int angle = 360;
 
 
 void rotCV() { //rotacePoSmeru
@@ -120,42 +121,43 @@ void setup() {
 
 void loop() { 
   digitalWrite(LED_BUILTIN, HIGH);  
-  //test
+  
+  //test "sweep"
   speedTime = 500;
-  for(int i=0;i<(uhel*64/45);i++){
+  for(int i=0;i<(angle*64/45);i++){
     rotacePoSmeru();
   }
   delay(1000);
  
   digitalWrite(LED_BUILTIN, LOW);
 
-  for(int i=0;i<(uhel*64/45);i++){
+  for(int i=0;i<(angle*64/45);i++){
     rotCCV();
   } 
   delay(1000);
 
   speedTime = 750;
-  for(int i=0;i<(uhel*64/45);i++){
+  for(int i=0;i<(angle*64/45);i++){
     rotCV();
   }
   delay(1000);
  
   digitalWrite(LED_BUILTIN, LOW);
 
-  for(int i=0;i<(uhel*64/45);i++){
+  for(int i=0;i<(angle*64/45);i++){
     rotCCV();
   } 
   delay(1000);
 
   speedTime = 1000;
-  for(int i=0;i<(uhel*64/45);i++){
+  for(int i=0;i<(angle*64/45);i++){
     rotCV();
   }
   delay(1000);
  
   digitalWrite(LED_BUILTIN, LOW);
 
-  for(int i=0;i<(uhel*64/45);i++){
+  for(int i=0;i<(angle*64/45);i++){
     rotaceProtiSmeru();
   } 
   delay(1000);
