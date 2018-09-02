@@ -92,16 +92,5 @@ L2: nano: <a href=https://create.arduino.cc/projecthub/arjun/programming-attiny8
 displej isp - i2c oled, ...<br />
 L3. projekty využívající dovednosti L2<br />
 <hr />
-<pre>
-programátor tiny - 5 drátků:
-Arduino Nano – ATtiny85
-5V – Vcc (Attiny má na desce 3V napájecí větev přerušenou "mikro jumperem")
-Pin 13 – Pin 2
-Pin 12 – Pin 1
-Pin 11 – Pin 0
-Pin 10 – Reset
-Gnd = Gnd (to už je propojeno)
-</pre>
-na desku DEV BOARD1 neosazovat NIC dalšího! Tiny se programuje při 5V a napájení má 3V
-my musíme provést drobný "nebezpčný hack", kdy pro tiny spojíme 3 na 5...<br />
+
 
