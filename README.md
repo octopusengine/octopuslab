@@ -6,7 +6,7 @@ devBoards for:
 - ESP32 - octopus ESP-interface-board 
 - Raspberry Pi 2/3/ZERO
 - Cortex M0/M3
-- Attiny 85/45/13
+- <a href=https://github.com/octopusengine/octopuslab/tree/master/attiny>Attiny</a> 85/45/13
 - Arduino (Nano)
 - ....
 <br />
