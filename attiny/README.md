@@ -18,10 +18,10 @@ Pro úvodní výuková zapojení postačí i Attiny13, ale už i pro trochu pokr
 <br />
 <pre>
              Attiny 13/85 
-           RST =--U--= VCC                  oeLAB dev board1                  
- > pinAn (A)P3 =     = P2 (A1)pinDall  (3) i2c Clock 
-      Rx (A)P4 =     = P1              (2) > LED 
-           GND =     = P0              (1) i2c Data 
+           RST +--U--+ VCC                 oeLAB dev board1                  
+ > pinAn (A)P3 |     | P2 (A1)pinDall  (3) i2c Clock 
+      Rx (A)P4 |     | P1              (2) > LED 
+           GND +-----+ P0              (1) i2c Data 
 </pre>
 <br /><br />
 Podporované základní příkazy (Arduino C):<br />
