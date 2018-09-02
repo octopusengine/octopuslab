@@ -1,14 +1,14 @@
 # octopuslab/esp32
 <pre>
-oeLAB - esp32 pins:       ROBOT Board:
+oeLAB-esp32 2x15 pins:            ROBOT Board:
      -----------  (GPIO)
  EN -           - D23 
  VP -           - D22
  VN -           - TXD
 D34 -           - RXD
-D35 -  NodeMcu  - D21
+D35 -           - D21
 D32 -           - D19
-D33 -  (Lolin)  - D18
+D33 -  (ESP32)  - D18
 D25 -           - D5
 D26 -           - TX2  
 D27 -           - RX2
