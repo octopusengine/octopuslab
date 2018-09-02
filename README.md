@@ -1,4 +1,3 @@
-# oeLAB
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oelab1.png" alt="oeLab" width="390">
 
 devBoards and projects for:
