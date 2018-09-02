@@ -1,7 +1,7 @@
 # oeLAB
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oelab1.png" alt="oeLab" width="390">
 
-devBoards for:
+devBoards and projects for:
 - <a href=https://github.com/octopusengine/octopuslab/tree/master/esp8266>ESP8266</a> - NodeMcu (LoLin) / WeMos and octopus ESP-interface-board 
 - <a href=https://github.com/octopusengine/octopuslab/tree/master/esp32>ESP32</a> - octopus ESP-interface-board 
 - Raspberry Pi 2/3/ZERO
