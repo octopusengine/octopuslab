@@ -1,5 +1,26 @@
 # octopuslab/esp32
 <pre>
+oeLAB - esp32 pins:       ROBOT Board:
+     -----------  (GPIO)
+ EN -           - D23 
+ VP -           - D22
+ VN -           - TXD
+D34 -           - RXD
+D35 -  NodeMcu  - D21
+D32 -           - D19
+D33 -  (Lolin)  - D18
+D25 -           - D5
+D26 -           - TX2  
+D27 -           - RX2
+D14 -           - D4
+D12 -           - D2
+D13 -           - D15
+GND -           - GND
+VIN -           - 3V3 +
+     -----------
+
+
+
 240 MHz dual core Tensilica LX6 microcontroller with 600 DMIPS
 Integrated 520 KB SRAM
 Integrated 802.11 b/g/n HT40 Wi-Fi transceiver, baseband, stack and LWIP
