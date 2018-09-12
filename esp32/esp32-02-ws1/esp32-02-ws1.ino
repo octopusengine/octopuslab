@@ -23,15 +23,15 @@ void loop() {
     delay(delayval);
     }
 */
-    wsLED.setPixelColor(0, pixels.Color(150,0,0));
+    wsLED.setPixelColor(0, wsLED.Color(150,0,0));
     wsLED.show();
     delay(delayval);
     
-    wsLED.setPixelColor(0, pixels.Color(0,150,0));
+    wsLED.setPixelColor(0, wsLED.Color(0,150,0));
     wsLED.show();
     delay(delayval);
 
-    wsLED.setPixelColor(0, pixels.Color(0,0,150));
+    wsLED.setPixelColor(0, wsLED.Color(0,0,150));
     wsLED.show();
     delay(delayval);  
 }
