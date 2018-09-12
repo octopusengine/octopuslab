@@ -1,6 +1,6 @@
 # octopuslab/esp32
 
-vývojová deska octopusLAB - ROBOT board - je k následujícím testům připravena (stačí osadit konektory, případně IO)<br />
+vývojová deska <a href="http://www.octopuslab.cz/index.php/vyvojove-desky/robot-board">octopusLAB - ROBOT board</a> - je k následujícím testům připravena (stačí osadit konektory, případně IO)<br />
 <br />
 esp32-01-blink	- základní test ESP a korektního uploadu programu (není potřeba nic krom ESP32 modulu)<br />
 esp32-02-ws1	- testujeme RGB LED diodu<br />
