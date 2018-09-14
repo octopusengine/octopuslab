@@ -40,9 +40,10 @@ GND -           - D8
 <br />
 
 
-
-
-
+<hr />
+Arduino IDE
+http://arduino.esp8266.com/stable/package_esp8266com_index.json<br />
+<br /><br />
 <hr />
 Micropython<br />
 win:<br />
