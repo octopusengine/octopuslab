@@ -16,24 +16,24 @@ esp32-09-wifi - test wifi<br />
 
 
 <pre>
-oeLAB-esp32 2x15 pins:       ROBOT Board:
-     -----------     (GPIO)
- EN -           - D23 (23) 
- VP -           - D22 (22)
- VN -           - TXD (1)
-D34 -           - RXD (3)
-D35 -           - D21 (21)
-D32 -           - D19 (19)
-D33 -  (ESP32)  - D18 (18)
-D25 -           - D5  (5)
-D26 -           - TX2 (17)  PIN_PWM1 
-D27 -           - RX2 (16)  PIN_PWM2
-D14 -           - D4  (4)   PIN_PWM3
-D12 -           - D2  (2)
-D13 -           - D15
-GND -           - GND
-VIN -           - 3V3 +
-     -----------
+oeLAB-esp32 2x15 pins:                  ROBOT Board:
+                -----------     (GPIO)
+            EN -           - D23 (23) 
+            VP -           - D22 (22)
+            VN -           - TXD (1)
+           D34 -           - RXD (3)
+           D35 -           - D21 (21)
+           D32 -           - D19 (19)
+           D33 -  (ESP32)  - D18 (18)
+MOTO_12EN  D25 -           - D5  (5)
+MOTO1A     D26 -           - TX2 (17)  PIN_PWM1 
+MOTO4A     D27 -           - RX2 (16)  PIN_PWM2
+MOTO3A     D14 -           - D4  (4)   PIN_PWM3
+MOTO2A     D12 -           - D2  (2)
+PIN_WS     D13 -           - D15
+           GND -           - GND
+           VIN -           - 3V3 +
+                -----------
 
 
 
