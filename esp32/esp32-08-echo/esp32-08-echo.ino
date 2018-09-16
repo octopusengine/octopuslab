@@ -1,14 +1,11 @@
-//esp32-08-echo - simple test: echo HC-SR04 + 8 x WS2812 rgb LED
+//esp32-08-echo - simple test: one WS2812 rgb LED
 //octopusLAB - ESP32 ROBOT board (2018/09)
 //NeoPixel(c) 2013 Shae Erisson (AdaFruit NeoPixel library)
 #define DEBUG
 
-#define PIN_WS         13
-#define NUMPIXELS      8
-
-#define PIN_PWM1    17
-#define PIN_PWM2    16
-#define PIN_PWM3    4
+#include "octopusLAB_ROBOT.h"
+//#define PIN_WS  13
+#define NUMPIXELS 8 //for WS strip 1/8/16...
 
 //echo
 const int trigPin = PIN_PWM1;
@@ -34,20 +31,22 @@ Adafruit_NeoPixel wsLED = Adafruit_NeoPixel(NUMPIXELS, PIN_WS, NEO_GRB + NEO_KHZ
 int delayval = 1000; // delay for half a second
 
 void wsClear(){
+   delay(10);
    for(int i=0;i<NUMPIXELS;i++){   
       wsLED.setPixelColor(i, wsLED.Color(0,0,0));}
    wsLED.show();
 }
 
 void wsBar(int num,byte wsR,byte wsG,byte wsB){
-   int numpx=int(num/10);
+   int numpx=int(num/5); // .../10
+   if (numpx>8) numpx=8;
    for(int i=0;i<numpx;i++){
     wsLED.setPixelColor(i, wsLED.Color(wsR,wsG,wsB));      
    }
    wsLED.show();
-   delay(delayval/2);
-   wsClear();
    delay(delayval/10);
+   wsClear();
+   //delay(delayval/10);
 }
 
 //------------------------------------------------------------------------------
@@ -57,7 +56,7 @@ void setup() {
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT); // Sets the echoPin as an Input
   wsLED.begin(); // This initializes the NeoPixel library.
-  wsSnake(0,0,50); //test
+  //wsSnake(0,0,50); //test
 }
 
 void loop() {
