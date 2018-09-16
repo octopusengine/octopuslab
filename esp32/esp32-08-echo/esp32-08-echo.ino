@@ -1,4 +1,4 @@
-//esp32-08-echo - simple test: one WS2812 rgb LED
+//esp32-08-echo - simple test: echo HC-SR04 + 8 x WS2812 rgb LED
 //octopusLAB - ESP32 ROBOT board (2018/09)
 //NeoPixel(c) 2013 Shae Erisson (AdaFruit NeoPixel library)
 #define DEBUG
