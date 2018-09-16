@@ -9,7 +9,8 @@ esp32-04-hall	- halova sonda citlivá na magnetické pole<br />
 esp32-05-spileddisplay - LED sedmisegmentový display s obvodem max<br />	
 esp32-06-dcmotor - dva stejnosměrné motorky pro podvozek robora<br />	
 esp32-07-i2c-stepper dva krokové motory na i2c<br />	
-esp32-08-bt - pokus s bt<br />	
+esp32-08-bt - pokus s bt<br />
+esp32-08-echo - test měřiče vzdálenosti HC-SR04<br />
 esp32-09-wifi - test wifi<br />
 <hr />
 
