@@ -1,4 +1,4 @@
-# octopuslab - Arduino nano > Attiny programmer
+# octopusLAB DEVboard 1 + Arduino nano > Attiny programmer
 programování Attiny (základ SPI)
 <pre>
     oeLAB dev board1:
