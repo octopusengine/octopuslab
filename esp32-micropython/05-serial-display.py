@@ -1,3 +1,5 @@
+from pyb import UART
+
 uart = UART(1, 9600)
 uart.init(9600, bits=8, parity=None, stop=1, timeout=1000)
 
