@@ -20,27 +20,30 @@ adc = machine.ADC(pin_an)
 
 def simple_blink():
     pin_led.value(0)
-    sleep(1/5)
+    sleep(1/10)
     pin_led.value(1)
-    sleep(1/2)
+    sleep(1/5)
 
 while True:
     an = adc.read()    
-    if (an<3000 and an>=2600):
-      np[0] = (128, 0, 0)
-      np.write()
-      simple_blink() 
-    
-    if (an<2600 and an>=2000):
-      np[0] = (0,128, 0)
-      np.write()
-      simple_blink() 
-    
+
     if (an<2000):
-       np[0] = (0, 0, 128)
+       np[0] = (128, 0, 0) #red
        np.write()
-       simple_blink()
- 
-    np[0] = (0, 0, 0)
-    np.write()
+       sleep(1)
+
+    if (an>=2000 and an<2600):
+       np[0] = (0,128, 0) #green
+       np.write()
+       sleep(1)
+
+    if (an>=2600 and an<3000):
+       np[0] = (0, 0, 128) #blue
+       np.write()
+       sleep(1) 
+
+    if (an>=3000): 
+        np[0] = (0, 0, 0)
+        np.write()
+
     simple_blink()     
