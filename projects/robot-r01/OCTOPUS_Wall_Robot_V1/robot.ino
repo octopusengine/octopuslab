@@ -8,6 +8,7 @@ void initRobot() {
   Laser.init(); // APDS-9930
   Laser.enableProximitySensor(false); // enable proximity, no interrupt
   initMoto();
+  initEcho();
 }
 
 void initButton() {

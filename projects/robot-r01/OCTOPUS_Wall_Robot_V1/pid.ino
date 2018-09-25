@@ -33,3 +33,8 @@ int calcEMACorrection(float correction, float _correction_last) {
   correction = correction * k_EMA + _correction_last * ((float)(1) - k_EMA);
   return correction;
 }
+
+void resetPid() {
+  _I_sum = 0;
+  _correction_last = 0;
+}

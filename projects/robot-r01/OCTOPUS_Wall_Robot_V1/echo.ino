@@ -11,6 +11,7 @@ int _distance = 0;
 
 //Timer 1
 unsigned long _millis_last = 0;
+
 void _pulse(int interval) {
   if (millis() < _millis_last + interval) {
     return;
@@ -24,7 +25,7 @@ void _pulse(int interval) {
 }
 
 // Handle interrupt - read pulse length
-void _handleEcho() {
+void _handleEcho() {  
   if (digitalRead(ECHO_PIN) == HIGH) {
     _start_micros = micros();
   } else {
@@ -35,6 +36,7 @@ void _handleEcho() {
 
 void initEcho() {
   // Attach Echo PIN to interrupt
+  pinMode(ECHO_PIN, INPUT);
   attachInterrupt(digitalPinToInterrupt(ECHO_PIN), _handleEcho, CHANGE);
   pinMode(TRIG_PIN, OUTPUT);
   digitalWrite(TRIG_PIN, LOW);
@@ -46,6 +48,6 @@ int updateEcho() {
     _distance = _lenght * 0.17;
     _finished = false;
   }
-  _pulse(500);
+  _pulse(50);
   return _distance;
 }
