@@ -2,4 +2,5 @@
 
 
 PID reg
-BT/roboremo (Android)
+BT/roboremo (Android) - serial BT terminal
+
