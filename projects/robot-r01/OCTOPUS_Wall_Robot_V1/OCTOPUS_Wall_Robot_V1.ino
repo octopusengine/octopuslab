@@ -5,6 +5,12 @@
 
 APDS9930 Laser = APDS9930();
 
+int speed_forward = 100;
+float kK = 1.0;
+float pK;
+float dK;
+float iD;
+
 //echo
 const int TRIG_PIN = PIN_PWM1;
 const int ECHO_PIN = PIN_PWM2;
@@ -25,12 +31,12 @@ void setup() {
   pinMode(TRIG_PIN, OUTPUT); // Sets the TRIG_PIN as an Output
   pinMode(ECHO_PIN, INPUT); // Sets the ECHO_PIN as an Input
 
-  neopixel_init();
+  neopixelInit();
 
   Laser.init(); // APDS-9930
   Laser.enableProximitySensor(false); // enable proximity, no interrupt
 
-  init_moto();
+  initMoto();
 }
 
 float error_last = 0;
@@ -47,7 +53,7 @@ void loop() {
   int delta = calcSpeedCorrection(error, error_last);
   error_last = error;
 
-  speed_left(speed - delta);
-  speed_right(delta + delta);
+  motorLeft(speed_forward - delta);
+  motorRight(speed_forward + delta);
   
 }

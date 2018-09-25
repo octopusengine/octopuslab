@@ -17,7 +17,7 @@
 
 // motor_left(speed);
 //
-void motor_left(int speed) {
+void motorLeft(int speed) {
 
   int forward = true;
   if (speed > 255) speed = 255;
@@ -34,7 +34,7 @@ void motor_left(int speed) {
 
 // motor_right(speed);
 //
-void motor_right(int speed) {
+void motorRight(int speed) {
 
   int forward = true;
   if (speed > 255) speed = 255;
@@ -49,7 +49,7 @@ void motor_right(int speed) {
   ledcWrite(PMOTO_CHAN, speed);
 }
 
-void init_moto() {
+void initMoto() {
   pinMode(LMOTO_FORWARD, OUTPUT); // Lmotor FORWARD
   pinMode(LMOTO_BACKWARD, OUTPUT); // Lmotor BACKWARD
 
@@ -62,7 +62,7 @@ void init_moto() {
   ledcAttachPin(LMOTO_PWM, LMOTO_CHAN); // Lmotor PWM
   ledcAttachPin(PMOTO_PWM, PMOTO_CHAN); // Rmotor PWM
 
-  motor_left(0);
-  motor_right(0);
+  motorLeft(0);
+  motorRight(0);
 
 }

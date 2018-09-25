@@ -6,12 +6,10 @@
 
 Adafruit_NeoPixel wsLED = Adafruit_NeoPixel(NUMPIXELS, PIN_WS, NEO_GRB + NEO_KHZ800);
 
-
-void neopixel_init() {
+void neopixelInit() {
   wsLED.begin(); // This initializes the NeoPixel library.
   wsClear();
 }
-
 
 void wsClear() {
   for (int i = 0; i < NUMPIXELS; i++) {
