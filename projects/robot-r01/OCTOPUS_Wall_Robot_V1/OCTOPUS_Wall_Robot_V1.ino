@@ -6,10 +6,11 @@
 APDS9930 Laser = APDS9930();
 
 int speed_forward = 100;
-float kK = 1.0;
-float pK;
-float dK;
-float iD;
+float kK = 1;
+float pK = 0.1;
+float dK = 30;
+float iK = 0;
+int n_EMA = 5;
 
 //echo
 const int TRIG_PIN = PIN_PWM1;
@@ -42,18 +43,27 @@ void setup() {
 float error_last = 0;
 
 void loop() {
-  int echo = getEchoDistance();
+  //int echo = getEchoDistance();
   int laser = Laser.readProximity();
 
-  Serial.print("E: " + String(echo));
-  Serial.print(", L: " + String(laser));
-  Serial.println();
+  //Serial.print("Ech: " + String(echo));
+  Serial.print(", Las: " + String(laser));
 
   float error = calcLaserError(laser);
   int delta = calcSpeedCorrection(error, error_last);
   error_last = error;
 
-  motorLeft(speed_forward - delta);
-  motorRight(speed_forward + delta);
+  Serial.print(", Err: " + String(error));
+
+  int speed_left = speed_forward + delta;
+  int speed_right = speed_forward - delta;
+
+  Serial.print(", Left: " + String(speed_left));
+  Serial.print(", Rght: " + String(speed_right));
+
+  motorLeft(speed_left);
+  motorRight(speed_right);
+  
+  Serial.println();
   
 }
