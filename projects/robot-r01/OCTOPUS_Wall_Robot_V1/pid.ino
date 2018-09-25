@@ -1,5 +1,4 @@
 #define LASER_MAX 1024
-#define SPEED_PID_CORRECTION 120
 
 float _I_sum = 0;
 
@@ -21,7 +20,7 @@ int calcSpeedCorrection(float error, float error_last) {
   correction = correction + _I_sum;
   float D_change = (float)(error - error_last); //D
   correction = correction + D_change * dK;
-  correction = correction * SPEED_PID_CORRECTION;
+  correction = correction * speed_pidcorrection;
 
   correction = calcEMACorrection(correction, _correction_last);
   _correction_last = correction;

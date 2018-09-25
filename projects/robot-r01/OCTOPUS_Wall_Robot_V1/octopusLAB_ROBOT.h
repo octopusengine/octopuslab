@@ -16,3 +16,7 @@
 #define PIN_PWM2 16
 #define PIN_PWM3  4
 #define PIN_WS 13
+
+//button
+#define DEV1 32
+#define DEV2 33 

@@ -8,7 +8,7 @@
 #define PMOTO_PWM MOTO_34EN
 
 
-#define PWM_FREQ 500                   
+#define PWM_FREQ 500
 #define PWM_RES 8
 #define LMOTO_CHAN 0
 #define PMOTO_CHAN 1

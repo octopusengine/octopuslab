@@ -20,15 +20,29 @@ void wsClear() {
 
 void wsBar(int num, byte wsR, byte wsG, byte wsB) {
   wsClear();
-  
+
   int numpx = num; // .../10
   if (numpx < 0) numpx = 0;
   if (numpx > 8) numpx = 8;
-  
+
   for (int i = 0; i < numpx; i++) {
     wsLED.setPixelColor(i, wsLED.Color(wsG, wsB, wsR));
   }
-  
+
   wsLED.show();
-  //delay(delayval / 10); 
+  //delay(delayval / 10);
+}
+
+void wsSetGreen() {
+  for (int i = 0; i < NUMPIXELS; i++) {
+    wsLED.setPixelColor(i, wsLED.Color(25, 0, 0));
+  }
+  wsLED.show();
+}
+
+void wsSetRed() {
+  for (int i = 0; i < NUMPIXELS; i++) {
+    wsLED.setPixelColor(i, wsLED.Color(0, 25, 0));
+  }
+  wsLED.show();
 }
