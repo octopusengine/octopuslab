@@ -17,27 +17,43 @@ void setup() {
   Serial.println("Initializing motors");
   //directions: L293D
   pinMode(MOTO_12EN, OUTPUT);
-  //  pinMode(MOTO_34EN, OUTPUT);
+  pinMode(MOTO_34EN, OUTPUT);
 
   pinMode(MOTO1A, OUTPUT);
   pinMode(MOTO2A, OUTPUT);
 
-  //  pinMode(MOTO3A, OUTPUT);
-  //  pinMode(MOTO4A, OUTPUT);
+  pinMode(MOTO3A, OUTPUT);
+  pinMode(MOTO4A, OUTPUT);
+  delay(pause);
 
-  //digitalWrite(MOTO_34EN, HIGH);
+  Serial.println("Turn off motors");
+  digitalWrite(MOTO_12EN, LOW);
+  digitalWrite(MOTO_34EN, LOW);
+  delay(pause);
 
   Serial.println("Turning MOTO 1 cw");
   digitalWrite(MOTO1A, LOW);
   digitalWrite(MOTO2A, HIGH);
+  delay(pause);
+
+  Serial.println("Turning MOTO 2 ccw");
+  digitalWrite(MOTO3A, HIGH);
+  digitalWrite(MOTO4A, LOW);
+  delay(pause);
+
+  Serial.println("Main program go in delay");
+  delay(pause);
 }
 
 
 void loop() {
-  Serial.println("Turning EN on");
+  Serial.println("MOTO1");
   digitalWrite(MOTO_12EN, HIGH);
-
+  digitalWrite(MOTO_34EN, LOW);
   delay(pause);
+
+  Serial.println("MOTO2");
   digitalWrite(MOTO_12EN, LOW);
+  digitalWrite(MOTO_34EN, HIGH);
   delay(pause);
 }
