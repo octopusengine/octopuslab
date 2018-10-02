@@ -8,6 +8,7 @@ int angle = 360;
 
 
 void rotCV() { //rotacePoSmeru
+  step1();
   step2();
   step3();
   step4();
