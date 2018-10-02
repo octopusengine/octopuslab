@@ -59,12 +59,12 @@ void setup() {
 
 void loop() {  
   Serial.println("MOTO1");
-  ledcWrite(MOTO1_CHAN, 190);
+  ledcWrite(MOTO1_CHAN, 220);
   ledcWrite(MOTO2_CHAN, 0);
   delay(pause);
 
   Serial.println("MOTO2");
   ledcWrite(MOTO1_CHAN, 0);
-  ledcWrite(MOTO2_CHAN, 100);
+  ledcWrite(MOTO2_CHAN, 128);
   delay(pause);
 }
