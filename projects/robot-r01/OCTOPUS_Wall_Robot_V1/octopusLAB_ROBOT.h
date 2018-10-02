@@ -1,6 +1,6 @@
 //octopusLAB - lib 201809
 //file: octopus32ROBOT / create: 2018/08 / last update: 2018/09
-// PIN as on octopusLAB ESP32 RobotBoard
+// PINS on octopusLAB ESP32 RobotBoard
 //======================================
 
 //DC motors with L293D
@@ -17,6 +17,6 @@
 #define PIN_PWM3  4
 #define PIN_WS 13
 
-//button
+//buttons and other stuff
 #define DEV1 32
 #define DEV2 33 

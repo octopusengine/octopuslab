@@ -7,11 +7,12 @@ volatile long _start_micros = 0;
 volatile long _lenght = 0;
 volatile bool _finished = false;
 
+//last read echo distance
 int _distance = 0;
 
-//Timer 1
 unsigned long _millis_last = 0;
 
+//trigger the echo (sends the sound pulse)
 void _pulse(int interval) {
   if (millis() < _millis_last + interval) {
     return;
@@ -34,16 +35,16 @@ void _handleEcho() {
   }
 }
 
+//echo setup
 void initEcho() {
-  // Attach Echo PIN to interrupt
   pinMode(ECHO_PIN, INPUT);
   attachInterrupt(digitalPinToInterrupt(ECHO_PIN), _handleEcho, CHANGE);
   pinMode(TRIG_PIN, OUTPUT);
   digitalWrite(TRIG_PIN, LOW);
 }
 
+//needs to be periodically updated in loop
 int updateEcho() {
-  // Shew measured echo length
   if (_finished) {
     _distance = _lenght * 0.17;
     _finished = false;

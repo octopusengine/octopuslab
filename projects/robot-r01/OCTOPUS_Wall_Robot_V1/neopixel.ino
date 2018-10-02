@@ -1,4 +1,3 @@
-//esp32-08-echo - simple test: one WS2812 rgb LED
 //octopusLAB - ESP32 ROBOT board (2018/09)
 //NeoPixel(c) 2013 Shae Erisson (AdaFruit NeoPixel library)
 #define DEBUG
@@ -6,11 +5,13 @@
 
 Adafruit_NeoPixel wsLED = Adafruit_NeoPixel(NUMPIXELS, PIN_WS, NEO_GRB + NEO_KHZ800);
 
+//Neopixel setup
 void neopixelInit() {
   wsLED.begin(); // This initializes the NeoPixel library.
   wsClear();
 }
 
+//sets no color to all neopixels
 void wsClear() {
   for (int i = 0; i < NUMPIXELS; i++) {
     wsLED.setPixelColor(i, wsLED.Color(0, 0, 0));
@@ -18,6 +19,7 @@ void wsClear() {
   wsLED.show();
 }
 
+//sets the number of pixels on a strip
 void wsBar(int num, byte wsR, byte wsG, byte wsB) {
   wsClear();
 
@@ -30,9 +32,9 @@ void wsBar(int num, byte wsR, byte wsG, byte wsB) {
   }
 
   wsLED.show();
-  //delay(delayval / 10);
 }
 
+//sets all green strip
 void wsSetGreen() {
   for (int i = 0; i < NUMPIXELS; i++) {
     wsLED.setPixelColor(i, wsLED.Color(25, 0, 0));
@@ -40,6 +42,7 @@ void wsSetGreen() {
   wsLED.show();
 }
 
+//sets all red strip
 void wsSetRed() {
   for (int i = 0; i < NUMPIXELS; i++) {
     wsLED.setPixelColor(i, wsLED.Color(0, 25, 0));
