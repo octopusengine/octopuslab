@@ -1,5 +1,8 @@
 /*
  * Robot Board SD Card test
+ * Connection SD-->RobotBoard:
+ * MISO, MOSI, SCK to OctoBUS SPI header on RobotBoard
+ * CS to OctoBUS D1 on RobotBoard
  */
 #include "FS.h"
 #include "SD.h"
