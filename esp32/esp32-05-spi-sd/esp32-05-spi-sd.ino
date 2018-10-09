@@ -9,6 +9,9 @@
 #include "SPI.h"
 #include "octopusLAB_ROBOT.h"
 
+// Define CS pin, D1 on OctoBUS as CS may be used for SPI LED Display
+#define SD_CS OB_D1
+
 void listDir(fs::FS &fs, const char * dirname, uint8_t levels){
     Serial.printf("Listing directory: %s\n", dirname);
 
@@ -168,7 +171,7 @@ void testFileIO(fs::FS &fs, const char * path){
 
 void setup(){
     Serial.begin(115200);
-    if(!SD.begin(OB_D1  )){
+    if(!SD.begin(SD_CS)){
         Serial.println("Card Mount Failed");
         return;
     }
