@@ -4,16 +4,24 @@ vývojová deska <a href="http://www.octopuslab.cz/index.php/vyvojove-desky/robo
 <br />
 esp32-01-blink	- základní test ESP a korektního uploadu programu (není potřeba nic krom ESP32 modulu)<br />
 esp32-02-ws1	- testujeme RGB LED diodu<br />
+esp32-02-ws8  - test 8x RGB LED WS<br />
+esp32-03-ad - měření napětí<br />
 esp32-03-touch-button - kapacitní tlačítko<br />	
 esp32-04-hall	- halova sonda citlivá na magnetické pole<br />
-esp32-05-spileddisplay - LED sedmisegmentový display s obvodem max<br />	
+esp32-05-i2c<br />
+esp32-05-spi<br />
+esp32-05-spi-sd	<br />
+esp32-05-spileddisplay - LED sedmisegmentový display s obvodem max<br />
+esp32-06-dcmotor-pwm<br />	
 esp32-06-dcmotor - dva stejnosměrné motorky pro podvozek robora<br />	
 esp32-07-i2c-stepper dva krokové motory na i2c<br />	
+esp32-07-servo<br />	
+esp32-08-accel-MMA_7455<br />	
+esp32-08-apds9930<br />	
 esp32-08-bt - pokus s bt<br />
 esp32-08-echo - test měřiče vzdálenosti HC-SR04<br />
 esp32-09-wifi - test wifi<br />
 <hr />
-
 
 <pre>
 oeLAB-esp32 (DopIt) 2x15 pins:         ROBOT Board:
