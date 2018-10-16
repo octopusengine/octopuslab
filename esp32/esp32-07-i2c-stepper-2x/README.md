@@ -1,5 +1,6 @@
 # 2x stepp motor basic test
 <code>
+<pre>
 ...
 int vel = 10;
 for(int i=0;i<8;i++)
@@ -9,4 +10,5 @@ for(int i=0;i<8;i++)
   up((6-i)*vel);
   right((6-i)*vel); 
   }  
+</pre>
 </code>
