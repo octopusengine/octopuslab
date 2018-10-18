@@ -10,6 +10,7 @@ https://boneskull.com/micropython-on-esp32-part-1/<br />
 https://naucse.python.cz/course/pyladies/beginners/install/<br />
 https://github.com/adafruit/ampy<br />
 <hr />
+Windows:<br />
 Ne. Zatím to není úplně jednoduché. Viděl jsem návodů několik a nakonec, kdy jsem nenašel nic triviálního, nějak jsem to teda rozchodil (Většina se dělá v terminálu / cmd / příkazové řádce):<br />
 Nainstaloval jsem python3 – hezky popsáno v [7]<br />
 Pak jsem jel částečně podle [6] (kde je to pro Linux – musel jsem krapet ohýbat pro okna)<br />
