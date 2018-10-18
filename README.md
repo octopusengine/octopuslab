@@ -2,8 +2,8 @@
 
 devBoards and projects for:
 - <a href=https://github.com/octopusengine/octopuslab/tree/master/esp8266>ESP8266</a> - NodeMcu (LoLin) / WeMos and octopus ESP-interface-board 
-- <a href=https://github.com/octopusengine/octopuslab/tree/master/esp32>ESP32 - Arduino IDE-C</a> - octopus ESP-interface-board 
-- <a href=https://github.com/octopusengine/octopuslab/tree/master/esp32-micropython>ESP32 - Micropython</a> - octopus ESP-interface-board 
+- <a href=https://github.com/octopusengine/octopuslab/tree/master/esp32>ESP32 - Arduino IDE-C</a> - octopusLAB ESP-interface/ROBOTboard
+- <a href=https://github.com/octopusengine/octopuslab/tree/master/esp32-micropython>ESP32 - Micropython</a> - octopusLAB ESP-interface/ROBOTboard
 - Raspberry Pi 2/3/ZERO
 - Cortex M0/M3
 - <a href=https://github.com/octopusengine/octopuslab/tree/master/attiny>Attiny</a> 85/45/13
