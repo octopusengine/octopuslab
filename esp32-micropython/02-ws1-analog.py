@@ -16,7 +16,7 @@ np = NeoPixel(pin, NUM_LED)
 
 pin_led = Pin(BUILT_IN_LED, Pin.OUT)
 pin_an = Pin(PIN_AN, Pin.IN)
-adc = machine.ADC(pin_an)
+adc = machine.ADC(pin_an) # <--this is A/D conversion
 
 def simple_blink():
     pin_led.value(0)
