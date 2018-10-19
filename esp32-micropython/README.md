@@ -53,9 +53,9 @@ categories:<br />
 03<br />
 04 - special sensors<br />
 05 - spi/i2c devices<br />
-06 - project examples<br />
+06 - basic motor test<br />
 07 - mechatronics<br />
-08 - wf<br />
+08 - wifi/bf/ir - remote (setup or control)<br />
 09 - complex projects<br />
 
 
