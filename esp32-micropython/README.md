@@ -32,20 +32,20 @@ ampy -p /COM6 get boot.py
 </pre>
 <hr />
 <pre>
-oeLAB-esp32 (DopIt) 2x15 pins:                            [ROBOT Board]:
+oeLAB-esp32 (DopIt) 2x15 pins:                              [ROBOT Board]:
                           -----------     (GPIO)
                       EN -           - D23 (23)  MOSI
-                I36   VP -           - D22 (22)  SCL(I2C) [I2C_SCL_PIN]
+                I36   VP -           - D22 (22)  SCL(I2C)   [I2C_SCL_PIN]
                 I39   VN -           - TXD (1)   D2
                 I34  D34 -           - RXD (3)   D3
-                I35  D35 -           - D21 (21)  SDA(I2C) I2C_SDA_PIN]
+                I35  D35 -           - D21 (21)  SDA(I2C)   [I2C_SDA_PIN]
 [ONE_WIRE_PIN] DEV1  D32 -           - D19 (19)
-                EV2  D33 -  (ESP32)  - D18 (18)
+               DEV2  D33 -  (ESP32)  - D18 (18)
           MOTO_12EN  D25 -           - D5  (5)   CS0
           MOTO1A     D26 -           - TX2 (17)  PIN_PWM1 
           MOTO4A     D27 -           - RX2 (16)  PIN_PWM2
           MOTO3A     D14 -           - D4  (4)   PIN_PWM3
-          MOTO2A     D12 -           - D2  (2)   LED_BUILTIN
+          MOTO2A     D12 -           - D2  (2)              [LED_BUILTIN]
           PIN_WS     D13 -           - D15       MOTO_34EN
                      GND -           - GND
                      VIN -           - 3V3 +
