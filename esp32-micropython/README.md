@@ -13,8 +13,11 @@ https://github.com/adafruit/ampy<br />
 <hr />
 
 ## Windows:
+- install Python3 <br />
+- download MicroPython [1]<br />
+<br />
+<br /> 
 
-Ne. Zatím to není úplně jednoduché. Viděl jsem návodů několik a nakonec, kdy jsem nenašel nic triviálního, nějak jsem to teda rozchodil (Většina se dělá v terminálu / cmd / příkazové řádce):<br />
 Nainstaloval jsem python3 – hezky popsáno v [7]<br />
 Pak jsem jel částečně podle [6] (kde je to pro Linux – musel jsem krapet ohýbat pro okna)<br />
 Je nutno stáhnout micropython – vybíral jsem z [5] a nahrál jsem ho „vedle“ do adresáře /down<br />
@@ -38,11 +41,13 @@ ampy -p /COM6 get boot.py
 </pre>
 ..uf. No a microPython – to už je pohoda.
 
+[1] https://micropython.org/download#esp32<br />
+
 [1] https://naucse.python.cz/lessons/beginners/micropython/<br />
 [2] https://github.com/espressif/esptool<br />
 [3] http://iot-bits.com/esp32/esp32-flash-download-tool-tutorial/<br />
 [4] https://www.14core.com/micropython-flashing-programming/<br />
-[5] https://micropython.org/download#esp32<br />
+
 [6] https://boneskull.com/micropython-on-esp32-part-1/<br />
 [7] https://naucse.python.cz/course/pyladies/beginners/install/<br />
 [8] https://github.com/adafruit/ampy<br />
