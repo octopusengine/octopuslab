@@ -41,7 +41,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                              [ROBOT Board]:
           MOTO4A     D27 -           - RX2 (16)  PIN_PWM2
           MOTO3A     D14 -           - D4  (4)   PIN_PWM3
           MOTO2A     D12 -           - D2  (2)              [LED_BUILTIN]
-          PIN_WS     D13 -           - D15       MOTO_34EN
+[WS_LED_PIN]         D13 -           - D15       MOTO_34EN
                      GND -           - GND
                      VIN -           - 3V3 +
                           -----------
