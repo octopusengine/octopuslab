@@ -13,8 +13,7 @@ https://boneskull.com/micropython-on-esp32-part-1/<br />
 - install esptool.py [2] https://github.com/espressif/esptool<br />
 - install ampy [3] https://github.com/adafruit/ampy<br />
 - connect ESP32 and detect COM port<br /> 
-- erase FLASH:
-<pre>esptool.py --chip esp32 -p /COM6 erase_flash</pre>
+- erase FLASH: <pre>esptool.py --chip esp32 -p /COM6 erase_flash</pre>
 <br /> 
 - upload Micropython bin: 
 <pre>esptool.py --chip esp32 -p /COM6 write_flash -z 0x1000 ./down/esp32-20180821-v1.9.4-479-g828f771e3.bin</pre>
