@@ -9,9 +9,9 @@ https://boneskull.com/micropython-on-esp32-part-1/<br />
 
 ## Windows:
 - install Python3 <br />
-- download MicroPython [1]<br />
-- install esptool.py [2]<br />
-- install ampy [3]<br />
+- download MicroPython [1] https://micropython.org/download#esp32<br />
+- install esptool.py [2] https://github.com/espressif/esptool<br />
+- install ampy [3] https://github.com/adafruit/ampy<br />
 - connect ESP32 and detect COM port<br /> 
 - erase FLASH:
 <pre>esptool.py --chip esp32 -p /COM6 erase_flash</pre>
@@ -30,12 +30,6 @@ AMPY_BAUD=115200<br />
 ampy -p /COM6 get boot.py
 # This file is executed on every boot (including wake-boot from deepsleep)
 </pre>
-
-
-[1] https://micropython.org/download#esp32<br />
-[2] https://github.com/espressif/esptool<br />
-[3] https://github.com/adafruit/ampy<br />
-
 <hr />
 
 
