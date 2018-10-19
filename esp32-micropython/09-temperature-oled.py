@@ -9,7 +9,7 @@ Set your sensor pin number in constants
 Installation:
 ampy -p /dev/ttyUSB0 put ./ssd1306.py
 ampy -p /dev/ttyUSB0 put ./temperature.py
-ampy -p /dev/ttyUSB0 put ./06-temperature-oled.py main.py
+ampy -p /dev/ttyUSB0 put ./09-temperature-oled.py main.py
 # reset device
 """
 
