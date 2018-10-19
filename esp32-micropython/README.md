@@ -50,13 +50,13 @@ oeLAB-esp32 (DoIt) 2x15 pins:                              [ROBOT Board]:
 categories:<br />
 01 - basic test<br />
 02 - simple experiment<br />
-03<br />
+03 - i/o test - sensor<br />
 04 - special sensors<br />
 05 - spi/i2c devices<br />
 06 - basic motor test<br />
 07 - mechatronics<br />
 08 - wifi/bf/ir - remote (setup or control)<br />
-09 - complex projects<br />
+09 - complex simple projects examples<br />
 
 
 
