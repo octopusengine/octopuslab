@@ -17,7 +17,7 @@ https://boneskull.com/micropython-on-esp32-part-1/<br />
 <br /> 
 - upload Micropython bin: 
 <pre>esptool.py --chip esp32 -p /COM6 write_flash -z 0x1000 ./down/esp32-20180821-v1.9.4-479-g828f771e3.bin</pre>
--install ampy[3]<br />
+- install ampy [3]<br />
 <pre>
 set AMPY_PORT=COM6<br />
 ampy ls<br />
