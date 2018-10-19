@@ -52,22 +52,16 @@ categories:<br />
 02 - simple experiment<br />
 03<br />
 04 - special sensors<br />
-05 - test all<br />
+05 - spi/i2c devices<br />
 06 - project examples<br />
 07 - mechatronics<br />
 08 - wf<br />
-09 - remote<br />
+09 - complex projects<br />
 
 
 
 
-04-hall.py	add basic examples - i2c/stepper/hall	a day ago
-05-dcmotor.py	add basic examples - i2c/stepper/hall	a day ago
-05-oled-image.py	added esp32 micropython example for oled graphics	14 hours ago
-05-oled.py	Improved OLED example for micropython	21 hours ago
-05-serial-display.py	Update 05-serial-display.py	27 days ago
-06-temperature-oled.py	added esp32 micropython example for temperature sensor and oled display	12 hours ago
-07-i2c-stepper.py
+
 
 
 
