@@ -36,7 +36,7 @@ try:
     i2c.writeto(addr, b'123')
     #i2c.mem_write(b"\x01", ADDRESS, REG)
     oled.text('ok', 20, 50)
-except Exception:
-    oled.text('---Err---', 20, 50)
+except Exception as e:
+    oled.text(str(e), 0, 50)
 
 oled.show()
