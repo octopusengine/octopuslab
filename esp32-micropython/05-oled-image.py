@@ -11,6 +11,7 @@ How to create .pbm? https://forum.micropython.org/viewtopic.php?t=4901#p29699
 Set your image WIDTH and HEIGHT in constants
 
 Installation:
+ampy -p /dev/ttyUSB0 put ./octopus_robot_board.py
 ampy -p /dev/ttyUSB0 put ./ssd1306.py
 ampy -p /dev/ttyUSB0 put ./test_image.pbm
 ampy -p /dev/ttyUSB0 put ./05-oled-image.py main.py
@@ -22,12 +23,12 @@ import machine
 import ssd1306
 import time
 
-I2C_SCL_PIN = 22
-I2C_SDA_PIN = 21
+import octopus_robot_board as o #octopusLab main library - "o" < octopus
+
 IMAGE_WIDTH = 63
 IMAGE_HEIGHT = 63
 
-i2c = machine.I2C(-1, machine.Pin(I2C_SCL_PIN), machine.Pin(I2C_SDA_PIN))
+i2c = machine.I2C(-1, machine.Pin(o.I2C_SCL_PIN), machine.Pin(o.I2C_SDA_PIN))
 oled = ssd1306.SSD1306_I2C(128, 64, i2c)
 
 # test_whole display
@@ -52,8 +53,8 @@ with open('test_image.pbm', 'rb') as f:
     oled.invert(1)
     oled.blit(fbuf, 0, 0)
 
-oled.text("Octopus", 66,5)
-oled.text("Lab", 82,15)
+oled.text("Octopus", 66,6)
+oled.text("Lab", 82,16)
 oled.text("Micro", 74,35)
 oled.text("Python", 70,45)
 oled.show()
