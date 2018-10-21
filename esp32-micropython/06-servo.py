@@ -16,7 +16,7 @@ from time import sleep
 import octopus_robot_board as o #octopusLab main library - "o" < octopus
 
 pin_servo = Pin(o.PWM1_PIN, Pin.OUT)
-pwm = PWM(pin_servo, freq=50, duty=77)
+pwm = PWM(pin_servo, freq=50, duty=70)
 pwm.duty(150)
 sleep(1)
 pwm.duty(30)
