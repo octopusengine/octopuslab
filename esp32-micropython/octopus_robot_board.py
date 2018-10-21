@@ -21,9 +21,9 @@ PIN_PWM2 = 16
 PIN_PWM3 = 4
 
 #inputs:
-I39 = 39
-I34 = 34
-I35 = 35
+I39_PIN = 39
+I34_PIN = 34
+I35_PIN = 35
 
 #main analog input (for power management)
 PIN_ANANALOG = 36
