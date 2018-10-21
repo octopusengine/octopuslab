@@ -16,9 +16,9 @@ I2C_SCL_PIN = 22
 I2C_SDA_PIN = 21
 
 #PWM/servo:
-PIN_PWM1 = 17
-PIN_PWM2 = 16
-PIN_PWM3 = 4
+PWM1_PIN = 17
+PWM2_PIN = 16
+PWM3_PIN = 4
 
 #inputs:
 I39_PIN = 39
