@@ -3,7 +3,6 @@ octopusLAB - I2C devices scanner:
 This is simple usage of SSD1306 OLED display over I2C
 needs external driver ssd1306.py
 from https://github.com/micropython/micropython/blob/master/drivers/display/ssd1306.py
-
 Installation:
 ampy -p /COM6 put ./octopus_robot_board.py
 ampy -p /COM6 put ./ssd1306.py
@@ -11,14 +10,17 @@ ampy -p /COM6 put ./05-oled-scann-i2c.py main.py
 # reset device
 """
 
-import machine
+from machine import Pin, I2C
 import ssd1306
 import time
 import os
 
 import octopus_robot_board as o #octopusLab main library - "o" < octopus
 
-i2c = machine.I2C(-1, machine.Pin(o.I2C_SCL_PIN), machine.Pin(o.I2C_SDA_PIN))
+i2c_sda = Pin(o.I2C_SDA_PIN, Pin.IN,  Pin.PULL_UP)
+i2c_scl = Pin(o.I2C_SCL_PIN, Pin.OUT, Pin.PULL_UP)
+
+i2c = I2C(scl=i2c_scl, sda=i2c_sda, freq=100000) # 100kHz as Expander is slow :(
 oled = ssd1306.SSD1306_I2C(128, 64, i2c)
 
 #address = 35 #33-0x21/35-0x23
