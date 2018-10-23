@@ -1,8 +1,11 @@
 """
-This is simple usage of SSD1306 OLED display over I2C
+This is simple usage of:
+PCF and two steppers
+and SSD1306 OLED display over I2C
 needs external driver ssd1306.py from https://github.com/micropython/micropython/blob/master/drivers/display/ssd1306.py
-Set your SCL and SDA pins in constants
+
 Installation:
+ampy -p /dev/ttyUSB0 put ./octopus_robot_board.py
 ampy -p /dev/ttyUSB0 put ./ssd1306.py
 ampy -p /COM6 put ./07-i2c-test.py main.py
 # reset device
