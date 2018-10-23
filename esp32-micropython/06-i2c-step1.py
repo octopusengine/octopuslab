@@ -77,7 +77,7 @@ tempData = bytearray(1)
 try:
     while True:
       #test = ubinascii.hexlify(data[, sep])
-      for i in range (0, 7):
+      for i in range (0, 8):
         tempData[0] = step[i]
         i2c.writeto(ADDRESS1, tempData)
         time.sleep(1/1000)
