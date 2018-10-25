@@ -26,6 +26,6 @@ I34_PIN = 34
 I35_PIN = 35
 
 #main analog input (for power management)
-PIN_ANANALOG = 36
+PIN_ANALOG = 36
 
 #---/
