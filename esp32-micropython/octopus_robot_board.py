@@ -21,7 +21,7 @@ I2C_SDA_PIN = const(21)
 PWM1_PIN = const(17)
 PWM2_PIN = const(16)
 PWM3_PIN = const(4)
-#pwm dut for servo:
+#pwm duty for servo:
 SERVO_MIN = const(40)
 SERVO_MAX= const(120)
 
