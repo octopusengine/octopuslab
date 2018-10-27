@@ -25,7 +25,7 @@ const char *wifi_pass = "secretPassword";
 
 // ESP32 specific includes
 #ifdef ESP32
-  #include <WiFi.h>
+#include <WiFi.h>
 #endif
 
 // WS LED
@@ -40,10 +40,10 @@ byte WSpacketBuffer[512];
 
 
 void banner() {
-//  Serial.print(F("SN: ")); Serial.println(String(ESP.getChipId(), HEX));
+  //  Serial.print(F("SN: ")); Serial.println(String(ESP.getChipId(), HEX));
   Serial.print(F("SDK: ")); Serial.println(ESP.getSdkVersion());
-//  Serial.print(F("Core: ")); Serial.println(ESP.getCoreVersion());
-//  Serial.print(F("Checksum: ")); Serial.println(ESP.getSketchMD5());
+  //  Serial.print(F("Core: ")); Serial.println(ESP.getCoreVersion());
+  //  Serial.print(F("Checksum: ")); Serial.println(ESP.getSketchMD5());
 }
 
 void network_connect_wait() {
