@@ -1,7 +1,6 @@
 """
 This is octopusLab basic library for robotBoard PCB
 Edition: --- 21.10.2018 ---
-
 Installation:
 ampy -p /dev/ttyUSB0 put ./octopus_robot_board.py
 """
@@ -22,8 +21,8 @@ PWM1_PIN = const(17)
 PWM2_PIN = const(16)
 PWM3_PIN = const(4)
 #pwm duty for servo:
-SERVO_MIN = const(40)
-SERVO_MAX= const(120)
+SERVO_MIN = const(38)
+SERVO_MAX= const(130)
 
 #inputs:
 I39_PIN = const(39)
