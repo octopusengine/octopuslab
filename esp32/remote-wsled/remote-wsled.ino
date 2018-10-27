@@ -40,10 +40,12 @@ byte WSpacketBuffer[512];
 
 
 void banner() {
-  //  Serial.print(F("SN: ")); Serial.println(String(ESP.getChipId(), HEX));
   Serial.print(F("SDK: ")); Serial.println(ESP.getSdkVersion());
-  //  Serial.print(F("Core: ")); Serial.println(ESP.getCoreVersion());
-  //  Serial.print(F("Checksum: ")); Serial.println(ESP.getSketchMD5());
+#ifdef ESP8266
+  Serial.print(F("SN: ")); Serial.println(String(ESP.getChipId(), HEX));
+  Serial.print(F("Core: ")); Serial.println(ESP.getCoreVersion());
+  Serial.print(F("Checksum: ")); Serial.println(ESP.getSketchMD5());
+#endif
 }
 
 void network_connect_wait() {
