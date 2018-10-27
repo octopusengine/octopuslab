@@ -1,6 +1,7 @@
 /*
   Example for remote controled WS led using Android application RoboRemo
 
+  ESP32
   ESP8266
 
   (c) 2018/10 Petrkr
