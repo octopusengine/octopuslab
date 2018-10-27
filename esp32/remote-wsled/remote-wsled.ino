@@ -107,6 +107,7 @@ void setup() {
   Serial.println();
   Serial.println(F("Booting up..."));
 
+  pinMode(LED_BUILTIN, OUTPUT);
 
   Serial.println("Setting up WS LED...");
   wsLED.begin();
@@ -170,6 +171,14 @@ void handleWSUDPServer() {
         Serial.print("BLUE: ");
         ws_blue = value.toInt();
         break;
+      case 'T':
+        Serial.print("Toggle Built in LED state");
+        digitalWrite(BUILTIN_LED, !digitalRead(BUILTIN_LED));
+        break;
+      default:
+        Serial.print("Unknown command: ");
+        Serial.print((char)WSpacketBuffer[0]);
+        Serial.println(value);
     }
 
     Serial.println(value);
