@@ -1,13 +1,14 @@
 """
 This is octopusLab basic library for robotBoard PCB
-Edition: --- 21.10.2018 ---
+Edition: --- 27.10.2018 ---
 Installation:
 ampy -p /dev/ttyUSB0 put ./octopus_robot_board.py
 """
 
 from micropython import const
 
-#ESP32 pinout setup
+# PIN as on octopusLAB ESP32 RobotBoard
+# ESP32 pinout setup:
 BUILT_IN_LED = const(2)
 WS_LED_PIN = const(13)    #ws RGB ledi diode
 ONE_WIRE_PIN = const(32)  #one wire (for Dallas temperature sensor)
@@ -15,6 +16,16 @@ ONE_WIRE_PIN = const(32)  #one wire (for Dallas temperature sensor)
 #I2C:
 I2C_SCL_PIN = const(22)
 I2C_SDA_PIN = const(21)
+
+# DC motors
+MOTOR_12EN = const(25)
+# Select version of robot board
+##MOTOR_34EN 15    # Robot Board v1
+MOTOR_34EN = const(13)   # Robot Board v2
+MOTOR_1A = const(26)
+MOTOR_2A = const(12)
+MOTOR_3A = const(14)
+MOTOR_4A = const(27)
 
 #PWM/servo:
 PWM1_PIN = const(17)
