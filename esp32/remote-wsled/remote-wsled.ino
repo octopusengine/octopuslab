@@ -66,25 +66,14 @@ void network_setup() {
   WiFi.mode(WIFI_STA);
   Serial.println(F("OK"));
 
-  //Try connect last connection, if saved
-  if (WiFi.SSID().length() != 0) {
-
 #ifdef ESP8266
-    ETS_UART_INTR_DISABLE();
-    wifi_station_disconnect();
-    ETS_UART_INTR_ENABLE();
+  ETS_UART_INTR_DISABLE();
+  wifi_station_disconnect();
+  ETS_UART_INTR_ENABLE();
 #endif
 
-    Serial.print(F("  trying connect to ")); Serial.print(WiFi.SSID());
-
-    WiFi.begin();
-
-    network_connect_wait();
-  }
-  else {
-    Serial.print(F("  trying connect to ")); Serial.print(wifi_ssid);
-    WiFi.begin(wifi_ssid, wifi_pass);
-  }
+  Serial.print(F("  trying connect to ")); Serial.print(wifi_ssid);
+  WiFi.begin(wifi_ssid, wifi_pass);
 
   network_connect_wait();
 
@@ -96,7 +85,7 @@ void network_setup() {
     Serial.print(F("  IP address: "));
     Serial.println(WiFi.localIP());
   } else {
-    Serial.println(F("Connection failed, reboot"));
+    Serial.println(F("Connection failed"));
   }
 }
 
