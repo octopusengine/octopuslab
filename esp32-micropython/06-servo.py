@@ -17,13 +17,18 @@ import octopus_robot_board as o #octopusLab main library - "o" < octopus
 
 pin_servo = Pin(o.PWM1_PIN, Pin.OUT)
 pwm = PWM(pin_servo, freq=50, duty=70)
-pwm.duty(150)
+# duty for servo is between 40 - 115
+
+SERVO_MIN = 40
+SERVO_MAX= 120
+
+pwm.duty(SERVO_MAX)
 sleep(1)
-pwm.duty(30)
+pwm.duty(SERVO_MIN)
 sleep(1)
 
-for i in range(30,150,2): #step 2
+for i in range(SERVO_MIN,SERVO_MAX,2): #step 2
     pwm.duty(i)
     sleep(1/10)
 
-pwm.duty(30)
+pwm.duty(SERVO_MIN)
