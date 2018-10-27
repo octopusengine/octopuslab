@@ -97,6 +97,9 @@ void setup() {
   Serial.println(F("Booting up..."));
 
   pinMode(LED_BUILTIN, OUTPUT);
+#ifdef ESP8266
+  digitalWrite(LED_BUILTIN, HIGH);
+#endif
 
   Serial.println("Setting up WS LED...");
   wsLED.begin();
