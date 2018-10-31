@@ -1,6 +1,8 @@
 """
 This is octopusLab basic library for robotBoard PCB
-Edition: --- 27.10.2018 ---
+I2C / SPI / MOTORs / SERVO / PWM...
+
+Edition: --- 31.10.2018 ---
 Installation:
 ampy -p /dev/ttyUSB0 put ./octopus_robot_board.py
 """
