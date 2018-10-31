@@ -10,17 +10,24 @@ from micropython import const
 # PIN as on octopusLAB ESP32 RobotBoard
 # ESP32 pinout setup:
 BUILT_IN_LED = const(2)
-WS_LED_PIN = const(13)    #ws RGB ledi diode
+##WS_LED_PIN 13          # Robot Board v1
+WS_LED_PIN = const(15)   # Robot Board v2 - WS RGB ledi diode   
 ONE_WIRE_PIN = const(32)  #one wire (for Dallas temperature sensor)
 
 #I2C:
 I2C_SCL_PIN = const(22)
 I2C_SDA_PIN = const(21)
 
+#SPI:
+SPI_CLK_PIN  = const(18)
+SPI_MISO_PIN = const(19)
+SPI_MOSI_PIN = const(23)
+SPI_CS0_PIN  = const(5)
+
 # DC motors
 MOTOR_12EN = const(25)
 # Select version of robot board
-##MOTOR_34EN 15    # Robot Board v1
+##MOTOR_34EN 15          # Robot Board v1
 MOTOR_34EN = const(13)   # Robot Board v2
 MOTOR_1A = const(26)
 MOTOR_2A = const(12)
