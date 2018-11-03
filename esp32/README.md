@@ -27,18 +27,18 @@ esp32-09-wifi - test wifi<br />
 oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:
                           -----------     (GPIO)
                       EN -           - D23 (23)  MOSI       [SPI_MOSI_PIN] 
-[PIN_ANALOG]    I36   VP -           - D22 (22)  SCL(I2C)   [I2C_SCL_PIN]
-[I39_PIN]       I39   VN -           - TXD (1)   D2
-[I34_PIN]       I34  D34 -           - RXD (3)   D3
-[I35_PIN]       I35  D35 -           - D21 (21)  SDA(I2C)   [I2C_SDA_PIN]
+[PIN_ANALOG]    (36)  VP -           - D22 (22)  SCL(I2C)   [I2C_SCL_PIN]
+[I39_PIN]       (39)  VN -           - TXD (1)   D2
+[I34_PIN]            D34 -           - RXD (3)   D3
+[I35_PIN]            D35 -           - D21 (21)  SDA(I2C)   [I2C_SDA_PIN]
 [ONE_WIRE_PIN] DEV1  D32 -           - D19 (19)  MISO       [SPI_MISO_PIN]
                DEV2  D33 -  (ESP32)  - D18 (18)  SCLK       [SPI_CLK_PIN]
-          MOTO_12EN  D25 -           - D5  (5)   CS0        [SPI_CS0_PIN]
-             MOTO1A  D26 -           - TX2 (17)             [PIN_PWM1] /Servo1
-             MOTO4A  D27 -           - RX2 (16)             [PIN_PWM2] /Servo2
-             MOTO3A  D14 -           - D4  (4)              [PIN_PWM3] /Servo3
-             MOTO2A  D12 -           - D2  (2)              [BUILT_IN_LED]
-          MOTO_34EN  D13 -           - D15 (15)             [WS_LED_PIN] //v1(13)     
+[MOTOR_12EN]         D25 -           - D5  (5)   CS0        [SPI_CS0_PIN]
+[MOTOR_1A]           D26 -           - TX2 (17)             [PIN_PWM1] /Servo1
+[MOTOR_4A]           D27 -           - RX2 (16)             [PIN_PWM2] /Servo2
+[MOTOR_3A]           D14 -           - D4  (4)              [PIN_PWM3] /Servo3
+[MOTOR_2A]           D12 -           - D2  (2)              [BUILT_IN_LED]
+[MOTOR_34EN]         D13 -           - D15 (15)             [WS_LED_PIN] //v1(13)     
                      GND -           - GND
                      VIN -           - 3V3 +
                           -----------
