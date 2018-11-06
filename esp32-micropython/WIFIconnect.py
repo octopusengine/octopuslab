@@ -1,37 +1,57 @@
-# include this in boot.py or main.py as WIFIC
-# and call WIFIconnect.do_connect() from the boot.py or main.py
+# include this in boot.py or main.py as WIFIConnect
+# Usage:
+# from WIFIconnect import WiFiConnect
+# w = WiFiConnect()
+# w.events_add_connecting(function to callback connecting)
+# w.events_add_connected(function to callback connected)
+# w.connect(ssid, password)
 
-# Don't forget to change the ssid and password under second comment
+# and call WIFIconnect.do_connect() from the boot.py or main.py
 
 # Includes
 import network
 from time import sleep
 
 
-def do_connect(ssid, password):
-    # get an instance of the sta_if WiFi interface
-    sta_if = network.WLAN(network.STA_IF)
+class WiFiConnect:
+    def __init__(self):
+        self.events_connecting = []
+        self.events_connected = []
 
-    # check if we are already connected to a WiFi
-    if sta_if.isconnected():
-        print("Already connected")
-        return
+    def __call_events_connecting__(self):
+        for f in self.events_connecting:
+            f()
 
-        # activate interface
-    sta_if.active(True)
+    def __call_events_connected__(self, sta):
+        for f in self.events_connected:
+            f(sta)
 
-    # connect to network via provided ID
-    print('connecting to "{}" network...'.format(ssid))
-    sta_if.connect(ssid, password)
+    def events_add_connecting(self, func):
+        self.events_connecting.append(func)
 
-    while not sta_if.isconnected():
-        print("  -- Waiting to connect")
-        sleep(0.5)
+    def events_add_connected(self, func):
+        self.events_connected.append(func)
 
-    # print connection info - automatic
-    # currently this prints out as if no connection was established - giving 0.0.0.0 sd ip
-    # however, connection IS made and functional
-    print('network config:', sta_if.ifconfig())
+    def connect(self, ssid, password):
+        # get an instance of the sta_if WiFi interface
+        sta_if = network.WLAN(network.STA_IF)
 
-    # simple newline to separate from base information during boot
-    print('')
+        # check if we are already connected to a WiFi
+        if sta_if.isconnected():
+            self.__call_events_connected__(sta_if)
+            return
+
+            # activate interface
+        sta_if.active(True)
+
+        # connect to network via provided ID
+        sta_if.connect(ssid, password)
+
+        while not sta_if.isconnected():
+            self.__call_events_connecting__()
+            sleep(0.5)
+
+        # print connection info - automatic
+        # currently this prints out as if no connection was established - giving 0.0.0.0 sd ip
+        # however, connection IS made and functional
+        self.__call_events_connected__(sta_if)
