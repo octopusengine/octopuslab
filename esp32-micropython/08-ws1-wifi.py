@@ -7,7 +7,7 @@ from neopixel import NeoPixel
 # Include wifi
 from WIFIconnect import WiFiConnect
 
-# Remeber set SSID and password in WiFiConfig.py file
+# Remember set SSID and password in WiFiConfig.py file
 import WiFiConfig
 
 # Import OctopusLab Robot board definition file
