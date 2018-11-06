@@ -49,7 +49,6 @@ class WiFiConnect:
 
         while not sta_if.isconnected():
             self.__call_events_connecting__()
-            sleep(0.5)
 
         # print connection info - automatic
         # currently this prints out as if no connection was established - giving 0.0.0.0 sd ip
