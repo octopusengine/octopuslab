@@ -1,12 +1,11 @@
 # include this in boot.py or main.py as WIFIConnect
 # Usage:
-# from WIFIconnect import WiFiConnect
+# from WiFiConnect import WiFiConnect
 # w = WiFiConnect()
 # w.events_add_connecting(function to callback connecting)
 # w.events_add_connected(function to callback connected)
 # w.connect(ssid, password)
 
-# and call WIFIconnect.do_connect() from the boot.py or main.py
 
 # Includes
 import network
