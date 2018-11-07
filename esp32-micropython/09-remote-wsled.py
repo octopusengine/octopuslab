@@ -26,9 +26,9 @@ np = NeoPixel(pin_ws, 1)
 pin_led = Pin(o.BUILT_IN_LED, Pin.OUT)
 
 def simple_blink():
-    pin_led.value(0)
-    sleep(0.1)
     pin_led.value(1)
+    sleep(0.1)
+    pin_led.value(0)
     sleep(0.1)
 
 # Default WS led light RED as init
