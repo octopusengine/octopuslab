@@ -3,6 +3,9 @@
 # Android: RoboRemo/menu/connect IP:PORT
 # Win: ncat -u IP PORT
 
+# servo1 .. R
+# servo2 .. B
+
 from time import sleep
 from neopixel import NeoPixel
 from machine import Pin, PWM
