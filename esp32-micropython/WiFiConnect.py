@@ -6,11 +6,9 @@
 # w.events_add_connected(function to callback connected)
 # w.connect(ssid, password)
 
-
 # Includes
 import network
 from time import sleep
-
 
 class WiFiConnect:
     def __init__(self):
