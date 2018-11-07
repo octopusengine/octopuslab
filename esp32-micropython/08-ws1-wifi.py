@@ -1,4 +1,8 @@
-#octopusLAB - ESP32 - WS RGB LED (Neopixel)
+#octopusLAB - ESP32 - WiFi and WS RGB LED signalizationn - basic test
+
+# ampy -p /COM6 put WiFiConfig.py
+# ampy -p /COM6 put WiFiConnect.py
+#
 
 from time import sleep
 from machine import Pin
