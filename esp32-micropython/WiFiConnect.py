@@ -1,4 +1,5 @@
-# include this in boot.py or main.py as WIFIConnect
+# include this in boot.py or main.py as WiFiConnect
+
 # Usage:
 # from WiFiConnect import WiFiConnect
 # w = WiFiConnect()
