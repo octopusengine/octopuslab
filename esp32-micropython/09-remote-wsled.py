@@ -1,17 +1,14 @@
 # usage:
 # __import__('09-remote-wsled')
+# Android: RoboRemo/menu/connect IP:PORT
+# Win: ncat -u IP PORT 
 
 from time import sleep
 from machine import Pin
 from neopixel import NeoPixel
 
-# Include wifi
-from WiFiConnect import WiFiConnect
-
-# Remember set SSID and password in WiFiConfig.py file
-import WiFiConfig
-
-# Import Usocket
+import WiFiConfig  # Remember set SSID and password in WiFiConfig.py file
+from WiFiConnect import WiFiConnect # Include wifi
 import usocket
 
 # Import OctopusLab Robot board definition file
@@ -26,9 +23,7 @@ WSBindIP = None
 # pin_ws = Pin(o.WS_LED_PIN, Pin.OUT)
 
 np = NeoPixel(pin_ws, 1)
-
 pin_led = Pin(o.BUILT_IN_LED, Pin.OUT)
-
 
 def simple_blink():
     pin_led.value(0)
@@ -36,12 +31,10 @@ def simple_blink():
     pin_led.value(1)
     sleep(0.1)
 
-
 # Default WS led light RED as init
 np[0] = (128, 0, 0)
 np.write()
 simple_blink()
-
 
 # Define function callback for connecting event
 def connected_callback(sta):
@@ -53,12 +46,10 @@ def connected_callback(sta):
     print(sta.ifconfig())
     WSBindIP = sta.ifconfig()[0]
 
-
 def connecting_callback():
     np[0] = (0, 0, 128)
     np.write()
     simple_blink()
-
 
 w = WiFiConnect()
 w.events_add_connecting(connecting_callback)
@@ -67,7 +58,6 @@ w.events_add_connected(connected_callback)
 w.connect(WiFiConfig.WIFI_SSID, WiFiConfig.WIFI_PASS)
 
 if WSBindIP is not None:
-
     print("UDP Server run on {}:{}".format(WSBindIP, WSUDPPort))
 
     us = usocket.socket(usocket.AF_INET, usocket.SOCK_DGRAM)
@@ -76,7 +66,6 @@ if WSBindIP is not None:
     ws_red = 0
     ws_green = 0
     ws_blue = 0
-
 
     def parseWS_LED(data):
         global ws_red
