@@ -5,7 +5,7 @@ from machine import Pin
 from neopixel import NeoPixel
 
 # Include wifi
-from WIFIconnect import WiFiConnect
+from WiFiConnect import WiFiConnect
 
 # Remember set SSID and password in WiFiConfig.py file
 import WiFiConfig
