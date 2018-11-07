@@ -9,7 +9,7 @@
 # __import__('08-blink-wifi')
 
 # Include wifi
-from WIFIconnect import WiFiConnect
+from WiFiConnect import WiFiConnect
 
 # Remember set SSID and password in WiFiConfig.py file
 import WiFiConfig
