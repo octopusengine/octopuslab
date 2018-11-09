@@ -6,15 +6,16 @@ analog value: an/maxbit*maxv
 
 Installation:
 ampy -p /dev/ttyUSB0 put ./octopus_robot_board.py
-ampy -p /dev/ttyUSB0 put ./ssd1306.py
-ampy -p /dev/ttyUSB0 put ./05-oled.py main.py
+ampy -p /dev/ttyUSB0 mkdir lib
+ampy -p /dev/ttyUSB0 put ./lib/ssd1306.py lib/ssd1306.py
+ampy -p /dev/ttyUSB0 put ./05-oled-analog.py main.py
 # reset device
 
 """
 import machine
 from machine import Pin
-import ssd1306
 import time
+from lib import ssd1306
 
 import octopus_robot_board as o #octopusLab main library - "o" < octopus
 
