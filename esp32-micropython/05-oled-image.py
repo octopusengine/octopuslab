@@ -20,8 +20,8 @@ ampy -p /dev/ttyUSB0 put ./05-oled-image.py main.py
 
 import framebuf
 import machine
-import ssd1306
 import time
+from lib import ssd1306
 
 import octopus_robot_board as o #octopusLab main library - "o" < octopus
 
@@ -42,7 +42,7 @@ oled.fill(0)
 oled.show()
 
 
-with open('test_image.pbm', 'rb') as f:
+with open('assets/octopus_image.pbm', 'rb') as f:
     f.readline() # Magic number
     f.readline() # Creator comment
     f.readline() # Dimensions
