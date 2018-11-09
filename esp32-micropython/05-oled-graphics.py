@@ -8,16 +8,16 @@ from https://github.com/micropython/micropython/blob/master/drivers/display/ssd1
 Set your SCL and SDA pins in constants
 
 Installation:
-ampy -p /dev/ttyUSB0 put ./octopus_robot_board.py
-ampy -p /dev/ttyUSB0 put ./ssd1306.py
-ampy -p /dev/ttyUSB0 put ./05-oled-gtaphics.py main.py
+./octopus_robot_board.py
+./lib/ssd1306.py
+ampy -p /dev/ttyUSB0 put ./05-oled-graphics.py main.py
 # reset device
 """
 
 import machine
-import ssd1306
 import time
 import urandom
+from lib import ssd1306
 
 import octopus_robot_board as o #octopusLab main library - "o" < octopus
 
