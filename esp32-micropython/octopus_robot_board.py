@@ -15,6 +15,7 @@ BUILT_IN_LED = const(2)
 ##WS_LED_PIN 13          # Robot Board v1
 WS_LED_PIN = const(15)   # Robot Board v2 - WS RGB ledi diode   
 ONE_WIRE_PIN = const(32)  #one wire (for Dallas temperature sensor)
+HALL_SENSOR = const(8)
 
 #I2C:
 I2C_SCL_PIN = const(22)
