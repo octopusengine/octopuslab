@@ -43,7 +43,8 @@ while True:
    oled.fill(0)
    oled.text('OctopusLab', 20, 15)
    an = adc.read()
-   oled.text("RAW: "+str(an), 20, 30)
-   oled.text("volts: "+str(an/2048*1.5), 20, 50)
+   oled.text("RAW: {0}".format(an), 20, 30)
+   # TODO improve mapping formula, doc: https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/adc.html
+   oled.text("volts: {0:.2f} V".format(an/4096*10.74), 20, 50)
    oled.show()
    time.sleep_ms(1000)
