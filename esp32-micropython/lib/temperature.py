@@ -1,3 +1,4 @@
+#https://boneskull.com/micropython-on-esp32-part-1/
 from time import sleep_ms
 from machine import Pin
 from onewire import OneWire
@@ -45,4 +46,3 @@ class TemperatureSensor:
         :rtype: float
         """
         return (c * 1.8) + 32
-
