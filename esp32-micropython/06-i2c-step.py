@@ -10,7 +10,7 @@ ampy -p /COM6 put ./06-i2c-step.py main.py
 
 """
 from machine import Pin, I2C
-from sm28byj48 import SM28BYJ48
+from lib.sm28byj48 import SM28BYJ48
 
 import octopus_robot_board as o #octopusLab main library - "o" < octopus
 
