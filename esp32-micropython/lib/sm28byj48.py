@@ -1,4 +1,6 @@
 # MicroPython 28BYJ-48 step motor on ULN2803 driver via PFC8574 I2C expander
+# octopus LAB library:
+# https://raw.githubusercontent.com/octopusengine/octopuslab/master/esp32-micropython/lib/sm28byj48.py
 
 import time
 from micropython import const
