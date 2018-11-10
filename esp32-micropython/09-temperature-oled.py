@@ -13,9 +13,8 @@ ampy -p /dev/ttyUSB0 put ./09-temperature-oled.py main.py
 """
 
 import machine
-import ssd1306
 import time
-
+from lib import ssd1306
 from lib.temperature import TemperatureSensor
 import octopus_robot_board as o # octopus ROBOTboard pinout
 
