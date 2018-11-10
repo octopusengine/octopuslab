@@ -11,11 +11,9 @@ How to create .pbm? https://forum.micropython.org/viewtopic.php?t=4901#p29699
 Set your image WIDTH and HEIGHT in constants
 
 Installation:
-ampy -p /dev/ttyUSB0 put ./octopus_robot_board.py
-ampy -p /dev/ttyUSB0 mkdir lib
-ampy -p /dev/ttyUSB0 put ./lib/ssd1306.py lib/ssd1306.py
-ampy -p /dev/ttyUSB0 mkdir assets
-ampy -p /dev/ttyUSB0 put ./assets/octopus_image.pbm assets/octopus_image.pbm
+octopus_robot_board.py
+lib/ssd1306.py lib/ssd1306.py
+assets/octopus_image.pbm 
 ampy -p /dev/ttyUSB0 put ./05-oled-image.py main.py
 # reset device
 """
