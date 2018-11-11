@@ -2,5 +2,6 @@
 
 
 PID reg
-BT/roboremo (Android) - serial BT terminal
+TODO: BT/roboremo (Android) - serial BT terminal
+TODO: > Micropython / Blockly-uPy
 
