@@ -9,3 +9,21 @@ Step 1/1 - WiFi setting:
 SSID: ...
 </pre>
 -----------------------
+<hr />
+<pre>
+>>> octopus()
+      ,'''`.
+     /      \
+     |(@)(@)|
+     )      (
+    /,'))((`.\
+   (( ((  )) ))
+   )  \ `)(' / (
+
+Hello this basic octopusLAB example
+(Press Ctrl+C to abort)
+
+select:
+...
+</pre>
+
