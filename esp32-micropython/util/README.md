@@ -23,7 +23,10 @@ SSID: ...
 Hello this basic octopusLAB example
 (Press Ctrl+C to abort)
 
-select:
+select: 1
+your select: 1
+mem_free: 103520
+
 ...
 </pre>
 
