@@ -6,3 +6,4 @@
 
 # when user enters REPL and executes setup()
 from util.setup import setup
+from util.octopus import octopus #beta
