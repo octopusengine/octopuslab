@@ -20,7 +20,7 @@ SSID: ...
    (( ((  )) ))
    )  \ `)(' / (
 
-Hello this basic octopusLAB example
+Hello, this basic octopusLAB example
 (Press Ctrl+C to abort)
 
 select: 1
