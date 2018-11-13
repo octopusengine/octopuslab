@@ -46,8 +46,27 @@ AMPY_BAUD=115200<br />
 - upload Micropython bin: <pre>esptool.py --chip esp32 -p /COM6 write_flash -z 0x1000 ./down/esp32-20180821-v1.9.4-479-g828f771e3.bin</pre>
 <br />
 - copy *.py file to ESP <pre>
-ampy -p /COM6 get boot.py
+ampy -p /COM6 put boot.py
 # This file is executed on every boot (including wake-boot from deepsleep)
+ampy -p /COM6 put ./octopus_robot_board.py
+
+ampy -p /COM6 mkdir lib
+ampy -p /COM6 put ./lib/ssd1306.py lib/ssd1306.py
+ampy -p /COM6 put ./lib/temperature.py lib/temperature.py               
+
+ampy -p /COM6 put 05-oled-image.py main.py
+ampy -p /COM6 put 01-blink.py main.py
+
+ampy -p /COM6 put WIFIConfig-octopus WiFiConfig.py
+ampy -p /COM6 put WC-octopus WiFiConfig.py
+
+---------------------------
+ampy -p /COM6 mkdir util
+ampy -p /COM6 put ./util/setup.py util/setup.py
+ampy -p /COM6 put ./util/octopus.py util/octopus.py
+ampy -p /COM6 ls util
+
+
 </pre>
 
 <hr />
