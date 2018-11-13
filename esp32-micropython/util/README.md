@@ -20,7 +20,7 @@ SSID: ...
    (( ((  )) ))
    )  \ `)(' / (
 
-Hello, this basic octopusLAB example (2018/11)
+Hello, this is basic octopusLAB example (2018/11)
 (Press Ctrl+C to abort)
 
 > unique_id: 807d3aa44ae4
