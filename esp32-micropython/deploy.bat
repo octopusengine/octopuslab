@@ -1,4 +1,5 @@
 echo Welcome to basic octopusLAB script!
+echo (edit for your COM port)
 pause
 ampy -p /COM6 put boot.py
 ampy -p /COM6 put ./octopus_robot_board.py
