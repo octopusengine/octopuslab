@@ -111,7 +111,7 @@ def _closedCallback(webSocket) :
 #	( "/test",	"POST",	_httpHandlerTestPost )
 #]
 
-srv = MicroWebSrv(webPath='www/')
+srv = MicroWebSrv(webPath='wwwesp/')
 srv.MaxWebSocketRecvLen     = 256
 srv.WebSocketThreaded		= False
 srv.AcceptWebSocketCallback = _acceptWebSocketCallback
