@@ -1,4 +1,4 @@
-from microWebSrv import MicroWebSrv
+from lib.microWebSrv import MicroWebSrv
 
 # ----------------------------------------------------------------------------
 
