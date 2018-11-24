@@ -51,13 +51,10 @@ def get_eui():
     id = ubinascii.hexlify(machine.unique_id()).decode()
     return id #mac2eui(id)
 
-def printLine():
-    print("------------------------------------------------")
-
 def mainMenu():
-    printLine()
+    print('-' * 30)
     print("Menu: Basic simple examples & tests")
-    printLine()
+    print('-' * 30)
     print("[b] - built-in led/beep/button")
     print("[i] - device & system info")
     print("[o] - oled display test")
@@ -66,7 +63,7 @@ def mainMenu():
     print("[t] - temperature")
     print("[w] - wifi test")
     print("[q] - QUIT")
-    printLine()
+    print('-' * 30)
 
     sel = input("select: ")
     #print("your select: "+str(sel))
@@ -87,7 +84,7 @@ def octopus():
     print("   )  \ `)(' / ( ")
     print()
     print("Hello, this is basic octopusLAB example (2018/11)")
-    print("(Press Ctrl+C to abort | CTRL+D to soft reboot)")
+    print(" (Press Ctrl+C to abort | CTRL+D to soft reboot)")
     print()
 
     time.sleep_us(10)       # sleep for 10 microseconds
@@ -106,10 +103,7 @@ def octopus():
                beep(pwm0,500,100)
                blink(500)
 
-      if sel == "s":
-          print(">>> setup()")
-
-      elif sel == "i":
+      if sel == "i":
           print("uPy version: "+str(os.uname()[3]))
           print("> unique_id: "+str(get_eui()))
           #print("--- MAC: "+str(mac2eui(get_eui())))
@@ -119,6 +113,7 @@ def octopus():
 
       if sel == "o":
           from lib import ssd1306
+          time.sleep_ms(2000)
           i2c = machine.I2C(-1, machine.Pin(I2C_SCL_PIN), machine.Pin(I2C_SDA_PIN))
           oled = ssd1306.SSD1306_I2C(128, 64, i2c)
 
@@ -159,6 +154,18 @@ def octopus():
 
         np[0] = (0, 0, 0) #0
         np.write()
+
+      if sel == "w":
+          from util.wifi_connect import WiFiConnect
+          f = open('config/wifi.json', 'r')
+          d = f.read()
+          f.close()
+          j = json.loads(d)
+          ssid=j["wifi_ssid"]
+          print("config for: " + ssid)
+          w = WiFiConnect()
+          w.connect(ssid,j["wifi_pass"])
+          print("WiFi: OK")
 
       if sel == "q":
           run = False
