@@ -56,6 +56,7 @@ def mainMenu():
     print("Menu: Basic simple examples & tests")
     print('-' * 30)
     print("[b] - built-in led/beep/button")
+    print("[c] - clear terminal")
     print("[i] - device & system info")
     print("[o] - oled display test")
     print("[r] - RGB WS led test")
@@ -63,11 +64,12 @@ def mainMenu():
     print("[t] - temperature")
     print("[w] - wifi test")
     print("[q] - QUIT")
-    print('-' * 30)
+    print('=' * 30)
 
     sel = input("select: ")
     #print("your select: "+str(sel))
     return sel
+    print()
 
 #-------------
 def octopus():
@@ -102,6 +104,9 @@ def octopus():
            for _ in range(count):
                beep(pwm0,500,100)
                blink(500)
+      if sel == "c":
+          print(chr(27) + "[2J") # clear terminal
+          print("\x1b[2J\x1b[H") # cursor up
 
       if sel == "i":
           print("uPy version: "+str(os.uname()[3]))
