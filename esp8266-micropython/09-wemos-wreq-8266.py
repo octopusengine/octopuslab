@@ -4,7 +4,7 @@ This is simple usage of SSD1306 OLED display over I2C
 ws rgb led
 button
 
-ampy -p /COM4 put 09-wemos-oled-wreq-8266.py main.py
+ampy -p /COM4 put 09-wemos-wreq-8266.py main.py
 # reset device
 """
 import machine
@@ -12,16 +12,19 @@ from machine import Pin, PWM
 import time
 from time import sleep
 from neopixel import NeoPixel
-import urequests
 import json
-
-from lib import ssd1306
-from lib.temperature import TemperatureSensor
-
+import urequests
 from util.wifi_connect import WiFiConnect
+from lib import ssd1306
 
-w = WiFiConnect()
-w.connect("ssid","pass")
+wwwserver="http://octopuslab.cz/api/led3.json"
+
+#from lib.temperature import TemperatureSensor
+aa = 16
+y0 = 5
+y1 = 15
+y2 = 25
+x0 = aa+5
 
 #import octopus_robot_board as o #octopusLab main library - "o" < octopus
 BUILT_IN_LED = 2
@@ -41,10 +44,6 @@ pwm0.duty(0)
 
 #ts = TemperatureSensor(ONE_WIRE_PIN)
 
-aa = 16
-y0 = 5
-x0 = aa+5
-
 def beep(p,f,t):  # port,freq,time
     #pwm0.freq()  # get current frequency
     p.freq(f)     # set frequency
@@ -62,31 +61,56 @@ np = NeoPixel(pin, NUMBER_LED)
 led = Pin(BUILT_IN_LED, Pin.OUT)
 
 def simple_blink_pause():
-    led.value(1)
-    sleep(1/10)
     led.value(0)
+    sleep(1/10)
+    led.value(1)
     sleep(1/5)
 
 # ----------------------------------------------
+oled.text("octopusLAB", x0, y0)
+oled.text("wifi_conf", x0, y1)
+oled.show()
+
+f = open('config/wifi.json', 'r')
+d = f.read()
+f.close()
+j = json.loads(d)
+ssid=j["wifi_ssid"]
+
+time.sleep_ms(1000)
+simple_blink_pause()
+oled.text("wifi_conf OK", x0, y1)
+oled.show()
+
+oled.text("wifi_conn", x0, y2)
+oled.show()
+w = WiFiConnect()
+w.connect(ssid,j["wifi_pass"])
+
+time.sleep_ms(1000)
+simple_blink_pause()
+oled.text("wifi_conn OK", x0, y2)
+oled.show()
+
 i=0
 while True:
-  r3 = urequests.post("http://yourserver.com/api/led3.json")
+  r3 = urequests.post(wwwserver)
   j = json.loads(r3.text)
   time.sleep_ms(3000)
-  oled.fill(0)
   rgb=j["led"]
-  oled.text(str(i)+": "+rgb, x0, 57)
+
+  oled.fill(0)
+  oled.text("octopusLAB", x0, y0)
+  oled.text(str(i)+": "+rgb, x0, 55)
   oled.show()
 
-  if rgb == "r":
-    np[0] = (128, 0, 0) #R
-
-  if rgb == "g":
-    np[0] = (0,128, 0) #G
-
-  if rgb == "b":
-    np[0] = (0, 0, 128) #B
-
+  if rgb == "r": np[0] = (128, 0, 0) #R
+  if rgb == "g": np[0] = (0,128, 0) #G
+  if rgb == "b": np[0] = (0, 0, 128) #B
+  if rgb == "0": np[0] = (0, 0, 0) #0
+  if rgb == "rg": np[0] = (255,255, 0)
+  if rgb == "rb": np[0] = (255,0, 255)
+  if rgb == "gb": np[0] = (0,255, 255)
   np.write()
-  time.sleep_ms(7000)
+  time.sleep_ms(27000)
   i=i+1
