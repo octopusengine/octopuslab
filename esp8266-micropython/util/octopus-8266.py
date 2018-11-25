@@ -22,17 +22,22 @@ ONE_WIRE_PIN = 13
 I2C_SCL_PIN=5 #gpio5=d1
 I2C_SDA_PIN=4 #gpio4=d2
 
-tim = Timer(-1)
-led = Pin(BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
-
 pwm0 = PWM(Pin(PIEZZO_PIN)) # create PWM object from a pin
 pwm0.duty(0)
+
+"""
+timNote = Timer(8, freq=3000)
+ch = timNote.channel(2, Timer.PWM, pin=Pin(PIEZZO_PIN))
+"""
+
+tim = Timer(-1)
+led = Pin(BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
 
 def beep(p,f,t):  # port,freq,time
     #pwm0.freq()  # get current frequency
     p.freq(f)     # set frequency
     #pwm0.duty()  # get current duty cycle
-    p.duty(200)   # set duty cycle
+    p.duty(512)   # set duty cycle
     time.sleep_ms(t)
     p.duty(0)
     #b.deinit()
@@ -65,10 +70,13 @@ def mainMenu():
     print("[c] - clear terminal")
     print("[f] - file info/dir")
     print("[i] - device & system info")
+    print("[m] - piezzo melody")
     print("[o] - oled display test")
     print("[r] - RGB WS led test")
     print("[s] - setup machine and wifi")
     print("[t] - temperature")
+    print("[u] - uart test")
+    print("[v] - list active variables")
     print("[w] - wifi test")
     print("[q] - QUIT")
     print('=' * 30)
@@ -132,11 +140,11 @@ def octopus():
           print("\x1b[2J\x1b[H") # cursor up
 
       if sel == "f":
-          import os
           print("file info /dir/ls:") #
           print(os.listdir())
           print("> lib: "+str(os.listdir("lib")))
           print("> util: "+str(os.listdir("util")))
+
       if sel == "i":
           print("uPy version: "+str(os.uname()[3]))
           print("> unique_id: "+str(get_eui()))
@@ -144,6 +152,36 @@ def octopus():
           gc.collect()
           print("> mem_free: "+str(gc.mem_free()))
           print("> machine.freq: "+str(machine.freq()))
+
+      if sel == "m":
+          # from lib import notes as *
+          beep(pwm0,200,50)
+          time.sleep_ms(300)
+          beep(pwm0,500,50)
+          time.sleep_ms(300)
+          beep(pwm0,900,50)
+          time.sleep_ms(1000)
+
+          # melody = [E7, E7, 0, E7, 0, C7, E7, 0, G7, 0, 0, 0, G6, 0, 0, 0, C7, 0, 0, G6]
+
+          # play Mario Bros tone example
+          # source from here http://www.linuxcircle.com/2013/03/31/playing-mario-bros-tune-with-arduino-and-piezo-buzzer/
+
+          #pwm0.duty()  # get current duty cycle
+          pwm0.duty(512)   # set duty cycle
+          for i in range(30,120):
+              print(i)
+              pwm0.freq(i*10)     # set frequency
+              time.sleep_ms(50)
+
+          """
+          for i in melody:
+              print(i)
+              #beep(pwm0,int(i/4),200)
+              pwm0.freq(int(i/8))     # set frequency
+              time.sleep_ms(200)
+          """
+          pwm0.duty(0)
 
       if sel == "o":
           from lib import ssd1306
@@ -163,10 +201,6 @@ def octopus():
           oled.text('OLED test', 20, 20)
           oled.show()
           time.sleep_ms(1000)
-
-      if sel == "s":
-          from util.setup import setup
-          setup()
 
       if sel == "r":
         from neopixel import NeoPixel
@@ -189,9 +223,20 @@ def octopus():
         np[0] = (0, 0, 0) #0
         np.write()
 
+      if sel == "s":
+           from util.setup import setup
+           setup()
+
+      if sel == "u":
+            print("uart - todo")
+
+      if sel == "v":
+          print("active variables: ")
+          print(dir())
+
       if sel == "w":
           from util.wifi_connect import WiFiConnect
-          time.sleep_ms(1000)
+          time.sleep_ms(2000)
           f = open('config/wifi.json', 'r')
           d = f.read()
           f.close()
