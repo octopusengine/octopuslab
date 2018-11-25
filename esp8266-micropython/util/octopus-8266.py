@@ -43,6 +43,12 @@ def blink(t): # time sleep
     led.value(0)
     time.sleep_ms(t)
 
+def simple_fast_blink():
+    led.value(1)
+    time.sleep_ms(50)
+    led.value(0)
+    time.sleep_ms(100)
+
 def mac2eui(mac):
     mac = mac[0:6] + 'fffe' + mac[6:]
     return hex(int(mac[0:2], 16) ^ 2)[2:] + mac[2:]
@@ -57,6 +63,7 @@ def mainMenu():
     print('-' * 30)
     print("[b] - built-in led/beep/button")
     print("[c] - clear terminal")
+    print("[f] - file info/dir")
     print("[i] - device & system info")
     print("[o] - oled display test")
     print("[r] - RGB WS led test")
@@ -70,6 +77,22 @@ def mainMenu():
     #print("your select: "+str(sel))
     return sel
     print()
+
+
+# Define function callback for connecting event
+def connected_callback(sta):
+    global WSBindIP
+    simple_fast_blink()
+    # np[0] = (0, 128, 0)
+    # np.write()
+    simple_fast_blink()
+    print(sta.ifconfig())
+    WSBindIP = sta.ifconfig()[0]
+
+def connecting_callback():
+    # np[0] = (0, 0, 128)
+    # np.write()
+    simple_fast_blink()
 
 #-------------
 def octopus():
@@ -108,6 +131,12 @@ def octopus():
           print(chr(27) + "[2J") # clear terminal
           print("\x1b[2J\x1b[H") # cursor up
 
+      if sel == "f":
+          import os
+          print("file info /dir/ls:") #
+          print(os.listdir())
+          print("> lib: "+str(os.listdir("lib")))
+          print("> util: "+str(os.listdir("util")))
       if sel == "i":
           print("uPy version: "+str(os.uname()[3]))
           print("> unique_id: "+str(get_eui()))
@@ -162,6 +191,7 @@ def octopus():
 
       if sel == "w":
           from util.wifi_connect import WiFiConnect
+          time.sleep_ms(1000)
           f = open('config/wifi.json', 'r')
           d = f.read()
           f.close()
@@ -169,6 +199,8 @@ def octopus():
           ssid=j["wifi_ssid"]
           print("config for: " + ssid)
           w = WiFiConnect()
+          w.events_add_connecting(connecting_callback)
+          w.events_add_connected(connected_callback)
           w.connect(ssid,j["wifi_pass"])
           print("WiFi: OK")
 
