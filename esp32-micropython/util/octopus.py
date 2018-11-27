@@ -27,7 +27,7 @@ I2C_SDA_PIN=4 #gpio4=d2
 """
 #---esp32---
 BUTT1_PIN = 12 #d6 x gpio16=d0
-PIEZZO_PIN = const(27)  #14
+PIEZZO_PIN = const(27)  #14 //MOTOR_4A = const(27)
 WS_LED_PIN = const(13) #v2+ > 15
 ONE_WIRE_PIN = const(32)
 
@@ -58,6 +58,9 @@ except:
 pwm0 = PWM(Pin(PIEZZO_PIN)) # create PWM object from a pin
 pwm0.duty(0)
 
+from lib.buzzer.notes import *
+mario = [E7, E7, 0, E7, 0, C7, E7, 0, G7, 0, 0, 0, G6, 0, 0, 0, C7, 0, 0, G6, 0, 0, E6, 0, 0, A6, 0, B6, 0, AS6, A6, 0, G6, E7, 0, G7, A7, 0, F7, G7, 0, E7, 0,C7, D7, B6, 0, 0, C7, 0, 0, G6, 0, 0, E6, 0, 0, A6, 0, B6, 0, AS6, A6, 0, G6, E7, 0, G7, A7, 0, F7, G7, 0, E7, 0,C7, D7, B6, 0, 0]
+
 """
 timNote = Timer(8, freq=3000)
 ch = timNote.channel(2, Timer.PWM, pin=Pin(PIEZZO_PIN))
@@ -66,7 +69,7 @@ tim = Timer(-1)
 """
 led = Pin(BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
 
-def beep(p,f,t):  # port,freq,time
+def simple_beep(p,f,t):  # port,freq,time
     #pwm0.freq()  # get current frequency
     p.freq(f)     # set frequency
     #pwm0.duty()  # get current duty cycle
@@ -139,6 +142,20 @@ def connecting_callback():
     # np.write()
     simple_fast_blink()
 
+def beep(pwm_pin, freq, length, volume=50):
+       pwm_pin.duty(volume)
+       pwm_pin.freq(freq)
+       time.sleep(length/1000)
+
+def play_melody(pwm_pin, melody, volume=50):
+ for note in melody:
+  if note == 0:
+      pwm_pin.duty(0)
+  else:
+      pwm_pin.duty(volume)
+      pwm_pin.freq(note)
+  time.sleep(0.15)
+
 #-------------
 def octopus():
     ###beep(pwm0,500,100) # start beep
@@ -164,13 +181,14 @@ def octopus():
     run= True
     while run:
       sel = mainMenu()
-      beep(pwm0,2000,50)
+      simple_beep(pwm0,1000,50)
 
       if sel == "b":
            count = 5
            for _ in range(count):
-               beep(pwm0,500,100)
+               simple_beep(pwm0,500,100)
                blink(500)
+
       if sel == "c":
           print(chr(27) + "[2J") # clear terminal
           print("\x1b[2J\x1b[H") # cursor up
@@ -190,6 +208,9 @@ def octopus():
           print("> machine.freq: "+str(machine.freq()))
 
       if sel == "m":
+          time.sleep_ms(500)
+          play_melody(pwm0, mario)
+          """
           # from lib import notes as *
           beep(pwm0,200,50)
           time.sleep_ms(300)
@@ -197,8 +218,6 @@ def octopus():
           time.sleep_ms(300)
           beep(pwm0,900,50)
           time.sleep_ms(1000)
-
-          # melody = [E7, E7, 0, E7, 0, C7, E7, 0, G7, 0, 0, 0, G6, 0, 0, 0, C7, 0, 0, G6]
 
           # play Mario Bros tone example
           # source from here http://www.linuxcircle.com/2013/03/31/playing-mario-bros-tune-with-arduino-and-piezo-buzzer/
@@ -209,13 +228,6 @@ def octopus():
               print(i)
               pwm0.freq(i*10)     # set frequency
               time.sleep_ms(50)
-
-          """
-          for i in melody:
-              print(i)
-              #beep(pwm0,int(i/4),200)
-              pwm0.freq(int(i/8))     # set frequency
-              time.sleep_ms(200)
           """
           pwm0.duty(0)
 
