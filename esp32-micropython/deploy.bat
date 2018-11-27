@@ -2,8 +2,8 @@ echo Welcome to basic octopusLAB script for ESP32 - Micropython!
 pause
 
 REM Setup your COM port
-SET PORT=/COM7
-your port is: %PORT%
+SET PORT=/COM6
+echo your port is: %PORT%
 
 REM To skip the following commands, put "REM" before them:
 
@@ -13,6 +13,9 @@ ampy -p  %PORT% put ./octopus_robot_board.py
 ampy -p  %PORT% mkdir lib
 ampy -p  %PORT% put ./lib/ssd1306.py lib/ssd1306.py
 ampy -p  %PORT% put ./lib/temperature.py lib/temperature.py
+ampy -p  %PORT% put ./lib/max7219.py lib/max7219.py
+ampy -p  %PORT% put ./lib/max7219_8digit.py lib/max7219_8digit.py
+
 ampy -p  %PORT% put ./lib/microWebSrv.py lib/microWebSrv.py
 ampy -p  %PORT% put ./lib/microWebSocket.py  lib/microWebSocket.py
 ampy -p  %PORT% put ./lib/sm28byj48.py lib/sm28byj48.py
