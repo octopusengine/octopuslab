@@ -4,10 +4,12 @@ set -euo pipefail
 # TODO documentation
 # TODO check arguments
 
-USB_DEV="/dev/ttyUSB0"
+export AMPY_PORT="/dev/ttyUSB0"
+export AMPY_BAUD=115200
+
 MAIN_SCRIPT="$1"
 echo "Please only execute in venv with ampy installed"
-echo "Deploying to $USB_DEV"
+echo "Deploying to $AMPY_PORT"
 
 read -p "Press enter to continue"
 
@@ -16,21 +18,21 @@ read -p "Press enter to continue"
 #pkill -f "screen $USB_DEV"
 
 echo "Deploying config"
-ampy -p $USB_DEV put ./config
+ampy put ./config
 echo "Deploying lib"
-ampy -p $USB_DEV put ./lib
+ampy put ./lib
 echo "Deploying util"
-ampy -p $USB_DEV put ./util
+ampy put ./util
 # TODO repeated execution is not updating content
-ampy -p $USB_DEV put ./util/setup.py util/setup.py
-ampy -p $USB_DEV put ./util/wifi_connect.py util/wifi_connect.py
+ampy put ./util/setup.py util/setup.py
+ampy put ./util/wifi_connect.py util/wifi_connect.py
 echo "Deploying boot.py"
-ampy -p $USB_DEV put ./boot.py
+ampy put ./boot.py
 echo "Deploying main script $MAIN_SCRIPT"
-ampy -p $USB_DEV put "$MAIN_SCRIPT" main.py
+ampy put "$MAIN_SCRIPT" main.py
 
 # if local file with wifi setting exists, push it
 if [ -f 'config/wifi.json' ]; then
     echo "Deploying local config/wifi.json"
-    ampy -p $USB_DEV put config/wifi.json config/wifi.json
+    ampy put config/wifi.json config/wifi.json
 fi
