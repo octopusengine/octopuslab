@@ -1,7 +1,7 @@
 """
 wemos - 8266:
 This is simple usage of SSD1306 OLED display over I2C
-ws rgb led
+temperature sensor
 button
 
 ampy -p /COM4 put 09-wemos-oled-temp-8266.py main.py
@@ -16,27 +16,28 @@ from neopixel import NeoPixel
 from lib import ssd1306
 from lib.temperature import TemperatureSensor
 
-#import octopus_robot_board as o #octopusLab main library - "o" < octopus
-BUILT_IN_LED = 2
-BUTT1_PIN = 12 #d6 x gpio16=d0
-PIEZZO_PIN = 14
-WS_LED_PIN = 15 #wemos gpio14 = d5
-ONE_WIRE_PIN = 13
+#SPI_MOSI_PIN = const(23)
+#BUILT_IN_LED = 2
+BUTT1_PIN = 14    #d6 x gpio16=d0
+PIEZZO_PIN = 0    # IoT wemos {piezz---D3=PWM1}
+ONE_WIRE_PIN = 2  # IoT wemos {DEV1 ---D4=PWM2} built in led width pull up
+#WS_LED_PIN = 15  #wemos gpio14 = d5
 
 I2C_SCL_PIN=5 #gpio5=d1
 I2C_SDA_PIN=4 #gpio4=d2
 
+butt1 = Pin(BUTT1_PIN, Pin.IN, Pin.PULL_UP)
+
 i2c = machine.I2C(-1, machine.Pin(I2C_SCL_PIN), machine.Pin(I2C_SDA_PIN))
 oled = ssd1306.SSD1306_I2C(128, 64, i2c)
+aa = 16
+y0 = 5
+x0 = aa+5
 
 pwm0 = PWM(Pin(PIEZZO_PIN)) # create PWM object from a pin
 pwm0.duty(0)
 
-#ts = TemperatureSensor(ONE_WIRE_PIN)
-
-aa = 16
-y0 = 5
-x0 = aa+5
+ts = TemperatureSensor(ONE_WIRE_PIN)
 
 def beep(p,f,t):  # port,freq,time
     #pwm0.freq()  # get current frequency
@@ -45,32 +46,17 @@ def beep(p,f,t):  # port,freq,time
     p.duty(200)   # set duty cycle
     time.sleep_ms(t)
     p.duty(0)
-    #b.deinit()
-
-NUMBER_LED = 1
-pin = Pin(WS_LED_PIN, Pin.OUT)
-butt = Pin(BUTT1_PIN, Pin.IN, Pin.PULL_UP)
-np = NeoPixel(pin, NUMBER_LED)
-
-led = Pin(BUILT_IN_LED, Pin.OUT)
-
-def simple_blink_pause():
-    led.value(0)
-    sleep(1/10)
-    led.value(1)
-    sleep(1/5)
 
 sevenSeg = [      #seven segment display
- #0,1,2,3,4,5,6   
- [1,1,1,1,1,1,0], #0      +----0----+
- [0,1,1,0,0,0,0], #1      |         |
- [1,1,0,1,1,0,1], #2      5         1
- [1,1,1,1,0,0,1], #3      |         |
- [0,1,1,0,0,1,1], #4      +----6----+
- [1,0,1,1,0,1,1], #5      |         |
- [1,0,1,1,1,1,1], #6      4         2
- [1,1,1,0,0,0,0], #7      |         | 
- [1,1,1,1,1,1,1], #8      +----3----+
+ [1,1,1,1,1,1,0], #0
+ [0,1,1,0,0,0,0], #1
+ [1,1,0,1,1,0,1], #2
+ [1,1,1,1,0,0,1], #3
+ [0,1,1,0,0,1,1], #4
+ [1,0,1,1,0,1,1], #5
+ [1,0,1,1,1,1,1], #6
+ [1,1,1,0,0,0,0], #7
+ [1,1,1,1,1,1,1], #8
  [1,1,1,1,0,1,1], #9
  [1,1,0,0,0,1,1], #deg
  [0,0,0,0,0,0,1]  #-
@@ -104,15 +90,13 @@ oled.fill(0)
 oled.text('OctopusLab', x0, 57)
 oled.show()
 time.sleep_ms(2000)
-
-#temp = ts.read_temp()
-
-for num in range(150,239):
-    threeDigits(num,True,True)
-    time.sleep_ms(50)
-    #temp = ts.read_temp()
-    #print(temp)
-
 beep(pwm0,500,100)
-oled.fill(0)
-oled.text('OctopusLab - ok', x0, 57)
+
+while True:
+    temp = ts.read_temp()
+    threeDigits(int(temp*10),True,True)
+    b =butt1.value()
+    if not b:
+       beep(pwm0,500,100)
+       threeDigits(0,True,True)
+    time.sleep_ms(1000)
