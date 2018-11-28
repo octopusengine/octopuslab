@@ -58,6 +58,9 @@ sevenSeg = [      #seven segment display
  [1,0,1,1,1,1,1], #6      4         2
  [1,1,1,0,0,0,0], #7      |         |
  [1,1,1,1,1,1,1], #8      +----3----+
+ [1,1,1,1,0,1,1], #9
+ [1,1,0,0,0,1,1], #deg
+ [0,0,0,0,0,0,1]  #-
 ]
 
 def oneDigit(seg,x,y,a): #segment /x,y position / a=size
