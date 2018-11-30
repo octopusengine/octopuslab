@@ -9,86 +9,50 @@
 from micropython import const
 import time
 import os, uos
-import json, ujson
 import gc #mem_free
 import machine, ubinascii
 from machine import Pin, PWM, SPI, Timer
 
-BUILT_IN_LED = 2
-#---8266---
-#SPI_MOSI_PIN = const(23)
-"""
-BUTT1_PIN = 12 #d6 x gpio16=d0
-PIEZZO_PIN = 14
-WS_LED_PIN = 15 #wemos gpio14 = d5
-ONE_WIRE_PIN = 13
-I2C_SCL_PIN=5 #gpio5=d1
-I2C_SDA_PIN=4 #gpio4=d2
-"""
-#---esp32---
-BUTT1_PIN = 12 #d6 x gpio16=d0
-PIEZZO_PIN = const(27)  #14 //MOTOR_4A = const(27)
-WS_LED_PIN = const(13) #v2+ > 15
-ONE_WIRE_PIN = const(32)
+from util.buzzer import beep, play_melody
+from util.led import blink
+from util.pinout import set_pinout
 
-I2C_SCL_PIN=const(22)
-I2C_SDA_PIN=const(21)
-#SPI:
-SPI_CLK_PIN  = const(18)
-SPI_MISO_PIN = const(19)
-SPI_MOSI_PIN = const(23)
-SPI_CS0_PIN  = const(5)
+pinout = set_pinout()
 
-#PWM/servo:
-PWM1_PIN = const(17)
-PWM2_PIN = const(16)
-PWM3_PIN = const(4)
+# try:
+#   spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(SPI_CLK_PIN), mosi=Pin(SPI_MOSI_PIN))
+#   ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
+#   from lib.max7219 import Matrix8x8
+#   display8 = Matrix8x8(spi, ss, 1) #1/4
+# except:
+#   print("SPI device already in use")
 
-HALL_SENSOR = const(8)
-PIN_ANALOG = const(36)
-#---------------------
-try:
-  spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(SPI_CLK_PIN), mosi=Pin(SPI_MOSI_PIN))
-  ss = Pin(SPI_CS0_PIN, Pin.OUT)
-  from lib.max7219 import Matrix8x8
-  display8 = Matrix8x8(spi, ss, 1) #1/4
-except:
-  print("SPI device already in use")
-
-pwm0 = PWM(Pin(PIEZZO_PIN)) # create PWM object from a pin
+pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
 pwm0.duty(0)
 
-from lib.buzzer.notes import *
-mario = [E7, E7, 0, E7, 0, C7, E7, 0, G7, 0, 0, 0, G6, 0, 0, 0, C7, 0, 0, G6, 0, 0, E6, 0, 0, A6, 0, B6, 0, AS6, A6, 0, G6, E7, 0, G7, A7, 0, F7, G7, 0, E7, 0,C7, D7, B6, 0, 0, C7, 0, 0, G6, 0, 0, E6, 0, 0, A6, 0, B6, 0, AS6, A6, 0, G6, E7, 0, G7, A7, 0, F7, G7, 0, E7, 0,C7, D7, B6, 0, 0]
 
 """
 timNote = Timer(8, freq=3000)
-ch = timNote.channel(2, Timer.PWM, pin=Pin(PIEZZO_PIN))
+ch = timNote.channel(2, Timer.PWM, pin=Pin(pinout.PIEZZO_PIN))
 
 tim = Timer(-1)
 """
-led = Pin(BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
+led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
 
-def simple_beep(p,f,t):  # port,freq,time
-    #pwm0.freq()  # get current frequency
-    p.freq(f)     # set frequency
-    #pwm0.duty()  # get current duty cycle
-    p.duty(512)   # set duty cycle
-    time.sleep_ms(t)
-    p.duty(0)
-    #b.deinit()
+# def simple_beep(p,f,t):  # port,freq,time
+#     #pwm0.freq()  # get current frequency
+#     p.freq(f)     # set frequency
+#     #pwm0.duty()  # get current duty cycle
+#     p.duty(512)   # set duty cycle
+#     time.sleep_ms(t)
+#     p.duty(0)
+#     #b.deinit()
 
-def blink(t): # time sleep
-    led.value(1)
-    time.sleep_ms(t)
-    led.value(0)
-    time.sleep_ms(t)
-
-def simple_fast_blink():
-    led.value(1)
-    time.sleep_ms(50)
-    led.value(0)
-    time.sleep_ms(100)
+# def blink(t): # time sleep
+#     led.value(1)
+#     time.sleep_ms(t)
+#     led.value(0)
+#     time.sleep_ms(t)
 
 def mac2eui(mac):
     mac = mac[0:6] + 'fffe' + mac[6:]
@@ -130,31 +94,23 @@ def mainMenu():
 # Define function callback for connecting event
 def connected_callback(sta):
     global WSBindIP
-    simple_fast_blink()
+    blink(led, 50, 100)
     # np[0] = (0, 128, 0)
     # np.write()
-    simple_fast_blink()
+    blink(led, 50, 100)
     print(sta.ifconfig())
     WSBindIP = sta.ifconfig()[0]
 
 def connecting_callback():
     # np[0] = (0, 0, 128)
     # np.write()
-    simple_fast_blink()
+    blink(led, 50, 100)
+#
+# def beep(pwm_pin, freq, length, volume=50):
+#        pwm_pin.duty(volume)
+#        pwm_pin.freq(freq)
+#        time.sleep(length/1000)
 
-def beep(pwm_pin, freq, length, volume=50):
-       pwm_pin.duty(volume)
-       pwm_pin.freq(freq)
-       time.sleep(length/1000)
-
-def play_melody(pwm_pin, melody, volume=50):
- for note in melody:
-  if note == 0:
-      pwm_pin.duty(0)
-  else:
-      pwm_pin.duty(volume)
-      pwm_pin.freq(note)
-  time.sleep(0.15)
 
 #-------------
 def octopus():
@@ -174,20 +130,20 @@ def octopus():
     print()
 
     time.sleep_us(10)       # sleep for 10 microseconds
-    blink(500)
+    blink(led, 500)
     time.sleep_ms(1000)     # 1s
     start = time.ticks_ms()
 
     run= True
     while run:
       sel = mainMenu()
-      simple_beep(pwm0,1000,50)
+      beep(pwm0, 1000, 50)
 
       if sel == "b":
            count = 5
            for _ in range(count):
-               simple_beep(pwm0,500,100)
-               blink(500)
+               beep(pwm0, 500, 100)
+               blink(led, 500)
 
       if sel == "c":
           print(chr(27) + "[2J") # clear terminal
@@ -209,26 +165,8 @@ def octopus():
 
       if sel == "m":
           time.sleep_ms(500)
+          from util.buzzer.melody import mario
           play_melody(pwm0, mario)
-          """
-          # from lib import notes as *
-          beep(pwm0,200,50)
-          time.sleep_ms(300)
-          beep(pwm0,500,50)
-          time.sleep_ms(300)
-          beep(pwm0,900,50)
-          time.sleep_ms(1000)
-
-          # play Mario Bros tone example
-          # source from here http://www.linuxcircle.com/2013/03/31/playing-mario-bros-tune-with-arduino-and-piezo-buzzer/
-
-          #pwm0.duty()  # get current duty cycle
-          pwm0.duty(512)   # set duty cycle
-          for i in range(30,120):
-              print(i)
-              pwm0.freq(i*10)     # set frequency
-              time.sleep_ms(50)
-          """
           pwm0.duty(0)
 
       if sel == "m8":
@@ -241,7 +179,7 @@ def octopus():
       if sel == "o":
           from lib import ssd1306
           time.sleep_ms(2000)
-          i2c = machine.I2C(-1, machine.Pin(I2C_SCL_PIN), machine.Pin(I2C_SDA_PIN))
+          i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
           oled = ssd1306.SSD1306_I2C(128, 64, i2c)
 
           oled.fill(1)
@@ -290,7 +228,7 @@ def octopus():
       if sel == "r":
         from neopixel import NeoPixel
         NUMBER_LED = 1
-        pin = Pin(WS_LED_PIN, Pin.OUT)
+        pin = Pin(pinout.WS_LED_PIN, Pin.OUT)
         np = NeoPixel(pin, NUMBER_LED)
 
         np[0] = (128, 0, 0) #R
@@ -311,7 +249,7 @@ def octopus():
       if sel == "r8":
        from neopixel import NeoPixel
        NUMBER_LED = 8
-       pin = Pin(WS_LED_PIN, Pin.OUT)
+       pin = Pin(pinout.WS_LED_PIN, Pin.OUT)
        np = NeoPixel(pin, NUMBER_LED)
 
        np[0] = (32, 0, 0) #R
@@ -325,7 +263,7 @@ def octopus():
       if sel == "r80":
          from neopixel import NeoPixel
          NUMBER_LED = 8
-         pin = Pin(WS_LED_PIN, Pin.OUT)
+         pin = Pin(pinout.WS_LED_PIN, Pin.OUT)
          np = NeoPixel(pin, NUMBER_LED)
          for i in range(NUMBER_LED):
            np[i] = (1, 0, 0)
@@ -344,18 +282,14 @@ def octopus():
           print(dir())
 
       if sel == "w":
-          from util.wifi_connect import WiFiConnect
+          from wifi_connect import read_wifi_config, WiFiConnect
           time.sleep_ms(2000)
-          f = open('config/wifi.json', 'r')
-          d = f.read()
-          f.close()
-          j = json.loads(d)
-          ssid=j["wifi_ssid"]
-          print("config for: " + ssid)
+          wifi_config = read_wifi_config()
+          print("config for: " + wifi_config["wifi_ssid"])
           w = WiFiConnect()
           w.events_add_connecting(connecting_callback)
           w.events_add_connected(connected_callback)
-          w.connect(ssid,j["wifi_pass"])
+          w.connect(wifi_config["wifi_ssid"], wifi_config["wifi_pass"])
           print("WiFi: OK")
 
       if sel == "q":
@@ -363,6 +297,6 @@ def octopus():
 
     delta = time.ticks_diff(time.ticks_ms(), start) # compute time difference
     print("> delta time: "+str(delta))
-    beep(pwm0,2000,50)
+    beep(pwm0, 2000, 50)
     print("all OK, press CTRL+D to soft reboot")
-    blink(50)
+    blink(led, 50)

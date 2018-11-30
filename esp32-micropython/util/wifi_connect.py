@@ -9,6 +9,7 @@
 
 # Includes
 import network
+import json, ujson  # suspicious?
 from time import sleep
 
 class WiFiConnect:
@@ -52,3 +53,10 @@ class WiFiConnect:
         # currently this prints out as if no connection was established - giving 0.0.0.0 sd ip
         # however, connection IS made and functional
         self.__call_events_connected__(sta_if)
+
+def wifi_config():
+    # TODO file does not exist
+    f = open('config/wifi.json', 'r')
+    d = f.read()
+    f.close()
+    return json.loads(d)
