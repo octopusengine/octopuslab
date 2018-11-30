@@ -11,7 +11,7 @@ def beep(p,f,t):  # port,freq,time
     p.freq(f)     # set frequency
     #pwm0.duty()  # get current duty cycle
     p.duty(512)   # set duty cycle
-    time.sleep_ms(t)
+    sleep_ms(t)
     p.duty(0)
     #b.deinit()
 
@@ -22,4 +22,4 @@ def play_melody(pwm_pin, melody, volume=50):
         else:
             pwm_pin.duty(volume)
             pwm_pin.freq(note)
-        sleep(0.15)
+        sleep_ms(150)
