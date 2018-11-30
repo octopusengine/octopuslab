@@ -54,7 +54,7 @@ class WiFiConnect:
         # however, connection IS made and functional
         self.__call_events_connected__(sta_if)
 
-def wifi_config():
+def read_wifi_config():
     # TODO file does not exist
     f = open('config/wifi.json', 'r')
     d = f.read()
