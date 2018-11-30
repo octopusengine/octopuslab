@@ -282,7 +282,7 @@ def octopus():
           print(dir())
 
       if sel == "w":
-          from wifi_connect import read_wifi_config, WiFiConnect
+          from util.wifi_connect import read_wifi_config, WiFiConnect
           time.sleep_ms(2000)
           wifi_config = read_wifi_config()
           print("config for: " + wifi_config["wifi_ssid"])
