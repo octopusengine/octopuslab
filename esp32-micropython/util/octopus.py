@@ -5,6 +5,7 @@
 # esp8266 / wemos / esp32 doit...
 
 # ampy -p /COM4 put util/octopus-8266.py util/octopus.py
+ver = "1.12.2018"
 
 from micropython import const
 import time
@@ -16,7 +17,6 @@ from machine import Pin, PWM, SPI, Timer
 from util.buzzer import beep, play_melody
 from util.led import blink
 from util.pinout import set_pinout
-
 pinout = set_pinout()
 
 # try:
@@ -63,27 +63,31 @@ def get_eui():
     return id #mac2eui(id)
 
 def mainMenu():
-    print('-' * 30)
+    print()
+    print('=' * 39)
     print("Menu: Basic simple examples & tests")
-    print('-' * 30)
-    print("[b] - built-in led/beep/button")
-    print("[c] - clear terminal")
-    print("[f] - file info/dir")
+    print('.' * 30)
+    print("SYSTEM & SETTINGS")
     print("[i] - device & system info")
+    print("[s] - setup machine and wifi")
+    print("[w] - wifi test")
+    print("[f] - file info/dir")
+    print("[c] - clear terminal")
+    print('.' * 30)
+    print("EXAMPLES & TESTS")
+    print("[b] - built-in led/beep/button")
+    print("[d] * displays")
     print("[m] - piezzo melody")
     print("[m7] - max display 8x7-segm")
     print("[m8] - max display 8x8-matrix")
     print("[o] - oled display test")
     print("[r] - RGB WS led test")
-    print("[r8] -8x RGB WS led test")
-    print("[sd] -serial display")
-    print("[s] - setup machine and wifi")
+    print("[r8] - 8x RGB WS led test")
+    print("[sd] - serial display")
     print("[t] - temperature")
-    print("[u] - uart test")
-    print("[v] - list active variables")
-    print("[w] - wifi test")
+    #print("[u] * uart test")
     print("[q] - QUIT")
-    print('=' * 30)
+    print('=' * 39)
 
     sel = input("select: ")
     #print("your select: "+str(sel))
@@ -131,7 +135,7 @@ def octopus():
 
     time.sleep_us(10)       # sleep for 10 microseconds
     blink(led, 500)
-    time.sleep_ms(1000)     # 1s
+    time.sleep_ms(300)     # 1s
     start = time.ticks_ms()
 
     run= True
@@ -154,14 +158,27 @@ def octopus():
           print(os.listdir())
           print("> lib: "+str(os.listdir("lib")))
           print("> util: "+str(os.listdir("util")))
+          print("> pinouts: "+str(os.listdir("pinouts")))
 
       if sel == "i":
-          print("uPy version: "+str(os.uname()[3]))
           print("> unique_id: "+str(get_eui()))
           #print("--- MAC: "+str(mac2eui(get_eui())))
+          print("> uPy version: "+str(os.uname()[3]))
+          print("> octopus() ver: " + ver)
+          try:
+                with open('config/device.json', 'r') as f:
+                    d = f.read()
+                    f.close()
+                    print("> config/device: " + d)
+                    # device_config = json.loads(d)
+          except:
+                print("Device config 'config/device.json' does not exist, please run setup()")
+
           gc.collect()
           print("> mem_free: "+str(gc.mem_free()))
           print("> machine.freq: "+str(machine.freq()))
+          print("> active variables:")
+          print(dir())
 
       if sel == "m":
           time.sleep_ms(500)
@@ -273,13 +290,6 @@ def octopus():
       if sel == "s":
            from util.setup import setup
            setup()
-
-      if sel == "u":
-            print("uart - todo")
-
-      if sel == "v":
-          print("active variables: ")
-          print(dir())
 
       if sel == "w":
           from util.wifi_connect import read_wifi_config, WiFiConnect
