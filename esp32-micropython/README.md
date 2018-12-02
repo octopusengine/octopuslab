@@ -8,7 +8,7 @@ https://boneskull.com/micropython-on-esp32-part-1/
 
 ## PINout:
 <pre>
-oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:
+oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:::
                           -----------     (GPIO)
                       EN -           - D23 (23)  MOSI       [SPI_MOSI_PIN] 
 [PIN_ANALOG]    (36)  VP -           - D22 (22)  SCL(I2C)   [I2C_SCL_PIN]
