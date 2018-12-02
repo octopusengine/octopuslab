@@ -33,54 +33,33 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:
 
 
 ## Windows:
-- install Python3 <br />
-- download MicroPython [1] https://micropython.org/download#esp32<br />
-- install esptool.py [2] https://github.com/espressif/esptool<br />
+- install Python3 
+- download MicroPython [1] https://micropython.org/download#esp32
+- install esptool.py [2] https://github.com/espressif/esptool
 - install ampy [3] https://github.com/adafruit/ampy <pre>
-set AMPY_PORT=COM6<br />
-ampy ls<br />
-AMPY_BAUD=115200<br />
-</pre><br />
-- connect ESP32 and detect COM port<br /> 
-- erase FLASH: <pre>esptool.py --chip esp32 -p /COM6 erase_flash</pre><br /> 
+set AMPY_PORT=COM6
+ampy ls
+AMPY_BAUD=115200
+</pre>
+- connect ESP32 and detect COM port
+- erase FLASH: <pre>esptool.py --chip esp32 -p /COM6 erase_flash</pre>
 - upload Micropython bin: <pre>esptool.py --chip esp32 -p /COM6 write_flash -z 0x1000 ./down/esp32-20180821-v1.9.4-479-g828f771e3.bin</pre>
-<br />
-- copy *.py file to ESP <pre>
-ampy -p /COM6 put boot.py
-# This file is executed on every boot (including wake-boot from deepsleep)
-ampy -p /COM6 put ./octopus_robot_board.py
-
-ampy -p /COM6 mkdir lib
-ampy -p /COM6 put ./lib/ssd1306.py lib/ssd1306.py
-ampy -p /COM6 put ./lib/temperature.py lib/temperature.py               
-
-ampy -p /COM6 put 05-oled-image.py main.py
-ampy -p /COM6 put 01-blink.py main.py
-
-ampy -p /COM6 put WIFIConfig-octopus WiFiConfig.py
-ampy -p /COM6 put WC-octopus WiFiConfig.py
-
----------------------------
-ampy -p /COM6 mkdir util
-ampy -p /COM6 put ./util/setup.py util/setup.py
-ampy -p /COM6 put ./util/octopus.py util/octopus.py
-ampy -p /COM6 ls util
-
 
 </pre>
 
+https://github.com/octopusengine/octopuslab/blob/master/esp32-micropython/deploy.bat
+
 <hr />
 
-categories:<br />
-01 - basic test<br />
-02 - simple experiment<br />
-03 - i/o test - sensor<br />
-04 - special sensors<br />
-05 - spi/i2c devices<br />
-06 - basic motor test<br />
-07 - mechatronics<br />
+simple examples - categories:
+01 - basic test
+02 - simple experiment
+03 - i/o test - sensor
+04 - special sensors
+05 - spi/i2c devices
+06 - basic motor test
+07 - mechatronics
 08 - wifi/bf/ir - remote (setup or control)<br />
-09 - complex simple projects examples<br />
 
 
 
