@@ -22,18 +22,5 @@ SSID: ...
 
 Hello, this is basic octopusLAB example (2018/11)
 (Press Ctrl+C to abort)
-
-> unique_id: 807d3aa44ae4
-test timer - delay
------
-Menu: 1 setup WiFi | 2 basic test | 3 system info
------
-select: 3
-your select: 3
-> mem_free: 102384
-> machine.freq: 240000000
-> delta time: 29867
-all OK, press CTRL+D to soft reboot
->>>
 </pre>
 
