@@ -1,10 +1,10 @@
 # MicroPython - ESP32 with ROBOTboard
 
-<hr />
+---
 https://www.instagram.com/p/Boo4LTRALBZ/?taken-by=octopusengine
-<br />
-https://boneskull.com/micropython-on-esp32-part-1/<br />
-<br />
+
+https://boneskull.com/micropython-on-esp32-part-1/
+
 
 ## PINout:
 <pre>
