@@ -50,9 +50,7 @@ https://github.com/octopusengine/octopuslab/blob/master/esp32-micropython/deploy
 <hr />
 
 simple examples - categories:
-
 01 - basic test
-
 02 - simple experiment
 
 03 - i/o test - sensor
