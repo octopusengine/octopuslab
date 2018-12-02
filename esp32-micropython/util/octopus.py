@@ -5,7 +5,7 @@
 # esp8266 / wemos / esp32 doit...
 
 # ampy -p /COM4 put util/octopus-8266.py util/octopus.py
-ver = "1.12.2018"
+ver = "2.12.2018"
 
 from micropython import const
 import time
@@ -62,9 +62,19 @@ def get_eui():
     id = ubinascii.hexlify(machine.unique_id()).decode()
     return id #mac2eui(id)
 
+def mainOctopus():
+    print("      ,'''`.")
+    print("     /      \ ")
+    print("     |(@)(@)|")
+    print("     )      (")
+    print("    /,'))((`.\ ")
+    print("   (( ((  )) ))")
+    print("   )  \ `)(' / ( ")
+    print()
+
 def mainMenu():
     print()
-    print('=' * 39)
+    print('-' * 39)
     print("Menu: Basic simple examples & tests")
     print('.' * 30)
     print("SYSTEM & SETTINGS")
@@ -76,24 +86,21 @@ def mainMenu():
     print('.' * 30)
     print("EXAMPLES & TESTS")
     print("[b] - built-in led/beep/button")
-    print("[d] * displays")
-    print("[m] - piezzo melody")
-    print("[m7] - max display 8x7-segm")
-    print("[m8] - max display 8x8-matrix")
-    print("[o] - oled display test")
-    print("[r] - RGB WS led test")
+    print("[r1] - RGB WS led test")
     print("[r8] - 8x RGB WS led test")
-    print("[sd] - serial display")
+    print("[m] - piezzo melody")
+    print("[a] - analog input test")
     print("[t] - temperature")
+    print("[d] - displays    --- >>>")
+    print("[r] - robot Board --- >>>")
     #print("[u] * uart test")
     print("[q] - QUIT")
-    print('=' * 39)
+    print('-' * 39)
 
     sel = input("select: ")
     #print("your select: "+str(sel))
     return sel
     print()
-
 
 # Define function callback for connecting event
 def connected_callback(sta):
@@ -121,15 +128,8 @@ def octopus():
     ###beep(pwm0,500,100) # start beep
     #tim.init(period=1000, mode=Timer.ONE_SHOT, callback=lambda t:print("test timer - thread delay"))
     #tim.init(period=2000, mode=Timer.PERIODIC, callback=lambda t:print(2))
-    print("      ,'''`.")
-    print("     /      \ ")
-    print("     |(@)(@)|")
-    print("     )      (")
-    print("    /,'))((`.\ ")
-    print("   (( ((  )) ))")
-    print("   )  \ `)(' / ( ")
-    print()
-    print("Hello, this is basic octopusLAB example (2018/11)")
+    mainOctopus()
+    print("Hello, this is basic octopusLAB example (2018/12)")
     print(" (Press Ctrl+C to abort | CTRL+D to soft reboot)")
     print()
 
@@ -142,6 +142,15 @@ def octopus():
     while run:
       sel = mainMenu()
       beep(pwm0, 1000, 50)
+
+      if sel == "a":
+          print("analog input test: ")
+          pin_an = Pin(pinout.ANALOG_PIN, Pin.IN)
+          adc = machine.ADC(pin_an)
+          an = adc.read()
+          print("RAW: " + str(an))
+          # TODO improve mapping formula, doc: https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/adc.html
+          print("volts: {0:.2f} V".format(an/4096*10.74), 20, 50)
 
       if sel == "b":
            count = 5
@@ -186,63 +195,7 @@ def octopus():
           play_melody(pwm0, mario)
           pwm0.duty(0)
 
-      if sel == "m8":
-        count = 5
-        for i in range(count):
-           display8.text(str(i),0,0,1)
-           display8.show()
-           time.sleep_ms(300)
-
-      if sel == "o":
-          from lib import ssd1306
-          time.sleep_ms(2000)
-          i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
-          oled = ssd1306.SSD1306_I2C(128, 64, i2c)
-
-          oled.fill(1)
-          oled.show()
-          time.sleep_ms(300)
-
-          # reset display
-          oled.fill(0)
-          oled.show()
-
-          # write text on x, y
-          oled.text('OLED test', 20, 20)
-          oled.show()
-          time.sleep_ms(1000)
-
-
-      if sel == "sd":
-                from machine import UART
-                uart = UART(2, 9600) #UART2 > #U2TXD(SERVO1/PWM1_PIN)
-                uart.write('C')      #test quick clear display
-
-                uart.write('W7')   #change color
-                uart.write('h30')  #horizontal line
-                uart.write('h230') #horizontal line
-
-                uart.write('R0')
-                uart.write('W2')   #color
-                uart.write('QoctopusLAB - UART2 test*')
-                time.sleep_ms(100)
-                uart.write('R2')
-                uart.write('W1')   #color
-                uart.write('QESP32 & ROBOTboard*')
-                time.sleep_ms(100)
-
-                uart.write('R5')
-                uart.write('W2')   #color
-
-                num=9
-                for i in range(num):
-                    uart.write('Q')
-                    uart.write(str(num-i-1))
-                    uart.write('*')
-                    time.sleep_ms(500)
-
-
-      if sel == "r":
+      if sel == "r1":
         from neopixel import NeoPixel
         NUMBER_LED = 1
         pin = Pin(pinout.WS_LED_PIN, Pin.OUT)
@@ -304,6 +257,88 @@ def octopus():
 
       if sel == "q":
           run = False
+
+
+      if sel == "d":
+         mainOctopus()
+         print("Display test >>>")
+         print('=' * 30)
+         print("[od] --- oled display test")
+         print("[m7] --- max display 8x7-segm")
+         print("[m8] --- max display 8x8-matrix")
+         print("[sd] --- serial display")
+         print("[nd] -+- Nextion display")
+         print("[id] -+- ink display")
+         print('=' * 30)
+         sel_d = input("select: ")
+
+         if sel_d == "od":
+              print("oled display test >")
+              from lib import ssd1306
+              time.sleep_ms(1500)
+              i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
+              oled = ssd1306.SSD1306_I2C(128, 64, i2c)
+
+              oled.fill(1)
+              oled.show()
+              time.sleep_ms(300)
+              oled.fill(0)                # reset display
+              oled.show()
+
+              # write text on x, y
+              oled.text('OLED test', 20, 20)
+              oled.show()
+              time.sleep_ms(1000)
+
+         if sel_d == "m8":
+           count = 5
+           for i in range(count):
+             display8.text(str(i),0,0,1)
+             display8.show()
+             time.sleep_ms(300)
+
+         if sel_d == "sd":
+                   from machine import UART
+                   uart = UART(2, 9600) #UART2 > #U2TXD(SERVO1/PWM1_PIN)
+                   uart.write('C')      #test quick clear display
+
+                   uart.write('W7')   #change color
+                   uart.write('h30')  #horizontal line
+                   uart.write('h230') #horizontal line
+
+                   uart.write('R0')
+                   uart.write('W2')   #color
+                   uart.write('QoctopusLAB - UART2 test*')
+                   time.sleep_ms(100)
+                   uart.write('R2')
+                   uart.write('W1')   #color
+                   uart.write('QESP32 & ROBOTboard*')
+                   time.sleep_ms(100)
+
+                   uart.write('R5')
+                   uart.write('W2')   #color
+
+                   num=9
+                   for i in range(num):
+                       uart.write('Q')
+                       uart.write(str(num-i-1))
+                       uart.write('*')
+                       time.sleep_ms(500)
+
+      if sel == "r":
+             mainOctopus()
+             print("Robot board test >>>")
+             print('=' * 30)
+             print("[dc] --- dc motor test")
+             print("[se] --- servo")
+             print("[sm] --- step motor")
+             print('=' * 30)
+
+             sel_r = input("select: ")
+             if sel_r == "dc":
+                  print("dc motor test >")
+
+
 
     delta = time.ticks_diff(time.ticks_ms(), start) # compute time difference
     print("> delta time: "+str(delta))
