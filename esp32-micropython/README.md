@@ -30,8 +30,6 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:
 
 
 
-
-
 ## Windows:
 - install Python3 
 - download MicroPython [1] https://micropython.org/download#esp32
@@ -59,7 +57,7 @@ simple examples - categories:
 05 - spi/i2c devices
 06 - basic motor test
 07 - mechatronics
-08 - wifi/bf/ir - remote (setup or control)<br />
+08 - wifi/bf/ir - remote (setup or control)
 
 
 
