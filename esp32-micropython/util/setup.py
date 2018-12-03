@@ -8,7 +8,10 @@ import ujson
 import machine #datetime
 
 devices = [
+["oLAB Tickernator","esp8266"],
+["oLAB BigDisplay3","esp8266"],
 ["oLAB RobotBoard1","esp32"],
+["oLAB RobotBoard1 v1","esp32"],
 ["oLAB IoTBoard1","esp8266"],
 ["oLAB IoTBoard1","esp32"]
 ]

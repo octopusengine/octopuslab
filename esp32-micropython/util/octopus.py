@@ -5,7 +5,7 @@
 # esp8266 / wemos / esp32 doit...
 
 # ampy -p /COM4 put util/octopus-8266.py util/octopus.py
-ver = "2.12.2018"
+ver = "3.12.2018"
 
 from micropython import const
 import time
@@ -19,13 +19,14 @@ from util.led import blink
 from util.pinout import set_pinout
 pinout = set_pinout()
 
-# try:
-#   spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(SPI_CLK_PIN), mosi=Pin(SPI_MOSI_PIN))
-#   ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
-#   from lib.max7219 import Matrix8x8
-#   display8 = Matrix8x8(spi, ss, 1) #1/4
-# except:
-#   print("SPI device already in use")
+# spi
+try:
+    spi.deinit()
+    print("spi > close")
+except:
+    print()
+spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
+ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
 
 rtc = machine.RTC() # real time
 
@@ -310,12 +311,29 @@ def octopus():
               oled.show()
               time.sleep_ms(1000)
 
+         if sel_d == "m7":
+             from lib.max7219_8digit import Display
+             #spi = SPI(-1, baudrate=100000, polarity=1, phase=0, sck=Pin(14), mosi=Pin(13), miso=Pin(2))
+             #ss = Pin(15, Pin.OUT)
+             d7 = Display(spi, ss)
+             d7.write_to_buffer('12345678')
+             d7.display()
+
          if sel_d == "m8":
-           count = 5
+           from lib.max7219 import Matrix8x8
+           d8 = Matrix8x8(spi, ss, 1) #1/4
+           #print("SPI device already in use")
+
+           count = 6
            for i in range(count):
-             display8.text(str(i),0,0,1)
-             display8.show()
-             time.sleep_ms(300)
+             d8.fill(0)
+             d8.text(str(i),0,0,1)
+             d8.show()
+             print(i)
+             time.sleep_ms(500)
+
+           d8.fill(0)
+           d8.show()
 
          if sel_d == "sd":
                    from machine import UART
