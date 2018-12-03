@@ -5,6 +5,7 @@
 #TODO DRY for filename
 import uos
 import ujson
+import machine #datetime
 
 devices = [
 ["oLAB RobotBoard1","esp32"],
@@ -18,8 +19,8 @@ def setup():
     print()
     print('=' * 30)
     print("[d] - device setting")
-    print("[w] - wifi")
-    print("[q] - QUIT")
+    print("[w] - set wifi")
+    print("[t] - set time")
     print('=' * 30)
     sel = input("select: ")
 
@@ -68,5 +69,16 @@ def setup():
             ujson.dump(wc, f)
             # ujson.dump(wc, f, ensure_ascii=False, indent=4)
         print()
+
+    if sel == "t":
+        print("Time setting:")
+        rtc = machine.RTC()
+        print(str(rtc.datetime()))
+        setdatetime = input("input 6 numbers - format: RRRRR,M,D,wd,h,m > ")+(",0,0")
+        dt_str = setdatetime.split(",")
+        print(str(dt_str))
+        dt_int = [int(numeric_string) for numeric_string in dt_str]
+        rtc.init(dt_int)
+        print(str(rtc.datetime()))
 
     print("all OK, press CTRL+D to soft reboot")
