@@ -27,6 +27,8 @@ pinout = set_pinout()
 # except:
 #   print("SPI device already in use")
 
+rtc = machine.RTC() # real time
+
 pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
 pwm0.duty(0)
 
@@ -62,6 +64,18 @@ def get_eui():
     id = ubinascii.hexlify(machine.unique_id()).decode()
     return id #mac2eui(id)
 
+def add0(sn):
+    ret_str=str(sn)
+    if int(sn)<10:
+       ret_str = "0"+str(sn)
+    return ret_str
+
+def get_hhmm():
+    #print(str(rtc.datetime()[4])+":"+str(rtc.datetime()[5]))
+    hh=add0(rtc.datetime()[4])
+    mm=add0(rtc.datetime()[5])
+    return hh+":"+mm
+
 def mainOctopus():
     print("      ,'''`.")
     print("     /      \ ")
@@ -74,6 +88,7 @@ def mainOctopus():
 
 def mainMenu():
     print()
+    print(get_hhmm())
     print('-' * 39)
     print("Menu: Basic simple examples & tests")
     print('.' * 30)
@@ -93,6 +108,7 @@ def mainMenu():
     print("[t] - temperature")
     print("[d] - displays    --- >>>")
     print("[r] - robot Board --- >>>")
+    print("[p] - projects    --- >>>")
     #print("[u] * uart test")
     print("[q] - QUIT")
     print('-' * 39)
@@ -121,7 +137,6 @@ def connecting_callback():
 #        pwm_pin.duty(volume)
 #        pwm_pin.freq(freq)
 #        time.sleep(length/1000)
-
 
 #-------------
 def octopus():
@@ -161,6 +176,7 @@ def octopus():
       if sel == "c":
           print(chr(27) + "[2J") # clear terminal
           print("\x1b[2J\x1b[H") # cursor up
+          mainOctopus()
 
       if sel == "f":
           print("file info /dir/ls:") #
@@ -188,6 +204,7 @@ def octopus():
           print("> machine.freq: "+str(machine.freq()))
           print("> active variables:")
           print(dir())
+          print("> datetime RAW: "+str(rtc.datetime()))
 
       if sel == "m":
           time.sleep_ms(500)
@@ -286,7 +303,10 @@ def octopus():
               oled.show()
 
               # write text on x, y
-              oled.text('OLED test', 20, 20)
+              oled.text('OLED test', 25, 10)
+              oled.text(get_hhmm(), 45,29) #time HH:MM
+              oled.hline(0,50,128,1)
+              oled.text("octopusLAB 2018",5,55) #time HH:MM
               oled.show()
               time.sleep_ms(1000)
 
@@ -338,6 +358,18 @@ def octopus():
              if sel_r == "dc":
                   print("dc motor test >")
 
+      if sel == "p":
+            mainOctopus()
+            print("Projects >>>")
+            print('=' * 30)
+            print("[1] --- temporary")
+            print("[2] --- todo")
+            print("[3] --- ")
+            print('=' * 30)
+
+            sel_p = input("select: ")
+            if sel_p == "1":
+                 print("project 1 >")
 
 
     delta = time.ticks_diff(time.ticks_ms(), start) # compute time difference
