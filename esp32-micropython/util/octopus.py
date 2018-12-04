@@ -5,7 +5,7 @@
 # esp8266 / wemos / esp32 doit...
 
 # ampy -p /COM4 put util/octopus-8266.py util/octopus.py
-ver = "3.12.2018"
+ver = "4.12.2018-v0.15"
 
 from micropython import const
 import time
@@ -77,14 +77,19 @@ def get_hhmm():
     mm=add0(rtc.datetime()[5])
     return hh+":"+mm
 
+octopuASCII = [
+"      ,'''`.",
+"     /      \ ",
+"     |(@)(@)|",
+"     )      (",
+"    /,'))((`.\ ",
+"   (( ((  )) ))",
+"   )  \ `)(' / ( ",
+]
+
 def mainOctopus():
-    print("      ,'''`.")
-    print("     /      \ ")
-    print("     |(@)(@)|")
-    print("     )      (")
-    print("    /,'))((`.\ ")
-    print("   (( ((  )) ))")
-    print("   )  \ `)(' / ( ")
+    for ol in octopuASCII:
+        print(str(ol))
     print()
 
 def mainMenu():
@@ -138,6 +143,15 @@ def connecting_callback():
 #        pwm_pin.duty(volume)
 #        pwm_pin.freq(freq)
 #        time.sleep(length/1000)
+
+#servo
+SERVO_MIN = 45
+SERVO_MAX = 130
+def map(x, in_min, in_max, out_min, out_max):
+    return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)
+
+def set_degree(servo, angle):
+    servo.duty(map(angle, 0,150, SERVO_MIN, SERVO_MAX))
 
 #-------------
 def octopus():
@@ -378,6 +392,19 @@ def octopus():
              sel_r = input("select: ")
              if sel_r == "dc":
                   print("dc motor test >")
+
+             if sel_r == "se":
+                print("servo1 test >")
+
+                #pwm_center = int(pinout.SERVO_MIN + (pinout.SERVO_MAX-pinout.SERVO_MIN)/2)
+                pwm_center = 60
+                pin_servo1 = Pin(pinout.PWM1_PIN, Pin.OUT)
+                servo1 = PWM(pin_servo1, freq=50, duty=pwm_center)
+                print("setup OK")
+                time.sleep_ms(1500)
+                servo1 = PWM(pin_servo1, freq=50, duty=SERVO_MAX)
+                time.sleep_ms(1500)
+                servo1 = PWM(pin_servo1, freq=50, duty=SERVO_MIN)
 
       if sel == "p":
             mainOctopus()
