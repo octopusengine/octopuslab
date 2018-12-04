@@ -16,6 +16,41 @@ devices = [
 ["oLAB IoTBoard1","esp32"]
 ]
 
+def deploy(url):
+    import sys
+    import os
+    import lib.shutil as shutil
+    import upip_utarfile as utarfile
+    import urequests
+
+    res = urequests.get(url)
+
+    if not res.status_code == 200:
+        return
+
+    def dir_exists(path):
+        try:
+            os.stat(path)
+            return True
+        except:
+            return False
+
+    t = utarfile.TarFile(fileobj = res.raw)
+
+    for f in t:
+        print("Extracting {}: {}".format(f.type, f.name))
+        if f.type == utarfile.DIRTYPE:
+            if f.name[-1:] == '/':
+                name = f.name[:-1]
+            else:
+                name = f.name
+
+            if not dir_exists(name):
+                os.mkdir(name)
+        else:
+            extracted = t.extractfile(f)
+            shutil.copyfileobj(extracted, open(f.name, "wb"))
+
 def setup():
     print("Hello, this will help you initialize your ESP")
     print("Press Ctrl+C to abort")
@@ -23,7 +58,9 @@ def setup():
     print('=' * 30)
     print("[d] - device setting")
     print("[w] - set wifi")
+    print("[wc] - connect wifi")
     print("[t] - set time")
+    print("[i] - Initial modules download")
     print('=' * 30)
     sel = input("select: ")
 
@@ -73,6 +110,17 @@ def setup():
             # ujson.dump(wc, f, ensure_ascii=False, indent=4)
         print()
 
+    if sel == "wc":
+          from util.wifi_connect import read_wifi_config, WiFiConnect
+          import time
+          time.sleep_ms(2000)
+          wifi_config = read_wifi_config()
+          print("config for: " + wifi_config["wifi_ssid"])
+          w = WiFiConnect()
+          w.connect(wifi_config["wifi_ssid"], wifi_config["wifi_pass"])
+          print("WiFi: OK")
+
+
     if sel == "t":
         print("Time setting:")
         rtc = machine.RTC()
@@ -83,5 +131,12 @@ def setup():
         dt_int = [int(numeric_string) for numeric_string in dt_str]
         rtc.init(dt_int)
         print(str(rtc.datetime()))
+    if sel == "i":
+        print("Initial download")
+        import upip
+        print("Installing shutil")
+        upip.install("micropython-shutil")
+        print("Running deploy")
+        deploy("http://petrkr.net/a/deploy.tar")
 
     print("all OK, press CTRL+D to soft reboot")
