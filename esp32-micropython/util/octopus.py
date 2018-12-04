@@ -1,69 +1,50 @@
 # this module is for Basic simple examples & tests
 # it's loaded in boot.py and provides function octopus()
 # user is questioned in interactive mode
-
 # esp8266 / wemos / esp32 doit...
-
-# ampy -p /COM4 put util/octopus-8266.py util/octopus.py
-ver = "3.12.2018"
+ver = "4.12.2018-15"
 
 from micropython import const
-import time
-import os, uos
-import gc #mem_free
-import machine, ubinascii
+import machine, time
 from machine import Pin, PWM, SPI, Timer
 
 from util.buzzer import beep, play_melody
 from util.led import blink
 from util.pinout import set_pinout
+
 pinout = set_pinout()
+rtc = machine.RTC() # real time
 
 # spi
 try:
-    spi.deinit()
-    print("spi > close")
+   spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
+   ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
 except:
-    print()
-spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
-ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
-
-rtc = machine.RTC() # real time
+    print("SPI.ERR")
 
 pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
 pwm0.duty(0)
 
-
 """
 timNote = Timer(8, freq=3000)
 ch = timNote.channel(2, Timer.PWM, pin=Pin(pinout.PIEZZO_PIN))
-
 tim = Timer(-1)
 """
 led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
 
-# def simple_beep(p,f,t):  # port,freq,time
-#     #pwm0.freq()  # get current frequency
-#     p.freq(f)     # set frequency
-#     #pwm0.duty()  # get current duty cycle
-#     p.duty(512)   # set duty cycle
-#     time.sleep_ms(t)
-#     p.duty(0)
-#     #b.deinit()
-
-# def blink(t): # time sleep
-#     led.value(1)
-#     time.sleep_ms(t)
-#     led.value(0)
-#     time.sleep_ms(t)
+octopuASCII = [
+"      ,'''`.",
+"     /      \ ",
+"     |(@)(@)|",
+"     )      (",
+"    /,'))((`.\ ",
+"   (( ((  )) ))",
+"   )  \ `)(' / ( ",
+]
 
 def mac2eui(mac):
     mac = mac[0:6] + 'fffe' + mac[6:]
     return hex(int(mac[0:2], 16) ^ 2)[2:] + mac[2:]
-
-def get_eui():
-    id = ubinascii.hexlify(machine.unique_id()).decode()
-    return id #mac2eui(id)
 
 def add0(sn):
     ret_str=str(sn)
@@ -77,14 +58,51 @@ def get_hhmm():
     mm=add0(rtc.datetime()[5])
     return hh+":"+mm
 
+aa = const(16)
+y0 =const(5)
+x0 = aa+5
+
+sevenSeg = [      #seven segment display
+#0,1,2,3,4,5,6
+ [1,1,1,1,1,1,0], #0      +----0----+
+ [0,1,1,0,0,0,0], #1      |         |
+ [1,1,0,1,1,0,1], #2      5         1
+ [1,1,1,1,0,0,1], #3      |         |
+ [0,1,1,0,0,1,1], #4      +----6----+
+ [1,0,1,1,0,1,1], #5      |         |
+ [1,0,1,1,1,1,1], #6      4         2
+ [1,1,1,0,0,0,0], #7      |         |
+ [1,1,1,1,1,1,1], #8      +----3----+
+ [1,1,1,1,0,1,1], #9
+ [1,1,0,0,0,1,1], #deg
+ [0,0,0,0,0,0,1]  #-
+]
+
+def oneDigit(d,seg,x,y,a): #segment /x,y position / a=size
+    d.hline(x,y,a,seg[0])
+    d.vline(x+a,y,a,seg[1])
+    d.vline(x+a,y+a,a,seg[2])
+    d.hline(x,y+a+a,a,seg[3])
+    d.vline(x,y+a,a,seg[4])
+    d.vline(x,y,a,seg[5])
+    d.hline(x,y+a,a,seg[6])
+
+def threeDigits(d,dnum,point,deg): #display number 0-999 / point 99.9 / degrees
+    d100=int(dnum/100)
+    d10=int((dnum-d100*100)/10)
+    d1= dnum-d100*100-d10*10
+    oneDigit(d,sevenSeg[d100],x0,y0,aa)
+    oneDigit(d,sevenSeg[d10],x0+aa+int(aa/2),y0,aa)
+    oneDigit(d,sevenSeg[d1],x0+(aa+int(aa/2))*2,y0,aa)
+    if point:
+       d.fill_rect(x0+(aa+int(aa/2))*2-5,y0+aa+aa,2,3,1) #test poin
+    if deg:
+       oneDigit(d,sevenSeg[10],x0+(aa+int(aa/2))*3,y0,aa) #test deg
+    d.show()
+
 def mainOctopus():
-    print("      ,'''`.")
-    print("     /      \ ")
-    print("     |(@)(@)|")
-    print("     )      (")
-    print("    /,'))((`.\ ")
-    print("   (( ((  )) ))")
-    print("   )  \ `)(' / ( ")
+    for ol in octopuASCII:
+        print(str(ol))
     print()
 
 def mainMenu():
@@ -119,7 +137,7 @@ def mainMenu():
     return sel
     print()
 
-# Define function callback for connecting event
+# callback for connecting event
 def connected_callback(sta):
     global WSBindIP
     blink(led, 50, 100)
@@ -133,13 +151,8 @@ def connecting_callback():
     # np[0] = (0, 0, 128)
     # np.write()
     blink(led, 50, 100)
-#
-# def beep(pwm_pin, freq, length, volume=50):
-#        pwm_pin.duty(volume)
-#        pwm_pin.freq(freq)
-#        time.sleep(length/1000)
 
-#-------------
+#------------
 def octopus():
     ###beep(pwm0,500,100) # start beep
     #tim.init(period=1000, mode=Timer.ONE_SHOT, callback=lambda t:print("test timer - thread delay"))
@@ -187,7 +200,12 @@ def octopus():
           print("> pinouts: "+str(os.listdir("pinouts")))
 
       if sel == "i":
-          print("> unique_id: "+str(get_eui()))
+          import os
+          import gc #mem_free
+          import ubinascii
+          id = ubinascii.hexlify(machine.unique_id()).decode()
+
+          print("> unique_id: "+str(id))
           #print("--- MAC: "+str(mac2eui(get_eui())))
           print("> uPy version: "+str(os.uname()[3]))
           print("> octopus() ver: " + ver)
@@ -276,7 +294,6 @@ def octopus():
       if sel == "q":
           run = False
 
-
       if sel == "d":
          mainOctopus()
          print("Display test >>>")
@@ -301,9 +318,12 @@ def octopus():
               oled.show()
               time.sleep_ms(300)
               oled.fill(0)                # reset display
+              threeDigits(oled,123,True,True)
               oled.show()
+              time.sleep_ms(2000)
 
               # write text on x, y
+              oled.fill(0) 
               oled.text('OLED test', 25, 10)
               oled.text(get_hhmm(), 45,29) #time HH:MM
               oled.hline(0,50,128,1)
@@ -376,6 +396,12 @@ def octopus():
              if sel_r == "dc":
                   print("dc motor test >")
 
+             if sel_r == "se":
+                 print("servo test >")
+
+             if sel_r == "sm":
+                 print("step motor test >")
+
       if sel == "p":
             mainOctopus()
             print("Projects >>>")
@@ -388,7 +414,6 @@ def octopus():
             sel_p = input("select: ")
             if sel_p == "1":
                  print("project 1 >")
-
 
     delta = time.ticks_diff(time.ticks_ms(), start) # compute time difference
     print("> delta time: "+str(delta))
