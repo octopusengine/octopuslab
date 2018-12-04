@@ -274,6 +274,9 @@ def octopus():
           print("WiFi: OK")
 
       if sel == "q":
+          print("machine.reset() and Exit")
+          time.sleep_ms(1000)
+          machine.reset()
           run = False
 
 
