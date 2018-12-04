@@ -12,7 +12,7 @@ from micropython import const
 # ESP32 pinout setup:
 BUILT_IN_LED = const(2)
 ##WS_LED_PIN 13          # Robot Board v2
-WS_LED_PIN = const(13)   # Robot Board v1 - WS RGB ledi diode   
+WS_LED_PIN = const(13)   # Robot Board v1 - WS RGB ledi diode
 ONE_WIRE_PIN = const(32)  #one wire (for Dallas temperature sensor)
 
 #I2C:
@@ -50,3 +50,4 @@ I35_PIN = const(35)
 
 #main analog input (for power management)
 PIN_ANALOG = const(36)
+PIEZZO_PIN = const(5)
