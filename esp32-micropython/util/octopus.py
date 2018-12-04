@@ -5,12 +5,11 @@
 # esp8266 / wemos / esp32 doit...
 
 # ampy -p /COM4 put util/octopus-8266.py util/octopus.py
-ver = "4.12.2018-v0.16"
+ver = "4.12.2018-v0.17"
 
 from micropython import const
 import time
-import os, uos
-import gc #mem_free
+import os
 import machine, ubinascii
 from machine import Pin, PWM, SPI, Timer
 
@@ -180,6 +179,8 @@ def octopus():
           print("> pinouts: "+str(os.listdir("pinouts")))
 
       if sel == "i":
+          import gc #mem_free
+
           print("> unique_id: "+str(get_eui()))
           #print("--- MAC: "+str(mac2eui(get_eui())))
           print("> uPy version: "+str(os.uname()[3]))
@@ -195,6 +196,8 @@ def octopus():
 
           gc.collect()
           print("> mem_free: "+str(gc.mem_free()))
+          print("> flash: "+str(os.statvfs("/")))
+          print("> flash free: "+str(int(os.statvfs("/")[0])*int(os.statvfs("/")[3])))
           print("> machine.freq: "+str(machine.freq()))
           print("> active variables:")
           print(dir())
@@ -371,6 +374,37 @@ def octopus():
              sel_r = input("select: ")
              if sel_r == "dc":
                   print("dc motor test >")
+                  a1 = Pin(pinout.MOTOR_1A, Pin.OUT)
+                  a2 = Pin(pinout.MOTOR_2A, Pin.OUT)
+                  a12 = Pin(pinout.MOTOR_12EN, Pin.OUT)
+                  a3 = Pin(pinout.MOTOR_3A, Pin.OUT)
+                  a4 = Pin(pinout.MOTOR_4A, Pin.OUT)
+                  a34 = Pin(pinout.MOTOR_34EN, Pin.OUT)
+
+                  a34.value(0)
+                  a12.value(1)
+
+                  print("a12:10")
+                  a1.value(1)
+                  a2.value(0)
+                  time.sleep_ms(3000)
+                  print("a12:01")
+                  a1.value(0)
+                  a2.value(1)
+                  time.sleep_ms(3000)
+
+                  a12.value(0)
+                  a34.value(1)
+
+                  print("a34:01")
+                  a3.value(0)
+                  a4.value(1)
+                  time.sleep_ms(3000)
+                  print("a12:10")
+                  a3.value(1)
+                  a4.value(0)
+                  time.sleep_ms(3000)
+                  a34.value(0)
 
              if sel_r == "se":
                 print("servo1 test >")
