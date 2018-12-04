@@ -5,7 +5,7 @@
 # esp8266 / wemos / esp32 doit...
 
 # ampy -p /COM4 put util/octopus-8266.py util/octopus.py
-ver = "4.12.2018-v0.15"
+ver = "4.12.2018-v0.16"
 
 from micropython import const
 import time
@@ -33,7 +33,6 @@ rtc = machine.RTC() # real time
 pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
 pwm0.duty(0)
 
-
 """
 timNote = Timer(8, freq=3000)
 ch = timNote.channel(2, Timer.PWM, pin=Pin(pinout.PIEZZO_PIN))
@@ -41,21 +40,6 @@ ch = timNote.channel(2, Timer.PWM, pin=Pin(pinout.PIEZZO_PIN))
 tim = Timer(-1)
 """
 led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
-
-# def simple_beep(p,f,t):  # port,freq,time
-#     #pwm0.freq()  # get current frequency
-#     p.freq(f)     # set frequency
-#     #pwm0.duty()  # get current duty cycle
-#     p.duty(512)   # set duty cycle
-#     time.sleep_ms(t)
-#     p.duty(0)
-#     #b.deinit()
-
-# def blink(t): # time sleep
-#     led.value(1)
-#     time.sleep_ms(t)
-#     led.value(0)
-#     time.sleep_ms(t)
 
 def mac2eui(mac):
     mac = mac[0:6] + 'fffe' + mac[6:]
@@ -138,15 +122,10 @@ def connecting_callback():
     # np[0] = (0, 0, 128)
     # np.write()
     blink(led, 50, 100)
-#
-# def beep(pwm_pin, freq, length, volume=50):
-#        pwm_pin.duty(volume)
-#        pwm_pin.freq(freq)
-#        time.sleep(length/1000)
 
 #servo
-SERVO_MIN = 45
-SERVO_MAX = 130
+SERVO_MIN = const(45)
+SERVO_MAX = const(130)
 def map(x, in_min, in_max, out_min, out_max):
     return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)
 
