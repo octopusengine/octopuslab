@@ -137,6 +137,6 @@ def setup():
         print("Installing shutil")
         upip.install("micropython-shutil")
         print("Running deploy")
-        deploy("http://petrkr.net/a/deploy.tar")
+        deploy("http://iot.petrkr.net/olab/latest.tar")
 
     print("all OK, press CTRL+D to soft reboot")
