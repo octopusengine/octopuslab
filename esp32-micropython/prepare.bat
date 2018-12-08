@@ -17,7 +17,7 @@ ampy -p  %PORT% ls
 ampy -p  %PORT% put boot.py
 
 echo "boot prepare"
-ampy put boot_prepare.py boot.py
+ampy -p  %PORT% put boot_prepare.py boot.py
 
 echo "config:"
 ampy -p  %PORT% mkdir config
