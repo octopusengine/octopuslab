@@ -1,4 +1,4 @@
-# MicroPython - ESP32 with ROBOTboard
+# MicroPython - ESP32 - ROBOTboard / IoTboard
 
 ---
 https://www.instagram.com/p/Boo4LTRALBZ/?taken-by=octopusengine
