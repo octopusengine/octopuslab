@@ -5,7 +5,7 @@
 # esp8266 / wemos / esp32 doit...
 
 # ampy -p /COM4 put util/octopus-8266.py util/octopus.py
-ver = "4.12.2018-v0.17"
+ver = "8.12.2018-v0.18"
 
 from micropython import const
 import time
@@ -20,13 +20,12 @@ pinout = set_pinout()
 
 # spi
 try:
-    spi.deinit()
-    print("spi > close")
+    #spi.deinit()
+    #print("spi > close")
+    spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
+    ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
 except:
     print()
-spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
-ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
-
 rtc = machine.RTC() # real time
 
 pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
@@ -90,8 +89,8 @@ def mainMenu():
     print('.' * 30)
     print("EXAMPLES & TESTS")
     print("[b] - built-in led/beep/button")
-    print("[r1] - RGB WS led test")
-    print("[r8] - 8x RGB WS led test")
+    print("[r1] - RGB WS led test (/wr1)")
+    print("[r8] - 8x RGB WS led test (/r80)")
     print("[m] - piezzo melody")
     print("[a] - analog input test")
     print("[t] - temperature")
@@ -130,6 +129,23 @@ def map(x, in_min, in_max, out_min, out_max):
 
 def set_degree(servo, angle):
     servo.duty(map(angle, 0,150, SERVO_MIN, SERVO_MAX))
+
+def w_connect():
+    from util.wifi_connect import read_wifi_config, WiFiConnect
+    time.sleep_ms(1000)
+    wifi_config = read_wifi_config()
+    print("config for: " + wifi_config["wifi_ssid"])
+    w = WiFiConnect()
+    w.events_add_connecting(connecting_callback)
+    w.events_add_connected(connected_callback)
+    w.connect(wifi_config["wifi_ssid"], wifi_config["wifi_pass"])
+    print("WiFi: OK")
+
+def neo_init(num_led):
+    from neopixel import NeoPixel
+    pin = Pin(pinout.WS_LED_PIN, Pin.OUT)
+    npObj = NeoPixel(pin, num_led)
+    return npObj
 
 #-------------
 def octopus():
@@ -210,10 +226,7 @@ def octopus():
           pwm0.duty(0)
 
       if sel == "r1":
-        from neopixel import NeoPixel
-        NUMBER_LED = 1
-        pin = Pin(pinout.WS_LED_PIN, Pin.OUT)
-        np = NeoPixel(pin, NUMBER_LED)
+        np = neo_init(1)
 
         np[0] = (128, 0, 0) #R
         np.write()
@@ -231,10 +244,7 @@ def octopus():
         np.write()
 
       if sel == "r8":
-       from neopixel import NeoPixel
-       NUMBER_LED = 8
-       pin = Pin(pinout.WS_LED_PIN, Pin.OUT)
-       np = NeoPixel(pin, NUMBER_LED)
+       np = neo_init(8)
 
        np[0] = (32, 0, 0) #R
        np[1] = (0,32, 0) #G
@@ -245,36 +255,38 @@ def octopus():
        np.write()
 
       if sel == "r80":
-         from neopixel import NeoPixel
-         NUMBER_LED = 8
-         pin = Pin(pinout.WS_LED_PIN, Pin.OUT)
-         np = NeoPixel(pin, NUMBER_LED)
+         np = neo_init(8)
          for i in range(NUMBER_LED):
            np[i] = (1, 0, 0)
            time.sleep_ms(1)# REVIEW:
          np.write()
 
       if sel == "s":
-           from util.setup import setup
-           setup()
+            from util.setup import setup
+            setup()
 
       if sel == "w":
-          from util.wifi_connect import read_wifi_config, WiFiConnect
-          time.sleep_ms(2000)
-          wifi_config = read_wifi_config()
-          print("config for: " + wifi_config["wifi_ssid"])
-          w = WiFiConnect()
-          w.events_add_connecting(connecting_callback)
-          w.events_add_connected(connected_callback)
-          w.connect(wifi_config["wifi_ssid"], wifi_config["wifi_pass"])
-          print("WiFi: OK")
+            w_connect()
+
+      if sel == "wr1":
+            w_connect()
+            np = neo_init(1)
+            import urequests
+            import json
+            url1="http://octopuslab.cz/api/ws.json"
+            print(url1)
+            r1 = urequests.post(url1)
+            j = json.loads(r1.text)
+            time.sleep_ms(2000)
+            print(j["r"])
+            np[0] = (j["r"], j["g"], j["b"]) #R
+            np.write()
 
       if sel == "q":
           print("machine.reset() and Exit")
           time.sleep_ms(1000)
           machine.reset()
           run = False
-
 
       if sel == "d":
          mainOctopus()
