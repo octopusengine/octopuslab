@@ -48,9 +48,11 @@ AMPY_BAUD=115200
 https://github.com/octopusengine/octopuslab/blob/master/esp32-micropython/deploy.bat
 
 ---
-a) deploy (.sh for Linux or .bat fo Windows) copy "all" files
+a) deploy (.sh for Linux or .bat fo Windows) 
+> copy "all" files
 
-b) prepare (.sh for Linux or .bat fo Windows) copy only:
+b) prepare (.sh for Linux or .bat fo Windows) 
+> copy only:
  util/setup > setup wifi, connect wifi, 
  util/wifi_connect.py
  boot_prepare.py
