@@ -8,6 +8,7 @@ import ujson
 import machine #datetime
 
 devices = [
+["oLAB Default","esp32"],
 ["oLAB Tickernator","esp8266"],
 ["oLAB BigDisplay3","esp8266"],
 ["oLAB RobotBoard1","esp32"],
@@ -82,7 +83,6 @@ def setup():
         #print(str(devices[int(sd)]))
         print("> " + str(devices[int(sd)][0]) + " | " + str(devices[int(sd)][1]))
 
-
         dc = {}
         dc['board_type'] = str(devices[int(sd)][0]) #input("Board type ('oLAB RobotBoard1' or 'oLAB IoTBoard1'): ")
         dc['soc_type'] = str(devices[int(sd)][1])   #input("SoC type ('esp32' or 'esp8266'): ")
@@ -120,7 +120,6 @@ def setup():
           w.connect(wifi_config["wifi_ssid"], wifi_config["wifi_pass"])
           print("WiFi: OK")
 
-
     if sel == "t":
         print("Time setting:")
         rtc = machine.RTC()
@@ -131,8 +130,9 @@ def setup():
         dt_int = [int(numeric_string) for numeric_string in dt_str]
         rtc.init(dt_int)
         print(str(rtc.datetime()))
+        
     if sel == "i":
-        print("Initial download")
+        print("Initial download:")
         import upip
         print("Installing shutil")
         upip.install("micropython-shutil")
