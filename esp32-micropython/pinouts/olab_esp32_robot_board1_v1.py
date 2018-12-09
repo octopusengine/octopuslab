@@ -49,5 +49,5 @@ I34_PIN = const(34)
 I35_PIN = const(35)
 
 #main analog input (for power management)
-PIN_ANALOG = const(36)
+ANALOG_PIN = const(36)
 PIEZZO_PIN = const(5)
