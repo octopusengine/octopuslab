@@ -7,7 +7,7 @@ LED_RED = const(15)
 LED_GRE = const(12)
 LED_BLU = const(13)
 
-ANALOG_PIN = const(A0) #photo resistor
+ANALOG_PIN = const(0) #A0 - LDR - photo resistor
 BUTT1_PIN = 14 
 
 #---
