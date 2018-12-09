@@ -11,7 +11,7 @@ REM To skip the following commands, put "REM" before them:
 
 ampy -p  %PORT% ls
 
-REM ampy -p  %PORT% put boot.py
+ampy -p  %PORT% put boot_prepare.py boot.py
 REM ampy -p  %PORT% put ./octopus_robot_board.py
 
 ampy -p  %PORT% mkdir pinouts
