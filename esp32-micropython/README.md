@@ -66,7 +66,10 @@ d) blockly and webrepl
 
 
 <pre>
---+--assets
+-boot.py
+-main.py
+|
++-+--assets
   |
   +--config (json config files - device/wifi/...)
   |
