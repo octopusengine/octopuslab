@@ -5,7 +5,7 @@
 # esp8266 / wemos / esp32 doit...
 
 # ampy -p /COM4 put util/octopus-8266.py util/octopus.py
-ver = "8.12.2018-v0.18"
+ver = "9.12.2018-v:0.19"
 
 from micropython import const
 import time
@@ -38,14 +38,6 @@ ch = timNote.channel(2, Timer.PWM, pin=Pin(pinout.PIEZZO_PIN))
 tim = Timer(-1)
 """
 led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
-
-def mac2eui(mac):
-    mac = mac[0:6] + 'fffe' + mac[6:]
-    return hex(int(mac[0:2], 16) ^ 2)[2:] + mac[2:]
-
-def get_eui():
-    id = ubinascii.hexlify(machine.unique_id()).decode()
-    return id #mac2eui(id)
 
 def add0(sn):
     ret_str=str(sn)
@@ -195,29 +187,10 @@ def octopus():
           print("> pinouts: "+str(os.listdir("pinouts")))
 
       if sel == "i":
-          import gc #mem_free
-
-          print("> unique_id: "+str(get_eui()))
-          #print("--- MAC: "+str(mac2eui(get_eui())))
-          print("> uPy version: "+str(os.uname()[3]))
+          print("System info:")
           print("> octopus() ver: " + ver)
-          try:
-                with open('config/device.json', 'r') as f:
-                    d = f.read()
-                    f.close()
-                    print("> config/device: " + d)
-                    # device_config = json.loads(d)
-          except:
-                print("Device config 'config/device.json' does not exist, please run setup()")
-
-          gc.collect()
-          print("> mem_free: "+str(gc.mem_free()))
-          print("> flash: "+str(os.statvfs("/")))
-          print("> flash free: "+str(int(os.statvfs("/")[0])*int(os.statvfs("/")[3])))
-          print("> machine.freq: "+str(machine.freq()))
-          print("> active variables:")
-          print(dir())
-          print("> datetime RAW: "+str(rtc.datetime()))
+          from util.sys_info import sys_info
+          sys_info()
 
       if sel == "m":
           time.sleep_ms(500)
@@ -420,7 +393,6 @@ def octopus():
 
              if sel_r == "se":
                 print("servo1 test >")
-
                 #pwm_center = int(pinout.SERVO_MIN + (pinout.SERVO_MAX-pinout.SERVO_MIN)/2)
                 pwm_center = 60
                 pin_servo1 = Pin(pinout.PWM1_PIN, Pin.OUT)
@@ -430,6 +402,25 @@ def octopus():
                 servo1 = PWM(pin_servo1, freq=50, duty=SERVO_MAX)
                 time.sleep_ms(1500)
                 servo1 = PWM(pin_servo1, freq=50, duty=SERVO_MIN)
+
+             if sel_r == "sm":
+                from lib.sm28byj48 import SM28BYJ48
+                #PCF address = 35 #33-0x21/35-0x23
+                ADDRESS = 0x23
+                # motor id 1 or 2
+                MOTOR_ID1 = 1
+                #MOTOR_ID2 = 2
+
+                i2c_sda = Pin(pinout.I2C_SDA_PIN, Pin.IN,  Pin.PULL_UP)
+                i2c_scl = Pin(pinout.I2C_SCL_PIN, Pin.OUT, Pin.PULL_UP)
+
+                i2c = machine.I2C(scl=i2c_scl, sda=i2c_sda, freq=100000) # 100kHz as Expander is slow :(
+                motor1 = SM28BYJ48(i2c, ADDRESS, MOTOR_ID1)
+
+                # turn right 90 deg
+                motor1.turn_degree(90)
+                # turn left 90 deg
+                motor1.turn_degree(90, 1)
 
       if sel == "p":
             mainOctopus()
