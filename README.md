@@ -15,15 +15,7 @@ devBoards and projects for:
 <h2>Contribute</h2>
 You are welcome to contribute to this repository by providing documentation to code, submitting issue reports, enhancement requests and pull requests.
 <hr />
-<b>Boards</b>
-General Shield RPi - gsR [Pic1] testing PoC
-General Shield ESP - gsE1 (ESP8266) gsE2 (ESP32) 
-Dev board basic
-I2C board
-Power board
-#tickernator (basic SPI &I2C) [Pic3]
-Big display [Pic2]
-Mechatronic1 - I2C 8bit-expander & darlington bus ULN
+
 
 
 
