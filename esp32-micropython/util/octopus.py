@@ -5,7 +5,7 @@
 # esp8266 / wemos / esp32 doit...
 
 # ampy -p /COM4 put util/octopus-8266.py util/octopus.py
-ver = "9.12.2018-v:0.19"
+ver = "10.12.2018-v:0.20"
 
 from micropython import const
 import time
@@ -116,6 +116,7 @@ def connecting_callback():
 #servo
 SERVO_MIN = const(45)
 SERVO_MAX = const(130)
+
 def map(x, in_min, in_max, out_min, out_max):
     return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)
 
@@ -141,6 +142,8 @@ def neo_init(num_led):
 
 #-------------
 def octopus():
+    #global notInitServo
+    notInitServo = True
     ###beep(pwm0,500,100) # start beep
     #tim.init(period=1000, mode=Timer.ONE_SHOT, callback=lambda t:print("test timer - thread delay"))
     #tim.init(period=2000, mode=Timer.PERIODIC, callback=lambda t:print(2))
@@ -228,7 +231,8 @@ def octopus():
        np.write()
 
       if sel == "r80":
-         np = neo_init(8)
+         NUMBER_LED = 8
+         np = neo_init(NUMBER_LED)
          for i in range(NUMBER_LED):
            np[i] = (1, 0, 0)
            time.sleep_ms(1)# REVIEW:
@@ -395,13 +399,23 @@ def octopus():
                 print("servo1 test >")
                 #pwm_center = int(pinout.SERVO_MIN + (pinout.SERVO_MAX-pinout.SERVO_MIN)/2)
                 pwm_center = 60
+
+                #if notInitServo:
+                print("init-servo:")
                 pin_servo1 = Pin(pinout.PWM1_PIN, Pin.OUT)
                 servo1 = PWM(pin_servo1, freq=50, duty=pwm_center)
-                print("setup OK")
+                print("OK")
                 time.sleep_ms(1500)
-                servo1 = PWM(pin_servo1, freq=50, duty=SERVO_MAX)
+                #notInitServo = False
+
                 time.sleep_ms(1500)
-                servo1 = PWM(pin_servo1, freq=50, duty=SERVO_MIN)
+                servo1.duty(SERVO_MAX)
+                time.sleep_ms(1500)
+                servo1.duty(SERVO_MIN)
+                time.sleep_ms(1500)
+
+                print("degree45")
+                set_degree(servo1,45)
 
              if sel_r == "sm":
                 from lib.sm28byj48 import SM28BYJ48
