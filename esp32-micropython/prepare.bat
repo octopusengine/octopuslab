@@ -23,13 +23,13 @@ echo "config:"
 ampy -p  %PORT% mkdir config
 ampy -p  %PORT% put ./config/device.json config/device.json
 
+echo "Lib:"
+ampy -p  %PORT% mkdir lib
+
 echo "Util:"
 ampy -p  %PORT% mkdir util
 ampy -p  %PORT% put ./util/setup.py util/setup.py
+ampy -p  %PORT% put ./util/sys_info.py util/sys_info.py
 ampy -p  %PORT% put ./util/wifi_connect.py util/wifi_connect.py
 
 echo "ok - start: setup() in Mircopython"
-
-
-
-
