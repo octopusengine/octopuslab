@@ -53,101 +53,112 @@ def deploy(url):
             extracted = t.extractfile(f)
             shutil.copyfileobj(extracted, open(f.name, "wb"))
 
+def setupMenu():
+    print()
+    print('=' * 30)
+    print('       S E T U P')
+    print('=' * 30)
+    print("[ds]  - device setting")
+    print("[sw]  - set wifi")
+    print("[cw]  - connect wifi")
+    print("[st]  - set time")
+    print("[im]  - initial modules download")
+    print("[si]  - system info")
+    print("[e]   - exit setup")
+
+    print('=' * 30)
+    sel = input("select: ")
+    return sel
+
 def setup():
     print("Hello, this will help you initialize your ESP")
     print("Press Ctrl+C to abort")
     print()
-    print('=' * 30)
-    print("[d] - device setting")
-    print("[w] - set wifi")
-    print("[wc] - connect wifi")
-    print("[t] - set time")
-    print("[i] - Initial modules download")
-    print("[si] - system info")
-
-    print('=' * 30)
-    sel = input("select: ")
 
     # TODO improve this
     # prepare directory
     if 'config' not in uos.listdir():
        uos.makedirs('config')
 
-    if sel == "si": #system_info()
-        from util.sys_info import sys_info
-        sys_info()
+    run= True
+    while run:
+        sele = setupMenu()
 
-    if sel == "d":
-        print("Device setting:")
-        print("   board_type  | soc_type (system on the board)")
-        i=0
-        for di in devices:
-           print(str(i)+": "+str(di[0]) + " | " + str(di[1]))
-           i=i+1
+        if sele == "e":
+            print("Setup exit >")
+            time.sleep_ms(2000)
+            print("all OK, press CTRL+D to soft reboot")
+            run = False
 
-        print()
-        sd = input("select: ")
-        #print(str(devices[int(sd)]))
-        print("> " + str(devices[int(sd)][0]) + " | " + str(devices[int(sd)][1]))
+        if sele == "si": #system_info()
+            from util.sys_info import sys_info
+            sys_info()
 
+        if sele == "ds":
+            print("Device setting:")
+            print("   board_type  | soc_type (system on the board)")
+            i=0
+            for di in devices:
+               print(str(i)+": "+str(di[0]) + " | " + str(di[1]))
+               i=i+1
 
-        dc = {}
-        dc['board_type'] = str(devices[int(sd)][0]) #input("Board type ('oLAB RobotBoard1' or 'oLAB IoTBoard1'): ")
-        dc['soc_type'] = str(devices[int(sd)][1])   #input("SoC type ('esp32' or 'esp8266'): ")
+            print()
+            sd = input("select: ")
+            #print(str(devices[int(sd)]))
+            print("> " + str(devices[int(sd)][0]) + " | " + str(devices[int(sd)][1]))
 
-        print("Writing to file config/device.json")
-        with open('config/device.json', 'w') as f:
-            ujson.dump(dc, f)
-            # ujson.dump(wc, f, ensure_ascii=False, indent=4)
-        print()
+            dc = {}
+            dc['board_type'] = str(devices[int(sd)][0]) #input("Board type ('oLAB RobotBoard1' or 'oLAB IoTBoard1'): ")
+            dc['soc_type'] = str(devices[int(sd)][1])   #input("SoC type ('esp32' or 'esp8266'): ")
 
-    if sel == "w":
-        print("WiFi setting:")
-        print()
-        wc = {}
-        wc['wifi_ssid'] = input("SSID: ")
-        wc['wifi_pass'] = input("PASSWORD: ")
+            print("Writing to file config/device.json")
+            with open('config/device.json', 'w') as f:
+                ujson.dump(dc, f)
+                # ujson.dump(wc, f, ensure_ascii=False, indent=4)
 
-        # TODO improve this
-        if 'config' not in uos.listdir():
-            uos.makedirs('config')
+        if sele == "sw":
+            print("WiFi setting:")
+            print()
+            wc = {}
+            wc['wifi_ssid'] = input("SSID: ")
+            wc['wifi_pass'] = input("PASSWORD: ")
 
-        print("Writing to file config/wifi.json")
-        with open('config/wifi.json', 'w') as f:
-            ujson.dump(wc, f)
-            # ujson.dump(wc, f, ensure_ascii=False, indent=4)
-        print()
+            # TODO improve this
+            if 'config' not in uos.listdir():
+                uos.makedirs('config')
 
-    if sel == "wc":
-          from util.wifi_connect import read_wifi_config, WiFiConnect
-          import time
-          time.sleep_ms(2000)
-          wifi_config = read_wifi_config()
-          print("config for: " + wifi_config["wifi_ssid"])
-          w = WiFiConnect()
-          w.connect(wifi_config["wifi_ssid"], wifi_config["wifi_pass"])
-          print("WiFi: OK")
+            print("Writing to file config/wifi.json")
+            with open('config/wifi.json', 'w') as f:
+                ujson.dump(wc, f)
+                # ujson.dump(wc, f, ensure_ascii=False, indent=4)
 
+        if sele == "cw":
+              from util.wifi_connect import read_wifi_config, WiFiConnect
+              import time
+              time.sleep_ms(2000)
+              wifi_config = read_wifi_config()
+              print("config for: " + wifi_config["wifi_ssid"])
+              w = WiFiConnect()
+              w.connect(wifi_config["wifi_ssid"], wifi_config["wifi_pass"])
+              print("WiFi: OK")
 
-    if sel == "t":
-        print("Time setting:")
-        rtc = machine.RTC()
-        print(str(rtc.datetime()))
-        setdatetime = input("input 6 numbers - format: RRRRR,M,D,wd,h,m > ")+(",0,0")
-        dt_str = setdatetime.split(",")
-        print(str(dt_str))
-        dt_int = [int(numeric_string) for numeric_string in dt_str]
-        rtc.init(dt_int)
-        print(str(rtc.datetime()))
+        if sele == "st":
+            print("Time setting:")
+            rtc = machine.RTC()
+            print(str(rtc.datetime()))
+            setdatetime = input("input 6 numbers - format: RRRRR,M,D,wd,h,m > ")+(",0,0")
+            dt_str = setdatetime.split(",")
+            print(str(dt_str))
+            dt_int = [int(numeric_string) for numeric_string in dt_str]
+            rtc.init(dt_int)
+            print(str(rtc.datetime()))
 
-    if sel == "i":
-        print("Initial download")
-        import upip
-        print("Installing shutil")
-        upip.install("micropython-shutil")
-        print("Running deploy")
-        deplUrl = "http://iot.petrkr.net/olab/latest.tar"
-        #deplUrl = "http://octopuslab.cz/download/latest.tar"
-        deploy(deplUrl)
-
-    print("all OK, press CTRL+D to soft reboot")
+        if sele == "sm":
+            print("Initial download")
+            import upip
+            print("Installing shutil")
+            upip.install("micropython-shutil")
+            print("Running deploy")
+            deplUrl = "http://iot.petrkr.net/olab/latest.tar"
+            #deplUrl = "http://octopuslab.cz/download/latest.tar"
+            deploy(deplUrl)
