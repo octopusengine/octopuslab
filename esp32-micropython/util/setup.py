@@ -3,7 +3,7 @@
 # user is questioned in interactive mode
 
 #TODO DRY for filename
-import uos
+import time, uos
 import ujson
 import machine #datetime
 
@@ -62,7 +62,8 @@ def setupMenu():
     print("[sw]  - set wifi")
     print("[cw]  - connect wifi")
     print("[st]  - set time")
-    print("[im]  - initial modules download")
+    print("[sd]  - system download >")
+    print("(initial octopus modules)")
     print("[si]  - system info")
     print("[e]   - exit setup")
 
@@ -134,8 +135,7 @@ def setup():
 
         if sele == "cw":
               from util.wifi_connect import read_wifi_config, WiFiConnect
-              import time
-              time.sleep_ms(2000)
+              time.sleep_ms(1000)
               wifi_config = read_wifi_config()
               print("config for: " + wifi_config["wifi_ssid"])
               w = WiFiConnect()
@@ -153,7 +153,7 @@ def setup():
             rtc.init(dt_int)
             print(str(rtc.datetime()))
 
-        if sele == "sm":
+        if sele == "im":
             print("Initial download")
             import upip
             print("Installing shutil")
