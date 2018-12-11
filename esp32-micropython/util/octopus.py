@@ -5,11 +5,10 @@
 # esp8266 / wemos / esp32 doit...
 
 # ampy -p /COM4 put util/octopus-8266.py util/octopus.py
-ver = "10.12.2018-v:0.20"
+ver = "11.12.2018-v:0.21"
 
 from micropython import const
-import time
-import os
+import time, os
 import machine, ubinascii
 from machine import Pin, PWM, SPI, Timer
 
@@ -69,9 +68,9 @@ def mainOctopus():
 def mainMenu():
     print()
     print(get_hhmm())
-    print('-' * 39)
-    print("Menu: Basic simple examples & tests")
-    print('.' * 30)
+    print('=' * 35)
+    print("     O C T O P U S    M E N U")
+    print('=' * 35)
     print("SYSTEM & SETTINGS")
     print("[i] - device & system info")
     print("[s] - setup machine and wifi")
@@ -91,7 +90,7 @@ def mainMenu():
     print("[p] - projects    --- >>>")
     #print("[u] * uart test")
     print("[q] - QUIT")
-    print('-' * 39)
+    print('-' * 35)
 
     sel = input("select: ")
     #print("your select: "+str(sel))
@@ -142,6 +141,7 @@ def neo_init(num_led):
 
 #-------------
 def octopus():
+    print()
     #global notInitServo
     notInitServo = True
     ###beep(pwm0,500,100) # start beep
