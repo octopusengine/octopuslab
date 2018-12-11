@@ -4,7 +4,10 @@ from micropython import const
 # PIN as on octopusLAB Wemos ESP8266 IoTBoard1
 BUILT_IN_LED = const(2)
 
-BUTT1_PIN = 12 #d6 x gpio16=d0
+BUTT1_PIN = 25 # up
+BUTT2_PIN = 12 # o
+BUTT3_PIN = 13 # dw
+
 PIEZZO_PIN = 14
 WS_LED_PIN = 15 #wemos gpio14 = d5
 ONE_WIRE_PIN = 13
