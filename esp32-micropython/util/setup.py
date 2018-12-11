@@ -86,7 +86,7 @@ def setup():
         sele = setupMenu()
 
         if sele == "e":
-            print("Setup exit >")
+            print("Setup - exit >")
             time.sleep_ms(2000)
             print("all OK, press CTRL+D to soft reboot")
             run = False
@@ -118,7 +118,7 @@ def setup():
                 # ujson.dump(wc, f, ensure_ascii=False, indent=4)
 
         if sele == "sw":
-            print("WiFi setting:")
+            print("Set WiFi >")
             print()
             wc = {}
             wc['wifi_ssid'] = input("SSID: ")
@@ -134,6 +134,7 @@ def setup():
                 # ujson.dump(wc, f, ensure_ascii=False, indent=4)
 
         if sele == "cw":
+              print("Connect WiFi >")
               from util.wifi_connect import read_wifi_config, WiFiConnect
               time.sleep_ms(1000)
               wifi_config = read_wifi_config()
@@ -143,7 +144,7 @@ def setup():
               print("WiFi: OK")
 
         if sele == "st":
-            print("Time setting:")
+            print("Time setting >")
             rtc = machine.RTC()
             print(str(rtc.datetime()))
             setdatetime = input("input 6 numbers - format: RRRRR,M,D,wd,h,m > ")+(",0,0")
@@ -153,8 +154,8 @@ def setup():
             rtc.init(dt_int)
             print(str(rtc.datetime()))
 
-        if sele == "im":
-            print("Initial download")
+        if sele == "sd":
+            print("System download > (initial octopus modules)")
             import upip
             print("Installing shutil")
             upip.install("micropython-shutil")
