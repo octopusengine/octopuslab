@@ -107,7 +107,7 @@ def blinkOledPoint():
     oled.show()
     time.sleep_ms(2000)
 
-urlMain = "http://www.octopusengine.org/iot17/add19req.php?type=iot&place=pp&device="
+urlMain = "http://www.octopusengine.org/iot17/add19rq.php?type=iot&place=pp&device="
 urlPOST = "http://www.octopusengine.org/iot17/add18.php"
 header = {}
 header["Content-Type"] = "application/x-www-form-urlencoded"
