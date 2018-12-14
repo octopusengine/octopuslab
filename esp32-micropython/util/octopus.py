@@ -5,7 +5,7 @@
 # esp8266 / wemos / esp32 doit...
 
 # ampy -p /COM4 put util/octopus-8266.py util/octopus.py
-ver = "11.12.2018-v:0.21"
+ver = "13.12.2018-v:0.22"
 
 from micropython import const
 import time, os
@@ -177,6 +177,18 @@ def octopus():
                beep(pwm0, 500, 100)
                blink(led, 500)
 
+      if sel == "bt":
+           butt1 = Pin(pinout.BUTT1_PIN, Pin.IN, Pin.PULL_UP)
+           butt2 = Pin(pinout.BUTT2_PIN, Pin.IN, Pin.PULL_UP)
+           butt3 = Pin(pinout.BUTT3_PIN, Pin.IN, Pin.PULL_UP)
+           count = 10
+           for _ in range(count):
+               print("b1-"+str(butt1.value())),
+               print("b2-"+str(butt2.value())),
+               print("b3-"+str(butt3.value()))
+               beep(pwm0, 500, 100)
+               blink(led, 500)
+
       if sel == "c":
           print(chr(27) + "[2J") # clear terminal
           print("\x1b[2J\x1b[H") # cursor up
@@ -241,6 +253,14 @@ def octopus():
       if sel == "s":
             from util.setup import setup
             setup()
+
+      if sel == "t":
+            print("temperature >")
+            from lib.temperature import TemperatureSensor
+            ts = TemperatureSensor(pinout.ONE_WIRE_PIN)
+            temp = ts.read_temp()
+            # print to console
+            print(temp)
 
       if sel == "w":
             w_connect()
