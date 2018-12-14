@@ -22,7 +22,7 @@ I2C_SDA_PIN = const(21)
 PIEZZO_PIN = const(27)  #14 //MOTOR_4A = const(27)
 WS_LED_PIN = const(15)  #TDO
 ANALOG_PIN = const(36)
-ONE_WIRE_PIN = const(32)
+ONE_WIRE_PIN = const(32) # = DEV1_PIN
 RELAY_PIN = const(33)
 MFET_PIN = const(14)
 
