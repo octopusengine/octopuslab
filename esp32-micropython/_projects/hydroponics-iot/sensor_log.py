@@ -2,7 +2,7 @@
 This example usage of DS18B20 "Dallas" temperature sensor, SSD1306 OLED display
 and light sensor BH1750
 for #hydroponics IoT monitoring system
-
+ampy -p /COM5 put sensor_log.py main.py
 alfa
 """
 import machine
@@ -11,6 +11,7 @@ import time
 import urequests
 import os, ubinascii
 import framebuf
+import math
 
 from lib import ssd1306
 from lib.temperature import TemperatureSensor
@@ -28,13 +29,15 @@ Debug = True
 
 #tim2 = Timer(1) #
 led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
+
 if Debug: print("init dallas temp >")
 ts = TemperatureSensor(pinout.ONE_WIRE_PIN)
 i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
-if Debug: print("init i2c oled >")
 
+if Debug: print("init i2c oled >")
 oled = ssd1306.SSD1306_I2C(128, 64, i2c)
 time.sleep_ms(2000)
+
 if Debug: print("init i2c bh >")
 sbh = BH1750(i2c)
 
@@ -45,6 +48,11 @@ xb0 = 0 # display bar possition
 yb0 = 58
 ydown = 57
 
+def draw_icon(icon, posx, posy):
+  for y, row in enumerate(icon):
+    for x, c in enumerate(row):
+        oled.pixel(x+posx, y+posy, c)
+
 def get_eui():
     id = ubinascii.hexlify(machine.unique_id()).decode()
     return id #mac2eui(id)
@@ -52,10 +60,8 @@ def get_eui():
 # Define function callback for connecting event
 def connected_callback(sta):
     global WSBindIP
-    blink(led, 50, 100)
-    # np[0] = (0, 128, 0)
-    # np.write()
-    blink(led, 50, 100)
+    draw_icon(ICON_clr, 88 ,0)
+    draw_icon(ICON_wifi, 88 ,0)
     print(sta.ifconfig())
     WSBindIP = sta.ifconfig()[0]
 
@@ -133,6 +139,7 @@ def displMessage(mess,timm):
     time.sleep_ms(timm*1000)
 
 def displBar(by,num,timb,anim):
+    if num>10: num = 10
     oled.fill_rect(xb0,by-1,128,5+2,0) # clear
     for i in range(10):               # 0
         oled.hline(xb0+i*13,by+2,9,1)
@@ -140,14 +147,9 @@ def displBar(by,num,timb,anim):
         oled.fill_rect(xb0+i*13,by,10,5,1)
         if anim:
            oled.show()
-           time.sleep_ms(20) # animation
+           time.sleep_ms(30) # animation
     oled.show()
     time.sleep_ms(timb)
-
-def draw_icon(icon, posx, posy):
-  for y, row in enumerate(icon):
-    for x, c in enumerate(row):
-        oled.pixel(x+posx, y+posy, c)
 
 #-----------------------------------------------------------------------------
 oledImage()
@@ -164,15 +166,16 @@ displMessage("init >",1)
 
 oled.text("wifi",99, 1)
 displMessage("wifi connect >",1)
+
+w_connect()
+
 for _ in range(5):
     draw_icon(ICON_clr, 88 ,0)
     oled.show()
     time.sleep_ms(100)
     draw_icon(ICON_wifi, 88 ,0)
     oled.show()
-    time.sleep_ms(200)
-
-w_connect()
+    time.sleep_ms(300)
 
 it = 0
 def count():
@@ -205,6 +208,6 @@ while True:
     tw = int(temp*10)
     print(tw/10)
     threeDigits(oled,tw,True,True)
-    displBar(yb0,int(numlux/20),300,1)
+    displBar(yb0,int(math.log10(numlux)*2),300,1)
     #blinkOledPoint()
     time.sleep_ms(1000)
