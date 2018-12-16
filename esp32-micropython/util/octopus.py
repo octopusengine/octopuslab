@@ -5,7 +5,7 @@
 # esp8266 / wemos / esp32 doit...
 
 # ampy -p /COM4 put util/octopus-8266.py util/octopus.py
-ver = "13.12.2018-v:0.22"
+ver = "15.12.2018-v:0.23"
 
 from micropython import const
 import time, os
@@ -16,6 +16,8 @@ from util.buzzer import beep, play_melody
 from util.led import blink
 from util.pinout import set_pinout
 pinout = set_pinout()
+
+from util.display_segment import *
 
 # spi
 try:
@@ -139,11 +141,20 @@ def neo_init(num_led):
     npObj = NeoPixel(pin, num_led)
     return npObj
 
+oled = 0
+def oled_intit():
+    global oled
+    from lib import ssd1306
+    time.sleep_ms(1000)
+    i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
+    oled = ssd1306.SSD1306_I2C(128, 64, i2c)
+
 #-------------
 def octopus():
     print()
     #global notInitServo
     notInitServo = True
+    global oled
     ###beep(pwm0,500,100) # start beep
     #tim.init(period=1000, mode=Timer.ONE_SHOT, callback=lambda t:print("test timer - thread delay"))
     #tim.init(period=2000, mode=Timer.PERIODIC, callback=lambda t:print(2))
@@ -200,6 +211,11 @@ def octopus():
           print("> lib: "+str(os.listdir("lib")))
           print("> util: "+str(os.listdir("util")))
           print("> pinouts: "+str(os.listdir("pinouts")))
+
+          print("i2c.scann() >")
+          i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
+          devices = i2c.scan()
+          print(devices)
 
       if sel == "i":
           print("System info:")
@@ -290,6 +306,8 @@ def octopus():
          print("Display test >>>")
          print('=' * 30)
          print("[od] --- oled display test")
+         print("[os] --- oled 3segment")
+         print("[oi] --- oled display image")
          print("[m7] --- max display 8x7-segm")
          print("[m8] --- max display 8x8-matrix")
          print("[sd] --- serial display")
@@ -300,10 +318,7 @@ def octopus():
 
          if sel_d == "od":
               print("oled display test >")
-              from lib import ssd1306
-              time.sleep_ms(1500)
-              i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
-              oled = ssd1306.SSD1306_I2C(128, 64, i2c)
+              oled_intit()
 
               oled.fill(1)
               oled.show()
@@ -318,6 +333,38 @@ def octopus():
               oled.text("octopusLAB 2018",5,55) #time HH:MM
               oled.show()
               time.sleep_ms(1000)
+
+         if sel_d == "os":
+              print("oled segment test >")
+              oled_intit()
+              #from util.display_segment import * #???
+              for num in range(10):
+                  threeDigits(oled,20+num,True,True)
+                  time.sleep_ms(50)
+
+         if sel_d == "oi":
+             print("oled image test >")
+             oled_intit()
+             import framebuf
+
+             IMAGE_WIDTH = 63
+             IMAGE_HEIGHT = 63
+
+             with open('assets/octopus_image.pbm', 'rb') as f:
+                 f.readline() # Magic number
+                 f.readline() # Creator comment
+                 f.readline() # Dimensions
+                 data = bytearray(f.read())
+                 fbuf = framebuf.FrameBuffer(data, IMAGE_WIDTH, IMAGE_HEIGHT, framebuf.MONO_HLSB)
+                 # To display just blit it to the display's framebuffer (note you need to invert, since ON pixels are dark on a normal screen, light on OLED).
+                 oled.invert(1)
+                 oled.blit(fbuf, 0, 0)
+
+             oled.text("Octopus", 66,6)
+             oled.text("Lab", 82,16)
+             oled.text("Micro", 74,35)
+             oled.text("Python", 70,45)
+             oled.show()
 
          if sel_d == "m7":
              from lib.max7219_8digit import Display
