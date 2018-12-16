@@ -34,9 +34,11 @@ ampy -p  %PORT% put ./config/device.json config/device.json
 
 ampy -p  %PORT% mkdir util
 ampy -p  %PORT% put ./util/setup.py util/setup.py
+ampy -p  %PORT% put ./util/sys_info.py util/sys_info.py 
 ampy -p  %PORT% put ./util/pinout.py util/pinout.py
 ampy -p  %PORT% put ./util/octopus.py util/octopus.py
 ampy -p  %PORT% put ./util/wifi_connect.py util/wifi_connect.py
+ampy -p  %PORT% put ./util/display-segment.py util/display-segment.py
 
 ampy -p  %PORT% mkdir util/led
 ampy -p  %PORT% put ./util/led/__init__.py util/led/__init__.py
@@ -45,6 +47,12 @@ ampy -p  %PORT% mkdir util/buzzer
 ampy -p  %PORT% put ./util/buzzer/__init__.py util/buzzer/__init__.py
 ampy -p  %PORT% put ./util/buzzer/melody.py util/buzzer/melody.py
 ampy -p  %PORT% put ./util/buzzer/notes.py util/buzzer/notes.py
+
+ampy -p  %PORT% mkdir assets
+ampy -p  %PORT% put ./assets/octopus_image.pbm assets/octopus_image.pbm 
+ampy -p  %PORT% put ./assets/icons9x9.py assets/icons9x9.py
+
+
 
 ampy -p  %PORT% mkdir wwwesp
 ampy -p  %PORT% put ./wwwesp/index.html wwwesp/index.html
