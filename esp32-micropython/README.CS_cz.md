@@ -84,7 +84,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
          [si]  - system info
          [e]   - exit setup
         ==============================</pre>
-    * vyberte <b>ds</b> (device setting), poté vyberte které nastavení budete
+    * vyberte <b>ds</b> (device setting), poté vyberte které nastavení budete používat
     * vyberte <b>sw</b> (set wifi) pro nastavení přístupových údajů na wifi
     * vyberte <b>cw</b> (connect wifi) pro připojení k wifi
     * vyberte <b>sd</b> (system downloads) aby se stáhl zbytek souborů
@@ -103,7 +103,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
          [c] - clear terminal
         ==============================</pre>
     * vyberte <b>s</b> (setup machine and wifi) pro přístup k dalším nastavením (stejné menu jako u Přípravy)
-    * vyberte <b>ds</b> (device setting), poté vyberte které nastavení budete
+    * vyberte <b>ds</b> (device setting), poté vyberte které nastavení budete používat
     * vyberte <b>sw</b> (set wifi) pro nastavení přístupových údajů na wifi
     * vyberte <b>cw</b> (connect wifi) pro připojení k wifi
     
