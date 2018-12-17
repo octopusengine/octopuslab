@@ -65,7 +65,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:::
 ## Initial setup
 
 * Prepare
-    * Once booted in by Putty (or similar software), select setup()
+    * Once booted in by Putty (or similar software), run setup()
         <pre>
         ==============================
                 S E T U P
@@ -85,7 +85,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:::
     * select <b>sd</b> (system downloads) to download and apply the rest of files
     
 * Deploy
-    * Once booted in by Putty (or similar software), select Octopus()
+    * Once booted in by Putty (or similar software), run Octopus()
         <pre>
         ==============================
           O C T O P U S    M E N U
