@@ -79,10 +79,10 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:::
          [si]  - system info
          [e]   - exit setup
         ==============================</pre>
-    * select <b>ds</b> (device setting) and choose which board you're using
-    * select sw (set wifi) to assign wifi credentials
-    * select cw (connect wifi) to reach the internets!
-    * select sd (system downloads) to download and apply the rest of files
+    * select <b>ds</b> (device setting),choose which board you're using
+    * select <b>sw</b> (set wifi) to assign wifi credentials
+    * select <b>cw</b> (connect wifi) to reach the internets!
+    * select <b>sd</b> (system downloads) to download and apply the rest of files
     
 * Deploy
     * Once booted in by Putty (or similar software), select Octopus()
@@ -97,10 +97,10 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:::
          [f] - file info/dir
          [c] - clear terminal
         ==============================</pre>
-    * select s (setup machine and wifi) to open further options (same menu as in Prepare)
-    * select ds (device setting) and choose which board you're using
-    * select sw (set wifi) to assign wifi credentials
-    * select cw (connect wifi) to reach the internets!
+    * select <b>s</b> (setup machine and wifi) to open further options (same menu as in Prepare)
+    * select <b>ds</b> (device setting), choose which board you're using
+    * select <b>sw</b> (set wifi) to assign wifi credentials
+    * select <b>cw</b> (connect wifi) to reach the internets!
     
 
 ## File structure
