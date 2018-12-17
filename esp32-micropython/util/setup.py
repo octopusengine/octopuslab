@@ -56,7 +56,7 @@ def deploy(url):
 def setupMenu():
     print()
     print('=' * 30)
-    print('       S E T U P')
+    print('        S E T U P')
     print('=' * 30)
     print("[ds]  - device setting")
     print("[sw]  - set wifi")
@@ -160,6 +160,7 @@ def setup():
             print("Installing shutil")
             upip.install("micropython-shutil")
             print("Running deploy")
-            deplUrl = "http://iot.petrkr.net/olab/latest.tar"
+            #deplUrl = "http://iot.petrkr.net/olab/latest.tar"
             #deplUrl = "http://octopuslab.cz/download/latest.tar"
+            deplUrl = "http://octopusengine.org/download/latest.tar"
             deploy(deplUrl)
