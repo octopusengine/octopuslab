@@ -79,7 +79,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:::
          [si]  - system info
          [e]   - exit setup
         ==============================</pre>
-    * select ds (device setting) and choose which board you're using
+    * select <b>ds</b> (device setting) and choose which board you're using
     * select sw (set wifi) to assign wifi credentials
     * select cw (connect wifi) to reach the internets!
     * select sd (system downloads) to download and apply the rest of files
