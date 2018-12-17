@@ -47,7 +47,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:::
         if you're selecting the script from command line.</pre>
     * [Deploy](https://github.com/octopusengine/octopuslab/blob/master/esp32-micropython/deploy.bat)
         <pre>  - requires whole directory
-        - copies all files from root directory, no need for initial setup
+        - copies all files from root director
         - takes longer than Prepare</pre>
         <pre>You can pass your port ID (for instance COM3) as first parameter
         if you're selecting the script from command line.</pre>
@@ -79,7 +79,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:::
          [si]  - system info
          [e]   - exit setup
         ==============================</pre>
-    * select <b>ds</b> (device setting),choose which board you're using
+    * select <b>ds</b> (device setting), then choose which board you're using
     * select <b>sw</b> (set wifi) to assign wifi credentials
     * select <b>cw</b> (connect wifi) to reach the internets!
     * select <b>sd</b> (system downloads) to download and apply the rest of files
@@ -98,7 +98,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:::
          [c] - clear terminal
         ==============================</pre>
     * select <b>s</b> (setup machine and wifi) to open further options (same menu as in Prepare)
-    * select <b>ds</b> (device setting), choose which board you're using
+    * select <b>ds</b> (device setting), then choose which board you're using
     * select <b>sw</b> (set wifi) to assign wifi credentials
     * select <b>cw</b> (connect wifi) to reach the internets!
     
