@@ -1,9 +1,19 @@
+@ECHO OFF
 echo Welcome to basic octopusLAB script for ESP32 - Micropython!
-pause
+REM pause
 
 REM Setup your COM port
-SET PORT=/COM6
+if %1.==. ( 
+ SET /p PORT="Enter port for conection to the device: " 
+) else ( SET PORT=%1
+)
+
+set arg1=%1
+REM SET PORT=/COM6
+
 echo your port is: %PORT%
+
+pause
 
 REM To skip the following commands, put "REM" before them:
 
@@ -51,8 +61,6 @@ ampy -p  %PORT% put ./util/buzzer/notes.py util/buzzer/notes.py
 ampy -p  %PORT% mkdir assets
 ampy -p  %PORT% put ./assets/octopus_image.pbm assets/octopus_image.pbm 
 ampy -p  %PORT% put ./assets/icons9x9.py assets/icons9x9.py
-
-
 
 ampy -p  %PORT% mkdir wwwesp
 ampy -p  %PORT% put ./wwwesp/index.html wwwesp/index.html

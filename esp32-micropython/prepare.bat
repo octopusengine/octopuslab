@@ -1,14 +1,22 @@
+@ECHO OFF
 echo Welcome to basic octopusLAB script for ESP32 - Micropython!
-pause
 
 REM --- TODO documentation
 REM --- TODO check arguments
 
-REM --> Setup your COM port
-SET PORT=/COM6
+REM Setup your COM port
+if %1.==. ( 
+ SET /p PORT="Enter COM port for conection to the device. " 
+) else ( SET PORT=%1
+)
+
+REM SET PORT=/COM6
+
 echo your port is: %PORT%
+
 echo "Please only execute in venv with ampy installed"
 
+pause
 
 REM To skip the following commands, put "REM" before them:
 
