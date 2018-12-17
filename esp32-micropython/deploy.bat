@@ -4,20 +4,22 @@ REM pause
 
 REM Setup your COM port
 if %1.==. ( 
- SET /p PORT="Enter port for conection to the device: " 
+ SET /p PORT="Enter COM port for conection to the device. " 
 ) else ( SET PORT=%1
 )
 
-set arg1=%1
-REM SET PORT=/COM6
-
 echo your port is: %PORT%
 
-pause
+if %1.==. (
+ echo "Please only execute in with ampy installed"
+ pause
+)
 
 REM To skip the following commands, put "REM" before them:
 
 ampy -p  %PORT% ls
+
+@ECHO ON
 
 ampy -p  %PORT% put boot.py
 REM ampy -p  %PORT% put ./octopus_robot_board.py
@@ -48,7 +50,7 @@ ampy -p  %PORT% put ./util/sys_info.py util/sys_info.py
 ampy -p  %PORT% put ./util/pinout.py util/pinout.py
 ampy -p  %PORT% put ./util/octopus.py util/octopus.py
 ampy -p  %PORT% put ./util/wifi_connect.py util/wifi_connect.py
-ampy -p  %PORT% put ./util/display_segment.py util/display_segment.py
+ampy -p  %PORT% put ./util/display-segment.py util/display-segment.py
 
 ampy -p  %PORT% mkdir util/led
 ampy -p  %PORT% put ./util/led/__init__.py util/led/__init__.py
@@ -67,5 +69,6 @@ ampy -p  %PORT% put ./wwwesp/index.html wwwesp/index.html
 ampy -p  %PORT% put ./wwwesp/octopus-logo100.png wwwesp/octopus-logo100.png
 
 ampy -p  %PORT% ls util
+
 echo start:
 echo >>> octopus()

@@ -10,19 +10,19 @@ if %1.==. (
 ) else ( SET PORT=%1
 )
 
-REM SET PORT=/COM6
-
 echo your port is: %PORT%
 
-echo "Please only execute in venv with ampy installed"
+if %1.==. (
+ echo "Please only execute in with ampy installed"
+ pause
+)
 
-pause
 
 REM To skip the following commands, put "REM" before them:
 
 ampy -p  %PORT% ls
 
-ampy -p  %PORT% put boot.py
+@ECHO ON
 
 echo "boot prepare"
 ampy -p  %PORT% put boot_prepare.py boot.py
