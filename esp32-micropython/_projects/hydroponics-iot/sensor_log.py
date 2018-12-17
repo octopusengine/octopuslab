@@ -27,7 +27,7 @@ ver = "0.21/2018"
 print("sensor_log.py - version: " + ver)
 
 Debug = True
-place = "PP2" # name group of IoT
+place = "PP1" # name group of IoT
 minute = 10 # 1/10 for data send
 #--- setup ---
 isTemp = True
