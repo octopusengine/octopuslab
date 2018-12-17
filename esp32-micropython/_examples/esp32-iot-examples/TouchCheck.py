@@ -15,13 +15,13 @@ def readButton(threshold, delay):
         if t1.read() < threshold: 
             b1 = b1 + delay
         elif b1 != 0.0:
-            print("Pin{0} pressed for {1}".format(pin1, b1))
+            print("Pin A pressed for %f" % b1)
             b1 = 0.0
         
         if t2.read() < threshold: 
             b2 += delay
         elif b2 != 0.0:
-            print("Pin{0} pressed for {1}".format(pin2, b2))
+            print("Pin B pressed for %f" % b2)
             b2 = 0.0
             
         sleep(delay)
