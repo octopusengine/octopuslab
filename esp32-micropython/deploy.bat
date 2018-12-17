@@ -38,8 +38,9 @@ ampy -p  %PORT% put ./lib/temperature.py lib/temperature.py
 ampy -p  %PORT% put ./lib/max7219.py lib/max7219.py
 ampy -p  %PORT% put ./lib/max7219_8digit.py lib/max7219_8digit.py
 ampy -p  %PORT% put ./lib/sm28byj48.py lib/sm28byj48.py
-REM ampy -p  %PORT% put ./lib/microWebSrv.py lib/microWebSrv.py
-REM ampy -p  %PORT% put ./lib/microWebSocket.py  lib/microWebSocket.py
+
+ampy -p  %PORT% mkdir lib/bh1750
+ampy -p  %PORT% put ./lib/bh1750/__init__.py lib/bh1750/__init__.py
 
 ampy -p  %PORT% mkdir config
 ampy -p  %PORT% put ./config/device.json config/device.json
