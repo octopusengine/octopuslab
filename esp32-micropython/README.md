@@ -20,9 +20,9 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:::
 [MOTOR_12EN]          D25 -           - D5  (5)   CS0        [SPI_CS0_PIN]
 [MOTOR_1A]            D26 -           - TX2 (17)             [PIN_PWM1] /Servo1
 [MOTOR_4A]    T7      D27 -           - RX2 (16)             [PIN_PWM2] /Servo2
-[MOTOR_3A]    T6      D14 -           - D4  (4)              [PIN_PWM3] /Servo3
-[MOTOR_2A]    T5      D12 -           - D2  (2)              [BUILT_IN_LED]
-[MOTOR_34EN]  T4      D13 -           - D15 (15)             [WS_LED_PIN] //v1(13)     
+[MOTOR_3A]    T6      D14 -           - D4  (4)          T0  [PIN_PWM3] /Servo3
+[MOTOR_2A]    T5      D12 -           - D2  (2)          T2  [BUILT_IN_LED]
+[MOTOR_34EN]  T4      D13 -           - D15 (15)         T3  [WS_LED_PIN] //v1(13)     
                       GND -           - GND
                       VIN -           - 3V3 +
                            -----------
