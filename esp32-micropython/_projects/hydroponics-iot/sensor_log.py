@@ -23,8 +23,11 @@ from util.display_segment import *
 from assets.icons9x9 import ICON_clr, ICON_wifi
 from util.pinout import set_pinout
 
+ver = "0.21/2018"
+print("sensor_log.py - version: " + ver)
+
 Debug = True
-place = "PP1" # name group of IoT
+place = "PP2" # name group of IoT
 minute = 10 # 1/10 for data send
 #--- setup ---
 isTemp = True
@@ -218,16 +221,18 @@ if Debug: print("start - loop")
 displMessage("start >",1)
 
 while True:
-    if isLight:
-        numlux = sbh.luminance(BH1750.ONCE_HIRES_1)
-        print(numlux)
-        displBar(yb0,int(math.log10(numlux)*2),300,1)
+    try:
+        if isLight:
+            numlux = sbh.luminance(BH1750.ONCE_HIRES_1)
+            print(numlux)
+            displBar(yb0,int(math.log10(numlux)*2),300,1)
 
-    if isTemp:
-      temp = ts.read_temp()
-      tw = int(temp*10)
-      print(tw/10)
-      threeDigits(oled,tw,True,True)
-
+        if isTemp:
+          temp = ts.read_temp()
+          tw = int(temp*10)
+          print(tw/10)
+          threeDigits(oled,tw,True,True)
+    except:
+        displMessage("Err: main loop",3)
     #blinkOledPoint()
     time.sleep_ms(1000)
