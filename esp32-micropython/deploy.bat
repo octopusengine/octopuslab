@@ -48,7 +48,7 @@ ampy -p  %PORT% put ./util/sys_info.py util/sys_info.py
 ampy -p  %PORT% put ./util/pinout.py util/pinout.py
 ampy -p  %PORT% put ./util/octopus.py util/octopus.py
 ampy -p  %PORT% put ./util/wifi_connect.py util/wifi_connect.py
-ampy -p  %PORT% put ./util/display-segment.py util/display-segment.py
+ampy -p  %PORT% put ./util/display_segment.py util/display_segment.py
 
 ampy -p  %PORT% mkdir util/led
 ampy -p  %PORT% put ./util/led/__init__.py util/led/__init__.py
