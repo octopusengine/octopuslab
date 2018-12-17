@@ -44,13 +44,13 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:::
         - copies only files necesarry for initial setup
         - finishes quicker than Deploy</pre>
         <pre>You can pass your port ID (for instance COM3) as first parameter
-        if you're selecting the script from command line.</pre>
+        if you're running the script from command line.</pre>
     * [Deploy](https://github.com/octopusengine/octopuslab/blob/master/esp32-micropython/deploy.bat)
         <pre>  - requires whole directory
         - copies all files from root director
         - takes longer than Prepare</pre>
         <pre>You can pass your port ID (for instance COM3) as first parameter
-        if you're selecting the script from command line.</pre>
+        if you're running the script from command line.</pre>
     * webrepl1
     * blockly and webrepl
 
