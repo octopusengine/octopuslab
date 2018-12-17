@@ -108,20 +108,20 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:::
 <pre>
 
 root
- ╟─boot.py
- ╟─main.py
- ╚╗
-  ╠═assets
-  ║
-  ╠═config (json config files - device/wifi/...)
-  ║
-  ╠═lib
-  ║
-  ╠═pinouts (boards and soc type)
-  ║
-  ╠═util╦═setup
-  ║     ╠═led/buzzer
-  ╠═... ╠═...
+ ╟─ boot.py
+ ╟─ main.py
+ ║
+ ╠═ assets
+ ║
+ ╠═ config (json config files - device/wifi/...)
+ ║
+ ╠═ lib
+ ║
+ ╠═ pinouts (boards and soc type)
+ ║
+ ╠═ util ═╦═ setup
+ ║        ╠═ led/buzzer
+ ╠═ ...   ╠═ ...
 </pre>
 
 
