@@ -22,9 +22,10 @@ from util.led import blink
 from util.display_segment import *
 from assets.icons9x9 import ICON_clr, ICON_wifi
 from util.pinout import set_pinout
-pinout = set_pinout()
 
 Debug = True
+place = "PP1" # name group of IoT
+minute = 10 # 1/10 for data send
 #--- setup ---
 isTemp = True
 isLight = True
@@ -32,15 +33,15 @@ isPressure = False
 isAD = False #TODO
 isPH = False #TODO
 
-minute = 10 # 1/10 for data send
-
+pinout = set_pinout()
 led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
 
 if Debug: print("init i2c oled >")
 i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
 oled = ssd1306.SSD1306_I2C(128, 64, i2c)
-time.sleep_ms(2000)
+time.sleep_ms(100)
 
+# magic constants )
 aa = 16 # one segment size
 y0 = 9  # y possition
 x0 = aa+5
@@ -101,7 +102,6 @@ def oledImage(file):
      oled.text("Python", 70,45)
      oled.show()
 
-
 def blinkOledPoint():
     oled.fill_rect(x0,y0,5,5,1)
     oled.show()
@@ -117,20 +117,23 @@ header = {}
 header["Content-Type"] = "application/x-www-form-urlencoded"
 
 def sendData():
-    # GET >
-    #urlGET = urlMain + deviceID + "&type=temp1&value=" + str(tw)
-    #print(urlGET)
-    #req = urequests.post(url)
-    if isTemp:
-        temp = ts.read_temp()
-        tw = int(temp*10)
-        postdata_t = "device={0}&place={1}&value={2}&type={3}".format(deviceID, "PP1", str(tw),"temp1")
-        res = urequests.post(urlPOST, data=postdata_t, headers=header)
+    try:
+        # GET >
+        #urlGET = urlMain + deviceID + "&type=temp1&value=" + str(tw)
+        #print(urlGET)
+        #req = urequests.post(url)
+        if isTemp:
+            temp = ts.read_temp()
+            tw = int(temp*10)
+            postdata_t = "device={0}&place={1}&value={2}&type={3}".format(deviceID, place, str(tw),"temp1")
+            res = urequests.post(urlPOST, data=postdata_t, headers=header)
 
-    if isLight:
-        numlux = sbh.luminance(BH1750.ONCE_HIRES_1)
-        postdata_l = "device={0}&place={1}&value={2}&type={3}".format(deviceID, "PP1", str(int(numlux)),"ligh1")
-        res = urequests.post(urlPOST, data=postdata_l, headers=header)
+        if isLight:
+            numlux = sbh.luminance(BH1750.ONCE_HIRES_1)
+            postdata_l = "device={0}&place={1}&value={2}&type={3}".format(deviceID, place, str(int(numlux)),"ligh1")
+            res = urequests.post(urlPOST, data=postdata_l, headers=header)
+    except:
+        displMessage("Err: send data",3)
 
 def displMessage(mess,timm):
     oled.fill_rect(0,ydown,128,10,0)
@@ -153,7 +156,7 @@ def displBar(by,num,timb,anim):
 
 #-----------------------------------------------------------------------------
 oledImage("octopus_image.pbm")
-time.sleep_ms(3000)
+time.sleep_ms(2500)
 oled.invert(0)
 oled.fill(0)                # reset display
 
