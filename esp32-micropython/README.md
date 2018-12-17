@@ -43,21 +43,24 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:::
         <pre>  - requires fewer initial files(1)
         - copies only files necesarry for initial setup
         - finishes quicker than Deploy</pre>
-        <pre>You can pass your port ID (for instance COM3) as first parameter if you're selectning the script from command line.</pre>
+        <pre>You can pass your port ID (for instance COM3) as first parameter
+        if you're selecting the script from command line.</pre>
     * [Deploy](https://github.com/octopusengine/octopuslab/blob/master/esp32-micropython/deploy.bat)
         <pre>  - requires whole directory
         - copies all files from root directory, no need for initial setup
         - takes longer than Prepare</pre>
-        <pre>You can pass your port ID (for instance COM3) as first parameter if you're selectning the script from command line.</pre>
+        <pre>You can pass your port ID (for instance COM3) as first parameter
+        if you're selecting the script from command line.</pre>
     * webrepl1
     * blockly and webrepl
 
 (1) Files required for Prepare are as follows: (directories included)
- - boot_prepare.py
- - /config/device.json
- - /util/setup.py
- - /util/sys_info.py
- - /util/wifi_connect.py
+<pre> boot_prepare.py
+ /config/device.json
+ /util/setup.py
+ /util/sys_info.py
+ /util/wifi_connect.py
+</pre>
 
 ## Initial setup
 
@@ -107,7 +110,8 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:::
 root
  ╟─boot.py
  ╟─main.py
- ╚╦═assets
+ ╚╗
+  ╠═assets
   ║
   ╠═config (json config files - device/wifi/...)
   ║
