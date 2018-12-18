@@ -93,14 +93,14 @@ def loadWav(wav_file):
     wav_pos = wav.seek(44)
 
     print("WAV File: {0}\n\
-    WAV Format: {1}\n\
-    WAV Channels: {2}\n\
-    WAV Sample rate: {3}\n\
-    WAV Bits per sample: {4}".format(wav_file,
-                                    wav_format,
-                                    wav_channels,
-                                    wav_sample_rate,
-                                    wav_bits_per_sample))
+WAV Format: {1}\n\
+WAV Channels: {2}\n\
+WAV Sample rate: {3}\n\
+WAV Bits per sample: {4}".format(wav_file,
+                                 wav_format,
+                                 wav_channels,
+                                 wav_sample_rate,
+                                 wav_bits_per_sample))
     return wav.read
 
 
