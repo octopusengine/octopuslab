@@ -51,7 +51,7 @@ def actualSampleRate(t):
     wav_pos_prev = wav_pos
 
 # Init DAC
-dac = DAC(Pin(25))
+dac = DAC(Pin(26))
 
 # Middle value for speaker
 dac.write(0x7F)
