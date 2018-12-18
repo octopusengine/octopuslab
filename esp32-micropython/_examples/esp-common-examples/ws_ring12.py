@@ -19,8 +19,8 @@ np = neo_init(n)
 
 def wheel(pos):
      if(pos < 85):
-         col = [pos*3, 255-pos+3,0]
-     if(pos < 170):
+         col = [pos*3, 255-pos*3,0]
+     elif(pos < 170):
        pos = pos -85;
        col = [255-pos*3, 0, pos*3]
      else:
