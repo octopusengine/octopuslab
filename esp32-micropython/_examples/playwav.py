@@ -1,4 +1,9 @@
 # Upload wav file using ampy or deploy tar
+#
+# TAR:
+#
+# import util.setup
+# util.setup.deploy("http[s]://path/to/file.tar")
 
 import os
 
