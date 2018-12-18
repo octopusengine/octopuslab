@@ -5,7 +5,7 @@
 # esp8266 / wemos / esp32 doit...
 
 # ampy -p /COM4 put util/octopus-8266.py util/octopus.py
-ver = "15.12.2018-v:0.23"
+ver = "18.12.2018-v:0.25"
 
 from micropython import const
 import time, os
@@ -87,9 +87,9 @@ def mainMenu():
     print("[m] - piezzo melody")
     print("[a] - analog input test")
     print("[t] - temperature")
-    print("[d] - displays    --- >>>")
-    print("[r] - robot Board --- >>>")
-    print("[p] - projects    --- >>>")
+    print("[d] - displays        --- >>>")
+    print("[r] - robot/iot Board --- >>>")
+    print("[p] - projects        --- >>>")
     #print("[u] * uart test")
     print("[q] - QUIT")
     print('-' * 35)
@@ -303,16 +303,16 @@ def octopus():
 
       if sel == "d":
          mainOctopus()
-         print("Display test >>>")
+         print(">>> Display test submenu")
          print('=' * 30)
-         print("[od] --- oled display test")
-         print("[os] --- oled 3segment")
-         print("[oi] --- oled display image")
-         print("[m7] --- max display 8x7-segm")
-         print("[m8] --- max display 8x8-matrix")
-         print("[sd] --- serial display")
-         print("[nd] -+- Nextion display")
-         print("[id] -+- ink display")
+         print("--- [od] --- oled display test")
+         print("--- [os] --- oled 3segment")
+         print("--- [oi] --- oled display image")
+         print("--- [m7] --- max display 8x7-segm")
+         print("--- [m8] --- max display 8x8-matrix")
+         print("--- [sd] --- serial display")
+         print("-+- [nd] -+- Nextion display")
+         print("-+- [id] -+- ink display")
          print('=' * 30)
          sel_d = input("select: ")
 
@@ -420,11 +420,18 @@ def octopus():
 
       if sel == "r":
              mainOctopus()
-             print("Robot board test >>>")
+             print()
              print('=' * 30)
-             print("[dc] --- dc motor test")
-             print("[se] --- servo")
-             print("[sm] --- step motor")
+             print(">>> Boards special test")
+             print('.' * 30)
+             print("    Robot board")
+             print("--- [dc] --- dc motor test")
+             print("--- [se] --- servo")
+             print("--- [sm] --- step motor")
+             print('.' * 30)
+             print("    IoT board")
+             print("--- [re] --- relay test")
+             print("--- [fa] --- pwm fan test")
              print('=' * 30)
 
              sel_r = input("select: ")
@@ -503,13 +510,21 @@ def octopus():
                 # turn left 90 deg
                 motor1.turn_degree(90, 1)
 
+             if sel_r == "re":
+                 print("relay test >")
+                 rel = Pin(pinout.RELAY_PIN, Pin.OUT)
+                 rel.value(1)
+                 time.sleep_ms(3000)
+                 rel.value(0)
+
       if sel == "p":
             mainOctopus()
-            print("Projects >>>")
+            print()
+            print(">>> Projects submenu")
             print('=' * 30)
-            print("[1] --- temporary")
-            print("[2] --- todo")
-            print("[3] --- ")
+            print("--- [1] --- temporary")
+            print("--- [2] --- todo")
+            print("--- [3] --- ")
             print('=' * 30)
 
             sel_p = input("select: ")
