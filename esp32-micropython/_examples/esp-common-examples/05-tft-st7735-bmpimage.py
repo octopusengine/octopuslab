@@ -124,6 +124,43 @@ print("Took: {0}ms".format(utime.ticks_ms()-start))
 #-------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------
 
+
+# 317ms, writing to temp FrameBuffer and direct flush to TFT per row
+# Using 2 byte read, do not use struct.unpack but shift bites
+import struct
+import utime
+
+start = utime.ticks_ms()
+f = open("octopuslogo-120w-565rgb.bmp", "rb")
+
+magic, size, res1,res2, imgoffset = struct.unpack('<2sIHHI', f.read(14))
+imgheadersize, w, h, planes, bits, comp, imgdatasize, xres,yres, ncol, icol = struct.unpack('<IiiHHIIiiII', f.read(40))
+
+rowSize = (w * 2 + 2) & ~2;
+
+fr = f.read
+fs = f.seek
+
+tmpfb = framebuf.FrameBuffer(bytearray(rowSize), w, 1, framebuf.RGB565)
+tmpfbp = tmpfb.pixel
+tftbb = tft.blit_buffer
+
+for row in range(0, h):
+    pos = imgoffset + (h - 1 - row) * rowSize
+    fs(pos)
+    for col in range(0, w):
+        data = fr(2)
+        tmpfbp(col, 0, (data[0] << 8) + data[1])
+
+    tftbb(tmpfb, 0, row, w, 1)
+
+print("Took: {0}ms".format(utime.ticks_ms()-start))
+
+
+#-------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------
+
 # 250ms Just read, nothing else, no FrameBuffer no TFT write
 
 import struct
@@ -139,5 +176,131 @@ for row in range(0, h):
     fs(pos)
     for col in range(0, w):
         data = unp('>H', fr(2))[0]
+
+print("Took: {0}ms".format(utime.ticks_ms()-start))
+
+
+#-------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------
+
+# 194ms Just read, nothing else, no FrameBuffer no TFT write
+
+import struct
+import utime
+
+f = open("octopuslogo-120w-565rgb.bmp", "rb")
+
+magic, size, res1,res2, imgoffset = struct.unpack('<2sIHHI', f.read(14))
+imgheadersize, w, h, planes, bits, comp, imgdatasize, xres,yres, ncol, icol = struct.unpack('<IiiHHIIiiII', f.read(40))
+
+rowSize = (w * 2 + 2) & ~2;
+
+unp = struct.unpack
+fr = f.read
+fs = f.seek
+o = ord # 227ms if ord not preloaded
+
+start = utime.ticks_ms()
+
+for row in range(0, h):
+    pos = imgoffset + (h - 1 - row) * rowSize
+    fs(pos)
+    for col in range(0, w):
+        data = (o(fr(1)) << 8) + o(fr(1))
+
+print("Took: {0}ms".format(utime.ticks_ms()-start))
+
+#-------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------
+
+# 110ms Just read, nothing else, no FrameBuffer no TFT write
+
+import struct
+import utime
+
+f = open("octopuslogo-120w-565rgb.bmp", "rb")
+
+magic, size, res1,res2, imgoffset = struct.unpack('<2sIHHI', f.read(14))
+imgheadersize, w, h, planes, bits, comp, imgdatasize, xres,yres, ncol, icol = struct.unpack('<IiiHHIIiiII', f.read(40))
+
+rowSize = (w * 2 + 2) & ~2;
+
+unp = struct.unpack
+fr = f.read
+fs = f.seek
+o = ord # 227ms if ord not preloaded
+
+start = utime.ticks_ms()
+
+for row in range(0, h):
+    pos = imgoffset + (h - 1 - row) * rowSize
+    fs(pos)
+    for col in range(0, w):
+        dataread = fr(2)
+        data = (dataread[0] << 8) + dataread[1]
+
+print("Took: {0}ms".format(utime.ticks_ms()-start))
+
+
+#-------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------
+
+#  102ms Just read, nothing else, no FrameBuffer no TFT write
+
+import struct
+import utime
+
+f = open("octopuslogo-120w-565rgb.bmp", "rb")
+
+magic, size, res1,res2, imgoffset = struct.unpack('<2sIHHI', f.read(14))
+imgheadersize, w, h, planes, bits, comp, imgdatasize, xres,yres, ncol, icol = struct.unpack('<IiiHHIIiiII', f.read(40))
+
+rowSize = (w * 2 + 2) & ~2;
+
+unp = struct.unpack
+fr = f.read
+fs = f.seek
+
+start = utime.ticks_ms()
+
+for row in range(0, h):
+    pos = imgoffset + (h - 1 - row) * rowSize
+    fs(pos)
+    for col in range(0, w):
+        data1 = fr(1)
+        data2 = fr(1)
+
+print("Took: {0}ms".format(utime.ticks_ms()-start))
+
+#-------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------
+
+#  67ms Just read, nothing else, no FrameBuffer no TFT write
+
+import struct
+import utime
+
+f = open("octopuslogo-120w-565rgb.bmp", "rb")
+
+magic, size, res1,res2, imgoffset = struct.unpack('<2sIHHI', f.read(14))
+imgheadersize, w, h, planes, bits, comp, imgdatasize, xres,yres, ncol, icol = struct.unpack('<IiiHHIIiiII', f.read(40))
+
+rowSize = (w * 2 + 2) & ~2;
+
+unp = struct.unpack
+fr = f.read
+fs = f.seek
+
+start = utime.ticks_ms()
+
+for row in range(0, h):
+    pos = imgoffset + (h - 1 - row) * rowSize
+    fs(pos)
+    for col in range(0, w):
+        data = fr(2)
 
 print("Took: {0}ms".format(utime.ticks_ms()-start))
