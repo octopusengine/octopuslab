@@ -215,7 +215,7 @@ print("Took: {0}ms".format(utime.ticks_ms()-start))
 #-------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------
 
-# 110ms Just read, nothing else, no FrameBuffer no TFT write
+# 100ms Just read, nothing else, no FrameBuffer no TFT write
 
 import struct
 import utime
@@ -227,10 +227,8 @@ imgheadersize, w, h, planes, bits, comp, imgdatasize, xres,yres, ncol, icol = st
 
 rowSize = (w * 2 + 2) & ~2;
 
-unp = struct.unpack
 fr = f.read
 fs = f.seek
-o = ord # 227ms if ord not preloaded
 
 start = utime.ticks_ms()
 
@@ -260,7 +258,6 @@ imgheadersize, w, h, planes, bits, comp, imgdatasize, xres,yres, ncol, icol = st
 
 rowSize = (w * 2 + 2) & ~2;
 
-unp = struct.unpack
 fr = f.read
 fs = f.seek
 
@@ -291,7 +288,6 @@ imgheadersize, w, h, planes, bits, comp, imgdatasize, xres,yres, ncol, icol = st
 
 rowSize = (w * 2 + 2) & ~2;
 
-unp = struct.unpack
 fr = f.read
 fs = f.seek
 
