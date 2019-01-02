@@ -1,7 +1,8 @@
 """
-This example usage of DS18B20 "Dallas" temperature sensor, SSD1306 OLED display
-and light sensor BH1750
-for #hydroponics IoT monitoring system
+sensor_log for #hydroponics IoT monitoring system
+example usage of  SSD1306 OLED display
+DS18B20 "Dallas" temperature sensor, light sensor BH1750, moisture sensor
+
 ampy -p /COM5 put sensor_log.py main.py
 alfa > beta
 """
@@ -23,7 +24,7 @@ from util.display_segment import *
 from assets.icons9x9 import ICON_clr, ICON_wifi
 from util.pinout import set_pinout
 
-ver = "0.21/2018"
+ver = "0.22/2019"
 print("sensor_log.py - version: " + ver)
 
 Debug = True
@@ -32,12 +33,18 @@ minute = 10 # 1/10 for data send
 #--- setup ---
 isTemp = True
 isLight = True
+isMois = True
 isPressure = False
 isAD = False #TODO
 isPH = False #TODO
 
 pinout = set_pinout()
 led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
+#moisture
+pwM = Pin(pinout.PWM1_PIN, Pin.OUT)
+pin_an = Pin(pinout.I35_PIN, Pin.IN)
+adcM = adc = machine.ADC(pin_an)
+
 
 if Debug: print("init i2c oled >")
 i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
@@ -51,6 +58,17 @@ x0 = aa+5
 xb0 = 0 # display bar possition
 yb0 = 58
 ydown = 57
+
+def get_moisture():
+    pwM.value(1)
+    time.sleep_ms(1000)
+    s1 = adcM.read() #moisture sensor
+    time.sleep_ms(1000)
+    s2 = adcM.read() #moisture sensor
+
+    s = int((s1+s2)/2)
+    pwM.value(0)
+    return(s)
 
 def draw_icon(icon, posx, posy):
   for y, row in enumerate(icon):
@@ -130,11 +148,19 @@ def sendData():
             tw = int(temp*10)
             postdata_t = "device={0}&place={1}&value={2}&type={3}".format(deviceID, place, str(tw),"temp1")
             res = urequests.post(urlPOST, data=postdata_t, headers=header)
+            time.sleep_ms(1000)
+
+        if isMois:
+            sM = get_moisture()
+            postdata_l = "device={0}&place={1}&value={2}&type={3}".format(deviceID, place, str(int(sM)),"mois1")
+            res = urequests.post(urlPOST, data=postdata_l, headers=header)
 
         if isLight:
             numlux = sbh.luminance(BH1750.ONCE_HIRES_1)
             postdata_l = "device={0}&place={1}&value={2}&type={3}".format(deviceID, place, str(int(numlux)),"ligh1")
             res = urequests.post(urlPOST, data=postdata_l, headers=header)
+            time.sleep_ms(1000)
+
     except:
         displMessage("Err: send data",3)
 
@@ -149,7 +175,8 @@ def displBar(by,num,timb,anim):
     oled.fill_rect(xb0,by-1,128,5+2,0) # clear
     for i in range(10):               # 0
         oled.hline(xb0+i*13,by+2,9,1)
-    for i in range(num):               # 1
+    if num > 0:
+      for i in range(num):               # 1
         oled.fill_rect(xb0+i*13,by,10,5,1)
         if anim:
            oled.show()
@@ -224,14 +251,19 @@ while True:
     try:
         if isLight:
             numlux = sbh.luminance(BH1750.ONCE_HIRES_1)
-            print(numlux)
+            print("L:"+str(numlux))
             displBar(yb0,int(math.log10(numlux)*2),300,1)
 
         if isTemp:
           temp = ts.read_temp()
           tw = int(temp*10)
-          print(tw/10)
+          print("T:"+str(tw/10))
           threeDigits(oled,tw,True,True)
+
+        #if isMois: #only test
+        #    s = get_moisture()
+        #    print("M:"+str(s))
+
     except:
         displMessage("Err: main loop",3)
     #blinkOledPoint()
