@@ -161,6 +161,44 @@ print("Took: {0}ms".format(utime.ticks_ms()-start))
 #-------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------
 
+# Forward read - how is BMP encoded
+
+# 303ms, writing to temp FrameBuffer and direct flush to TFT per row
+# Using 2 byte read, do not use struct.unpack but shift bites
+import struct
+import utime
+
+start = utime.ticks_ms()
+f = open("octopuslogo-120w-565rgb.bmp", "rb")
+
+magic, size, res1,res2, imgoffset = struct.unpack('<2sIHHI', f.read(14))
+imgheadersize, w, h, planes, bits, comp, imgdatasize, xres,yres, ncol, icol = struct.unpack('<IiiHHIIiiII', f.read(40))
+
+rowSize = (w * 2 + 2) & ~2;
+
+fr = f.read
+fs = f.seek
+
+tmpfb = framebuf.FrameBuffer(bytearray(rowSize), w, 1, framebuf.RGB565)
+tmpfbp = tmpfb.pixel
+tftbb = tft.blit_buffer
+pos = imgoffset
+fs(pos)
+
+for row in range(0, h):
+    for col in range(0, w):
+        data = fr(2)
+        tmpfbp(col, 0, (data[0] << 8) + data[1])
+
+    tftbb(tmpfb, 0, h - 1 - row, w, 1)
+
+print("Took: {0}ms".format(utime.ticks_ms()-start))
+
+
+#-------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------
+
 # 250ms Just read, nothing else, no FrameBuffer no TFT write
 
 import struct
