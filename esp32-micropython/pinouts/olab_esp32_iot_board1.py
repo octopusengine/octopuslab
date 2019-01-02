@@ -1,7 +1,7 @@
 """
 This is octopusLab basic library for iotBoard PCB and esp32 soc
 I2C / SPI / MOTORs / SERVO / PWM...
-Edition: --- 2.12.2018 ---
+Edition: --- 2.1.2019 ---
 """
 from micropython import const
 # PIN as on octopusLAB Wemos ESP32 IoTBoard1
