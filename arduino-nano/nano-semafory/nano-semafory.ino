@@ -1,25 +1,28 @@
-// the setup function runs once when you press reset or power the board
+// octopusLAB - arduino NANO / UNIboard / ULN LED driver
+// 5.1.2019 - ok
+// MIT (c) Jan Copak
 
 //green
-int G1 = 3; //PWM
-int G2 = 4; //
-int G3 = 5; //PWM
-int G4 = 6; //PWM
-int G5 = 7; //
-int G6 = 8;
+#define G1 3 //PWM
+#define G2 4 //
+#define G3 5 //PWM
+#define G4 6 //PWM
+#define G5 7 //
+#define G6 8
 //red
-int R1 = 9;  //PWM
-int R2 = 10; //PWM
-int R3 = 11; //PWM
-int R4 = 12; 
-int R5 = A0;
-int R6 = A1; 
+#define R1 9  //PWM
+#define R2 10 //PWM
+#define R3 11 //PWM
+#define R4 12 
+#define R5 A0
+#define R6 A1
 
-int buttonPin = 2;
+const byte pins[] = {
+  G1, G2, G3, G4, G5, G6,
+  R1, R2, R3, R4, R5, R6
+}; 
+
 const byte interruptPin = 2;
-volatile byte state = LOW;
-
-//12/13//PWM
 
 int menu = 0; //default
 
@@ -71,7 +74,7 @@ void test_fade(int tim)
   fade1(G6,tim);    
 }
 
-void test_blinkG(int bt)
+void blink_allG(int bt)
 {
   blink1(G1,bt);
   blink1(G2,bt);
@@ -81,7 +84,7 @@ void test_blinkG(int bt)
   blink1(G6,bt);
 }
 
-void test_blinkR(int bt)
+void blink_allR(int bt)
 {
   blink1(R1,bt);
   blink1(R2,bt);
@@ -102,7 +105,6 @@ void test_blinkRG(int bt)
 }
 
 void test1(){
-
   for (uint8_t i = 0; i < 3; i++)
   {
   digitalWrite(LED_BUILTIN, HIGH);   
@@ -146,21 +148,35 @@ for (int i = 0; i < 500; i++)
   }  
 }
 
-int simpleReadButt(){
-  //buttonState
-  if (digitalRead(buttonPin) == LOW) {
-    Serial.println("but1");
-    delay(10);
-    if (digitalRead(buttonPin) == LOW)
-          {
-            menu = menu+1;
-            if (menu>3){menu = 0;}
-          }
-    } else {
-      Serial.println("but0");
-    }
-  }
+void ligtMultiAll(int tim){
+  for (int i = 0; i < tim; i++) //800 cca 1-2sec
+    {    test_blinkRG(1);    }
+}
 
+void sw_fade(int led,int lightTime) {
+  int maxi = 300;
+  int multH = 5;
+  int multL = 20;
+  for (int i = 1; i < maxi; i++)
+  {
+      digitalWrite(led, HIGH);
+      delayMicroseconds(i*multH); 
+      digitalWrite(led, LOW); 
+      delayMicroseconds((maxi-i)*multL); 
+  }
+  digitalWrite(led, HIGH);
+  delay(lightTime); 
+  digitalWrite(led, LOW);
+  for (int i = 1; i < maxi; i++)
+  {
+      digitalWrite(led, HIGH);
+      delayMicroseconds((maxi-i)*multH); 
+      digitalWrite(led, LOW); 
+      delayMicroseconds(i*multL); 
+  }  
+}
+
+//----------butt int
 void myInt()
 {
  static unsigned long last_interrupt_time = 0;
@@ -174,68 +190,67 @@ void myInt()
 }
 
 int doButtInt(){
-    Serial.println("but_interupt");
+    Serial.print("butt_interupt > ");
     delay(100); 
     menu = menu+1;
     if (menu>3){menu = 0;} 
     Serial.println(menu);
-    delay(1000);         
+    
+    delay(500);
+    sw_fade(pins[menu],2000);
+    delay(500);
+    sw_fade(pins[menu],2000); 
+    delay(500);
+    sw_fade(pins[menu],2000); 
+    delay(1000);          
 }  
-//-----------------------
+//---------------------------------------------------------------- ==================
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Start simple LED driwer test");
-  //pinMode(buttonPin, INPUT_PULLUP);
+  Serial.println("----- Simple LED driwer < Arduino Nano, ULN, UNIboard -----");
+  
+  Serial.println("Setup interrupt");
   pinMode(interruptPin, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(interruptPin), myInt, FALLING); //CHANGE
-  
+
+  Serial.print("Setup PINS: ");
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(G1, OUTPUT);
-  pinMode(G2, OUTPUT);
-  pinMode(G3, OUTPUT);
-  pinMode(G4, OUTPUT);
-  pinMode(G5, OUTPUT);
-  pinMode(G6, OUTPUT);
-  pinMode(R1, OUTPUT);
-  pinMode(R2, OUTPUT);
-  pinMode(R3, OUTPUT);
-  pinMode(R4, OUTPUT);
-  pinMode(R5, OUTPUT);
-  pinMode(R6, OUTPUT);
+  for (int i = 0; i < 12; i++) 
+    {     pinMode(pins[i], OUTPUT);   
+          Serial.print(i, pins[i]);
+    }
+  Serial.println();  
 }
 
-// the loop function runs over and over again forever
+void loop() {   // the loop function runs over and over again forever ===============
+if (menu == 0 ){
+    Serial.println("go-menu0-default");
+    //sw_fade(R5,3000);
+    //sw_fade(G2,3000);
+    ligtMultiAll(800); 
 
-void loop() {
-  //menu = simpleReadButt();
-  Serial.print("loop menu:");
-  Serial.println(menu);
-
-  if (menu == 0 ){
-    Serial.println("test1");
-    for (int i = 0; i < 800; i++)
-    {  
-    test_blinkRG(1);
-    }
-  }
+    blink_allG(1500);
+    blink_allR(1500);    
+}
  
 if (menu == 1 ){ 
-  
-  test_blinkG(300);
-  test_blinkR(300); 
+  Serial.println("go-menu1");
+  blink_allG(1500);
+  blink_allR(1500); 
 }
 
-if (menu == 2 ){   
+if (menu == 2 ){ 
+  Serial.println("go-menu0");  
   test_fade(1000);
 }
 
-if (menu == 3 ){   
-  int number12 = random(0, 11)+1;
+if (menu == 3 ){ 
+  Serial.println("go-menu3");  
+  int number12 = random(0, 3); //11
   Serial.print("loop rnd:");
   Serial.println(number12);
+  sw_fade(pins[number12],3000);
 }
-
-delay(2000);
-                      
+delay(3000);                     
 }
