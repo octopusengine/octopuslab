@@ -1,5 +1,5 @@
 // octopusLAB - arduino NANO / UNIboard / ULN LED driver
-// 5.1.2019 - ok
+// 6.1.2019 - ok - first patterns
 // MIT (c) Jan Copak
 
 //green
@@ -24,7 +24,7 @@ const byte pins[] = {
 
 const byte interruptPin = 2;
 
-int menu = 0; //default
+int menu = 1; //default
 
 //int led = 9;           // the PWM pin the LED is attached to
 int brightness = 0;    // how bright the LED is
@@ -193,15 +193,15 @@ int doButtInt(){
     Serial.print("butt_interupt > ");
     delay(100); 
     menu = menu+1;
-    if (menu>3){menu = 0;} 
+    if (menu>3){menu = 1;} 
     Serial.println(menu);
     
     delay(500);
-    sw_fade(pins[menu],2000);
+    sw_fade(pins[menu-1],1000);
     delay(500);
-    sw_fade(pins[menu],2000); 
+    sw_fade(pins[menu-1],1000); 
     delay(500);
-    sw_fade(pins[menu],2000); 
+    sw_fade(pins[menu-1],1000); 
     delay(1000);          
 }  
 //---------------------------------------------------------------- ==================
@@ -223,34 +223,32 @@ void setup() {
   Serial.println();  
 }
 
-void loop() {   // the loop function runs over and over again forever ===============
-if (menu == 0 ){
-    Serial.println("go-menu0-default");
-    //sw_fade(R5,3000);
-    //sw_fade(G2,3000);
-    ligtMultiAll(800); 
-
-    blink_allG(1500);
-    blink_allR(1500);    
-}
- 
+void loop() {   // the loop function runs over and over again forever =============== 
 if (menu == 1 ){ 
   Serial.println("go-menu1");
-  blink_allG(1500);
-  blink_allR(1500); 
+  blink1(LED_BUILTIN,500); 
+  ligtMultiAll(1500);      
 }
 
 if (menu == 2 ){ 
-  Serial.println("go-menu0");  
-  test_fade(1000);
+  Serial.println("go-menu2"); 
+  blink1(LED_BUILTIN,200);  delay(200);
+  blink1(LED_BUILTIN,200);  
+ 
+  int number12 = random(0, 11); //0,11=all
+  Serial.print("loop rnd:");
+  Serial.println(number12);
+  sw_fade(pins[number12],3500);
 }
 
 if (menu == 3 ){ 
-  Serial.println("go-menu3");  
-  int number12 = random(0, 3); //11
-  Serial.print("loop rnd:");
-  Serial.println(number12);
-  sw_fade(pins[number12],3000);
-}
-delay(3000);                     
+  Serial.println("go-menu3"); 
+  blink1(LED_BUILTIN,150);delay(200);
+  blink1(LED_BUILTIN,150);delay(200);
+  blink1(LED_BUILTIN,150);
+   
+  blink_allG(1500);
+  blink_allR(1500);
+  delay(1000);
+ }                     
 }
