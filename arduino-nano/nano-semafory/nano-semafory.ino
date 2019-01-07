@@ -1,15 +1,15 @@
 // octopusLAB - arduino NANO / UNIboard / ULN LED driver
-// 6.1.2019 - ok - first patterns
+// 7.1.2019 - ok - first patterns
 // MIT (c) Jan Copak
 
-//green
+//ULN1
 #define G1 3 //PWM
 #define G2 4 //
 #define G3 5 //PWM
 #define G4 6 //PWM
 #define G5 7 //
 #define G6 8
-//red
+//ULN2
 #define R1 9  //PWM
 #define R2 10 //PWM
 #define R3 11 //PWM
@@ -20,6 +20,16 @@
 const byte pins[] = {
   G1, G2, G3, G4, G5, G6,
   R1, R2, R3, R4, R5, R6
+}; 
+
+const byte pinsR[] = {
+  G1, G3, G5,
+  R1, R3, R5
+}; 
+
+const byte pinsG[] = {
+  G2, G4, G6,
+  R2, R4, R6
 }; 
 
 const byte interruptPin = 2;
@@ -64,34 +74,20 @@ void fade1(int led,int lightTime) {
   analogWrite(led, 0);  
 }
 
-void test_fade(int tim)
-{
-  fade1(G1,tim);  
-  fade1(G2,tim);
-  fade1(G3,tim); 
-  fade1(G4,tim); 
-  fade1(G5,tim); 
-  fade1(G6,tim);    
-}
-
 void blink_allG(int bt)
 {
-  blink1(G1,bt);
-  blink1(G2,bt);
-  blink1(G3,bt);
-  blink1(G4,bt);
-  blink1(G5,bt);
-  blink1(G6,bt);
+for (int i = 0; i < 6; i++) 
+    {        
+          blink1(pinsG[i],bt);
+    }
 }
 
 void blink_allR(int bt)
 {
-  blink1(R1,bt);
-  blink1(R2,bt);
-  blink1(R3,bt);
-  blink1(R4,bt);
-  blink1(R5,bt);
-  blink1(R6,bt);
+for (int i = 0; i < 6; i++) 
+    {        
+          blink1(pinsR[i],bt);
+    }
 }
 
 void test_blinkRG(int bt)
@@ -149,8 +145,21 @@ for (int i = 0; i < 500; i++)
 }
 
 void ligtMultiAll(int tim){
+  Serial.println("> ligtMultiAll");
   for (int i = 0; i < tim; i++) //800 cca 1-2sec
     {    test_blinkRG(1);    }
+}
+
+void ligtMultiR(int tim){
+  Serial.println("> ligtMultiR");
+  for (int i = 0; i < tim; i++) //800 cca 1-2sec
+    {    blink_allR(1);    }
+}
+
+void ligtMultiG(int tim){
+  Serial.println("> ligtMultiG");
+  for (int i = 0; i < tim; i++) //800 cca 1-2sec
+    {    blink_allG(1);    }
 }
 
 void sw_fade(int led,int lightTime) {
@@ -227,7 +236,9 @@ void loop() {   // the loop function runs over and over again forever ==========
 if (menu == 1 ){ 
   Serial.println("go-menu1");
   blink1(LED_BUILTIN,500); 
-  ligtMultiAll(1500);      
+  ligtMultiAll(1500);  
+  ligtMultiR(1500);
+  ligtMultiG(1500);        
 }
 
 if (menu == 2 ){ 
@@ -236,7 +247,7 @@ if (menu == 2 ){
   blink1(LED_BUILTIN,200);  
  
   int number12 = random(0, 11); //0,11=all
-  Serial.print("loop rnd:");
+  Serial.print("> loop rnd:");
   Serial.println(number12);
   sw_fade(pins[number12],3500);
 }
@@ -246,7 +257,8 @@ if (menu == 3 ){
   blink1(LED_BUILTIN,150);delay(200);
   blink1(LED_BUILTIN,150);delay(200);
   blink1(LED_BUILTIN,150);
-   
+
+  Serial.println("> blink all R / G"); 
   blink_allG(1500);
   blink_allR(1500);
   delay(1000);
