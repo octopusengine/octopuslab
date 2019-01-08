@@ -1,3 +1,5 @@
+### This is only education test more ways how to draw image in MircroPython
+
 # 11 700 ms - direct write to TFT without FrameBuffer, RGB888 BMP 3 Byte per pixel
 import struct
 import utime
@@ -82,6 +84,37 @@ for row in range(0, h):
 tft.blit_buffer(fb, 0, 0, 128, 160)
 print("Took: {0}ms".format(utime.ticks_ms()-start))
 
+
+#-------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------
+
+
+# 250ms write to global FrameBuffer and flush to TFT once, use bit move
+import struct
+import utime
+
+start = utime.ticks_ms()
+f = open("octopuslogo-120w-565rgb.bmp", "rb")
+
+magic, size, res1,res2, imgoffset = struct.unpack('<2sIHHI', f.read(14))
+imgheadersize, w, h, planes, bits, comp, imgdatasize, xres,yres, ncol, icol = struct.unpack('<IiiHHIIiiII', f.read(40))
+
+fr = f.read
+fs = f.seek
+fbp = fb.pixel
+
+rowSize = (w * 2 + 2) & ~2;
+
+for row in range(0, h):
+    pos = imgoffset + (h - 1 - row) * rowSize
+    fs(pos)
+    for col in range(0, w):
+        data = fr(2)
+        fbp(col, row, (data[0] << 8) + data[1])
+
+tft.blit_buffer(fb, 0, 0, 128, 160)
+print("Took: {0}ms".format(utime.ticks_ms()-start))
 
 #-------------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------------
