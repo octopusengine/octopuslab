@@ -2,7 +2,7 @@
 $target_dir = "data/";
 $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 $uploadOk = 1;
-$uploadkey = "KEYoctopus19";
+$uploadkey = "KEY";
 
 //archive
 $date = new DateTime('now');
