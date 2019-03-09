@@ -2,6 +2,9 @@
 # import upip
 # upip.install("micropython-ssd1306")
 
+def map(x, in_min, in_max, out_min, out_max):
+    return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)
+
 from machine import I2C, Pin
 import network
 from ssd1306 import SSD1306_I2C
