@@ -8,13 +8,21 @@ def map(x, in_min, in_max, out_min, out_max):
 from machine import I2C, Pin
 import network
 from ssd1306 import SSD1306_I2C
+import time
 
 wlan = network.WLAN()
 wlan.active(1)
 wlan.connect(WIFI_SSID, WIFI_PASS)
 
 i2c = I2C(scl = Pin(4), sda=Pin(5))
-oled = ssd1306.SSD1306_I2C(128, 64, i2c)
+oled = SSD1306_I2C(128, 64, i2c)
+
+oled.text("Connecting", 0, 0)
+oled.text(WIFI_SSID, 0, 15)
+oled.show()
+
+while not wlan.isconnected():
+    pass
 
 while 1:
     oled.fill(0)
