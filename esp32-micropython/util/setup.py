@@ -162,7 +162,6 @@ def setup():
             upip.install("micropython-shutil")
             print("Running deploy")
             deplUrl = "http://iot.petrkr.net/olab/latest.tar"
-            #deplUrl = "http://octopuslab.cz/download/latest.tar"
             deploy(deplUrl)
 
         if sele == "sdo":
@@ -171,7 +170,6 @@ def setup():
             print("Installing shutil")
             upip.install("micropython-shutil")
             print("Running deploy")
-            #deplUrl = "http://iot.petrkr.net/olab/latest.tar"
             #deplUrl = "http://octopuslab.cz/download/latest.tar"
             deplUrl = "http://octopusengine.org/download/latest.tar"
             deploy(deplUrl)
