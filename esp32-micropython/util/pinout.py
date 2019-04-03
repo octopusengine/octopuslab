@@ -13,8 +13,11 @@ def set_pinout():
     except:
         print("Device config 'config/device.json' does not exist, please run setup()")
 
-    if device_config.get('board_type') == "oLAB default" and device_config.get('soc_type') == "esp32":
+    if device_config.get('board_type') == "oLAB Default" and device_config.get('soc_type') == "esp32":
         import pinouts.olab_esp32_default as pinout
+
+    if device_config.get('board_type') == "oLAB Witty" and device_config.get('soc_type') == "esp8266":
+        import pinouts.olab_esp826_witty as pinout    
 
     if device_config.get('board_type') == "oLAB Tickernator" and device_config.get('soc_type') == "esp8266":
         import pinouts.olab_esp8266_tickernator as pinout
