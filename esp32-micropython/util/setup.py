@@ -62,7 +62,8 @@ def setupMenu():
     print("[sw]  - set wifi")
     print("[cw]  - connect wifi")
     print("[st]  - set time")
-    print("[sd]  - system download >")
+    print("[sdp]  - system download > petrkr")
+    print("[sdo]  - system download > octopus")
     print("(initial octopus modules)")
     print("[si]  - system info")
     print("[e]   - exit setup")
@@ -154,7 +155,17 @@ def setup():
             rtc.init(dt_int)
             print(str(rtc.datetime()))
 
-        if sele == "sd":
+        if sele == "sdp":
+            print("System download > (initial octopus modules)")
+            import upip
+            print("Installing shutil")
+            upip.install("micropython-shutil")
+            print("Running deploy")
+            deplUrl = "http://iot.petrkr.net/olab/latest.tar"
+            #deplUrl = "http://octopuslab.cz/download/latest.tar"
+            deploy(deplUrl)
+
+        if sele == "sdo":
             print("System download > (initial octopus modules)")
             import upip
             print("Installing shutil")
