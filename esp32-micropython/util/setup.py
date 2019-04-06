@@ -18,6 +18,21 @@ devices = [
 ["oLAB IoTBoard1","esp32"]
 ]
 
+octopuASCII = [
+"      ,'''`.",
+"     /      \ ",
+"     |(@)(@)|",
+"     )      (",
+"    /,'))((`.\ ",
+"   (( ((  )) ))",
+"   )  \ `)(' / ( ",
+]
+
+def mainOctopus():
+    for ol in octopuASCII:
+        print(str(ol))
+    print()
+
 def deploy(url):
     import sys
     import os
@@ -61,6 +76,7 @@ def setupMenu():
     print("[ds]  - device setting")
     print("[sw]  - set wifi")
     print("[cw]  - connect wifi")
+    print("[mq]  - set mqtt")
     print("[st]  - set time")
     print("[sdp]  - system download > petrkr")
     print("[sdo]  - system download > octopus")
@@ -72,7 +88,16 @@ def setupMenu():
     sel = input("select: ")
     return sel
 
+def shutil(): 
+    print("System download > (initial octopus modules)")
+    import upip
+    print("Installing shutil")
+    upip.install("micropython-shutil")
+    print("Running deploy")
+       
+
 def setup():
+    mainOctopus()
     print("Hello, this will help you initialize your ESP")
     print("Press Ctrl+C to abort")
     print()
@@ -144,6 +169,21 @@ def setup():
               w.connect(wifi_config["wifi_ssid"], wifi_config["wifi_pass"])
               print("WiFi: OK")
 
+        if sele == "mq":
+            print("Set mqtt >")
+            print()
+            mq = {}
+            mq['mqtt_broker_ip'] = input("BROKER IP: ")
+            mq['mqtt_clientid_prefix'] = input("CLIENT PREFIX: ")
+
+            # TODO improve this
+            if 'config' not in uos.listdir():
+                uos.makedirs('config')
+
+            print("Writing to file config/mqtt.json")
+            with open('config/mqtt.json', 'w') as f:
+                ujson.dump(mq, f)
+
         if sele == "st":
             print("Time setting >")
             rtc = machine.RTC()
@@ -156,20 +196,12 @@ def setup():
             print(str(rtc.datetime()))
 
         if sele == "sdp":
-            print("System download > (initial octopus modules)")
-            import upip
-            print("Installing shutil")
-            upip.install("micropython-shutil")
-            print("Running deploy")
+            shutil()
             deplUrl = "http://iot.petrkr.net/olab/latest.tar"
             deploy(deplUrl)
 
         if sele == "sdo":
-            print("System download > (initial octopus modules)")
-            import upip
-            print("Installing shutil")
-            upip.install("micropython-shutil")
-            print("Running deploy")
+            shutil()
             #deplUrl = "http://octopuslab.cz/download/latest.tar"
             deplUrl = "http://octopusengine.org/download/latest.tar"
             deploy(deplUrl)
