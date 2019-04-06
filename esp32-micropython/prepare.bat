@@ -39,5 +39,6 @@ ampy -p  %PORT% mkdir util
 ampy -p  %PORT% put ./util/setup.py util/setup.py
 ampy -p  %PORT% put ./util/sys_info.py util/sys_info.py
 ampy -p  %PORT% put ./util/wifi_connect.py util/wifi_connect.py
+ampy -p  %PORT% put ./util/mqtt_connect.py util/mqtt_connect.py
 
 echo "ok - start: setup() in Mircopython"
