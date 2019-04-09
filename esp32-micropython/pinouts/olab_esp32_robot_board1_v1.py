@@ -51,3 +51,6 @@ I35_PIN = const(35)
 #main analog input (for power management)
 ANALOG_PIN = const(36)
 PIEZZO_PIN = const(5)
+MFET_PIN = const(17) # PWM1
+RELAY_PIN = const(16) # PWM2
+
