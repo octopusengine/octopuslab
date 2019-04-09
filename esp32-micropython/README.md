@@ -64,6 +64,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
  /util/setup.py
  /util/sys_info.py
  /util/wifi_connect.py
+ /util/mqtt_connect.py
 </pre>
 
 ## Initial setup
