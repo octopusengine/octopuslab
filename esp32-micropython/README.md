@@ -70,19 +70,35 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
 
 * Prepare
     * Once booted in by Putty (or similar software), run setup()
-        <pre>
-        ==============================
-                S E T U P
-        ==============================
-         [ds]  - device setting
-         [sw]  - set wifi
-         [cw]  - connect wifi
-         [st]  - set time
-         [sd]  - system download >
-         (initial octopus modules)
-         [si]  - system info
-         [e]   - exit setup
-        ==============================</pre>
+<pre>
+      ,'''`.
+     /      \
+     |(@)(@)|
+     )      (
+    /,'))((`.\
+   (( ((  )) ))
+   )  \ `)(' / (
+
+Hello, this will help you initialize your ESP
+2019/03 (c)octopusLAB
+Press Ctrl+C to abort
+
+"==============================
+        S E T U P
+"===============================
+[ds]  - device setting
+[sw]  - set wifi
+[cw]  - connect wifi
+[mq]  - set mqtt
+[st]  - set time
+[sdp]  - system download > petrkr
+[sdo]  - system download > octopus
+(initial octopus modules)
+[si]  - system info
+[o]   - run octopus() demo
+[e]   - exit setup
+"==============================
+</pre>
     * select <b>ds</b> (device setting), then choose which board you're using
     * select <b>sw</b> (set wifi) to assign wifi credentials
     * select <b>cw</b> (connect wifi) to reach the internets!
