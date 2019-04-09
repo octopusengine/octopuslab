@@ -8,6 +8,8 @@ esptool.py --chip esp32 -p /COM6 erase_flash
 esptool.py --chip esp32 -p /COM6 write_flash -z 0x1000 ./down/esp32-20190409-v1.10-271-g74ed06828.bin
 
 pak:
+ampy -p /COM6 ls > ampy "prošťouchne port" a následný přenos je pravděpodobnější 
+
 prepare.bat COM6
 
 ---
