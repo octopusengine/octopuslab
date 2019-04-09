@@ -27,18 +27,15 @@ ampy -p  %PORT% ls
 echo "boot prepare"
 ampy -p  %PORT% put boot_prepare.py boot.py
 
-echo "config:"
-ampy -p  %PORT% mkdir config
-ampy -p  %PORT% put ./config/device.json config/device.json
-
-echo "Lib:"
-ampy -p  %PORT% mkdir lib
-
 echo "Util:"
 ampy -p  %PORT% mkdir util
 ampy -p  %PORT% put ./util/setup.py util/setup.py
 ampy -p  %PORT% put ./util/sys_info.py util/sys_info.py
 ampy -p  %PORT% put ./util/wifi_connect.py util/wifi_connect.py
 ampy -p  %PORT% put ./util/mqtt_connect.py util/mqtt_connect.py
+
+echo "config:"
+ampy -p  %PORT% mkdir config
+ampy -p  %PORT% put ./config/device.json config/device.json
 
 echo "ok - start: setup() in Mircopython"
