@@ -107,6 +107,9 @@ c.set_callback(mqtt_sub)
 c.connect()
 c.subscribe("/octopus/device/{0}/#".format(esp_id))
 
+print("mqtt log")
+c.publish("log: /octopus/device/",esp_id) # topic, message (value) to publish
+
 print("> loop:")
 while True:
     c.check_msg()
