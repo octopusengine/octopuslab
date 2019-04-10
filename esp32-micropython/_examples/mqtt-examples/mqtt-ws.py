@@ -108,7 +108,7 @@ c.connect()
 c.subscribe("/octopus/device/{0}/#".format(esp_id))
 
 print("mqtt log")
-c.publish("log: /octopus/device/",esp_id) # topic, message (value) to publish
+c.publish("/octopus/device/",esp_id) # topic, message (value) to publish
 
 print("> loop:")
 while True:
