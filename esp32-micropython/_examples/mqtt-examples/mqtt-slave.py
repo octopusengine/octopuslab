@@ -171,6 +171,21 @@ def mqtt_sub(topic, msg):
 
         if data[0] == 'L':
            pwm = int(data[1:])
+
+    if "segm" in topic:
+        data = bd(msg)   
+
+        if data[0] == 'S':
+           print("S > segm")
+           try:
+              segnum = int(data[1:])  
+              print(segnum)
+
+              if is7seg:
+                d7.write_to_buffer(str(it)+"-"+str(segnum))
+                d7.display() 
+           except:
+               print("mqtt.esm.ERR")          
             
 
 # Default WS led light RED as init
