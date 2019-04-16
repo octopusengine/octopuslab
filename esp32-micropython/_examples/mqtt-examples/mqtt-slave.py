@@ -14,7 +14,7 @@ from umqtt.simple import MQTTClient
 from util.pinout import set_pinout
 pinout = set_pinout()
 
-ver = "15.4.2019-v:0.1"
+ver = "16.4.2019-v:0.1"
 print("mqtt-slave.py > ESP32")
 print(ver)
 
@@ -214,16 +214,21 @@ urlApi ="http://www.octopusengine.org/api/hydrop/"
 print("mqtt_config >")
 mqtt_clientid_prefix = read_mqtt_config()["mqtt_clientid_prefix"]
 mqtt_host = read_mqtt_config()["mqtt_broker_ip"]
+mqtt_root_topic = read_mqtt_config()["mqtt_root_topic"]
+
 mqtt_ssl  = False # Consider to use TLS!
 mqtt_clientid = mqtt_clientid_prefix + esp_id
 
 c = MQTTClient(mqtt_clientid, mqtt_host)
 c.set_callback(mqtt_sub)
 c.connect()
-c.subscribe("/octopus/device/{0}/#".format(esp_id))
+# c.subscribe("/octopus/device/{0}/#".format(esp_id))
+subStr = mqtt_root_topic+esp_id+"/#"
+c.subscribe(subStr)
 
 print("mqtt log")
-c.publish("/octopus/device/",esp_id) # topic, message (value) to publish
+# mqtt_root_topic_temp = "/octopus/device/"
+c.publish(mqtt_root_topic,esp_id) # topic, message (value) to publish
 
 timeSetup()
 timerInit()
