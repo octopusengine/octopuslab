@@ -7,6 +7,8 @@ import time, uos
 import ujson
 import machine #datetime
 
+ver = "2019/04 (c)octopusLAB"
+
 devices = [
 ["oLAB Default","esp32"],
 ["oLAB Witty","esp8266"],
@@ -82,6 +84,7 @@ def setupMenu():
     print("[sdo]  - system download > octopus")
     print("(initial octopus modules)")
     print("[si]  - system info")
+    print("[o]   - run octopus() demo")
     print("[e]   - exit setup")
 
     print('=' * 30)
@@ -99,8 +102,9 @@ def shutil():
 def setup():
     mainOctopus()
     print("Hello, this will help you initialize your ESP")
+    print(ver)
     print("Press Ctrl+C to abort")
-    print()
+    
 
     # TODO improve this
     # prepare directory
@@ -175,6 +179,7 @@ def setup():
             mq = {}
             mq['mqtt_broker_ip'] = input("BROKER IP: ")
             mq['mqtt_clientid_prefix'] = input("CLIENT PREFIX: ")
+            mq['mqtt_root_topic'] = input("ROOT TOPIC: ")
 
             # TODO improve this
             if 'config' not in uos.listdir():
@@ -205,3 +210,7 @@ def setup():
             #deplUrl = "http://octopuslab.cz/download/latest.tar"
             deplUrl = "http://octopusengine.org/download/latest.tar"
             deploy(deplUrl)
+
+        if sele == "o":
+            from util.octopus import octopus
+            octopus()    
