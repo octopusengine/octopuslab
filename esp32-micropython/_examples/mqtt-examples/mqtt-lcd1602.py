@@ -48,7 +48,7 @@ bd = bytes.decode
 
 mqtt_clientid_prefix = "CHANGE PREFIX"
 mqtt_host = read_mqtt_config()["mqtt_broker_ip"]
-mqtt_ssl  = False # Consider to use TLS!
+mqtt_ssl  = True # TODO: put to config
 
 def simple_blink():
     pin_led.value(1)
@@ -136,10 +136,9 @@ mqtt_clientid_prefix = read_mqtt_config()["mqtt_clientid_prefix"]
 mqtt_host = read_mqtt_config()["mqtt_broker_ip"]
 mqtt_root_topic = read_mqtt_config()["mqtt_root_topic"]
 
-mqtt_ssl  = False # Consider to use TLS!
 mqtt_clientid = mqtt_clientid_prefix + esp_id
 
-c = MQTTClient(mqtt_clientid, mqtt_host)
+c = MQTTClient(mqtt_clientid, mqtt_host, ssl=mqtt_ssl)
 c.set_callback(mqtt_sub)
 
 lcd.move_to(14, 0)
