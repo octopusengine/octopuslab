@@ -178,6 +178,8 @@ def setup():
             print()
             mq = {}
             mq['mqtt_broker_ip'] = input("BROKER IP: ")
+            mq['mqtt_ssl'] = input("> SSL (0/1): ")
+            mq['mqtt_port'] = input("> PORT (1883/8883/?): ")
             mq['mqtt_clientid_prefix'] = input("CLIENT PREFIX: ")
             mq['mqtt_root_topic'] = input("ROOT TOPIC: ")
 
