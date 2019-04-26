@@ -320,7 +320,7 @@ def handleKeyPad():
     if key and ticks_ms() > KP_LastPress + KP_Delay:
         KP_LastPress = ticks_ms()
         print(key)
-        c.publish("/octopus/{0}/keypad/key".format(esp_id), key)
+        c.publish("octopus/{0}/keypad/key".format(esp_id), key)
 
 print("> loop:")
 while True:
