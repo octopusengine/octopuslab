@@ -1,5 +1,4 @@
 // octopusLAB - arduino NANO / UNIboard / ULN LED driver
-// 7.1.2019 - ok - first patterns
 // MIT (c) Jan Copak
 
 //ULN1

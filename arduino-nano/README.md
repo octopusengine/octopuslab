@@ -1,6 +1,9 @@
-Arduino NANO:
+# OctopusLab/AruinoNano
 
-<pre>
+Everyone know this board. Its dead simple to use it and its very powerful. And we know it too! 
+Use this board to make motor controller, controll stepper motors etc! As every boards this folders contains some basics examples for this board with our development modules.
+
+## Pins
                       +-----+
          +------------| USB |------------+
          |            +-----+            |
@@ -24,5 +27,8 @@ Arduino NANO:
          | NANO-V3                       |
          +-------------------------------+
 
+## Links
 
-</pre>
+Are you stuck with some problem with code or something similar? Dont worry! Theese links provide more informations and tutorials about this board.
+
+https://www.instructables.com/id/Arduino-Nano/
