@@ -4,6 +4,8 @@ Development board [ROBOT BOARD]("http://www.octopuslab.cz/index.php/vyvojove-des
 
 ## Pins
 
+<pre>
+
 oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:
                           -----------     (GPIO)
                       EN -           - D23 (23)  MOSI       [SPI_MOSI_PIN] 
@@ -22,6 +24,8 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:
                      GND -           - GND
                      VIN -           - 3V3 +
                           -----------
+                          
+   </pre>
 
 ## Description of the ESP32
 240 MHz dual core Tensilica LX6 microcontroller with 600 DMIPS
