@@ -10,17 +10,17 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:
                           -----------     (GPIO)
                       EN -           - D23 (23)  MOSI       [SPI_MOSI_PIN] 
 [PIN_ANALOG]    (36)  VP -           - D22 (22)  SCL(I2C)   [I2C_SCL_PIN]
-[I39_PIN]       (39)  VN -           - TXD (1)   D2
-[I34_PIN]            D34 -           - RXD (3)   D3
-[I35_PIN]            D35 -           - D21 (21)  SDA(I2C)   [I2C_SDA_PIN]
-[ONE_WIRE_PIN] DEV1  D32 -           - D19 (19)  MISO       [SPI_MISO_PIN]
-               DEV2  D33 -  (ESP32)  - D18 (18)  SCLK       [SPI_CLK_PIN]
+[PIN_I39]       (39)  VN -           - TXD (1)   D2
+[PIN_I34]            D34 -           - RXD (3)   D3
+[PIN_I35]            D35 -           - D21 (21)  SDA(I2C)   [I2C_SDA_PIN]
+[PIN_DEV1]     DEV1  D32 -           - D19 (19)  MISO       [SPI_MISO_PIN]
+[PIN_DEV2]     DEV2  D33 -  (ESP32)  - D18 (18)  SCLK       [SPI_CLK_PIN]
 [PIN_MOTOR_12EN]     D25 -           - D5  (5)   CS0        [SPI_CS0_PIN]
-[PIN_MOTOR_1A]       D26 -           - TX2 (17)             [PIN_PWM1] /Servo1
-[PIN_MOTOR_4A]       D27 -           - RX2 (16)             [PIN_PWM2] /Servo2
-[PIN_MOTOR_3A]       D14 -           - D4  (4)              [PIN_PWM3] /Servo3
+[PIN_MOTOR_1A]       D26 -           - TX2 (17)             [PIN_SERVO1] /PWM1
+[PIN_MOTOR_4A]       D27 -           - RX2 (16)             [PIN_SERVO2] /PWM2
+[PIN_MOTOR_3A]       D14 -           - D4  (4)              [PIN_SERVO3] /PWM3
 [PIN_MOTOR_2A]       D12 -           - D2  (2)              [BUILT_IN_LED]
-[PIN_MOTOR_34EN]     D13 -           - D15 (15)             [WS_LED_PIN] //v1(13)     
+[PIN_MOTOR_34EN]     D13 -           - D15 (15)             [PIN_WS_LED]     
                      GND -           - GND
                      VIN -           - 3V3 +
                           -----------
