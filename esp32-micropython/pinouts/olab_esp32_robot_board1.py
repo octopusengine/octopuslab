@@ -49,3 +49,7 @@ SERVO_MAX= const(130)
 I39_PIN = const(39)
 I34_PIN = const(34)
 I35_PIN = const(35)
+
+#temp
+MFET_PIN = const(17) # PWM1
+RELAY_PIN = const(16) # PWM2
