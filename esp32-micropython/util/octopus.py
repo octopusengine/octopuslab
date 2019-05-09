@@ -5,10 +5,10 @@
 # esp8266 / wemos / esp32 doit...
 
 # ampy -p /COM4 put util/octopus-8266.py util/octopus.py
-ver = "18.12.2018-v:0.25"
+ver = "25.2.2019-v:0.27"
 
 from micropython import const
-import time, os
+import time, os, math
 import machine, ubinascii
 from machine import Pin, PWM, SPI, Timer
 
@@ -31,6 +31,8 @@ rtc = machine.RTC() # real time
 
 pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
 pwm0.duty(0)
+
+fet = Pin(pinout.MFET_PIN, Pin.OUT)
 
 """
 timNote = Timer(8, freq=3000)
@@ -149,6 +151,26 @@ def oled_intit():
     i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
     oled = ssd1306.SSD1306_I2C(128, 64, i2c)
 
+def pulse(l, t):
+     for i in range(20):
+         l.duty(int(math.sin(i / 10 * math.pi) * 500 + 500))
+         time.sleep_ms(t)
+
+def fade_in(p, r, m):
+     # pin - range - multipl
+     for i in range(r):
+          p.value(0)
+          time.sleep_us((r-i)*m*2) # multH/L *2
+          p.value(1)
+          time.sleep_us(i*m)
+
+def fade_out(p, r, m):
+     # pin - range - multipl
+     for i in range(r):
+          p.value(1)
+          time.sleep_us((r-i)*m)
+          p.value(0)
+          time.sleep_us(i*m*2)
 #-------------
 def octopus():
     print()
@@ -432,6 +454,9 @@ def octopus():
              print("    IoT board")
              print("--- [re] --- relay test")
              print("--- [fa] --- pwm fan test")
+             print("--- [li] --- led fade in")
+             print("--- [lo] --- led fade out")
+             print("--- [lp] --- led pulse")
              print('=' * 30)
 
              sel_r = input("select: ")
@@ -517,6 +542,33 @@ def octopus():
                  time.sleep_ms(3000)
                  rel.value(0)
 
+             if sel_r == "li":
+                 print("led - pwm fade in - test >")
+                 #lf = PWM(Pin(pinout.MFET_PIN))
+                 #lf.duty(0)
+                 #lf.freq(5000)
+                 #time.sleep_ms(1000)
+                 #for i in range(100):
+                 #     lf.duty(i*10)
+                 #     time.sleep_ms(20)
+                 fade_in(fet,500,5)
+
+             if sel_r == "lo":
+                  print("led - pwm fade out - test >")
+                  #lf = PWM(Pin(pinout.MFET_PIN))
+                  #lf.duty(1000)
+                  #lf.freq(5000)
+                  #time.sleep_ms(1000)
+                  #for i in range(100):
+                  #      lf.duty(1000-i*10)
+                  #      time.sleep_ms(20)
+                  fade_out(fet,500,5)
+
+             if sel_r == "lp":
+                  lf = PWM(Pin(pinout.MFET_PIN))
+                  for i in range(5):
+                      pulse(lf, 200)
+
       if sel == "p":
             mainOctopus()
             print()
@@ -530,7 +582,6 @@ def octopus():
             sel_p = input("select: ")
             if sel_p == "1":
                  print("project 1 >")
-
 
     delta = time.ticks_diff(time.ticks_ms(), start) # compute time difference
     print("> delta time: "+str(delta))
