@@ -4,20 +4,7 @@ I2C / SPI / MOTORs / SERVO / PWM...
 Edition: --- 2.12.2018 ---
 """
 from micropython import const
-
-# PIN as on octopusLAB ESP32 RobotBoard
-BUILT_IN_LED = const(2)
-HALL_SENSOR = const(8)
-
-#I2C:
-I2C_SCL_PIN = const(22)
-I2C_SDA_PIN = const(21)
-
-#SPI:
-SPI_CLK_PIN  = const(18)
-SPI_MISO_PIN = const(19)
-SPI_MOSI_PIN = const(23)
-SPI_CS0_PIN  = const(5)
+from pinouts.olab_esp32_base import *
 
 ##WS_LED_PIN 13          # Robot Board v1
 WS_LED_PIN = const(15)   # Robot Board v2 - WS RGB ledi diode
