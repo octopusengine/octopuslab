@@ -17,5 +17,9 @@ There are multiple development boards what we support now. All of them are bello
 - <a href=https://github.com/octopusengine/octopuslab/tree/master/attiny>Attiny</a> 85/45/13
 - <a href=https://github.com/octopusengine/octopuslab/tree/master/arduino-nano>Arduino</a> (Nano)
 
+## Library
+
+@TomasRoj and we are developing library to help user work with pins on our boards. By using this, user just need to call a simple to remember pin number in front of finding the pin number in docs etc. The library is in heavy development so we dont recommend using it in heavy production but, dont worry to use it now in your smal side projects > its good for us as bug testing etc. It can be recommended ways how to work with our modules in the futore, so why not try using it? 
+
 ## Contibution
 You are welcome to contribute to this repository by providing documentation to code, submitting issue reports, enhancement requests and pull requests. We are glad that people like you help make us future of electronics better and easier. For full describtion of how can you contribute and what rules you must respect, please visit our CODE of CONDUCT.
