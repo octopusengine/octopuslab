@@ -9,7 +9,7 @@ https://github.com/dhylands/python_lcd
 print("mqtt-lcd1602.py > mqtt 'hello world' - ho + ssl/led/ws")
 
 from time import sleep
-from machine import Pin
+from machine import Pin, SPI
 import machine, time
 from util.wifi_connect import read_wifi_config, WiFiConnect
 from util.mqtt_connect import read_mqtt_config
@@ -24,17 +24,28 @@ pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
 fet = Pin(pinout.MFET_PIN, Pin.OUT)
 rel = Pin(pinout.RELAY_PIN, Pin.OUT)
 
-isOLED = True
-isLCD = False
-isSD = True
+isLed7 = True  # SPI
+isOLED = False # I2C
+isLCD = False  # I2C
+isSD = False   # UART
 
-# serial displ
-if isSD:
-    from machine import UART
-    uart = UART(2, 9600) #UART2 > #U2TXD(SERVO1/PWM1_PIN)
-    uart.write('C')      #test quick clear display 
+print("setup displays: >")
 
-from lib.esp8266_i2c_lcd import I2cLcd
+# SPI max 8x7 segment
+try:
+    #spi.deinit()
+    #print("spi > close")
+    spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
+    ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
+except:
+    print("SPI.Err")
+
+if isLed7:
+    from lib.max7219_8digit import Display
+    d7 = Display(spi, ss)
+    d7.write_to_buffer('octopus')
+    d7.display()
+    
 LCD_ADDRESS=0x27
 LCD_ROWS=2
 LCD_COLS=16
@@ -48,7 +59,14 @@ if not 0x27 in i2c.scan():
     #raise Exception("No device")
 
 if isLCD:
-   lcd = I2cLcd(i2c, LCD_ADDRESS, LCD_ROWS, LCD_COLS)
+    from lib.esp8266_i2c_lcd import I2cLcd
+    lcd = I2cLcd(i2c, LCD_ADDRESS, LCD_ROWS, LCD_COLS)
+
+# serial displ
+if isSD:
+    from machine import UART
+    uart = UART(2, 9600) #UART2 > #U2TXD(SERVO1/PWM1_PIN)
+    uart.write('C')      #test quick clear display 
 
 esp_id = ubinascii.hexlify(machine.unique_id()).decode()
 print(esp_id)
@@ -161,6 +179,13 @@ def mqtt_sub(topic, msg):
             
         np[0] = (ws_r, ws_g, ws_b)
         np.write()
+
+    if "led8x7/rawtext" in topic:
+        data = bd(msg)
+        print("raw test: {0}".format(data))
+        if isLed7:
+            d7.write_to_buffer(data)
+            d7.display()   
     
     if "lcd/clear" in topic:
         data = bd(msg)
@@ -277,7 +302,6 @@ except Exception as e:
     print("Error connecting to MQTT")
     if isLCD:
         lcd.putchar("E")
-
 
 print("> loop:")
 while True:
