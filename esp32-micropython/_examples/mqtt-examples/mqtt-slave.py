@@ -21,14 +21,19 @@ print("mqtt-slave.py > ESP32")
 ver = "0.21/17.5.2019"
 print(ver)
 
-#* = todo / ## = automatic
+# hard-code config / daefault
+Debug = True        # TODO: debugPrint()?
+minute = 10         # 1/10 for data send
+timeInterval = 1
+wifi_retries = 100  # for wifi connecting
 
+#* = todo / ## = automatic
 # Defaults - sensors
 isTemp = 0      #  temperature
 isLight = 0     #  light (lux)
 isMois = 0      #* moisture
-isAD = 0        #* AD input voltage
-isADL = 0       #  AD photoresistor
+isAD = 1        #* AD input voltage
+isADL = 1       #  AD photoresistor
 # Displays
 isLed7 = 1      #  SPI max 8x7 segm.display
 isOLED = 1      ##  I2C
@@ -45,11 +50,18 @@ OLEDY = 64
 OLED_x0 = 3
 OLED_ydown = OLEDY-7
 
-# hard-code config / daefault
-Debug = True        # TODO: debugPrint()?
-minute = 10         # 1/10 for data send
-timeInterval = 1
-wifi_retries = 100  # for wifi connecting
+#ADC/ADL
+pin_analog = 36
+adc = ADC(Pin(pin_analog))
+pin_analog_light = 34
+adcl = ADC(Pin(pin_analog_light))
+
+ADC_SAMPLES=100
+ADC_HYSTERESIS=50
+ad_oldval=0
+adl_oldval=0
+adc.atten(ADC.ATTN_11DB) # setup
+adcl.atten(ADC.ATTN_11DB) 
 
 pin_led = Pin(pinout.BUILT_IN_LED, Pin.OUT)
 pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
@@ -120,7 +132,13 @@ def getTemp():
         for t in ts:
             temp = ds.read_temp(t)
             tw = int(temp*10)
-    return tw  
+    return tw
+
+def get_adc_value(inAdc):
+    aval = 0
+    for i in range(0, ADC_SAMPLES):
+        aval += inAdc.read()
+    return aval // ADC_SAMPLES
 
 def timerInit():
     tim1.init(period=10000, mode=Timer.PERIODIC, callback=lambda t:timerSend()) 
@@ -335,7 +353,7 @@ if isSD:
 
 if isOLED:
     oled_intit()
-    oled.text('MQTT-SLAVE test', 5, 5)
+    oled.text('MQTT-SLAVE test', 5, 3)
     # oled.text(get_hhmm(), 45,29) #time HH:MM
     oled.hline(0,50,128,1)
     oled.text("octopusLAB 2019",5,OLED_ydown) 
@@ -405,3 +423,20 @@ print(get_hhmm(rtc))
 printLog(5,"start - main loop >")
 while True:
     c.check_msg()
+
+    if isADL:
+        aval = get_adc_value(adcl)
+        if abs(adl_oldval-aval) > ADC_HYSTERESIS:
+            if   isOLED:
+                valmap = map(aval, 0, 4050, 0, 126)
+                displBarSlimH(oled, valmap, 11)
+            adl_oldval = aval
+            print("ADCL: " + str(aval))
+            c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog_light), str(aval))
+
+    if isAD:
+        aval = get_adc_value(adc)
+        if abs(ad_oldval-aval) > ADC_HYSTERESIS:
+            ad_oldval = aval
+            print("ADC: " + str(aval))
+            c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog), str(aval))
