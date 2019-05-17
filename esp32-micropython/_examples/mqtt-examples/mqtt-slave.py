@@ -9,7 +9,7 @@ from util.wifi_connect import read_wifi_config, WiFiConnect
 from util.mqtt_connect import read_mqtt_config
 from util.octopus_lib import *
 from umqtt.simple import MQTTClient
-from util.iot_garden import * # fade_
+#from util.iot_garden import * # fade_
 from onewire import OneWire
 from ds18x20 import DS18X20
 
@@ -32,14 +32,16 @@ wifi_retries = 100  # for wifi connecting
 isTemp = 0      #  temperature
 isLight = 0     #  light (lux)
 isMois = 0      #* moisture
-isAD = 1        #* AD input voltage
-isADL = 1       #  AD photoresistor
+isAD = 0        #* AD input voltage
+isADL = 0       #  AD photoresistor
 # Displays
-isLed7 = 1      #  SPI max 8x7 segm.display
+isLed7 = 0      #  SPI max 8x7 segm.display
 isOLED = 1      ##  I2C
 isLCD = 0       ##* I2C
 isSD = 0        #* UART
 isServo = 1     # Have PWM pins
+isFET = 0       # We have FET
+isRelay = 0     # Have Relay
 
 LCD_ADDRESS=0x27
 LCD_ROWS=2
@@ -66,8 +68,12 @@ adcl.atten(ADC.ATTN_11DB)
 
 pin_led = Pin(pinout.BUILT_IN_LED, Pin.OUT)
 pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
-fet = Pin(pinout.MFET_PIN, Pin.OUT)
-rel = Pin(pinout.RELAY_PIN, Pin.OUT)
+
+if isFET:
+    fet = Pin(pinout.MFET_PIN, Pin.OUT)
+
+if isRelay:
+    rel = Pin(pinout.RELAY_PIN, Pin.OUT)
 
 if isServo:
     pwm1 = PWM(Pin(pinout.PWM1_PIN), freq=50, duty=70)
@@ -122,13 +128,15 @@ def loadConfig():
         isAD = io_config.get('adv1')
         isADL = io_config.get('adv3')
         isTemp = io_config.get('temp')
+        isServo = io_config.get('servo')
 
         print("isOLED: " + str(isOLED))  
         print("isLCD: " + str(isLCD))  
         print("isLed7: " + str(isLed7))  
         print("isAD: " + str(isAD))  
         print("isADL: " + str(isADL))  
-        print("isTemp: " + str(isTemp))               
+        print("isTemp: " + str(isTemp))
+        print("isServo: " + str(isServo))
     """
     except:
         print("Data Err. or '"+ configFile + "' does not exist")
@@ -296,7 +304,7 @@ def mqtt_sub(topic, msg):
         np[0] = (ws_r, ws_g, ws_b)
         np.write()
 
-    if "relay" in topic:
+    if "relay" in topic and isRelay:
         data = bd(msg)   
 
         if data[0] == 'N':  # oN
@@ -306,7 +314,7 @@ def mqtt_sub(topic, msg):
             print("R > off")
             rel.value(0) 
 
-    if "pwm" in topic:
+    if "pwm" in topic and isFET:
         data = bd(msg)   
 
         if data[0] == '1':
@@ -424,6 +432,7 @@ np[0] = (0, 0, 0)
 np.write()        
 
 if isLed7:
+    print("Testing 7seg")
     test7seg() 
 
 printLog(4,"wifi and mqtt >")    
