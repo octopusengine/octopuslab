@@ -39,6 +39,7 @@ isLed7 = 1      #  SPI max 8x7 segm.display
 isOLED = 1      ##  I2C
 isLCD = 0       ##* I2C
 isSD = 0        #* UART
+isServo = 1     # Have PWM pins
 
 LCD_ADDRESS=0x27
 LCD_ROWS=2
@@ -67,6 +68,11 @@ pin_led = Pin(pinout.BUILT_IN_LED, Pin.OUT)
 pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
 fet = Pin(pinout.MFET_PIN, Pin.OUT)
 rel = Pin(pinout.RELAY_PIN, Pin.OUT)
+
+if isServo:
+    pwm1 = PWM(Pin(pinout.PWM1_PIN), freq=50, duty=70)
+    pwm2 = PWM(Pin(pinout.PWM2_PIN), freq=50, duty=70)
+    pwm3 = PWM(Pin(pinout.PWM3_PIN), freq=50, duty=70)
 
 rtc = machine.RTC() # real time
 tim1 = Timer(0)     # for main 10 sec timer
@@ -324,18 +330,35 @@ def mqtt_sub(topic, msg):
             print("mqtt.8x7seg.ERR") 
 
     if "oled1" in topic:
-        data = bd(msg)  
+        data = bd(msg)
         try:
             displMessage(data,2)
         except:
-            print("oled.ERR") 
+            print("oled.ERR")
 
     if "oled2" in topic:
-        data = bd(msg)  
+        data = bd(msg)
         try:
             displMessage2(data,2)
         except:
-            print("oled.ERR")                   
+            print("oled.ERR")
+
+    if "servo/" in topic and isServo:
+        data = bd(msg)
+        try:
+            servo = topic.split('servo/')[1]
+            print("Setting servo {0} to value {1}".format(servo, data))
+
+            if servo == "1":
+                pwm1.duty(int(data))
+            if servo == "2":
+                pwm2.duty(int(data))
+            if servo == "3":
+                pwm3.duty(int(data))
+
+        except:
+        print("Servo error")
+
 
 # --- init ---
 printLog(3,"init i/o - config >")
