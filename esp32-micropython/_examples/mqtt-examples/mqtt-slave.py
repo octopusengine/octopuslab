@@ -354,18 +354,19 @@ def mqtt_sub(topic, msg):
     if "servo/" in topic and isServo:
         data = bd(msg)
         try:
-            servo = topic.split('servo/')[1]
+            servo = str(topic).split('servo/')[1]
             print("Setting servo {0} to value {1}".format(servo, data))
 
-            if servo == "1":
+            if servo == "1'":
                 pwm1.duty(int(data))
-            if servo == "2":
+            if servo == "2'":
                 pwm2.duty(int(data))
-            if servo == "3":
+            if servo == "3'":
                 pwm3.duty(int(data))
 
-        except:
+        except Exception as e:
             print("Servo error")
+            print(e)
 
 
 # --- init ---
