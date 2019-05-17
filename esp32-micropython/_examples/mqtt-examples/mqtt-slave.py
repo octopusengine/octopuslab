@@ -357,7 +357,7 @@ def mqtt_sub(topic, msg):
                 pwm3.duty(int(data))
 
         except:
-        print("Servo error")
+            print("Servo error")
 
 
 # --- init ---
