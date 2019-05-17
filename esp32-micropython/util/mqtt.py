@@ -133,8 +133,8 @@ def mqtt():
             if 'config' not in uos.listdir():
                 uos.makedirs('config')
 
-            print("Writing to file config/mqtt.json")
-            with open('config/mqtt.json', 'w') as f:
+            print("Writing to file config/mqtt_io.json")
+            with open('config/mqtt_io.json', 'w') as f:
                 ujson.dump(mq, f)
 
         if sele == "o":
@@ -174,9 +174,8 @@ def mqtt():
             c.set_callback(mqtt_sub)
             print("mqtt.connect > ")
             c.connect()
-            # c.subscribe("/octopus/device/{0}/#".format(esp_id))
-
             """
+            # c.subscribe("/octopus/device/{0}/#".format(esp_id))
             subStr = mqtt_root_topic+"/"+esp_id+"/#"
             print("subscribe (root topic + esp id):" + subStr)
             c.subscribe(subStr)
