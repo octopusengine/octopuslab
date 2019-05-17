@@ -93,29 +93,27 @@ def mqtt():
             sys_info()
 
         if sele == "io":
-            print("--- Set 0/1 for inpusts/outputs ---")
-            print(" --> displays:")
+            print("------- Set 0/1 for inpusts/outputs ------")
+            print(" --> displays ---")
             wc = {}
             wc['oled'] = input("oled: ")
             wc['lcd'] = input("lcd: (2x16) ")
-            wc['spi'] = input("spi: (8x7 segment) ")
+            wc['8x7'] = input("spi: (8x7 segment) ")
             wc['tft'] = input("tft: (128x64) ")
-            wc['sm'] = input("UART: serial monitor ")
+            wc['usm'] = input("UART: serial monitor ")
             wc['ws'] = input("ws1: [1/8/16/..]")
-            print(" --> sensors:")
+            print(" --> sensors ---")
             wc['temp'] = input("dallas temerature senzor: ")
-            wc['ad'] = input("adc: ")
-            wc['adl'] = input("adc light: ")
+            wc['adv1'] = input("adc: i36 - power: ")
+            wc['adv2'] = input("adc: i35: ")
+            wc['adv3'] = input("adc: i34 - light: ")
             wc['light'] = input("light i2c senzor: ")
             wc['button'] = input("button: ")
             wc['keyboard'] = input("keyboard: ")
+            # servo1/2/3,motroA/B,stepper1/2
 
-            # TODO improve this
-            if 'config' not in uos.listdir():
-                uos.makedirs('config')
-
-            print("Writing to file config/mqtt.json")
-            with open('config/mqtt.json', 'w') as f:
+            print("Writing to file config/mqtt_io.json")
+            with open('config/mqtt_io.json', 'w') as f:
                 ujson.dump(wc, f)
                 # ujson.dump(wc, f, ensure_ascii=False, indent=4)
 
@@ -129,12 +127,8 @@ def mqtt():
             mq['mqtt_clientid_prefix'] = input("CLIENT PREFIX: ")
             mq['mqtt_root_topic'] = input("ROOT TOPIC: ")
 
-            # TODO improve this
-            if 'config' not in uos.listdir():
-                uos.makedirs('config')
-
-            print("Writing to file config/mqtt_io.json")
-            with open('config/mqtt_io.json', 'w') as f:
+            print("Writing to file config/mqtt.json")
+            with open('config/mqtt.json', 'w') as f:
                 ujson.dump(mq, f)
 
         if sele == "o":
