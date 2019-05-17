@@ -59,6 +59,15 @@ def sys_info():
    except:
         print("'config/mqtt.json' does not exist")
 
+   print("[mqtt_io]")
+   try:
+        with open('config/mqtt_io.json', 'r') as f:
+            d = f.read()
+            f.close()
+            print(" > config/mqtt_io: " + d)
+   except:
+        print("'config/mqtt_io.json' does not exist")     
+
    print()
 
    gc.collect()
