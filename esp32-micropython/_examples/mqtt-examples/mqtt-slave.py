@@ -1,7 +1,7 @@
 #octopusLAB - ESP32 - WiFi and WS RGB LED signalizationn - MQTT
 #
 
-import machine, time, ubinascii
+import machine, time, ubinascii, json
 from time import sleep
 from machine import Pin, Timer, PWM, SPI
 from neopixel import NeoPixel
@@ -96,6 +96,37 @@ isOLED = 0x3c in i2cdevs
 bhLight = 0x23 in i2cdevs
 bh2Light = 0x5c in i2cdevs
 tslLight = 0x39 in i2cdevs
+
+
+io_config = {}
+def loadConfig():
+    global isOLED, isLCD, isLed7, isAD, isADL, isTemp
+       
+    configFile = 'config/mqtt_io.json'
+    if Debug: print("load "+configFile+" >")
+    if True: #try:
+        with open(configFile, 'r') as f:
+            d = f.read()
+            f.close()
+            io_config = json.loads(d)
+
+        isOLED = io_config.get('oled')
+        isLCD = io_config.get('lcd')
+        isLed7 = io_config.get('8x7')
+        isAD = io_config.get('adv1')
+        isADL = io_config.get('adv3')
+        isTemp = io_config.get('temp')
+
+        print("isOLED: " + str(isOLED))  
+        print("isLCD: " + str(isLCD))  
+        print("isLed7: " + str(isLed7))  
+        print("isAD: " + str(isAD))  
+        print("isADL: " + str(isADL))  
+        print("isTemp: " + str(isTemp))               
+    """
+    except:
+        print("Data Err. or '"+ configFile + "' does not exist")
+    """    
 
 oled = 0
 def oled_intit():
@@ -308,6 +339,8 @@ def mqtt_sub(topic, msg):
 
 # --- init ---
 printLog(3,"init i/o - config >")
+loadConfig()
+
 ts = []
 if isTemp:
     print("dallas temp >")
