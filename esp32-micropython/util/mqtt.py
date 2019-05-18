@@ -123,8 +123,8 @@ def mqtt():
             print()
             mq = {}
             mq['mqtt_broker_ip'] = input("BROKER IP: ")
-            mq['mqtt_ssl'] = input("> SSL (0/1): ")
-            mq['mqtt_port'] = input("> PORT (1883/8883/?): ")
+            mq['mqtt_ssl'] = int(input("> SSL (0/1): "))
+            mq['mqtt_port'] = int(input("> PORT (1883/8883/?): "))
             mq['mqtt_clientid_prefix'] = input("CLIENT PREFIX: ")
             mq['mqtt_root_topic'] = input("ROOT TOPIC: ")
 
@@ -164,8 +164,7 @@ def mqtt():
             mqtt_ssl  = read_mqtt_config()["mqtt_ssl"]
 
             mqtt_clientid = mqtt_clientid_prefix + esp_id
-            #c = MQTTClient(mqtt_clientid, mqtt_host, ssl=mqtt_ssl)
-            c = MQTTClient(mqtt_clientid, mqtt_host)
+            c = MQTTClient(mqtt_clientid, mqtt_host, ssl=mqtt_ssl)
             c.set_callback(mqtt_sub)
             print("mqtt.connect > ")
             c.connect()
