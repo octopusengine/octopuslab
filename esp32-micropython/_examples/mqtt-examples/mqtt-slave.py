@@ -70,7 +70,9 @@ pin_led = Pin(pinout.BUILT_IN_LED, Pin.OUT)
 pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
 
 if isFET:
-    fet = Pin(pinout.MFET_PIN, Pin.OUT)
+    fet = PWM(Pin(pinout.MFET_PIN, Pin.OUT))
+    fet.duty(0)
+    fet.freq(2000)
 
 if isRelay:
     rel = Pin(pinout.RELAY_PIN, Pin.OUT)
@@ -314,7 +316,27 @@ def mqtt_sub(topic, msg):
             print("R > off")
             rel.value(0) 
 
-    if "pwm" in topic and isFET:
+    if "pwm/freq" in topic:
+        data = bd(msg)
+        try:
+            value = int(data)
+            print("PWM Freq: {0}".format(value))
+
+            fet.freq(value)
+        except:
+            pass
+
+    if "pwm/duty" in topic:
+        data = bd(msg)
+        try:
+            value = int(data)
+            print("PWM Duty: {0}".format(value))
+
+            fet.duty(value)
+        except:
+            pass
+
+    if "pwmx" in topic and isFET:
         data = bd(msg)   
 
         if data[0] == '1':
