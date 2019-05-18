@@ -456,8 +456,7 @@ mqtt_root_topic = read_mqtt_config()["mqtt_root_topic"]
 mqtt_ssl  = read_mqtt_config()["mqtt_ssl"]
 
 mqtt_clientid = mqtt_clientid_prefix + esp_id
-#c = MQTTClient(mqtt_clientid, mqtt_host, ssl=mqtt_ssl)
-c = MQTTClient(mqtt_clientid, mqtt_host)
+c = MQTTClient(mqtt_clientid, mqtt_host, ssl=mqtt_ssl)
 c.set_callback(mqtt_sub)
 print("mqtt.connect > ")
 c.connect()
