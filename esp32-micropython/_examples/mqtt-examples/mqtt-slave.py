@@ -57,6 +57,11 @@ isOLED = 1      ##  I2C
 isLCD = 0       ##* I2C
 isSD = 0        #* UART
 
+# testing simple orchestrator connection manager
+cm_Light2M8 = 0
+cm_Light2M8brightness = 0
+
+#
 LCD_ADDRESS=0x27
 LCD_ROWS=2
 LCD_COLS=16
@@ -451,6 +456,62 @@ def mqtt_sub(topic, msg):
             print("Servo error")
             print(e)
 
+def handleAD():
+    global ad_oldval, ad1_oldval, ad2_oldval
+    if isAD:
+        aval = get_adc_value(adc)
+        if abs(ad_oldval-aval) > ADC_HYSTERESIS:
+            ad_oldval = aval
+            print("ADC: " + str(aval))
+            c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog), str(aval))
+
+    if isAD1:
+        aval = get_adc_value(adc1)
+        if abs(ad1_oldval-aval) > ADC_HYSTERESIS/5: # 50/5=10 for light
+            ad1_oldval = aval 
+            """
+            if   isOLED: # test light sensor
+                valmap = map(aval, 0, 4050, 0, 126)
+                displBarSlimH(oled, valmap, 11)
+            """
+            print("ADC1: " + str(aval))
+            c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog_1), str(aval))
+   
+    
+    if isAD2:
+        aval = get_adc_value(adc2)
+        if abs(ad2_oldval-aval) > ADC_HYSTERESIS:
+            ad2_oldval = aval
+            print("ADC2: " + str(aval))
+            c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog_2), str(aval))
+
+def handleConnectionScripts():
+    global ad_oldval, ad1_oldval, ad2_oldval
+    if cm_Light2M8brightness:        
+        if isAD1 and isLed8:
+            aval = get_adc_value(adc1)
+            if abs(ad1_oldval-aval) > ADC_HYSTERESIS/5: 
+                ad1_oldval = aval
+                valmap = map(aval, 5, 600, 2, 15)
+                if valmap > 15: valmap = 15          
+                d8.brightness(valmap)
+                if cm_Light2M8: 
+                    d8.fill(0)
+                    d8.text(str(aval), 0, 0, 1)
+                d8.show()       
+
+    """
+    if cm_Light2M8: 
+        if isAD1 and isLed8:
+            aval = get_adc_value(adc1)
+            if abs(ad1_oldval-aval) > ADC_HYSTERESIS:
+                ad_oldval = aval            
+                d8.fill(0)
+                d8.text(str(aval), 0, 0, 1)
+                d8.show()
+    """                        
+
+
 # --- init and simple testing ---
 printLog(3,"init i/o - config >")
 loadConfig()
@@ -599,30 +660,14 @@ timerInit()
 print(get_hhmm(rtc))
 
 printLog(5,"start - main loop >")
+
 while True:
+
     c.check_msg()
 
-    if isAD:
-        aval = get_adc_value(adc)
-        if abs(ad_oldval-aval) > ADC_HYSTERESIS:
-            ad_oldval = aval
-            print("ADC: " + str(aval))
-            c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog), str(aval))
+    handleAD()
 
-    if isAD1:
-        aval = get_adc_value(adc1)
-        if abs(ad1_oldval-aval) > ADC_HYSTERESIS:
-            if   isOLED: # test light sensor
-                valmap = map(aval, 0, 4050, 0, 126)
-                displBarSlimH(oled, valmap, 11)
-            ad1_oldval = aval
-            print("ADC1: " + str(aval))
-            c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog_1), str(aval))
+    handleConnectionScripts() # testing
+
     
-    if isAD2:
-        aval = get_adc_value(adc2)
-        if abs(ad2_oldval-aval) > ADC_HYSTERESIS:
-            ad2_oldval = aval
-            print("ADC2: " + str(aval))
-            c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog_2), str(aval))
 
