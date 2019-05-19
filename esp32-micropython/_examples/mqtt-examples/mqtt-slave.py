@@ -1,8 +1,16 @@
 """
-octopusLAB - ESP32 - MQTT "slave" manager
+octopusLAB - ESP32 easy - MQTT "slave" manager
 need ROBOTboard or IoTboard (it depends on the project)
+Built in Led, WS RGB Led
+Inputs: 
+Button, keyboard, analog Joystick
+Sensors: A/D, One wire temperature, I2C light, ...
+Outputs: 
+Relay, MOS-FER PWM (IoT board)
+Servo, DC motor, stepper (Robot board)
+Displays: 
+I2C OLED, I2C LCD, SPI 8x7 segment, SPI 4x 8x8 matrix, UART Nextion, UART Serial display, SPI TTF...
 """
-
 
 import machine, time, ubinascii, json
 from time import sleep
@@ -187,7 +195,21 @@ def displMessage(mess,timm):
         oled.show()
         time.sleep_ms(timm*1000)
     except Exception as e:
-       print("Err. displMessage2() Exception: {0}".format(e))              
+       print("Err. displMessage2() Exception: {0}".format(e))  
+
+def scroll(text,num): # TODO speed, timer? / NO "sleep"
+    WIDTH = 8*4
+    x = WIDTH + 2
+    for _ in range(8*len(text)*num):
+        time.sleep(0.03)
+        d8.fill(0)
+        x -= 1
+        if x < - (8*len(text)):
+            x = WIDTH + 2
+        d8.text(text, x, 0, 1)
+        d8.show()
+    d8.fill(0)
+    d8.show()  
 
 def getTemp():
     tw=999
@@ -380,7 +402,23 @@ def mqtt_sub(topic, msg):
             d7.write_to_buffer(data)
             d7.display() 
         except:
-            print("mqtt.8x7seg.ERR") 
+            print("mqtt.8x7segment.ERR") 
+    
+    if "8x8mtx/stat" in topic: # show simple 1 or 4 chars
+        data = bd(msg)  
+        try:
+            d8.fill(0)
+            d8.text(data, 0, 0, 1)
+            d8.show()
+        except:
+            print("mqtt.8x8matrix/stat.ERR")   
+
+    if "8x8mtx/scroll" in topic: # show simple 1 or 4 chars
+        data = bd(msg)  
+        try:
+            scroll(data,5) # .upper()
+        except:
+            print("mqtt.8x8matrix/scroll.ERR")             
 
     if "oled1" in topic:
         data = bd(msg)
