@@ -7,7 +7,7 @@ import time, uos
 import ujson
 import machine #datetime
 
-ver = "2019/04 (c)octopusLAB"
+ver = "0.5 / 19.5.2019"
 
 devices = [
 ["oLAB Default","esp32"],
@@ -78,7 +78,7 @@ def setupMenu():
     print("[ds]  - device setting")
     print("[sw]  - set wifi")
     print("[cw]  - connect wifi")
-    print("[mq]  - set mqtt")
+    print("[mq]  - mqtt() setup")
     print("[st]  - set time")
     print("[sdp]  - system download > petrkr")
     print("[sdo]  - system download > octopus")
@@ -102,7 +102,7 @@ def shutil():
 def setup():
     mainOctopus()
     print("Hello, this will help you initialize your ESP")
-    print(ver)
+    print("ver: " + ver + " (c)octopusLAB")
     print("Press Ctrl+C to abort")
     
 
@@ -174,22 +174,14 @@ def setup():
               print("WiFi: OK")
 
         if sele == "mq":
-            print("Set mqtt >")
-            print()
-            mq = {}
-            mq['mqtt_broker_ip'] = input("BROKER IP: ")
-            mq['mqtt_ssl'] = input("> SSL (0/1): ")
-            mq['mqtt_port'] = input("> PORT (1883/8883/?): ")
-            mq['mqtt_clientid_prefix'] = input("CLIENT PREFIX: ")
-            mq['mqtt_root_topic'] = input("ROOT TOPIC: ")
+            print("mqtt setup >")
+            try:
+                print()
+                from util.mqtt import mqtt
+                mqtt()
+            except:
+               print("Err.mqtt() or 'util.mqtt.py' does not exist")    
 
-            # TODO improve this
-            if 'config' not in uos.listdir():
-                uos.makedirs('config')
-
-            print("Writing to file config/mqtt.json")
-            with open('config/mqtt.json', 'w') as f:
-                ujson.dump(mq, f)
 
         if sele == "st":
             print("Time setting >")
