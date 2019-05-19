@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
 # TODO documentation
-# TODO check arguments
 
-export AMPY_PORT="/dev/ttyUSB0"
-export AMPY_BAUD=115200
+[ -z "$AMPY_PORT" ] && export AMPY_PORT="/dev/ttyUSB0"
+[ -z "$AMPY_BAUD" ] && export AMPY_BAUD=115200
+
+set -euo pipefail
 
 echo "Please only execute in venv with ampy installed"
 echo "Deploying to $AMPY_PORT"
