@@ -1,7 +1,7 @@
 #include <ETH.h>
 
 // TODO: Pin# of the enable signal for the external crystal oscillator (-1 to disable for internal APLL source)
-#define ETH_POWER_PIN   -1
+#define ETH_POWER_PIN   5
 
 #define ETH_ADDR        1
 
@@ -67,7 +67,8 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Program RUN");
   WiFi.onEvent(WiFiEvent);
-  ETH.begin(ETH_ADDR, ETH_POWER_PIN);
+  ETH.begin(ETH_ADDR, ETH_POWER_PIN, ETH_PHY_MDC, ETH_PHY_MDIO, ETH_PHY_TYPE, ETH_CLOCK_GPIO17_OUT);
+  //ETH.begin(ETH_ADDR, ETH_POWER_PIN);
 }
 
 
