@@ -56,6 +56,9 @@ isLed8 = 0      #  SPI max 8x8 matrix display
 isOLED = 1      ##  I2C
 isLCD = 0       ##* I2C
 isSD = 0        #* UART
+isServo = 1     # Have PWM pins
+isFET = 1       # We have FET
+isRelay = 1     # Have Relay
 
 # testing simple orchestrator connection manager
 cm_Light2M8 = 0
