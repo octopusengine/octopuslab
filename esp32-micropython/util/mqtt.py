@@ -8,7 +8,7 @@ from umqtt.simple import MQTTClient
 from util.mqtt_connect import read_mqtt_config
 from util.wifi_connect import read_wifi_config, WiFiConnect
 from util.pinout import set_pinout
-ver = "2019/05 (c)octopusLAB"
+ver = "0.21 / 19.5.2019"
 esp_id = ubinascii.hexlify(machine.unique_id()).decode()
 
 octopuASCII = [
@@ -39,15 +39,13 @@ def simple_blink():
 def setupMenu():
     print()
     print('=' * 30)
-    print('        S E T U P')
+    print('      M Q T T    S E T U P')
     print('=' * 30)
-    print("[mq]  - set mqtt")
-    print("[mqt] - mqtt simple test")
+    print("[ms]  - mqtt setup")
+    print("[mt]  - mqtt simple test")
     print("[io]  - set mqtt i/o devices")
     print("[si]  - system info")
-    print("[s]   - run setup()")
-    print("[o]   - run octopus() demo")
-    print("[e]   - exit setup")
+    print("[e]   - exit mqtt setup")
 
     print('=' * 30)
     sel = input("select: ")
@@ -69,8 +67,8 @@ def connecting_callback(retries):
 def mqtt():
     mainOctopus()
     print("Hello, this will help you initialize your ESP wit MQTT")
-    print(ver)
-    print(esp_id)
+    print("ver: " + ver + " (c)octopusLAB")
+    print("id: " + esp_id)
     print("Press Ctrl+C to abort")
     
     # TODO improve this
@@ -99,9 +97,10 @@ def mqtt():
             wc['oled'] = int(input("oled: "))
             wc['lcd'] = int(input("lcd: (2x16) "))
             wc['8x7'] = int(input("spi: (8x7 segment) "))
+            wc['8x8'] = int(input("spi: (8x8 matrix) [0/1/4/..]"))
             wc['tft'] = int(input("tft: (128x64) "))
             wc['usm'] = int(input("UART: serial monitor "))
-            wc['ws'] = int(input("ws1: [1/8/16/..]"))
+            wc['ws'] = int(input("ws1: [0/1/8/16/..]"))
             print(" --> sensors ---")
             wc['temp'] = int(input("dallas temerature senzor: "))
             wc['adv'] = int(input("adc: i36 (ad/power): "))
@@ -119,7 +118,7 @@ def mqtt():
                 ujson.dump(wc, f)
                 # ujson.dump(wc, f, ensure_ascii=False, indent=4)
 
-        if sele == "mq":
+        if sele == "ms":
             print("Set mqtt >")
             print()
             mq = {}
@@ -133,18 +132,10 @@ def mqtt():
             with open('config/mqtt.json', 'w') as f:
                 ujson.dump(mq, f)
 
-        if sele == "o":
-            from util.octopus import octopus
-            octopus() 
-
-        if sele == "s":
-            from util.setup import setup
-            setup() 
-
         def mqtt_sub(topic, msg):  
             print("MQTT Topic {0}: {1}".format(topic, msg))                
 
-        if sele == "mqt":
+        if sele == "mt":
             print("mqtt simple test:")   
 
             print("wifi_config >")
@@ -152,7 +143,7 @@ def mqtt():
             wifi = WiFiConnect(wifi_config["wifi_retries"] if "wifi_retries" in wifi_config else 250 )
             wifi.events_add_connecting(connecting_callback)
             wifi.events_add_connected(connected_callback)
-            print("wifi.connect >")
+            print("wifi.connect  to " + wifi_config["wifi_ssid"])
             wifi_status = wifi.connect(wifi_config["wifi_ssid"], wifi_config["wifi_pass"])
 
             # url config: TODO > extern.
@@ -167,7 +158,7 @@ def mqtt():
             mqtt_clientid = mqtt_clientid_prefix + esp_id
             c = MQTTClient(mqtt_clientid, mqtt_host, ssl=mqtt_ssl)
             c.set_callback(mqtt_sub)
-            print("mqtt.connect > ")
+            print("mqtt.connect to " + mqtt_host)
             c.connect()
             """
             # c.subscribe("/octopus/device/{0}/#".format(esp_id))
@@ -176,8 +167,9 @@ def mqtt():
             c.subscribe(subStr)
             """
 
-            print("mqtt log >")
             mqtt_log_topic = mqtt_root_topic+"/log"
+            print("mqtt log > " + mqtt_log_topic)
+           
             print(mqtt_log_topic)
             # mqtt_root_topic_temp = "octopus/device"
             c.publish(mqtt_log_topic,esp_id) # topic, message (value) to publish      
