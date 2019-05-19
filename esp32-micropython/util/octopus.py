@@ -177,6 +177,7 @@ def octopus():
     #global notInitServo
     notInitServo = True
     global oled
+    global fet
     ###beep(pwm0,500,100) # start beep
     #tim.init(period=1000, mode=Timer.ONE_SHOT, callback=lambda t:print("test timer - thread delay"))
     #tim.init(period=2000, mode=Timer.PERIODIC, callback=lambda t:print(2))
@@ -544,7 +545,6 @@ def octopus():
 
              if sel_r == "li":
                  if not fet:
-                     global fet
                      fet = Pin(pinout.MFET_PIN, Pin.OUT)
 
                  print("led - pwm fade in - test >")
@@ -559,7 +559,6 @@ def octopus():
 
              if sel_r == "lo":
                   if not fet:
-                     global fet
                      fet = Pin(pinout.MFET_PIN, Pin.OUT)
 
                   print("led - pwm fade out - test >")
