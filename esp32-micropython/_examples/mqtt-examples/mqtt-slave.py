@@ -2,13 +2,13 @@
 octopusLAB - ESP32 easy - MQTT "slave" manager
 need ROBOTboard or IoTboard (it depends on the project)
 Built in Led, WS RGB Led
-Inputs: 
+Inputs:
 Button, keyboard, analog Joystick
 Sensors: A/D, One wire temperature, I2C light, ...
-Outputs: 
+Outputs:
 Relay, MOS-FER PWM (IoT board)
 Servo, DC motor, stepper (Robot board)
-Displays: 
+Displays:
 I2C OLED, I2C LCD, SPI 8x7 segment, SPI 4x 8x8 matrix, UART Nextion, UART Serial display, SPI TTF...
 """
 
@@ -76,7 +76,7 @@ OLED_x0 = 3
 OLED_ydown = OLEDY-7
 
 #ADC/ADL
-pin_analog = 36         # analog or power management 
+pin_analog = 36         # analog or power management
 adc = ADC(Pin(pin_analog))
 pin_analog_1 = 34       # x
 adc1 = ADC(Pin(pin_analog_1)) # AC1 == "ACL"
@@ -89,8 +89,8 @@ ad_oldval=0
 ad1_oldval=0
 ad2_oldval=0
 adc.atten(ADC.ATTN_11DB) # setup
-adc1.atten(ADC.ATTN_11DB) 
-adc2.atten(ADC.ATTN_11DB) 
+adc1.atten(ADC.ATTN_11DB)
+adc2.atten(ADC.ATTN_11DB)
 
 pin_led = Pin(pinout.BUILT_IN_LED, Pin.OUT)
 
@@ -112,7 +112,7 @@ if isFET:
     fet.freq(2000)
 
 if isRelay:
-    rel = Pin(pinout.RELAY_PIN, Pin.OUT)    
+    rel = Pin(pinout.RELAY_PIN, Pin.OUT)
 
 rtc = machine.RTC() # real time
 tim1 = Timer(0)     # for main 10 sec timer
@@ -143,7 +143,7 @@ tslLight = 0x39 in i2cdevs
 io_config = {}
 def loadConfig():
     global isWS, isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo
-       
+
     configFile = 'config/mqtt_io.json'
     if Debug: print("load "+configFile+" >")
     try:
@@ -163,20 +163,20 @@ def loadConfig():
         isTemp = io_config.get('temp')
         isServo = io_config.get('servo')
 
-        print("isWS: " + str(isWS)) 
-        print("isOLED: " + str(isOLED))  
-        print("isLCD: " + str(isLCD))  
-        print("isLed7: " + str(isLed7)) 
-        print("isLed8: " + str(isLed8)) 
-        print("isAD: " + str(isAD))  
-        print("isAD1: " + str(isAD1))  
-        print("isAD2: " + str(isAD2)) 
+        print("isWS: " + str(isWS))
+        print("isOLED: " + str(isOLED))
+        print("isLCD: " + str(isLCD))
+        print("isLed7: " + str(isLed7))
+        print("isLed8: " + str(isLed8))
+        print("isAD: " + str(isAD))
+        print("isAD1: " + str(isAD1))
+        print("isAD2: " + str(isAD2))
         print("isTemp: " + str(isTemp))
         print("isServo: " + str(isServo))
 
     except:
         print("Data Err. or '"+ configFile + "' does not exist")
-  
+
 
 oled = 0
 def oled_intit():
@@ -194,7 +194,7 @@ def displMessage2(mess,timm): # OLEDdisplMessage()
         oled.show()
         time.sleep_ms(timm*1000)
     except Exception as e:
-       print("Err. displMessage() Exception: {0}".format(e)) 
+       print("Err. displMessage() Exception: {0}".format(e))
 
 def displMessage(mess,timm):
     try:
@@ -203,7 +203,7 @@ def displMessage(mess,timm):
         oled.show()
         time.sleep_ms(timm*1000)
     except Exception as e:
-       print("Err. displMessage2() Exception: {0}".format(e))  
+       print("Err. displMessage2() Exception: {0}".format(e))
 
 def scroll(text,num): # TODO speed, timer? / NO "sleep"
     WIDTH = 8*4
@@ -217,7 +217,7 @@ def scroll(text,num): # TODO speed, timer? / NO "sleep"
         d8.text(text, x, 0, 1)
         d8.show()
     d8.fill(0)
-    d8.show()  
+    d8.show()
 
 def getTemp():
     tw=999
@@ -236,7 +236,7 @@ def get_adc_value(inAdc):
     return aval // ADC_SAMPLES
 
 def timerInit():
-    tim1.init(period=10000, mode=Timer.PERIODIC, callback=lambda t:timerSend()) 
+    tim1.init(period=10000, mode=Timer.PERIODIC, callback=lambda t:timerSend())
 
 def timeSetup():
     if Debug: print("time setup >")
@@ -250,13 +250,13 @@ def timeSetup():
         rtc.init(dt_int)
         print(str(rtc.datetime()))
     except:
-        print("Err. Setup time from WiFi")    
-    
+        print("Err. Setup time from WiFi")
+
 def simple_blink():
     pin_led.value(1)
     sleep(0.1)
     pin_led.value(0)
-    sleep(0.1) 
+    sleep(0.1)
 
 def fade_sw_in(p, r, m):
      # pin - range - multipl
@@ -272,19 +272,19 @@ def fade_sw_out(p, r, m):
           p.value(1)
           time.sleep_us((r-i)*m)
           p.value(0)
-          time.sleep_us(i*m*2)      
+          time.sleep_us(i*m*2)
 
-def test7seg():     
+def test7seg():
      d7.write_to_buffer('octopus')
      d7.display()
 
 def sendData():
-    print("sendData()") 
-    if isTemp:  
+    print("sendData()")
+    if isTemp:
         temp10 = int(ts.read_temp()*10)
         publishTopic = "octopus/{0}/temp/{1}".format(esp_id,temp)
-        print(str("publishTopic: ".publishTopic))        
-        c.publish("/octopus/device/{0}/temp/".format(esp_id),str(temp10/10))      
+        print(str("publishTopic: ".publishTopic))
+        c.publish("/octopus/device/{0}/temp/".format(esp_id),str(temp10/10))
 
 it = 0 # every 10 sec.
 def timerSend():
@@ -299,10 +299,10 @@ def timerSend():
             d7.display()
         else:
             d7.write_to_buffer(str(it))
-            d7.display()        
+            d7.display()
     """
     if isOLED:
-        displMessage2(str(it) + " | " + str(get_hhmm(rtc)),1)    
+        displMessage2(str(it) + " | " + str(get_hhmm(rtc)),1)
 
     if (it == 6*minute): # 6 = 1min / 60 = 10min
         if Debug: print("10 min. > send data:")
@@ -337,9 +337,9 @@ def mqtt_sub(topic, msg):
             pin_led.value(1)
             #c.publish(mqtt_root_topic+esp_id,1)
 
-        elif data[0] == 'F':  # ofF 
+        elif data[0] == 'F':  # ofF
             print("-> off")
-            pin_led.value(0) 
+            pin_led.value(0)
             #c.publish(mqtt_root_topic+esp_id,0)
 
     if "wsled" in topic:
@@ -351,23 +351,23 @@ def mqtt_sub(topic, msg):
         elif data[0] == 'B':
            ws_b = int(data[1:])
 
-        if data[0] == '#':  
-            ws_r = int(int(data[1:3], 16)/2)  
-            ws_g = int(int(data[3:5], 16)/2)  
-            ws_b = int(int(data[5:7], 16)/2)  
-            
+        if data[0] == '#':
+            ws_r = int(int(data[1:3], 16)/2)
+            ws_g = int(int(data[3:5], 16)/2)
+            ws_b = int(int(data[5:7], 16)/2)
+
         np[0] = (ws_r, ws_g, ws_b)
         np.write()
 
     if "relay" in topic and isRelay:
-        data = bd(msg)   
+        data = bd(msg)
 
         if data[0] == 'N':  # oN
             print("R > on")
             rel.value(1)
-        elif data[0] == 'F':  # ofF 
+        elif data[0] == 'F':  # ofF
             print("R > off")
-            rel.value(0) 
+            rel.value(0)
 
     if "pwm/freq" in topic:
         data = bd(msg)
@@ -390,43 +390,43 @@ def mqtt_sub(topic, msg):
             pass
 
     if "pwmx" in topic and isFET:
-        data = bd(msg)   
+        data = bd(msg)
 
         if data[0] == '1':
            #pwm = int(data[1:])
             print("led1 - pwm fade in >")
             fade_sw_in(fet,500,5)
-            #fet.value(1) 
+            #fet.value(1)
 
         if data[0] == '0':
            #pwm = int(data[1:])
             print("led0 - pwm fade out >")
-            fade_sw_out(fet,500,5) 
-            #fet.value(0)    
+            fade_sw_out(fet,500,5)
+            #fet.value(0)
 
     if "8x7seg" in topic:
-        data = bd(msg)  
+        data = bd(msg)
         try:
             d7.write_to_buffer(data)
-            d7.display() 
+            d7.display()
         except:
-            print("mqtt.8x7segment.ERR") 
-    
+            print("mqtt.8x7segment.ERR")
+
     if "8x8mtx/stat" in topic: # show simple 1 or 4 chars
-        data = bd(msg)  
+        data = bd(msg)
         try:
             d8.fill(0)
             d8.text(data, 0, 0, 1)
             d8.show()
         except:
-            print("mqtt.8x8matrix/stat.ERR")   
+            print("mqtt.8x8matrix/stat.ERR")
 
     if "8x8mtx/scroll" in topic: # show simple 1 or 4 chars
-        data = bd(msg)  
+        data = bd(msg)
         try:
             scroll(data,5) # .upper()
         except:
-            print("mqtt.8x8matrix/scroll.ERR")             
+            print("mqtt.8x8matrix/scroll.ERR")
 
     if "oled1" in topic:
         data = bd(msg)
@@ -471,7 +471,7 @@ def handleAD():
     if isAD1:
         aval = get_adc_value(adc1)
         if abs(ad1_oldval-aval) > ADC_HYSTERESIS/5: # 50/5=10 for light
-            ad1_oldval = aval 
+            ad1_oldval = aval
             """
             if   isOLED: # test light sensor
                 valmap = map(aval, 0, 4050, 0, 126)
@@ -479,8 +479,8 @@ def handleAD():
             """
             print("ADC1: " + str(aval))
             c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog_1), str(aval))
-   
-    
+
+
     if isAD2:
         aval = get_adc_value(adc2)
         if abs(ad2_oldval-aval) > ADC_HYSTERESIS:
@@ -490,29 +490,29 @@ def handleAD():
 
 def handleConnectionScripts():
     global ad_oldval, ad1_oldval, ad2_oldval
-    if cm_Light2M8brightness:        
+    if cm_Light2M8brightness:
         if isAD1 and isLed8:
             aval = get_adc_value(adc1)
-            if abs(ad1_oldval-aval) > ADC_HYSTERESIS/5: 
+            if abs(ad1_oldval-aval) > ADC_HYSTERESIS/5:
                 ad1_oldval = aval
                 valmap = map(aval, 5, 600, 2, 15)
-                if valmap > 15: valmap = 15          
+                if valmap > 15: valmap = 15
                 d8.brightness(valmap)
-                if cm_Light2M8: 
+                if cm_Light2M8:
                     d8.fill(0)
                     d8.text(str(aval), 0, 0, 1)
-                d8.show()       
+                d8.show()
 
     """
-    if cm_Light2M8: 
+    if cm_Light2M8:
         if isAD1 and isLed8:
             aval = get_adc_value(adc1)
             if abs(ad1_oldval-aval) > ADC_HYSTERESIS:
-                ad_oldval = aval            
+                ad_oldval = aval
                 d8.fill(0)
                 d8.text(str(aval), 0, 0, 1)
                 d8.show()
-    """                        
+    """
 
 
 # --- init and simple testing ---
@@ -577,14 +577,14 @@ if isLed8:
 
         from lib.max7219 import Matrix8x8
         d8 = Matrix8x8(spi, ss, 4) #1/4
-        #print("SPI device already in use") 
+        #print("SPI device already in use")
         d8.brightness(15)
         d8.fill(0)
         d8.text('1234', 0, 0, 1)
         d8.show()
     """except:
-        print("spi.D8.ERR")  
-    """          
+        print("spi.D8.ERR")
+    """
 
 if not 0x27 in i2c.scan():
     print("I2C LCD display not found!")
@@ -599,21 +599,21 @@ if isLCD:
 if isSD:
     from machine import UART
     uart = UART(2, 9600) #UART2 > #U2TXD(SERVO1/PWM1_PIN)
-    uart.write('C')      #test quick clear display  
+    uart.write('C')      #test quick clear display
 
 if isOLED:
     oled_intit()
     oled.text('MQTT-SLAVE test', 5, 3)
     # oled.text(get_hhmm(), 45,29) #time HH:MM
     oled.hline(0,50,128,1)
-    oled.text("octopusLAB 2019",5,OLED_ydown) 
-    oled.show()    
-            
+    oled.text("octopusLAB 2019",5,OLED_ydown)
+    oled.show()
+
 if isLed7:
     print("Testing 7seg")
-    test7seg() 
+    test7seg()
 
-printLog(4,"wifi and mqtt >")    
+printLog(4,"wifi and mqtt >")
 
 print("wifi_config >")
 wifi_config = read_wifi_config()
@@ -652,11 +652,11 @@ print("test temp: " + str(getTemp()))
 """
 timeSetup()
 if isOLED:
-    oled.text(get_hhmm(), 45,29) #time HH:   
-    oled.show() 
+    oled.text(get_hhmm(), 45,29) #time HH:
+    oled.show()
 if isLed7:
     d7.write_to_buffer(get_hhmm())
-    d7.display() 
+    d7.display()
 """
 
 timerInit()
@@ -671,6 +671,4 @@ while True:
     handleAD()
 
     handleConnectionScripts() # testing
-
-    
 
