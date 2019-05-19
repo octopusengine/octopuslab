@@ -97,20 +97,6 @@ ws_r = 0
 ws_g = 0
 ws_b = 0
 
-if isServo:
-    pwm1 = PWM(Pin(pinout.PWM1_PIN), freq=50, duty=70)
-    pwm2 = PWM(Pin(pinout.PWM2_PIN), freq=50, duty=70)
-    pwm3 = PWM(Pin(pinout.PWM3_PIN), freq=50, duty=70)
-
-# only for IoT board
-if isFET:
-    fet = PWM(Pin(pinout.MFET_PIN, Pin.OUT))
-    fet.duty(0)
-    fet.freq(2000)
-
-if isRelay:
-    rel = Pin(pinout.RELAY_PIN, Pin.OUT)
-
 rtc = machine.RTC() # real time
 tim1 = Timer(0)     # for main 10 sec timer
 
@@ -609,6 +595,20 @@ if isOLED:
 if isLed7:
     print("Testing 7seg")
     test7seg()
+
+if isServo:
+    pwm1 = PWM(Pin(pinout.PWM1_PIN), freq=50, duty=70)
+    pwm2 = PWM(Pin(pinout.PWM2_PIN), freq=50, duty=70)
+    pwm3 = PWM(Pin(pinout.PWM3_PIN), freq=50, duty=70)
+
+# only for IoT board
+if isFET:
+    fet = PWM(Pin(pinout.MFET_PIN, Pin.OUT))
+    fet.duty(0)
+    fet.freq(2000)
+
+if isRelay:
+    rel = Pin(pinout.RELAY_PIN, Pin.OUT)
 
 printLog(4,"wifi and mqtt >")
 
