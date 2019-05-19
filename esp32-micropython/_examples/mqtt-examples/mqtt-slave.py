@@ -620,7 +620,7 @@ printLog(4,"wifi and mqtt >")
 
 print("wifi_config >")
 wifi_config = read_wifi_config()
-wifi = WiFiConnect(wifi_config["wifi_retries"] if "wifi_retries" in wifi_config else 250 )
+wifi = WiFiConnect(wifi_config["wifi_retries"] if "wifi_retries" in wifi_config else wifi_retries)
 wifi.events_add_connecting(connecting_callback)
 wifi.events_add_connected(connected_callback)
 print("wifi.connect  to " + wifi_config["wifi_ssid"])
