@@ -16,6 +16,7 @@ void WiFiEvent(WiFiEvent_t event) {
       break;
     case SYSTEM_EVENT_ETH_CONNECTED:
       Serial.println("ETH Connected");
+      digitalWrite(2, HIGH); //Builtin LED ON
       break;
     case SYSTEM_EVENT_ETH_GOT_IP:
       Serial.print("ETH MAC: ");
@@ -33,6 +34,7 @@ void WiFiEvent(WiFiEvent_t event) {
     case SYSTEM_EVENT_ETH_DISCONNECTED:
       Serial.println("ETH Disconnected");
       eth_connected = false;
+      digitalWrite(2, LOW); // Builtin LED OFF
       break;
     case SYSTEM_EVENT_ETH_STOP:
       Serial.println("ETH Stopped");
@@ -65,6 +67,11 @@ void testClient(const char * host, uint16_t port, const char * url) {
 
 void setup() {
   Serial.begin(115200);
+
+  //Built in LED
+  pinMode(2, OUTPUT);
+  digitalWrite(2, LOW);
+  
   Serial.println("Program RUN");
   WiFi.onEvent(WiFiEvent);
   ETH.begin(ETH_ADDR, ETH_POWER_PIN, ETH_PHY_MDC, ETH_PHY_MDIO, ETH_PHY_TYPE, ETH_CLOCK_GPIO17_OUT);
