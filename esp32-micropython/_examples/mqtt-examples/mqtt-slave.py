@@ -41,7 +41,8 @@ isAD2 = 0       #  A/D y / thermistor
 isServo = 1     # Have PWM pins
 isFET = 0       # We have FET
 isRelay = 0     # Have Relay
-# Displays
+# Displays / LED
+isWS = 0        #  WS RGB LED 0/1/8/...n
 isLed7 = 0      #  SPI max 8x7 segm.display
 isLed8 = 0      #  SPI max 8x8 matrix display
 isOLED = 1      ##  I2C
@@ -125,7 +126,7 @@ tslLight = 0x39 in i2cdevs
 
 io_config = {}
 def loadConfig():
-    global isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo
+    global isWS, isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo
        
     configFile = 'config/mqtt_io.json'
     if Debug: print("load "+configFile+" >")
@@ -135,6 +136,7 @@ def loadConfig():
             f.close()
             io_config = json.loads(d)
 
+        isWS = io_config.get('ws')
         isOLED = io_config.get('oled')
         isLCD = io_config.get('lcd')
         isLed7 = io_config.get('8x7')
@@ -145,9 +147,11 @@ def loadConfig():
         isTemp = io_config.get('temp')
         isServo = io_config.get('servo')
 
+        print("isWS: " + str(isWS)) 
         print("isOLED: " + str(isOLED))  
         print("isLCD: " + str(isLCD))  
-        print("isLed7: " + str(isLed7))  
+        print("isLed7: " + str(isLed7)) 
+        print("isLed8: " + str(isLed8)) 
         print("isAD: " + str(isAD))  
         print("isAD1: " + str(isAD1))  
         print("isAD2: " + str(isAD2)) 
@@ -219,9 +223,9 @@ def timeSetup():
         print("Err. Setup time from WiFi")    
     
 def simple_blink():
-    pin_led.value(0)
-    sleep(0.1)
     pin_led.value(1)
+    sleep(0.1)
+    pin_led.value(0)
     sleep(0.1) 
 
 def fade_sw_in(p, r, m):
@@ -409,9 +413,29 @@ def mqtt_sub(topic, msg):
             print("Servo error")
             print(e)
 
-# --- init ---
+# --- init and simple testing ---
 printLog(3,"init i/o - config >")
 loadConfig()
+
+if isWS:
+    print("WS RGB LED test >")
+    np[0] = (128, 0, 0) #R
+    np.write()
+    simple_blink() # pause
+    sleep(1)
+
+    np[0] = (0,128, 0) #G
+    np.write()
+    simple_blink()
+    sleep(1)
+
+    np[0] = (0, 0, 128) #B
+    np.write()
+    simple_blink()
+    sleep(1)
+
+    np[0] = (0, 0, 0)
+    np.write()
 
 ts = []
 if isTemp:
@@ -439,7 +463,26 @@ if isLed7:
         ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
         d7 = Display(spi, ss)
     except:
-        print("spi.ERR")
+        print("spi.D7.ERR")
+
+if isLed8:
+    from lib.max7219_8digit import Display
+    # spi
+    if True: #try:
+        #spi.deinit()
+        spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
+        ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
+
+        from lib.max7219 import Matrix8x8
+        d8 = Matrix8x8(spi, ss, 4) #1/4
+        #print("SPI device already in use") 
+        d8.brightness(15)
+        d8.fill(0)
+        d8.text('1234', 0, 0, 1)
+        d8.show()
+    """except:
+        print("spi.D8.ERR")  
+    """          
 
 if not 0x27 in i2c.scan():
     print("I2C LCD display not found!")
@@ -463,15 +506,7 @@ if isOLED:
     oled.hline(0,50,128,1)
     oled.text("octopusLAB 2019",5,OLED_ydown) 
     oled.show()    
-                
-# Default WS led light RED as init
-np[0] = (100, 0, 0)
-np.write()
-simple_blink()
-simple_blink()
-np[0] = (0, 0, 0)
-np.write()        
-
+            
 if isLed7:
     print("Testing 7seg")
     test7seg() 
