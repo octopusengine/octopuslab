@@ -1,5 +1,8 @@
-#octopusLAB - ESP32 - WiFi and WS RGB LED signalizationn - MQTT
-#
+"""
+octopusLAB - ESP32 - MQTT "slave" manager
+need ROBOTboard or IoTboard (it depends on the project)
+"""
+
 
 import machine, time, ubinascii, json
 from time import sleep
@@ -18,8 +21,7 @@ pinout = set_pinout()
 
 printLog(1,"boot device >")
 print("mqtt-slave.py > ESP32")
-ver = "0.21/17.5.2019"
-print(ver)
+ver = "0.31 / 19.5.2019"
 
 # hard-code config / daefault
 Debug = True        # TODO: debugPrint()?
@@ -28,20 +30,23 @@ timeInterval = 1
 wifi_retries = 100  # for wifi connecting
 
 #* = todo / ## = automatic
-# Defaults - sensors
+# Inputs - sensors
 isTemp = 0      #  temperature
 isLight = 0     #  light (lux)
 isMois = 0      #* moisture
-isAD = 0        #* AD input voltage
-isADL = 0       #  AD photoresistor
-# Displays
-isLed7 = 0      #  SPI max 8x7 segm.display
-isOLED = 1      ##  I2C
-isLCD = 0       ##* I2C
-isSD = 0        #* UART
+isAD = 0        #* A/D input voltage
+isAD1 = 0       #  A/D x / photoresistor
+isAD2 = 0       #  A/D y / thermistor
+# Outpusts
 isServo = 1     # Have PWM pins
 isFET = 0       # We have FET
 isRelay = 0     # Have Relay
+# Displays
+isLed7 = 0      #  SPI max 8x7 segm.display
+isLed8 = 0      #  SPI max 8x8 matrix display
+isOLED = 1      ##  I2C
+isLCD = 0       ##* I2C
+isSD = 0        #* UART
 
 LCD_ADDRESS=0x27
 LCD_ROWS=2
@@ -54,44 +59,49 @@ OLED_x0 = 3
 OLED_ydown = OLEDY-7
 
 #ADC/ADL
-pin_analog = 36
+pin_analog = 36         # analog or power management 
 adc = ADC(Pin(pin_analog))
-pin_analog_light = 34
-adcl = ADC(Pin(pin_analog_light))
+pin_analog_light = 34   # x
+adc1 = ADC(Pin(pin_analog_light)) # AC1 == "ACL"
+pin_analog_2 = 35       # y
+adc2 = ADC(Pin(pin_analog_light))
 
 ADC_SAMPLES=100
 ADC_HYSTERESIS=50
 ad_oldval=0
-adl_oldval=0
+ad1_oldval=0
 adc.atten(ADC.ATTN_11DB) # setup
-adcl.atten(ADC.ATTN_11DB) 
+adc1.atten(ADC.ATTN_11DB) 
+adc2.atten(ADC.ATTN_11DB) 
 
 pin_led = Pin(pinout.BUILT_IN_LED, Pin.OUT)
+
 pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
-
-if isFET:
-    fet = PWM(Pin(pinout.MFET_PIN, Pin.OUT))
-    fet.duty(0)
-    fet.freq(2000)
-
-if isRelay:
-    rel = Pin(pinout.RELAY_PIN, Pin.OUT)
+np = NeoPixel(pin_ws, 1)
+ws_r = 0
+ws_g = 0
+ws_b = 0
 
 if isServo:
     pwm1 = PWM(Pin(pinout.PWM1_PIN), freq=50, duty=70)
     pwm2 = PWM(Pin(pinout.PWM2_PIN), freq=50, duty=70)
     pwm3 = PWM(Pin(pinout.PWM3_PIN), freq=50, duty=70)
 
+# only for IoT board
+if isFET:
+    fet = PWM(Pin(pinout.MFET_PIN, Pin.OUT))
+    fet.duty(0)
+    fet.freq(2000)
+
+if isRelay:
+    rel = Pin(pinout.RELAY_PIN, Pin.OUT)    
+
 rtc = machine.RTC() # real time
 tim1 = Timer(0)     # for main 10 sec timer
 
+print("ver: " + ver + " (c)octopusLAB")
 esp_id = ubinascii.hexlify(machine.unique_id()).decode()
-print(esp_id)
-
-np = NeoPixel(pin_ws, 1)
-ws_r = 0
-ws_g = 0
-ws_b = 0
+print("id: " + esp_id)
 
 printLog(2,"init - variables and functions >")
 
@@ -118,7 +128,7 @@ def loadConfig():
        
     configFile = 'config/mqtt_io.json'
     if Debug: print("load "+configFile+" >")
-    if True: #try:
+    try:
         with open(configFile, 'r') as f:
             d = f.read()
             f.close()
@@ -127,8 +137,9 @@ def loadConfig():
         isOLED = io_config.get('oled')
         isLCD = io_config.get('lcd')
         isLed7 = io_config.get('8x7')
-        isAD = io_config.get('adv1')
-        isADL = io_config.get('adv3')
+        isAD = io_config.get('adv')
+        isAD1 = io_config.get('adv1')
+        isAD2 = io_config.get('adv2')
         isTemp = io_config.get('temp')
         isServo = io_config.get('servo')
 
@@ -136,13 +147,14 @@ def loadConfig():
         print("isLCD: " + str(isLCD))  
         print("isLed7: " + str(isLed7))  
         print("isAD: " + str(isAD))  
-        print("isADL: " + str(isADL))  
+        print("isAD1: " + str(isAD1))  
+        print("isAD2: " + str(isAD2)) 
         print("isTemp: " + str(isTemp))
         print("isServo: " + str(isServo))
-    """
+
     except:
         print("Data Err. or '"+ configFile + "' does not exist")
-    """    
+  
 
 oled = 0
 def oled_intit():
@@ -303,6 +315,11 @@ def mqtt_sub(topic, msg):
         elif data[0] == 'B':
            ws_b = int(data[1:])
 
+        if data[0] == '#':  
+            ws_r = int(int(data[1:3], 16)/2)  
+            ws_g = int(int(data[3:5], 16)/2)  
+            ws_b = int(int(data[5:7], 16)/2)  
+            
         np[0] = (ws_r, ws_g, ws_b)
         np.write()
 
@@ -390,7 +407,6 @@ def mqtt_sub(topic, msg):
             print("Servo error")
             print(e)
 
-
 # --- init ---
 printLog(3,"init i/o - config >")
 loadConfig()
@@ -465,7 +481,7 @@ wifi_config = read_wifi_config()
 wifi = WiFiConnect(wifi_config["wifi_retries"] if "wifi_retries" in wifi_config else 250 )
 wifi.events_add_connecting(connecting_callback)
 wifi.events_add_connected(connected_callback)
-print("wifi.connect >")
+print("wifi.connect  to " + wifi_config["wifi_ssid"])
 wifi_status = wifi.connect(wifi_config["wifi_ssid"], wifi_config["wifi_pass"])
 
 # url config: TODO > extern.
@@ -480,7 +496,7 @@ mqtt_ssl  = read_mqtt_config()["mqtt_ssl"]
 mqtt_clientid = mqtt_clientid_prefix + esp_id
 c = MQTTClient(mqtt_clientid, mqtt_host, ssl=mqtt_ssl)
 c.set_callback(mqtt_sub)
-print("mqtt.connect > ")
+print("mqtt.connect to " + mqtt_host)
 c.connect()
 # c.subscribe("/octopus/device/{0}/#".format(esp_id))
 
@@ -511,13 +527,20 @@ printLog(5,"start - main loop >")
 while True:
     c.check_msg()
 
-    if isADL:
-        aval = get_adc_value(adcl)
-        if abs(adl_oldval-aval) > ADC_HYSTERESIS:
-            if   isOLED:
+    if isAD1:
+        aval = get_adc_value(adc1)
+        if abs(ad1_oldval-aval) > ADC_HYSTERESIS:
+            if   isOLED: # test light sensor
                 valmap = map(aval, 0, 4050, 0, 126)
                 displBarSlimH(oled, valmap, 11)
-            adl_oldval = aval
+            ad1_oldval = aval
+            print("ADCL: " + str(aval))
+            c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog_light), str(aval))
+    
+    if isAD2:
+        aval = get_adc_value(adc2)
+        if abs(ad2_oldval-aval) > ADC_HYSTERESIS:
+            ad2_oldval = aval
             print("ADCL: " + str(aval))
             c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog_light), str(aval))
 
