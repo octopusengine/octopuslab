@@ -46,7 +46,7 @@ isAD = 0        #* A/D input voltage
 isAD1 = 0       #  A/D x / photoresistor
 isAD2 = 0       #  A/D y / thermistor
 # Outpusts
-isServo = 1     # Have PWM pins
+isServo = 1     # Have PWM pins (both Robot and IoT have by default)
 isFET = 0       # We have FET
 isRelay = 0     # Have Relay
 # Displays / LED
@@ -112,16 +112,6 @@ bd = bytes.decode
 if Debug: print("init i2c >")
 i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
 # i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN), freq=100000) # 100kHz because PCF is slow
-if Debug: print(" - scanning")
-i2cdevs = i2c.scan()
-if Debug: print(" - devices: {0}".format(i2cdevs))
-
-# Determine what we have connected to I2C
-isOLED = 0x3c in i2cdevs
-bhLight = 0x23 in i2cdevs
-bh2Light = 0x5c in i2cdevs
-tslLight = 0x39 in i2cdevs
-
 
 io_config = {}
 def loadConfig():
@@ -161,7 +151,22 @@ def loadConfig():
         print("Data Err. or '"+ configFile + "' does not exist")
 
 
-oled = 0
+# Detect I2C bus
+def detect_i2c_dev():
+    global isOLED, bhLight, bh2Light, tslLight, isLCD
+
+    if Debug: print(" - scanning")
+    i2cdevs = i2c.scan()
+    if Debug: print(" - devices: {0}".format(i2cdevs))
+
+    # Determine what we have connected to I2C
+    isOLED = (0x3c in i2cdevs) and isOLED      # If there is OLED, but config disabled it
+    bhLight = 0x23 in i2cdevs
+    bh2Light = 0x5c in i2cdevs
+    tslLight = 0x39 in i2cdevs
+    isLCD = (LCD_ADDRESS in i2cdevs) and isLCD # If there is OLED, but config disabled it
+
+oled = None
 def oled_intit():
     print("OLED present: {0}".format(isOLED))
     global oled
@@ -501,6 +506,7 @@ def handleConnectionScripts():
 # --- init and simple testing ---
 printLog(3,"init i/o - config >")
 loadConfig()
+detect_i2c_dev()
 
 if isWS:
     print("WS RGB LED test >")
