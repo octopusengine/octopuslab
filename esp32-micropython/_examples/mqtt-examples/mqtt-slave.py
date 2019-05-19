@@ -61,15 +61,16 @@ OLED_ydown = OLEDY-7
 #ADC/ADL
 pin_analog = 36         # analog or power management 
 adc = ADC(Pin(pin_analog))
-pin_analog_light = 34   # x
-adc1 = ADC(Pin(pin_analog_light)) # AC1 == "ACL"
+pin_analog_1 = 34       # x
+adc1 = ADC(Pin(pin_analog_1)) # AC1 == "ACL"
 pin_analog_2 = 35       # y
-adc2 = ADC(Pin(pin_analog_light))
+adc2 = ADC(Pin(pin_analog_2))
 
 ADC_SAMPLES=100
 ADC_HYSTERESIS=50
 ad_oldval=0
 ad1_oldval=0
+ad2_oldval=0
 adc.atten(ADC.ATTN_11DB) # setup
 adc1.atten(ADC.ATTN_11DB) 
 adc2.atten(ADC.ATTN_11DB) 
@@ -124,7 +125,7 @@ tslLight = 0x39 in i2cdevs
 
 io_config = {}
 def loadConfig():
-    global isOLED, isLCD, isLed7, isAD, isADL, isTemp
+    global isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo
        
     configFile = 'config/mqtt_io.json'
     if Debug: print("load "+configFile+" >")
@@ -137,6 +138,7 @@ def loadConfig():
         isOLED = io_config.get('oled')
         isLCD = io_config.get('lcd')
         isLed7 = io_config.get('8x7')
+        isLed8 = io_config.get('8x8')
         isAD = io_config.get('adv')
         isAD1 = io_config.get('adv1')
         isAD2 = io_config.get('adv2')
@@ -527,6 +529,13 @@ printLog(5,"start - main loop >")
 while True:
     c.check_msg()
 
+    if isAD:
+        aval = get_adc_value(adc)
+        if abs(ad_oldval-aval) > ADC_HYSTERESIS:
+            ad_oldval = aval
+            print("ADC: " + str(aval))
+            c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog), str(aval))
+
     if isAD1:
         aval = get_adc_value(adc1)
         if abs(ad1_oldval-aval) > ADC_HYSTERESIS:
@@ -534,19 +543,13 @@ while True:
                 valmap = map(aval, 0, 4050, 0, 126)
                 displBarSlimH(oled, valmap, 11)
             ad1_oldval = aval
-            print("ADCL: " + str(aval))
-            c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog_light), str(aval))
+            print("ADC1: " + str(aval))
+            c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog_1), str(aval))
     
     if isAD2:
         aval = get_adc_value(adc2)
         if abs(ad2_oldval-aval) > ADC_HYSTERESIS:
             ad2_oldval = aval
-            print("ADCL: " + str(aval))
-            c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog_light), str(aval))
+            print("ADC2: " + str(aval))
+            c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog_2), str(aval))
 
-    if isAD:
-        aval = get_adc_value(adc)
-        if abs(ad_oldval-aval) > ADC_HYSTERESIS:
-            ad_oldval = aval
-            print("ADC: " + str(aval))
-            c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog), str(aval))
