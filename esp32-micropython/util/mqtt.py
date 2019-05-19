@@ -104,9 +104,10 @@ def mqtt():
             wc['ws'] = int(input("ws1: [1/8/16/..]"))
             print(" --> sensors ---")
             wc['temp'] = int(input("dallas temerature senzor: "))
-            wc['adv1'] = int(input("adc: i36 - power: "))
-            wc['adv2'] = int(input("adc: i35: "))
-            wc['adv3'] = int(input("adc: i34 - light: "))
+            wc['adv'] = int(input("adc: i36 (ad/power): "))
+            wc['adv1'] = int(input("adc: i34 (x/light): "))
+            wc['adv2'] = int(input("adc: i35 (y/temp): "))
+           
             wc['light'] = int(input("light i2c senzor: "))
             wc['button'] = int(input("button: "))
             wc['keyboard'] = int(input("keyboard: "))
