@@ -29,7 +29,7 @@ pinout = set_pinout()
 
 printLog(1,"boot device >")
 print("mqtt-slave.py > ESP32")
-ver = "0.31 / 19.5.2019"
+ver = "0.35 / 20.5.2019"
 
 # hard-code config / daefault
 Debug = True        # TODO: debugPrint()?
@@ -45,6 +45,7 @@ isMois = 0      #* moisture
 isAD = 0        #* A/D input voltage
 isAD1 = 0       #  A/D x / photoresistor
 isAD2 = 0       #  A/D y / thermistor
+isKeypad = 0    # Robot I2C+expander 4x4 keypad
 # Outpusts
 isServo = 1     # Have PWM pins (both Robot and IoT have by default)
 isFET = 0       # We have FET
@@ -71,6 +72,11 @@ OLEDX = 128
 OLEDY = 64
 OLED_x0 = 3
 OLED_ydown = OLEDY-7
+
+# Keyboard settings timer
+KP_ADDRESS=0x23
+KP_Delay = 250
+KP_LastPress = 0
 
 #ADC/ADL
 pin_analog = 36         # analog or power management
@@ -135,6 +141,7 @@ def loadConfig():
         isAD2 = io_config.get('adv2')
         isTemp = io_config.get('temp')
         isServo = io_config.get('servo')
+        isKeypad = io_config.get('keyboard')
 
         print("isWS: " + str(isWS))
         print("isOLED: " + str(isOLED))
@@ -146,6 +153,7 @@ def loadConfig():
         print("isAD2: " + str(isAD2))
         print("isTemp: " + str(isTemp))
         print("isServo: " + str(isServo))
+        print("isKeypad: " + str(isKeypad))
 
     except:
         print("Data Err. or '"+ configFile + "' does not exist")
@@ -311,14 +319,13 @@ def connecting_callback(retries):
     simple_blink()
 
 def mqtt_sub(topic, msg):
-    global ws_r
-    global ws_g
-    global ws_b
+    data = bd(msg)
+    global ws_r, ws_g, ws_b
 
     print("MQTT Topic {0}: {1}".format(topic, msg))
     if "led" in topic:
         print("led:")
-        data = bd(msg)
+        
 
         if data[0] == 'N':  # oN
             print("-> on")
@@ -331,7 +338,6 @@ def mqtt_sub(topic, msg):
             #c.publish(mqtt_root_topic+esp_id,0)
 
     if "wsled" in topic:
-        data = bd(msg)
         if data[0] == 'R':
            ws_r = int(data[1:])
         elif data[0] == 'G':
@@ -348,8 +354,6 @@ def mqtt_sub(topic, msg):
         np.write()
 
     if "relay" in topic and isRelay:
-        data = bd(msg)
-
         if data[0] == 'N':  # oN
             print("R > on")
             rel.value(1)
@@ -358,7 +362,6 @@ def mqtt_sub(topic, msg):
             rel.value(0)
 
     if "pwm/freq" in topic:
-        data = bd(msg)
         try:
             value = int(data)
             print("PWM Freq: {0}".format(value))
@@ -368,7 +371,6 @@ def mqtt_sub(topic, msg):
             pass
 
     if "pwm/duty" in topic:
-        data = bd(msg)
         try:
             value = int(data)
             print("PWM Duty: {0}".format(value))
@@ -378,8 +380,6 @@ def mqtt_sub(topic, msg):
             pass
 
     if "pwmx" in topic and isFET:
-        data = bd(msg)
-
         if data[0] == '1':
            #pwm = int(data[1:])
             print("led1 - pwm fade in >")
@@ -393,7 +393,6 @@ def mqtt_sub(topic, msg):
             #fet.value(0)
 
     if "8x7seg" in topic:
-        data = bd(msg)
         try:
             d7.write_to_buffer(data)
             d7.display()
@@ -401,7 +400,6 @@ def mqtt_sub(topic, msg):
             print("mqtt.8x7segment.ERR")
 
     if "8x8mtx/stat" in topic: # show simple 1 or 4 chars
-        data = bd(msg)
         try:
             d8.fill(0)
             d8.text(data, 0, 0, 1)
@@ -410,28 +408,24 @@ def mqtt_sub(topic, msg):
             print("mqtt.8x8matrix/stat.ERR")
 
     if "8x8mtx/scroll" in topic: # show simple 1 or 4 chars
-        data = bd(msg)
         try:
             scroll(data,5) # .upper()
         except:
             print("mqtt.8x8matrix/scroll.ERR")
 
     if "oled1" in topic:
-        data = bd(msg)
         try:
             displMessage(data,2)
         except:
             print("oled.ERR")
 
     if "oled2" in topic:
-        data = bd(msg)
         try:
             displMessage2(data,2)
         except:
             print("oled.ERR")
 
     if "servo/" in topic and isServo:
-        data = bd(msg)
         try:
             servo = str(topic).split('servo/')[1]
             print("Setting servo {0} to value {1}".format(servo, data))
@@ -502,6 +496,17 @@ def handleConnectionScripts():
                 d8.show()
     """
 
+def handleKeyPad():
+    global KP_LastPress
+    try:
+        key = kp.getKey()
+    except OSError as e:
+        print(e)
+
+    if key and ticks_ms() > KP_LastPress + KP_Delay:
+        KP_LastPress = ticks_ms()
+        print(key)
+        c.publish("octopus/{0}/keypad/key".format(esp_id), key)
 
 # --- init and simple testing ---
 printLog(3,"init i/o - config >")
@@ -602,6 +607,15 @@ if isLed7:
     print("Testing 7seg")
     test7seg()
 
+if isKeypad:
+    print("I2C epander Keypad 4x4")
+    if not KP_ADDRESS in i2c.scan():
+        print("I2C Keypad not found!")
+        isKeypad = False
+    else:
+        from lib.KeyPad_I2C import keypad
+        kp = keypad(i2c, KP_ADDRESS)    
+
 if isServo:
     pwm1 = PWM(Pin(pinout.PWM1_PIN), freq=50, duty=70)
     pwm2 = PWM(Pin(pinout.PWM2_PIN), freq=50, duty=70)
@@ -675,3 +689,5 @@ while True:
 
     handleConnectionScripts() # testing
 
+    if isKeypad:
+        handleKeyPad()
