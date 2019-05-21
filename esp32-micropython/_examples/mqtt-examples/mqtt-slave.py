@@ -101,6 +101,8 @@ pin_led = Pin(pinout.BUILT_IN_LED, Pin.OUT)
 
 pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
 np = NeoPixel(pin_ws, 1)
+# num_pixels = 12
+
 ws_r = 0
 ws_g = 0
 ws_b = 0
@@ -356,6 +358,14 @@ def mqtt_sub(topic, msg):
         np[0] = (ws_r, ws_g, ws_b)
         np.write()
 
+    if "wsled/rainbow" in topic:
+        rainbow_cycle(isWS,2)  # Increase the number to slow down the rainbow
+        time.sleep(1)
+
+    if "wsled/off" in topic:
+        np.fill(BLACK)
+        np.write()            
+
     if "relay" in topic and isRelay:
         if data[0] == 'N':  # oN
             print("R > on")
@@ -581,6 +591,67 @@ def handleKeyPad():
 
         c.publish("octopus/{0}/keypad/key".format(esp_id), key)
 
+# WS neopixel:
+def wheel(pos):
+    # Input a value 0 to 255 to get a color value.
+    # The colours are a transition r - g - b - back to r.
+    if pos < 0 or pos > 255:
+        return (0, 0, 0)
+    if pos < 85:
+        return (255 - pos * 3, pos * 3, 0)
+    if pos < 170:
+        pos -= 85
+        return (0, 255 - pos * 3, pos * 3)
+    pos -= 170
+    return (pos * 3, 0, 255 - pos * 3)
+
+def color_chase(num_pixels, color, wait):
+    for i in range(num_pixels):
+        np[i] = color
+        np.write()
+        time.sleep(wait)
+
+def rainbow_cycle(num_pixels,wait):
+    for j in range(255):
+        for i in range(num_pixels):
+            rc_index = (i * 256 // num_pixels) + j
+            np[i] = wheel(rc_index & 255)
+        np.write()
+
+RED = (255, 0, 0)
+YELLOW = (255, 150, 0)
+GREEN = (0, 255, 0)
+CYAN = (0, 255, 255)
+BLUE = (0, 0, 255)
+PURPLE = (180, 0, 255)
+BLACK = (0, 0, 0) # = off
+
+def neopixelTest(num_pixels):
+        #https://github.com/maxking/micropython/blob/master/rainbow.py
+        np.fill(RED)
+        np.write()
+        # Increase or decrease to change the speed of the solid color change.
+        time.sleep(1)
+        np.fill(GREEN)
+        np.write()
+        time.sleep(1)
+        np.fill(BLUE)
+        np.write()
+        time.sleep(1)
+
+        color_chase(num_pixels,RED, 0.1)  # Increase the number to slow down the color chase
+        color_chase(num_pixels,YELLOW, 0.1)
+        color_chase(num_pixels,GREEN, 0.1)
+        color_chase(num_pixels,CYAN, 0.1)
+        color_chase(num_pixels,BLUE, 0.1)
+        color_chase(num_pixels,PURPLE, 0.1)
+
+        rainbow_cycle(num_pixels,2)  # Increase the number to slow down the rainbow
+        time.sleep(1)
+
+        np.fill(BLACK)
+        np.write()
+
 # --- init and simple testing ---
 printLog(3,"init i/o - config >")
 loadConfig()
@@ -605,6 +676,14 @@ if isWS:
 
     np[0] = (0, 0, 0)
     np.write()
+
+    #pixels = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=0.3, auto_write=False)
+    # test
+    if isWS > 1:
+        print("Neopixel WS LED: " + str(isWS))
+        np = NeoPixel(pin_ws, isWS)
+        neopixelTest(isWS)
+        
 
 ts = []
 if isTemp:
