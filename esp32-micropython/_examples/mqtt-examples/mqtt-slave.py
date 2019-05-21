@@ -13,7 +13,7 @@ I2C OLED, I2C LCD, SPI 8x7 segment, SPI 4x 8x8 matrix, UART Nextion, UART Serial
 """
 
 import machine, time, ubinascii, json
-from time import sleep
+from time import sleep, ticks_ms
 from machine import Pin, Timer, PWM, SPI
 from neopixel import NeoPixel
 from util.wifi_connect import read_wifi_config, WiFiConnect
@@ -59,8 +59,10 @@ isLCD = 0       ##* I2C
 isSD = 0        #* UART
 
 # testing simple orchestrator connection manager
+isTimer = 1
 cm_Light2M8 = 0
 cm_Light2M8brightness = 0
+cm_Keypad2Lcd = 1
 
 #
 LCD_ADDRESS=0x27
@@ -115,13 +117,13 @@ printLog(2,"init - variables and functions >")
 bd = bytes.decode
 
 # Set up I2C
-if Debug: print("init i2c >")
+print("init i2c >")
 i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
 # i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN), freq=100000) # 100kHz because PCF is slow
 
 io_config = {}
 def loadConfig():
-    global isWS, isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo
+    global isWS, isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo, isKeypad
 
     configFile = 'config/mqtt_io.json'
     if Debug: print("load "+configFile+" >")
@@ -143,26 +145,27 @@ def loadConfig():
         isServo = io_config.get('servo')
         isKeypad = io_config.get('keyboard')
 
-        print("isWS: " + str(isWS))
-        print("isOLED: " + str(isOLED))
-        print("isLCD: " + str(isLCD))
-        print("isLed7: " + str(isLed7))
-        print("isLed8: " + str(isLed8))
-        print("isAD: " + str(isAD))
-        print("isAD1: " + str(isAD1))
-        print("isAD2: " + str(isAD2))
-        print("isTemp: " + str(isTemp))
-        print("isServo: " + str(isServo))
-        print("isKeypad: " + str(isKeypad))
-
     except:
         print("Data Err. or '"+ configFile + "' does not exist")
+
+def printConfig():
+    print("isWS: " + str(isWS))
+    print("isOLED: " + str(isOLED))
+    print("isLCD: " + str(isLCD))
+    print("isLed7: " + str(isLed7))
+    print("isLed8: " + str(isLed8))
+    print("isAD: " + str(isAD))
+    print("isAD1: " + str(isAD1))
+    print("isAD2: " + str(isAD2))
+    print("isTemp: " + str(isTemp))
+    print("isServo: " + str(isServo))
+    print("isKeypad: " + str(isKeypad))
 
 
 # Detect I2C bus
 def detect_i2c_dev():
     global isOLED, bhLight, bh2Light, tslLight, isLCD
-
+    print("detect i2c devices >")
     if Debug: print(" - scanning")
     i2cdevs = i2c.scan()
     if Debug: print(" - devices: {0}".format(i2cdevs))
@@ -392,6 +395,71 @@ def mqtt_sub(topic, msg):
             fade_sw_out(fet,500,5)
             #fet.value(0)
 
+    if "lcd/clear" in topic:
+        data = bd(msg)
+        print("raw test: {0}".format(data))
+        if isLCD:
+            lcd.clear()
+
+    if "lcd/rawtext" in topic:
+        data = bd(msg)
+        print("raw test: {0}".format(data))
+        if isLCD:
+            lcd.clear()
+            lcd.putstr(data)
+
+    if "lcd/line1text" in topic:
+        data = bd(msg)
+        print("line 1 text: {0}".format(data))
+        if isLCD:
+            lcd.move_to(0, 0)
+            lcd.putstr(data[:LCD_COLS])
+
+    if "lcd/line2text" in topic:
+        data = bd(msg)
+        print("line 2 text: {0}".format(data))
+        if isLCD:
+            lcd.move_to(0, 1)
+            lcd.putstr(data[:LCD_COLS])
+
+    if "lcd/line3text" in topic:
+        data = bd(msg)
+        print("line 3 text: {0}".format(data))
+        if isLCD:
+            lcd.move_to(0, 2)
+            lcd.putstr(data[:LCD_COLS])
+
+    if "lcd/line4text" in topic:
+        data = bd(msg)
+        print("line 4 text: {0}".format(data))
+        if isLCD:
+            lcd.move_to(0, 3)
+            lcd.putstr(data[:LCD_COLS])
+
+    if "lcd/write" in topic:
+        data = bd(msg)
+        print("text: {0}".format(data))
+        if isLCD:
+             lcd.putstr(data)
+
+    if "lcd/set_cursor" in topic:
+        data = bd(msg)
+        x=0
+        y=0
+        print("Cursor set: {0}".format(data))
+        try:
+            if "x" in data:
+                x = int(data.split('x')[0])
+                y = int(data.split('x')[1])
+            else:
+                y = int(data)
+
+            lcd.move_to(x, y)
+
+        except Exception as e:
+            print("Error parse message")
+            print(e)        
+
     if "8x7seg" in topic:
         try:
             d7.write_to_buffer(data)
@@ -506,12 +574,17 @@ def handleKeyPad():
     if key and ticks_ms() > KP_LastPress + KP_Delay:
         KP_LastPress = ticks_ms()
         print(key)
+        if cm_Keypad2Lcd:
+            if isLCD:
+                lcd.move_to(0, 2)
+                lcd.putstr(key)
+
         c.publish("octopus/{0}/keypad/key".format(esp_id), key)
 
 # --- init and simple testing ---
 printLog(3,"init i/o - config >")
 loadConfig()
-detect_i2c_dev()
+printConfig()
 
 if isWS:
     print("WS RGB LED test >")
@@ -579,6 +652,28 @@ if isLed8:
     """except:
         print("spi.D8.ERR")
     """
+if isServo:
+    pwm1 = PWM(Pin(pinout.PWM1_PIN), freq=50, duty=70)
+    pwm2 = PWM(Pin(pinout.PWM2_PIN), freq=50, duty=70)
+    pwm3 = PWM(Pin(pinout.PWM3_PIN), freq=50, duty=70)
+
+# only for IoT board
+if isFET:
+    fet = PWM(Pin(pinout.MFET_PIN, Pin.OUT))
+    fet.duty(0)
+    fet.freq(2000)
+
+if isRelay:
+    rel = Pin(pinout.RELAY_PIN, Pin.OUT)
+
+# serial displ
+if isSD:
+    from machine import UART
+    uart = UART(2, 9600) #UART2 > #U2TXD(SERVO1/PWM1_PIN)
+    uart.write('C')      #test quick clear display
+
+# i2c devices ------:
+detect_i2c_dev()
 
 if not 0x27 in i2c.scan():
     print("I2C LCD display not found!")
@@ -588,12 +683,8 @@ if not 0x27 in i2c.scan():
 if isLCD:
     from lib.esp8266_i2c_lcd import I2cLcd
     lcd = I2cLcd(i2c, LCD_ADDRESS, LCD_ROWS, LCD_COLS)
-
-# serial displ
-if isSD:
-    from machine import UART
-    uart = UART(2, 9600) #UART2 > #U2TXD(SERVO1/PWM1_PIN)
-    uart.write('C')      #test quick clear display
+    lcd.clear()
+    lcd.putstr("octopusLAB")
 
 if isOLED:
     oled_intit()
@@ -615,20 +706,6 @@ if isKeypad:
     else:
         from lib.KeyPad_I2C import keypad
         kp = keypad(i2c, KP_ADDRESS)    
-
-if isServo:
-    pwm1 = PWM(Pin(pinout.PWM1_PIN), freq=50, duty=70)
-    pwm2 = PWM(Pin(pinout.PWM2_PIN), freq=50, duty=70)
-    pwm3 = PWM(Pin(pinout.PWM3_PIN), freq=50, duty=70)
-
-# only for IoT board
-if isFET:
-    fet = PWM(Pin(pinout.MFET_PIN, Pin.OUT))
-    fet.duty(0)
-    fet.freq(2000)
-
-if isRelay:
-    rel = Pin(pinout.RELAY_PIN, Pin.OUT)
 
 printLog(4,"wifi and mqtt >")
 
@@ -675,8 +752,9 @@ if isLed7:
     d7.write_to_buffer(get_hhmm())
     d7.display()
 """
+if isTimer:
+    timerInit()
 
-timerInit()
 print(get_hhmm(rtc))
 
 printLog(5,"start - main loop >")
