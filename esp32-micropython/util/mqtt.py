@@ -108,6 +108,7 @@ def mqtt():
             wc['adv2'] = int(input("adc: i35 (y/temp): "))
            
             wc['light'] = int(input("light i2c senzor: "))
+            wc['relay'] = int(input("Relay: "))
             wc['button'] = int(input("button: "))
             wc['keyboard'] = int(input("keyboard: "))
             wc['servo'] = int(input("Servo: "))
