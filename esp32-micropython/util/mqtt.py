@@ -108,12 +108,13 @@ def mqtt():
             wc['adv2'] = int(input("adc: i35 (y/temp): "))
            
             wc['light'] = int(input("light i2c senzor: "))
-            wc['relay'] = int(input("Relay: "))
+            wc['relay'] = int(input("relay: "))
             wc['button'] = int(input("button: "))
             wc['keyboard'] = int(input("keyboard: "))
-            wc['servo'] = int(input("Servo: "))
+            wc['servo'] = int(input("servo: "))
             # servo1/2/3,motroA/B,stepper1/2
-
+            wc['name'] = int(input("device name/describe: "))
+                
             print("Writing to file config/mqtt_io.json")
             with open('config/mqtt_io.json', 'w') as f:
                 ujson.dump(wc, f)
