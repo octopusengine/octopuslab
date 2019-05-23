@@ -29,7 +29,7 @@ pinout = set_pinout()
 
 printLog(1,"boot device >")
 print("mqtt-slave.py > ESP32")
-ver = "0.35 / 20.5.2019"
+ver = "0.36 / 23.5.2019"
 
 # hard-code config / daefault
 Debug = True        # TODO: debugPrint()?
@@ -125,7 +125,7 @@ i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SD
 
 io_config = {}
 def loadConfig():
-    global isWS, isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo, isKeypad
+    global isWS, isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo, isRelay, isKeypad
 
     configFile = 'config/mqtt_io.json'
     if Debug: print("load "+configFile+" >")
@@ -145,6 +145,7 @@ def loadConfig():
         isAD2 = io_config.get('adv2')
         isTemp = io_config.get('temp')
         isServo = io_config.get('servo')
+        isRelay = io_config.get('relay')
         isKeypad = io_config.get('keyboard')
 
     except:
@@ -161,6 +162,7 @@ def printConfig():
     print("isAD2: " + str(isAD2))
     print("isTemp: " + str(isTemp))
     print("isServo: " + str(isServo))
+    print("isRelay: " + str(isRelay))
     print("isKeypad: " + str(isKeypad))
 
 
@@ -367,6 +369,7 @@ def mqtt_sub(topic, msg):
         np.write()            
 
     if "relay" in topic and isRelay:
+        print("relay")
         if data[0] == 'N':  # oN
             print("R > on")
             rel.value(1)
