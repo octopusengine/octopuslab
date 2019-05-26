@@ -100,7 +100,7 @@ def mqtt():
             wc['8x8'] = int(input("spi: (8x8 matrix) [0/1/4/..]"))
             wc['tft'] = int(input("tft: (128x64) "))
             wc['usm'] = int(input("UART: serial monitor "))
-            wc['ws'] = int(input("ws1: [0/1/8/16/..]"))
+            wc['ws'] = int(input("ws RGB: [0/1/8/16/..]"))
             print(" --> sensors ---")
             wc['temp'] = int(input("dallas temerature senzor: "))
             wc['adv'] = int(input("adc: i36 (ad/power): "))
@@ -113,7 +113,7 @@ def mqtt():
             wc['keyboard'] = int(input("keyboard: "))
             wc['servo'] = int(input("servo: "))
             # servo1/2/3,motroA/B,stepper1/2
-            wc['name'] = int(input("device name/describe: "))
+            wc['name'] = input("device name/describe: ")
                 
             print("Writing to file config/mqtt_io.json")
             with open('config/mqtt_io.json', 'w') as f:
