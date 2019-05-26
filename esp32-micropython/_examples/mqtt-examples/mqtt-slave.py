@@ -57,6 +57,7 @@ isLed8 = 0      #  SPI max 8x8 matrix display
 isOLED = 1      ##  I2C
 isLCD = 0       ##* I2C
 isSD = 0        #* UART
+name = ""       # device name/describe
 
 # testing simple orchestrator connection manager
 isTimer = 1
@@ -125,7 +126,7 @@ i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SD
 
 io_config = {}
 def loadConfig():
-    global isWS, isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo, isRelay, isKeypad
+    global isWS, isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo, isRelay, isKeypad, name
 
     configFile = 'config/mqtt_io.json'
     if Debug: print("load "+configFile+" >")
@@ -147,11 +148,13 @@ def loadConfig():
         isServo = io_config.get('servo')
         isRelay = io_config.get('relay')
         isKeypad = io_config.get('keyboard')
+        name = io_config.get('name')
 
     except:
         print("Data Err. or '"+ configFile + "' does not exist")
 
 def printConfig():
+    print("name: " + name)
     print("isWS: " + str(isWS))
     print("isOLED: " + str(isOLED))
     print("isLCD: " + str(isLCD))
