@@ -47,14 +47,15 @@ isAD1 = 0       #  A/D x / photoresistor
 isAD2 = 0       #  A/D y / thermistor
 isKeypad = 0    # Robot I2C+expander 4x4 keypad
 # Outpusts
-isServo = 1     # Have PWM pins (both Robot and IoT have by default)
+isServo = 0     # Have PWM pins (both Robot and IoT have by default)
+isStepper = 0 
 isFET = 0       # We have FET
 isRelay = 0     # Have Relay
 # Displays / LED
 isWS = 0        #  WS RGB LED 0/1/8/...n
 isLed7 = 0      #  SPI max 8x7 segm.display
 isLed8 = 0      #  SPI max 8x8 matrix display
-isOLED = 1      ##  I2C
+isOLED = 0      ##  I2C
 isLCD = 0       ##* I2C
 isSD = 0        #* UART
 name = ""       # device name/describe
@@ -126,7 +127,7 @@ i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SD
 
 io_config = {}
 def loadConfig():
-    global isWS, isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo, isRelay, isKeypad, name
+    global isWS, isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo, isStepper, isRelay, isKeypad, name
 
     configFile = 'config/mqtt_io.json'
     if Debug: print("load "+configFile+" >")
@@ -146,6 +147,7 @@ def loadConfig():
         isAD2 = io_config.get('adv2')
         isTemp = io_config.get('temp')
         isServo = io_config.get('servo')
+        isStepper = io_config.get('stepper')
         isRelay = io_config.get('relay')
         isKeypad = io_config.get('keyboard')
         name = io_config.get('name')
@@ -165,6 +167,7 @@ def printConfig():
     print("isAD2: " + str(isAD2))
     print("isTemp: " + str(isTemp))
     print("isServo: " + str(isServo))
+    print("isStepper: " + str(isStepper))
     print("isRelay: " + str(isRelay))
     print("isKeypad: " + str(isKeypad))
 
@@ -741,6 +744,27 @@ if isServo:
     pwm1 = PWM(Pin(pinout.PWM1_PIN), freq=50, duty=70)
     pwm2 = PWM(Pin(pinout.PWM2_PIN), freq=50, duty=70)
     pwm3 = PWM(Pin(pinout.PWM3_PIN), freq=50, duty=70)
+
+if isStepper:
+                print("test stepper")
+                from lib.sm28byj48 import SM28BYJ48
+                #PCF address = 35 #33-0x21/35-0x23
+                ADDRESS = 0x23
+                # motor id 1 or 2
+                MOTOR_ID1 = 1
+                #MOTOR_ID2 = 2
+
+                i2c_sda = Pin(pinout.I2C_SDA_PIN, Pin.IN,  Pin.PULL_UP)
+                i2c_scl = Pin(pinout.I2C_SCL_PIN, Pin.OUT, Pin.PULL_UP)
+
+                i2c = machine.I2C(scl=i2c_scl, sda=i2c_sda, freq=100000) # 100kHz as Expander is slow :(
+                motor1 = SM28BYJ48(i2c, ADDRESS, MOTOR_ID1)
+
+                # turn right 90 deg
+                motor1.turn_degree(90)
+                # turn left 90 deg
+                motor1.turn_degree(90, 1)
+ 
 
 # only for IoT board
 if isFET:
