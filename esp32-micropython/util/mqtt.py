@@ -112,6 +112,7 @@ def mqtt():
             wc['button'] = int(input("button: "))
             wc['keyboard'] = int(input("keyboard: "))
             wc['servo'] = int(input("servo: "))
+            wc['stepper'] = int(input("stepper: "))
             # servo1/2/3,motroA/B,stepper1/2
             wc['name'] = input("device name/describe: ")
                 
