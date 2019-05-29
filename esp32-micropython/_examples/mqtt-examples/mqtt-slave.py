@@ -13,7 +13,7 @@ I2C OLED, I2C LCD, SPI 8x7 segment, SPI 4x 8x8 matrix, UART Nextion, UART Serial
 """
 
 import machine, time, ubinascii, json
-from time import sleep, ticks_ms
+from time import sleep, ticks_ms, sleep_ms
 from machine import Pin, Timer, PWM, SPI
 from neopixel import NeoPixel
 from util.wifi_connect import read_wifi_config, WiFiConnect
@@ -46,6 +46,7 @@ isAD = 0        #* A/D input voltage
 isAD1 = 0       #  A/D x / photoresistor
 isAD2 = 0       #  A/D y / thermistor
 isKeypad = 0    # Robot I2C+expander 4x4 keypad
+isButton = 0    # DEV2 Button
 # Outpusts
 isServo = 0     # Have PWM pins (both Robot and IoT have by default)
 isStepper = 0 
@@ -76,6 +77,13 @@ OLEDX = 128
 OLEDY = 64
 OLED_x0 = 3
 OLED_ydown = OLEDY-7
+
+# Button settings
+BTN_Debounce   = 20
+BTN_Tresh      = 10
+BTN_Delay      = 250
+BTN_LastPress  = 0
+BTN_PressCount = 0
 
 # Keyboard settings timer
 KP_ADDRESS=0x23
@@ -127,7 +135,7 @@ i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SD
 
 io_config = {}
 def loadConfig():
-    global isWS, isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo, isStepper, isRelay, isKeypad, name
+    global isWS, isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo, isStepper, isRelay, isKeypad, isButton, name
 
     configFile = 'config/mqtt_io.json'
     if Debug: print("load "+configFile+" >")
@@ -150,6 +158,7 @@ def loadConfig():
         isStepper = io_config.get('stepper')
         isRelay = io_config.get('relay')
         isKeypad = io_config.get('keyboard')
+        isButton = io_config.get('button')
         name = io_config.get('name')
 
     except:
@@ -170,6 +179,7 @@ def printConfig():
     print("isStepper: " + str(isStepper))
     print("isRelay: " + str(isRelay))
     print("isKeypad: " + str(isKeypad))
+    print("isButton: " + str(isButton))
 
 
 # Detect I2C bus
@@ -600,6 +610,31 @@ def handleKeyPad():
 
         c.publish("octopus/{0}/keypad/key".format(esp_id), key)
 
+
+BTN_LastState = False
+def handleButton(pin):
+    global BTN_LastPress, BTN_PressCount, BTN_LastState
+
+    if ticks_ms() > BTN_LastPress + BTN_Delay:
+        BTN_LastPress = ticks_ms()
+
+        debounce = 0
+        for i in range(BTN_Debounce):
+            debounce += pin.value()
+            sleep_ms(1)
+
+        print("Handling button, debounce value: {0}".format(debounce))
+
+        if debounce < BTN_Tresh:
+            if not BTN_LastState:
+                print(pin)
+                BTN_PressCount += 1
+                BTN_LastState = True
+                c.publish("octopus/{0}/button".format(esp_id), str(BTN_PressCount))
+        else:
+            BTN_LastState = False 
+
+
 # WS neopixel:
 def wheel(pos):
     # Input a value 0 to 255 to get a color value.
@@ -816,6 +851,12 @@ if isKeypad:
         from lib.KeyPad_I2C import keypad
         kp = keypad(i2c, KP_ADDRESS)    
 
+if isButton:
+    print("Initializing Button, delay {0}".format(BTN_Delay))
+    btn = Pin(pinout.DEV2_PIN, Pin.IN, Pin.PULL_UP)
+    #btn.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=handleButton)
+
+
 printLog(4,"wifi and mqtt >")
 
 print("wifi_config >")
@@ -877,3 +918,6 @@ while True:
 
     if isKeypad:
         handleKeyPad()
+
+    if isButton:
+        handleButton(btn)
