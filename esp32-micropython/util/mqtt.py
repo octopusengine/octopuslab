@@ -114,6 +114,7 @@ def mqtt():
             wc['servo'] = int(input("servo: "))
             wc['stepper'] = int(input("stepper: "))
             # servo1/2/3,motroA/B,stepper1/2
+            wc['timer'] = int(input("timer: "))
             wc['name'] = input("device name/describe: ")
                 
             print("Writing to file config/mqtt_io.json")
