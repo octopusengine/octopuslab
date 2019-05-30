@@ -135,7 +135,7 @@ i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SD
 
 io_config = {}
 def loadConfig():
-    global isWS, isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo, isStepper, isRelay, isKeypad, isButton, name
+    global isTimer, isWS, isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo, isStepper, isRelay, isKeypad, isButton, name
 
     configFile = 'config/mqtt_io.json'
     if Debug: print("load "+configFile+" >")
@@ -160,12 +160,14 @@ def loadConfig():
         isKeypad = io_config.get('keyboard')
         isButton = io_config.get('button')
         name = io_config.get('name')
+        isTimer = io_config.get('timer')
 
     except:
         print("Data Err. or '"+ configFile + "' does not exist")
 
 def printConfig():
     print("name: " + name)
+    print("isTimer: " + str(isTimer))
     print("isWS: " + str(isWS))
     print("isOLED: " + str(isOLED))
     print("isLCD: " + str(isLCD))
