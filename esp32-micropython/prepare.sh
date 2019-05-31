@@ -37,6 +37,9 @@ ampy put ./util/wifi_connect.py util/wifi_connect.py
 echo "util/mqtt_connect"
 ampy put ./util/mqtt_connect.py util/mqtt_connect.py
 
+echo "util/mqtt"
+ampy put ./util/mqtt.py util/mqtt.py
+
 # if local file with wifi setting exists, push it
 if [ -f 'config/wifi.json' ]; then
     echo "Deploying local config/wifi.json"
