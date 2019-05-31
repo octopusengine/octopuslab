@@ -18,8 +18,8 @@ read -p "Press enter to continue"
 
 ampy ls
 
-echo "boot prepare"
-ampy put boot_prepare.py boot.py
+echo "boot"
+ampy put boot.py boot.py
 
 echo "Config dir"
 ampy mkdir config 2> /dev/null || true
