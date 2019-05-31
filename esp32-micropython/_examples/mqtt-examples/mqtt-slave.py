@@ -23,6 +23,7 @@ from umqtt.simple import MQTTClient
 #from util.iot_garden import * # fade_
 from onewire import OneWire
 from ds18x20 import DS18X20
+import gc
 
 from util.pinout import set_pinout
 pinout = set_pinout()
@@ -123,6 +124,7 @@ tim1 = Timer(0)     # for main 10 sec timer
 print("ver: " + ver + " (c)octopusLAB")
 esp_id = ubinascii.hexlify(machine.unique_id()).decode()
 print("id: " + esp_id)
+print("Free: "+str(gc.mem_free()))
 
 printLog(2,"init - variables and functions >")
 
@@ -132,6 +134,8 @@ bd = bytes.decode
 print("init i2c >")
 i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
 # i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN), freq=100000) # 100kHz because PCF is slow
+
+print("Free: "+str(gc.mem_free()))
 
 io_config = {}
 def loadConfig():
@@ -183,6 +187,7 @@ def printConfig():
     print("isKeypad: " + str(isKeypad))
     print("isButton: " + str(isButton))
 
+print("Free: "+str(gc.mem_free()))
 
 # Detect I2C bus
 def detect_i2c_dev():
@@ -306,6 +311,8 @@ def sendData():
         publishTopic = "octopus/{0}/temp/{1}".format(esp_id,temp)
         print(str("publishTopic: ".publishTopic))
         c.publish("/octopus/device/{0}/temp/".format(esp_id),str(temp10/10))
+
+print("Free: "+str(gc.mem_free()))
 
 it = 0 # every 10 sec.
 def timerSend():
@@ -540,6 +547,8 @@ def mqtt_sub(topic, msg):
             print("Servo error")
             print(e)
 
+print("Free: "+str(gc.mem_free()))
+
 def handleAD():
     global ad_oldval, ad1_oldval, ad2_oldval
     if isAD:
@@ -672,6 +681,9 @@ BLUE = (0, 0, 255)
 PURPLE = (180, 0, 255)
 BLACK = (0, 0, 0) # = off
 
+print("Free: "+str(gc.mem_free()))
+
+
 def neopixelTest(num_pixels):
         #https://github.com/maxking/micropython/blob/master/rainbow.py
         np.fill(RED)
@@ -700,8 +712,13 @@ def neopixelTest(num_pixels):
 
 # --- init and simple testing ---
 printLog(3,"init i/o - config >")
+print("Free: "+str(gc.mem_free()))
 loadConfig()
+
+print("Free: "+str(gc.mem_free()))
 printConfig()
+
+print("Free: "+str(gc.mem_free()))
 
 if isWS:
     print("WS RGB LED test >")
