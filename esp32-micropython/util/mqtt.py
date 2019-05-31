@@ -8,7 +8,7 @@ from umqtt.simple import MQTTClient
 from util.mqtt_connect import read_mqtt_config
 from util.wifi_connect import read_wifi_config, WiFiConnect
 from util.pinout import set_pinout
-ver = "0.21 / 19.5.2019"
+ver = "0.22 / 31.5.2019"
 esp_id = ubinascii.hexlify(machine.unique_id()).decode()
 
 octopuASCII = [
@@ -98,7 +98,7 @@ def mqtt():
             wc['lcd'] = int(input("lcd: (2x16) "))
             wc['8x7'] = int(input("spi: (8x7 segment) "))
             wc['8x8'] = int(input("spi: (8x8 matrix) [0/1/4/..]"))
-            wc['tft'] = int(input("tft: (128x64) "))
+            wc['tft'] = int(input("tft: (128x160) "))
             wc['usm'] = int(input("UART: serial monitor "))
             wc['ws'] = int(input("ws RGB: [0/1/8/16/..]"))
             print(" --> sensors ---")
