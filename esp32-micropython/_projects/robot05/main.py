@@ -20,8 +20,10 @@ DEBUG = True
 BTN_Debounce   = 50  # How many reads
 BTN_Tresh      = 40  # How many reads must be 1 to return pressed
 
-ECHO_Treshold  =  10  # How many centimeters (and less) to stop
+ECHO_Treshold  =  7  # How many centimeters (and less) to stop
+WS_Brightness  = 40
 
+MOTO_R_Correction = 45
 
 # Pin definitions
 
@@ -82,11 +84,15 @@ def motors(speedL, speedR, forward=True):
     moto_R4.value(forward)
 
     moto_L.duty(speedL)
-    moto_R.duty(speedR)
+
+    if speedR > MOTO_R_Correction:
+        moto_R.duty(speedR - MOTO_R_Correction)
+    else:
+        moto_R.duty(0)
 
 # Boot up robot
 
-np[0] = (0, 0, 128)
+np[0] = (0, 0, WS_Brightness)
 np.write()
 
 def waitButton(state):
@@ -114,7 +120,7 @@ while True:
         motoRun = not motoRun
 
         if not motoRun:
-            np[0] = (128, 0, 0)
+            np[0] = (WS_Brightness, 0, 0)
             np.write()
 
     echo_cm = echo.distance_cm()
@@ -122,18 +128,18 @@ while True:
     if echo_cm < ECHO_Treshold and echo_cm > 2 and motoRun:
         debug("Distance less than threshols {0}. Stopping motors!".format(ECHO_Treshold))
         motoRun = False
-        np[0] = (128, 128, 0)
+        np[0] = (WS_Brightness, WS_Brightness, 0)
         np.write()
 
 
     if (ir_left or ir_right) and motoRun:
         debug("IR stop")
         motoRun = False
-        np[0] = (128, 0, 128)
+        np[0] = (WS_Brightness, 0, WS_Brightness)
         np.write()
 
     if motoRun:
-        np[0] = (0, 128, 0)
+        np[0] = (0, WS_Brightness, 0)
         np.write()
 
         moto_run(450)
