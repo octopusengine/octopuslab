@@ -40,3 +40,7 @@ I35_PIN = const(35)
 #temp
 MFET_PIN = const(17) # PWM1
 RELAY_PIN = const(16) # PWM2
+
+# DEV pins
+DEV1_PIN = const(32)
+DEV2_PIN = const(33)
