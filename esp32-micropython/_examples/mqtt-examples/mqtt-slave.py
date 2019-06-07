@@ -15,7 +15,6 @@ I2C OLED, I2C LCD, SPI 8x7 segment, SPI 4x 8x8 matrix, UART Nextion, UART Serial
 import machine, time, ubinascii, json
 from time import sleep, ticks_ms, sleep_ms
 from machine import Pin, Timer, PWM, SPI
-from neopixel import NeoPixel
 from util.wifi_connect import read_wifi_config, WiFiConnect
 from util.mqtt_connect import read_mqtt_config
 from util.octopus_lib import *
@@ -23,14 +22,14 @@ from umqtt.simple import MQTTClient
 #from util.iot_garden import * # fade_
 from onewire import OneWire
 from ds18x20 import DS18X20
-import gc
+
 
 from util.pinout import set_pinout
 pinout = set_pinout()
 
 printLog(1,"boot device >")
 print("mqtt-slave.py > ESP32")
-ver = "0.36 / 23.5.2019"
+ver = "0.37 / 7.6.2019"
 
 # hard-code config / daefault
 Debug = True        # TODO: debugPrint()?
@@ -110,21 +109,13 @@ adc2.atten(ADC.ATTN_11DB)
 
 pin_led = Pin(pinout.BUILT_IN_LED, Pin.OUT)
 
-pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
-np = NeoPixel(pin_ws, 1)
-# num_pixels = 12
-
-ws_r = 0
-ws_g = 0
-ws_b = 0
-
 rtc = machine.RTC() # real time
 tim1 = Timer(0)     # for main 10 sec timer
 
 print("ver: " + ver + " (c)octopusLAB")
 esp_id = ubinascii.hexlify(machine.unique_id()).decode()
 print("id: " + esp_id)
-print("Free: "+str(gc.mem_free()))
+printFree()
 
 printLog(2,"init - variables and functions >")
 
@@ -135,7 +126,7 @@ print("init i2c >")
 i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
 # i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN), freq=100000) # 100kHz because PCF is slow
 
-print("Free: "+str(gc.mem_free()))
+printFree()
 
 io_config = {}
 def loadConfig():
@@ -187,7 +178,7 @@ def printConfig():
     print("isKeypad: " + str(isKeypad))
     print("isButton: " + str(isButton))
 
-print("Free: "+str(gc.mem_free()))
+printFree()
 
 # Detect I2C bus
 def detect_i2c_dev():
@@ -312,8 +303,6 @@ def sendData():
         print(str("publishTopic: ".publishTopic))
         c.publish("/octopus/device/{0}/temp/".format(esp_id),str(temp10/10))
 
-print("Free: "+str(gc.mem_free()))
-
 it = 0 # every 10 sec.
 def timerSend():
     global it
@@ -386,7 +375,7 @@ def mqtt_sub(topic, msg):
         np.write()
 
     if "wsled/rainbow" in topic:
-        rainbow_cycle(isWS,2)  # Increase the number to slow down the rainbow
+        rainbow_cycle(np, isWS,2)  # Increase the number to slow down the rainbow
         time.sleep(1)
 
     if "wsled/off" in topic:
@@ -547,7 +536,7 @@ def mqtt_sub(topic, msg):
             print("Servo error")
             print(e)
 
-print("Free: "+str(gc.mem_free()))
+printFree()
 
 def handleAD():
     global ad_oldval, ad1_oldval, ad2_oldval
@@ -645,108 +634,29 @@ def handleButton(pin):
         else:
             BTN_LastState = False 
 
-
-# WS neopixel:
-def wheel(pos):
-    # Input a value 0 to 255 to get a color value.
-    # The colours are a transition r - g - b - back to r.
-    if pos < 0 or pos > 255:
-        return (0, 0, 0)
-    if pos < 85:
-        return (255 - pos * 3, pos * 3, 0)
-    if pos < 170:
-        pos -= 85
-        return (0, 255 - pos * 3, pos * 3)
-    pos -= 170
-    return (pos * 3, 0, 255 - pos * 3)
-
-def color_chase(num_pixels, color, wait):
-    for i in range(num_pixels):
-        np[i] = color
-        np.write()
-        time.sleep(wait)
-
-def rainbow_cycle(num_pixels,wait):
-    for j in range(255):
-        for i in range(num_pixels):
-            rc_index = (i * 256 // num_pixels) + j
-            np[i] = wheel(rc_index & 255)
-        np.write()
-
-RED = (255, 0, 0)
-YELLOW = (255, 150, 0)
-GREEN = (0, 255, 0)
-CYAN = (0, 255, 255)
-BLUE = (0, 0, 255)
-PURPLE = (180, 0, 255)
-BLACK = (0, 0, 0) # = off
-
-print("Free: "+str(gc.mem_free()))
-
-
-def neopixelTest(num_pixels):
-        #https://github.com/maxking/micropython/blob/master/rainbow.py
-        np.fill(RED)
-        np.write()
-        # Increase or decrease to change the speed of the solid color change.
-        time.sleep(1)
-        np.fill(GREEN)
-        np.write()
-        time.sleep(1)
-        np.fill(BLUE)
-        np.write()
-        time.sleep(1)
-
-        color_chase(num_pixels,RED, 0.1)  # Increase the number to slow down the color chase
-        color_chase(num_pixels,YELLOW, 0.1)
-        color_chase(num_pixels,GREEN, 0.1)
-        color_chase(num_pixels,CYAN, 0.1)
-        color_chase(num_pixels,BLUE, 0.1)
-        color_chase(num_pixels,PURPLE, 0.1)
-
-        rainbow_cycle(num_pixels,2)  # Increase the number to slow down the rainbow
-        time.sleep(1)
-
-        np.fill(BLACK)
-        np.write()
-
 # --- init and simple testing ---
 printLog(3,"init i/o - config >")
-print("Free: "+str(gc.mem_free()))
+printFree()
 loadConfig()
-
-print("Free: "+str(gc.mem_free()))
 printConfig()
-
-print("Free: "+str(gc.mem_free()))
+printFree()
 
 if isWS:
+    print("WS RGB LED init neopixel >")
+    from util.ws_rgb import *
+    pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
+    np = setupNeopixel(pin_ws, isWS)
+    
+    # num_pixels = 12
+    ws_r = 0
+    ws_g = 0
+    ws_b = 0
     print("WS RGB LED test >")
-    np[0] = (128, 0, 0) #R
-    np.write()
-    simple_blink() # pause
-    sleep(1)
+    
+    simpleRgb(np) 
 
-    np[0] = (0,128, 0) #G
-    np.write()
-    simple_blink()
-    sleep(1)
-
-    np[0] = (0, 0, 128) #B
-    np.write()
-    simple_blink()
-    sleep(1)
-
-    np[0] = (0, 0, 0)
-    np.write()
-
-    #pixels = neopixel.NeoPixel(pixel_pin, num_pixels, brightness=0.3, auto_write=False)
-    # test
-    if isWS > 1:
-        print("Neopixel WS LED: " + str(isWS))
-        np = NeoPixel(pin_ws, isWS)
-        neopixelTest(isWS)
-        
+if isWS > 1:
+    neopixelTest(np, isWS)        
 
 ts = []
 if isTemp:
@@ -877,6 +787,7 @@ if isButton:
 
 
 printLog(4,"wifi and mqtt >")
+printFree()
 
 print("wifi_config >")
 wifi = WiFiConnect(wifi_retries)
@@ -926,6 +837,7 @@ if isTimer:
 print(get_hhmm(rtc))
 
 printLog(5,"start - main loop >")
+printFree()
 
 while True:
 
