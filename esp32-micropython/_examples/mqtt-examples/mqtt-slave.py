@@ -12,14 +12,14 @@ Displays:
 I2C OLED, I2C LCD, SPI 8x7 segment, SPI 4x 8x8 matrix, UART Nextion, UART Serial display, SPI TTF
 """
 import machine, time, ubinascii, json
-from time import sleep, ticks_ms, sleep_ms
+from time import sleep, ticks_ms, sleep_ms, sleep_us
 from machine import Pin, Timer, PWM, SPI
 from util.wifi_connect import read_wifi_config, WiFiConnect
 from util.mqtt_connect import read_mqtt_config
 from util.octopus_lib import *
 from umqtt.simple import MQTTClient
-#from util.iot_garden import * # fade_
 from util.pinout import set_pinout
+import urequests
 pinout = set_pinout()
 
 printLog(1,"boot device >")
@@ -42,6 +42,7 @@ isAD1 = 0       #  A/D x / photoresistor
 isAD2 = 0       #  A/D y / thermistor
 isKeypad = 0    # Robot I2C+expander 4x4 keypad
 isButton = 0    # DEV2 Button
+isTime = 1      # setup time from cloud
 # Outpusts
 isServo = 0     # Have PWM pins (both Robot and IoT have by default)
 isStepper = 0 
@@ -57,12 +58,12 @@ isTft = 0       # 128x160
 isSD = 0        #* UART
 name = ""       # device name/describe
 
-# testing simple orchestrator connection manager
+# testing simple orchestrator connection manager / hard wire matrix
 isTimer = 1
 cm_Light2M8 = 0
 cm_Light2M8brightness = 0
-cm_Keypad2Lcd = 1
-
+cm_Keypad2Lcd = 0
+cm_Time2Tft = 1
 #
 LCD_ADDRESS=0x27
 LCD_ROWS=2
@@ -204,7 +205,7 @@ def displMessage2(mess,timm): # OLEDdisplMessage()
         oled.fill_rect(0,OLED_ydown,OLEDX,10,0)
         oled.text(mess, OLED_x0, OLED_ydown)
         oled.show()
-        time.sleep_ms(timm*1000)
+        sleep_ms(timm*1000)
     except Exception as e:
        print("Err. displMessage() Exception: {0}".format(e))
 
@@ -213,7 +214,7 @@ def displMessage(mess,timm):
         oled.fill_rect(0,OLED_ydown-17,OLEDX,10,0)
         oled.text(mess, OLED_x0, OLED_ydown-17)
         oled.show()
-        time.sleep_ms(timm*1000)
+        sleep_ms(timm*1000)
     except Exception as e:
        print("Err. displMessage2() Exception: {0}".format(e))
 
@@ -252,7 +253,7 @@ def timerInit():
 
 def timeSetup():
     if Debug: print("time setup >")
-    urlApi ="http://www.octopusengine.org/api/..."
+    urlApi ="http://www.octopusengine.org/api/hydrop"
     urltime=urlApi+"/get-datetime.php"
     try:
         response = urequests.get(urltime)
@@ -553,6 +554,7 @@ def handleAD():
             print("ADC2: " + str(aval))
             c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog_2), str(aval))
 
+it = 0
 def handleHardWireScripts(): # matrix of connections examples
     global ad_oldval, ad1_oldval, ad2_oldval
     if cm_Light2M8brightness:
@@ -578,6 +580,21 @@ def handleHardWireScripts(): # matrix of connections examples
                 d8.text(str(aval), 0, 0, 1)
                 d8.show()
     """
+    if cm_Time2Tft:
+        global it
+        if isTft:
+            it = it + 1 
+            hhmm = get_hhmm(rtc)
+            #print(hhmm)
+            try:
+                fb.fill(0)
+                fb.text('OctopusLab', 20, 15, color565(255,255,0))
+                fb.text(hhmm, 86, 148, color565(255,255,255))
+                fb.text(str(it), 10, 148, color565(0,0,255))
+                tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
+                sleep(1)
+            except:
+                print("err.cm_Time2Tft()")    
 
 def handleKeyPad():
     global KP_LastPress
@@ -697,7 +714,6 @@ if isTft:
     printFree()
     from lib import st7735
     from lib.rgb import color565
-    #spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(18), mosi=Pin(23))
     spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
     ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
 
@@ -706,7 +722,7 @@ if isTft:
     rst = Pin(17, Pin.OUT)
     tft = st7735.ST7735R(spi, cs = cs, dc = dc, rst = rst)
 
-    print("spi.TFT ramebufer >")
+    print("spi.TFT framebufer >")
     printFree()
     import framebuf
     # Initialize FrameBuffer of TFT's size
@@ -731,10 +747,10 @@ if isTft:
 
     sleep(1)    
 
-    for i in range(1,10+1):
+    for i in range(0,3):
         fb.fill(0)
         fb.text('OctopusLab', 20, 15, color565(255,255,255))
-        fb.text(" --- "+str(10-i)+" ---", 20, 55, color565(255,255,255))
+        fb.text(" --- "+str(3-i)+" ---", 20, 55, color565(255,255,255))
         tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
         sleep(0.5)
 
@@ -744,25 +760,24 @@ if isServo:
     pwm3 = PWM(Pin(pinout.PWM3_PIN), freq=50, duty=70)
 
 if isStepper:
-                print("test stepper")
-                from lib.sm28byj48 import SM28BYJ48
-                #PCF address = 35 #33-0x21/35-0x23
-                ADDRESS = 0x23
-                # motor id 1 or 2
-                MOTOR_ID1 = 1
-                #MOTOR_ID2 = 2
+        print("test stepper")
+        from lib.sm28byj48 import SM28BYJ48
+        #PCF address = 35 #33-0x21/35-0x23
+        ADDRESS = 0x23
+        # motor id 1 or 2
+        MOTOR_ID1 = 1
+        #MOTOR_ID2 = 2
 
-                i2c_sda = Pin(pinout.I2C_SDA_PIN, Pin.IN,  Pin.PULL_UP)
-                i2c_scl = Pin(pinout.I2C_SCL_PIN, Pin.OUT, Pin.PULL_UP)
+        i2c_sda = Pin(pinout.I2C_SDA_PIN, Pin.IN,  Pin.PULL_UP)
+        i2c_scl = Pin(pinout.I2C_SCL_PIN, Pin.OUT, Pin.PULL_UP)
 
-                i2c = machine.I2C(scl=i2c_scl, sda=i2c_sda, freq=100000) # 100kHz as Expander is slow :(
-                motor1 = SM28BYJ48(i2c, ADDRESS, MOTOR_ID1)
+        i2c = machine.I2C(scl=i2c_scl, sda=i2c_sda, freq=100000) # 100kHz as Expander is slow :(
+        motor1 = SM28BYJ48(i2c, ADDRESS, MOTOR_ID1)
 
-                # turn right 90 deg
-                motor1.turn_degree(90)
-                # turn left 90 deg
-                motor1.turn_degree(90, 1)
- 
+        # turn right 90 deg
+        motor1.turn_degree(90)
+        # turn left 90 deg
+        motor1.turn_degree(90, 1)
 
 # only for IoT board
 if isFET:
@@ -779,7 +794,7 @@ if isSD:
     uart = UART(2, 9600) #UART2 > #U2TXD(SERVO1/PWM1_PIN)
     uart.write('C')      #test quick clear display
 
-# i2c devices ------:
+# i2c devices:
 detect_i2c_dev()
 
 if not 0x27 in i2c.scan():
@@ -819,7 +834,6 @@ if isButton:
     btn = Pin(pinout.DEV2_PIN, Pin.IN, Pin.PULL_UP)
     #btn.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=handleButton)
 
-
 printLog(4,"wifi and mqtt >")
 printFree()
 
@@ -856,19 +870,17 @@ c.publish(mqtt_root_topic,esp_id) # topic, message (value) to publish
 
 print("test temp: " + str(getTemp()))
 
-"""
-timeSetup()
+if isTime: timeSetup()
+print(get_hhmm(rtc))
+
 if isOLED:
     oled.text(get_hhmm(), 45,29) #time HH:
     oled.show()
 if isLed7:
     d7.write_to_buffer(get_hhmm())
     d7.display()
-"""
-if isTimer:
-    timerInit()
 
-print(get_hhmm(rtc))
+if isTimer: timerInit()
 
 printLog(5,"start - main loop >")
 printFree()
