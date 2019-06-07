@@ -63,7 +63,8 @@ isTimer = 1
 cm_Light2M8 = 0
 cm_Light2M8brightness = 0
 cm_Keypad2Lcd = 0
-cm_Time2Tft = 1
+cm_Time2Tft = 0
+cm_DisplayTemp = 1
 #
 LCD_ADDRESS=0x27
 LCD_ROWS=2
@@ -580,6 +581,15 @@ def handleHardWireScripts(): # matrix of connections examples
                 d8.text(str(aval), 0, 0, 1)
                 d8.show()
     """
+    if cm_DisplayTemp:
+        if isLed7 and isTemp:
+            try:
+                tt = getTemp()/10
+                d7.write_to_buffer(str(tt) + "c ")
+                d7.display()
+            except:
+                print("mqtt.8x7segment.ERR")
+
     if cm_Time2Tft:
         global it
         if isTft:
@@ -873,12 +883,14 @@ print("test temp: " + str(getTemp()))
 if isTime: timeSetup()
 print(get_hhmm(rtc))
 
+"""
 if isOLED:
     oled.text(get_hhmm(), 45,29) #time HH:
     oled.show()
 if isLed7:
     d7.write_to_buffer(get_hhmm())
     d7.display()
+"""    
 
 if isTimer: timerInit()
 
