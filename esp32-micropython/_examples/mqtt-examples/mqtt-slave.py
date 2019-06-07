@@ -9,9 +9,8 @@ Outputs:
 Relay, MOS-FER PWM (IoT board)
 Servo, DC motor, stepper (Robot board)
 Displays:
-I2C OLED, I2C LCD, SPI 8x7 segment, SPI 4x 8x8 matrix, UART Nextion, UART Serial display, SPI TTF...
+I2C OLED, I2C LCD, SPI 8x7 segment, SPI 4x 8x8 matrix, UART Nextion, UART Serial display, SPI TTF
 """
-
 import machine, time, ubinascii, json
 from time import sleep, ticks_ms, sleep_ms
 from machine import Pin, Timer, PWM, SPI
@@ -54,6 +53,7 @@ isLed7 = 0      #  SPI max 8x7 segm.display
 isLed8 = 0      #  SPI max 8x8 matrix display
 isOLED = 0      ##  I2C
 isLCD = 0       ##* I2C
+isTft = 0       # 128x160
 isSD = 0        #* UART
 name = ""       # device name/describe
 
@@ -114,19 +114,17 @@ print("id: " + esp_id)
 printFree()
 
 printLog(2,"init - variables and functions >")
-
 bd = bytes.decode
 
 # Set up I2C
 print("init i2c >")
 i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
-# i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN), freq=100000) # 100kHz because PCF is slow
-
+# 100kHz because PCF is slow
 printFree()
 
 io_config = {}
 def loadConfig():
-    global isTimer, isWS, isOLED, isLCD, isLed7, isLed8, isAD, isAD1, isAD2, isTemp, isServo, isStepper, isRelay, isKeypad, isButton, name
+    global isTimer, isWS, isOLED, isLCD, isLed7, isLed8, isTft, isAD, isAD1, isAD2, isTemp, isServo, isStepper, isRelay, isKeypad, isButton, name
 
     configFile = 'config/mqtt_io.json'
     if Debug: print("load "+configFile+" >")
@@ -141,6 +139,7 @@ def loadConfig():
         isLCD = io_config.get('lcd')
         isLed7 = io_config.get('8x7')
         isLed8 = io_config.get('8x8')
+        isTft = io_config.get('tft')
         isAD = io_config.get('adv')
         isAD1 = io_config.get('adv1')
         isAD2 = io_config.get('adv2')
@@ -164,6 +163,7 @@ def printConfig():
     print("isLCD: " + str(isLCD))
     print("isLed7: " + str(isLed7))
     print("isLed8: " + str(isLed8))
+    print("isTFT: " + str(isTft))
     print("isAD: " + str(isAD))
     print("isAD1: " + str(isAD1))
     print("isAD2: " + str(isAD2))
@@ -174,12 +174,11 @@ def printConfig():
     print("isKeypad: " + str(isKeypad))
     print("isButton: " + str(isButton))
 
-printFree()
-
 # Detect I2C bus
 def detect_i2c_dev():
     global isOLED, bhLight, bh2Light, tslLight, isLCD
     print("detect i2c devices >")
+    printFree()
     if Debug: print(" - scanning")
     i2cdevs = i2c.scan()
     if Debug: print(" - devices: {0}".format(i2cdevs))
@@ -253,7 +252,7 @@ def timerInit():
 
 def timeSetup():
     if Debug: print("time setup >")
-    urlApi ="http://www.octopusengine.org/api/hydrop/"
+    urlApi ="http://www.octopusengine.org/api/..."
     urltime=urlApi+"/get-datetime.php"
     try:
         response = urequests.get(urltime)
@@ -275,17 +274,17 @@ def fade_sw_in(p, r, m):
      # pin - range - multipl
      for i in range(r):
           p.value(0)
-          time.sleep_us((r-i)*m*2) # multH/L *2
+          sleep_us((r-i)*m*2) # multH/L *2
           p.value(1)
-          time.sleep_us(i*m)
+          sleep_us(i*m)
 
 def fade_sw_out(p, r, m):
      # pin - range - multipl
      for i in range(r):
           p.value(1)
-          time.sleep_us((r-i)*m)
+          sleep_us((r-i)*m)
           p.value(0)
-          time.sleep_us(i*m*2)
+          sleep_us(i*m*2)
 
 def test7seg():
      d7.write_to_buffer('octopus')
@@ -335,6 +334,7 @@ def connecting_callback(retries):
     #np.write()
     simple_blink()
 
+# ----------------------------------
 def mqtt_sub(topic, msg):
     data = bd(msg)
     global ws_r, ws_g, ws_b
@@ -371,7 +371,7 @@ def mqtt_sub(topic, msg):
         np.write()
 
     if "wsled/rainbow" in topic:
-        rainbow_cycle(np, isWS,2)  # Increase the number to slow down the rainbow
+        rainbow_cycle(np, isWS,2)  # Increase to slow down
         time.sleep(1)
 
     if "wsled/off" in topic:
@@ -410,63 +410,53 @@ def mqtt_sub(topic, msg):
            #pwm = int(data[1:])
             print("led1 - pwm fade in >")
             fade_sw_in(fet,500,5)
-            #fet.value(1)
 
         if data[0] == '0':
            #pwm = int(data[1:])
             print("led0 - pwm fade out >")
             fade_sw_out(fet,500,5)
-            #fet.value(0)
 
     if "lcd/clear" in topic:
-        data = bd(msg)
         print("raw test: {0}".format(data))
         if isLCD:
             lcd.clear()
 
     if "lcd/rawtext" in topic:
-        data = bd(msg)
         print("raw test: {0}".format(data))
         if isLCD:
             lcd.clear()
             lcd.putstr(data)
 
     if "lcd/line1text" in topic:
-        data = bd(msg)
         print("line 1 text: {0}".format(data))
         if isLCD:
             lcd.move_to(0, 0)
             lcd.putstr(data[:LCD_COLS])
 
     if "lcd/line2text" in topic:
-        data = bd(msg)
         print("line 2 text: {0}".format(data))
         if isLCD:
             lcd.move_to(0, 1)
             lcd.putstr(data[:LCD_COLS])
 
     if "lcd/line3text" in topic:
-        data = bd(msg)
         print("line 3 text: {0}".format(data))
         if isLCD:
             lcd.move_to(0, 2)
             lcd.putstr(data[:LCD_COLS])
 
     if "lcd/line4text" in topic:
-        data = bd(msg)
         print("line 4 text: {0}".format(data))
         if isLCD:
             lcd.move_to(0, 3)
             lcd.putstr(data[:LCD_COLS])
 
     if "lcd/write" in topic:
-        data = bd(msg)
         print("text: {0}".format(data))
         if isLCD:
              lcd.putstr(data)
 
     if "lcd/set_cursor" in topic:
-        data = bd(msg)
         x=0
         y=0
         print("Cursor set: {0}".format(data))
@@ -498,7 +488,7 @@ def mqtt_sub(topic, msg):
         except:
             print("mqtt.8x8matrix/stat.ERR")
 
-    if "8x8mtx/scroll" in topic: # show simple 1 or 4 chars
+    if "8x8mtx/scroll" in topic: #
         try:
             scroll(data,5) # .upper()
         except:
@@ -563,7 +553,7 @@ def handleAD():
             print("ADC2: " + str(aval))
             c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog_2), str(aval))
 
-def handleConnectionScripts():
+def handleHardWireScripts(): # matrix of connections examples
     global ad_oldval, ad1_oldval, ad2_oldval
     if cm_Light2M8brightness:
         if isAD1 and isLed8:
@@ -605,7 +595,6 @@ def handleKeyPad():
                 lcd.putstr(key)
 
         c.publish("octopus/{0}/keypad/key".format(esp_id), key)
-
 
 BTN_LastState = False
 def handleButton(pin):
@@ -703,6 +692,52 @@ if isLed8:
     """except:
         print("spi.D8.ERR")
     """
+if isTft:
+    print("spi.TFT 128x160 init >")
+    printFree()
+    from lib import st7735
+    from lib.rgb import color565
+    #spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(18), mosi=Pin(23))
+    spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
+    ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
+
+    cs = Pin(5, Pin.OUT)
+    dc = Pin(16, Pin.OUT)
+    rst = Pin(17, Pin.OUT)
+    tft = st7735.ST7735R(spi, cs = cs, dc = dc, rst = rst)
+
+    print("spi.TFT ramebufer >")
+    printFree()
+    import framebuf
+    # Initialize FrameBuffer of TFT's size
+    fb = framebuf.FrameBuffer(bytearray(tft.width*tft.height*2), tft.width, tft.height, framebuf.RGB565)
+    fbp = fb.pixel
+
+    fb.fill(color565(255,0,0))
+    tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
+    sleep(1)
+
+    fb.fill(color565(0,255,0))
+    tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
+    sleep(1)
+
+    fb.fill(color565(0,0,255))
+    tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
+    sleep(1)
+
+    # reset display
+    fb.fill(0)
+    tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
+
+    sleep(1)    
+
+    for i in range(1,10+1):
+        fb.fill(0)
+        fb.text('OctopusLab', 20, 15, color565(255,255,255))
+        fb.text(" --- "+str(10-i)+" ---", 20, 55, color565(255,255,255))
+        tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
+        sleep(0.5)
+
 if isServo:
     pwm1 = PWM(Pin(pinout.PWM1_PIN), freq=50, duty=70)
     pwm2 = PWM(Pin(pinout.PWM2_PIN), freq=50, duty=70)
@@ -844,7 +879,7 @@ while True:
 
     handleAD()
 
-    handleConnectionScripts() # testing
+    handleHardWireScripts() # testing hw connections
 
     if isKeypad:
         handleKeyPad()
