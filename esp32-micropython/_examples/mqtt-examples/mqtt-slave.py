@@ -20,10 +20,6 @@ from util.mqtt_connect import read_mqtt_config
 from util.octopus_lib import *
 from umqtt.simple import MQTTClient
 #from util.iot_garden import * # fade_
-from onewire import OneWire
-from ds18x20 import DS18X20
-
-
 from util.pinout import set_pinout
 pinout = set_pinout()
 
@@ -661,6 +657,9 @@ if isWS > 1:
 ts = []
 if isTemp:
     print("dallas temp >")
+    from onewire import OneWire
+    from ds18x20 import DS18X20
+    dspin = machine.Pin(pinout.ONE_WIRE_PIN)
     try:
         ds = DS18X20(OneWire(dspin))
         ts = ds.scan()
