@@ -143,12 +143,11 @@ def mqtt():
             print("mqtt simple test:")   
 
             print("wifi_config >")
-            wifi_config = read_wifi_config()
-            wifi = WiFiConnect(wifi_config["wifi_retries"] if "wifi_retries" in wifi_config else 250 )
+            wifi = WiFiConnect(250)
             wifi.events_add_connecting(connecting_callback)
             wifi.events_add_connected(connected_callback)
-            print("wifi.connect  to " + wifi_config["wifi_ssid"])
-            wifi_status = wifi.connect(wifi_config["wifi_ssid"], wifi_config["wifi_pass"])
+            print("wifi.connect")
+            wifi_status = wifi.connect()
 
             # url config: TODO > extern.
 
