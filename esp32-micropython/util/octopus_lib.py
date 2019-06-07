@@ -1,11 +1,8 @@
 # this module is to setup your board
 # iotBoard for project parallel garden
 #
-
-import machine
 from machine import Pin, PWM, ADC
-import time, os, ubinascii
-import framebuf
+import machine, time, os, ubinascii, framebuf, gc
 
 # ---------------- procedures
 def getOctopusLibVer():
@@ -15,6 +12,9 @@ def printLog(i,s):
     print()
     print('-' * 30)
     print("[--- " + str(i) + " ---] " + s)  
+
+def printFree():
+    print("Free: "+str(gc.mem_free()))    
 
 def map(x, in_min, in_max, out_min, out_max):
     return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)      
