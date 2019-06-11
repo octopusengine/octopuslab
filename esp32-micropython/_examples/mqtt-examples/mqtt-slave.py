@@ -17,19 +17,17 @@ from machine import Pin, Timer, PWM, SPI
 from util.wifi_connect import read_wifi_config, WiFiConnect
 from util.mqtt_connect import read_mqtt_config
 from util.octopus_lib import *
-from umqtt.simple import MQTTClient
 from util.pinout import set_pinout
 import urequests
 pinout = set_pinout()
 
 printLog(1,"boot device >")
 print("mqtt-slave.py > ESP32")
-ver = "0.37 / 7.6.2019"
+ver = "0.38 / 11.6.2019"
 
 # hard-code config / daefault
-Debug = True        # TODO: debugPrint()?
-minute = 10         # 1/10 for data send
-timeInterval = 1
+Debug = True        # TODO: debugPrint()?        
+timeInterval = 10    # 1/10 for data send
 wifi_retries = 100  # for wifi connecting
 
 #* = todo / ## = automatic
@@ -42,7 +40,6 @@ isAD1 = 0       #  A/D x / photoresistor
 isAD2 = 0       #  A/D y / thermistor
 isKeypad = 0    # Robot I2C+expander 4x4 keypad
 isButton = 0    # DEV2 Button
-isTime = 1      # setup time from cloud
 # Outpusts
 isServo = 0     # Have PWM pins (both Robot and IoT have by default)
 isStepper = 0 
@@ -58,12 +55,17 @@ isTft = 0       # 128x160
 isSD = 0        #* UART
 name = ""       # device name/describe
 
+isTimer = 0     # config
+isTime = 1      # setup time from cloud
+isMqtt = False      # hardcode
+isInflux = True        # influx and grafana db
+isMySQl = False
 # testing simple orchestrator connection manager / hard wire matrix
-isTimer = 1
 cm_Light2M8 = 0
 cm_Light2M8brightness = 0
 cm_Keypad2Lcd = 0
 cm_Time2Tft = 0
+cm_Temp2Tft = 0
 cm_DisplayTemp = 1
 #
 LCD_ADDRESS=0x27
@@ -190,7 +192,7 @@ def detect_i2c_dev():
     bhLight = 0x23 in i2cdevs
     bh2Light = 0x5c in i2cdevs
     tslLight = 0x39 in i2cdevs
-    isLCD = (LCD_ADDRESS in i2cdevs) and isLCD # If there is OLED, but config disabled it
+    isLCD = (LCD_ADDRESS in i2cdevs) and isLCD # =
 
 oled = None
 def oled_intit():
@@ -234,7 +236,7 @@ def scroll(text,num): # TODO speed, timer? / NO "sleep"
     d8.show()
 
 def getTemp():
-    tw=999
+    tw=0
     if isTemp:
         ds.convert_temp()
         sleep_ms(750)
@@ -293,13 +295,27 @@ def test7seg():
      d7.display()
 
 def sendData():
-    print("sendData()")
+    print("sendData() timer >")
+    temp = 0
     if isTemp:
-        temp10 = int(ts.read_temp()*10)
+        temp = getTemp()
+        print("temp: " + str(temp/10))
+        
+    if isMqtt:
         publishTopic = "octopus/{0}/temp/{1}".format(esp_id,temp)
-        print(str("publishTopic: ".publishTopic))
-        c.publish("/octopus/device/{0}/temp/".format(esp_id),str(temp10/10))
+        print(str("publishTopic: " + publishTopic))
+        c.publish("/octopus/device/{0}/temp/".format(esp_id),str(temp/10))
 
+    if isInflux:
+        print("send influx data >")
+        influx_fields["temp"] = temp/10
+        postdata_fields = ','.join(["%s=%s" % (k, v) for (k, v) in influx_fields.items()])
+        postdata_influx = "hohome,{0} {1}".format(postdata_tags, postdata_fields)
+        #postdata_influx = "hohome,place="+name+",device="+esp_id+" temp="+str(temp/10)
+        print(postdata_influx)
+        res = urequests.post(influxWriteURL, data=postdata_influx) 
+        res.close()
+     
 it = 0 # every 10 sec.
 def timerSend():
     global it
@@ -318,10 +334,11 @@ def timerSend():
     if isOLED:
         displMessage2(str(it) + " | " + str(get_hhmm(rtc)),1)
 
-    if (it == 6*minute): # 6 = 1min / 60 = 10min
-        if Debug: print("10 min. > send data:")
-        sendData() # read sensors and send data
+    if (it >= 6*timeInterval): # 6 = 1min / 60 = 10min
+        if Debug: print(str(it) + " | " + str(timeInterval) + " min. > send data:")
         it = 0
+        sendData() # read sensors and send data
+       
 
 # Define function callback for connecting event
 def connected_callback(sta):
@@ -557,7 +574,8 @@ def handleAD():
 
 it = 0
 def handleHardWireScripts(): # matrix of connections examples
-    global ad_oldval, ad1_oldval, ad2_oldval
+    global ad_oldval, ad1_oldval, ad2_oldval, it
+    it = it + 1 
     if cm_Light2M8brightness:
         if isAD1 and isLed8:
             aval = get_adc_value(adc1)
@@ -571,16 +589,7 @@ def handleHardWireScripts(): # matrix of connections examples
                     d8.text(str(aval), 0, 0, 1)
                 d8.show()
 
-    """
-    if cm_Light2M8:
-        if isAD1 and isLed8:
-            aval = get_adc_value(adc1)
-            if abs(ad1_oldval-aval) > ADC_HYSTERESIS:
-                ad_oldval = aval
-                d8.fill(0)
-                d8.text(str(aval), 0, 0, 1)
-                d8.show()
-    """
+    
     if cm_DisplayTemp:
         if isLed7 and isTemp:
             try:
@@ -590,21 +599,39 @@ def handleHardWireScripts(): # matrix of connections examples
             except:
                 print("mqtt.8x7segment.ERR")
 
+    if isTft:
+        try:
+            fb.fill(0)
+            fb.text('OctopusLab', 20, 15, color565(0,0,255))
+            fb.hline(3, 27, 122, color565(0,0,255)) # xyw
+            fb.text('MQTT test', 3, 39, color565(255,255,255))
+        except:
+            print("err.tft")              
+
     if cm_Time2Tft:
-        global it
         if isTft:
-            it = it + 1 
             hhmm = get_hhmm(rtc)
             #print(hhmm)
             try:
-                fb.fill(0)
-                fb.text('OctopusLab', 20, 15, color565(255,255,0))
                 fb.text(hhmm, 86, 148, color565(255,255,255))
                 fb.text(str(it), 10, 148, color565(0,0,255))
-                tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
-                sleep(1)
+                sleep(0.5)
             except:
                 print("err.cm_Time2Tft()")    
+
+    if cm_Temp2Tft: 
+            tt = getTemp()/10  
+            fb.text(str(tt), 86, 133, color565(0,255,0)) 
+            #fb.pixel(it,int(tt),color565(255,255,255)) 
+            print(str(tt))   
+            sleep(2)
+
+    if isTft:
+        try:
+            tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
+            sleep(2)
+        except:
+            print("err.tft")                    
 
 def handleKeyPad():
     global KP_LastPress
@@ -856,30 +883,60 @@ wifi_status = wifi.connect()
 
 # url config: TODO > extern.
 
-print("mqtt_config >")
-mqtt_clientid_prefix = read_mqtt_config()["mqtt_clientid_prefix"]
-mqtt_host = read_mqtt_config()["mqtt_broker_ip"]
-mqtt_root_topic = read_mqtt_config()["mqtt_root_topic"]
-mqtt_ssl  = read_mqtt_config()["mqtt_ssl"]
-mqtt_user = read_mqtt_config()["mqtt_user"]
-mqtt_pass = read_mqtt_config()["mqtt_pass"]
+if isMqtt:
+    from umqtt.simple import MQTTClient
+    print("mqtt_config >")
+    mqtt_clientid_prefix = read_mqtt_config()["mqtt_clientid_prefix"]
+    mqtt_host = read_mqtt_config()["mqtt_broker_ip"]
+    mqtt_root_topic = read_mqtt_config()["mqtt_root_topic"]
+    #mqtt_ssl  = False # Consider to use TLS!
+    mqtt_ssl  = read_mqtt_config()["mqtt_ssl"]
 
-mqtt_clientid = mqtt_clientid_prefix + esp_id
-c = MQTTClient(mqtt_clientid, mqtt_host, ssl=mqtt_ssl, user=mqtt_user, password=mqtt_pass)
-c.set_callback(mqtt_sub)
-print("mqtt.connect to " + mqtt_host)
-c.connect()
-# c.subscribe("/octopus/device/{0}/#".format(esp_id))
+    mqtt_clientid = mqtt_clientid_prefix + esp_id
+    c = MQTTClient(mqtt_clientid, mqtt_host, ssl=mqtt_ssl)
+    c.set_callback(mqtt_sub)
+    print("mqtt.connect to " + mqtt_host)
+    c.connect()
+    # c.subscribe("/octopus/device/{0}/#".format(esp_id))
 
-subStr = mqtt_root_topic+"/"+esp_id+"/#"
-print("subscribe (root topic + esp id):" + subStr)
-c.subscribe(subStr)
+    subStr = mqtt_root_topic+"/"+esp_id+"/#"
+    print("subscribe (root topic + esp id):" + subStr)
+    c.subscribe(subStr)
 
-print("mqtt log")
-# mqtt_root_topic_temp = "octopus/device"
-c.publish(mqtt_root_topic,esp_id) # topic, message (value) to publish
+    print("mqtt log")
+    # mqtt_root_topic_temp = "octopus/device"
+    c.publish(mqtt_root_topic,esp_id) # topic, message (value) to publish
 
-print("test temp: " + str(getTemp()))
+if isInflux:
+    print("setup Influx db")
+    influxWriteURL = "https://parallelgarden.surikata.info"
+    influxTable = "hohome"
+    influx_tags   = dict()
+    influx_log = dict()
+    influx_fields = dict()
+
+    influx_tags["device"] = esp_id
+    influx_tags["place"]  = name 
+    postdata_tags   = ','.join(["%s=%s" % (k, v) for (k, v) in influx_tags.items()])
+
+    #log
+    print("Influx db - log >")
+    influx_log["log"] = 1
+
+    postdata_fields = ','.join(["%s=%s" % (k, v) for (k, v) in influx_log.items()])
+    postdata_influx = "hohome,{0} {1}".format(postdata_tags, postdata_fields)
+    print(postdata_influx)
+    try:
+        res = urequests.post(influxWriteURL, data=postdata_influx) 
+        res.close()   
+    except:
+        print("Influx or WiFi ERR")     
+    printFree()     
+
+printFree()
+print("test temp: " + str(getTemp()/10))
+# test sendData
+sendData()
 
 if isTime: timeSetup()
 print(get_hhmm(rtc))
@@ -899,15 +956,8 @@ printLog(5,"start - main loop >")
 printFree()
 
 while True:
-
-    c.check_msg()
-
+    if isMqtt: c.check_msg()
+    if isKeypad: handleKeyPad()
+    if isButton: handleButton(btn)
     handleAD()
-
     handleHardWireScripts() # testing hw connections
-
-    if isKeypad:
-        handleKeyPad()
-
-    if isButton:
-        handleButton(btn)
