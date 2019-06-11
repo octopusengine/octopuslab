@@ -860,11 +860,12 @@ print("mqtt_config >")
 mqtt_clientid_prefix = read_mqtt_config()["mqtt_clientid_prefix"]
 mqtt_host = read_mqtt_config()["mqtt_broker_ip"]
 mqtt_root_topic = read_mqtt_config()["mqtt_root_topic"]
-#mqtt_ssl  = False # Consider to use TLS!
 mqtt_ssl  = read_mqtt_config()["mqtt_ssl"]
+mqtt_user = read_mqtt_config()["mqtt_user"]
+mqtt_pass = read_mqtt_config()["mqtt_pass"]
 
 mqtt_clientid = mqtt_clientid_prefix + esp_id
-c = MQTTClient(mqtt_clientid, mqtt_host, ssl=mqtt_ssl)
+c = MQTTClient(mqtt_clientid, mqtt_host, ssl=mqtt_ssl, user=mqtt_user, password=mqtt_pass)
 c.set_callback(mqtt_sub)
 print("mqtt.connect to " + mqtt_host)
 c.connect()
