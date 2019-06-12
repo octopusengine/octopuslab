@@ -1,14 +1,12 @@
 """
-octopusLAB - ESP32 easy - MQTT "slave" manager
+octopusLAB - ESP32 easy - MQTT "slave" manager / and or / influx db
 need ROBOTboard or IoTboard (it depends on the project)
-Built in Led, WS RGB Led
-Inputs:
+> Inputs:
 Button, keyboard, analog Joystick
 Sensors: A/D, One wire temperature, I2C light, ...
-Outputs:
-Relay, MOS-FER PWM (IoT board)
-Servo, DC motor, stepper (Robot board)
-Displays:
+> Outputs:
+Relay, MOS-FER PWM (IoT board), Servo, DC motor, stepper (Robot board)
+> Displays:
 I2C OLED, I2C LCD, SPI 8x7 segment, SPI 4x 8x8 matrix, UART Nextion, UART Serial display, SPI TTF
 """
 import machine, time, ubinascii, json
@@ -23,7 +21,7 @@ pinout = set_pinout()
 
 printLog(1,"boot device >")
 print("mqtt-slave.py > ESP32")
-ver = "0.38 / 11.6.2019"
+ver = "0.38 / 12.6.2019"
 
 # hard-code config / daefault
 Debug = True        # TODO: debugPrint()?        
@@ -55,18 +53,20 @@ isTft = 0       # 128x160
 isSD = 0        #* UART
 name = ""       # device name/describe
 
-isTimer = 0     # config
-isTime = 1      # setup time from cloud
+isTimer = 0         # config
+isTime = 1          # setup time from cloud
 isMqtt = False      # hardcode
-isInflux = True        # influx and grafana db
+isInflux = True     # influx and grafana db
+influxWriteURL = "" # from i/o config
 isMySQl = False
-# testing simple orchestrator connection manager / hard wire matrix
+# simple orchestrator connection manager / hard wire matrix
 cm_Light2M8 = 0
 cm_Light2M8brightness = 0
 cm_Keypad2Lcd = 0
 cm_Time2Tft = 0
 cm_Temp2Tft = 0
 cm_DisplayTemp = 1
+cm_SimpleBlinkTimer = 1
 #
 LCD_ADDRESS=0x27
 LCD_ROWS=2
@@ -128,7 +128,7 @@ printFree()
 
 io_config = {}
 def loadConfig():
-    global isTimer, isWS, isOLED, isLCD, isLed7, isLed8, isTft, isAD, isAD1, isAD2, isTemp, isServo, isStepper, isRelay, isKeypad, isButton, name
+    global isTimer, isWS, isOLED, isLCD, isLed7, isLed8, isTft, isAD, isAD1, isAD2, isTemp, isServo, isStepper, isRelay, isKeypad, isButton, name, influxWriteURL
 
     configFile = 'config/mqtt_io.json'
     if Debug: print("load "+configFile+" >")
@@ -155,6 +155,7 @@ def loadConfig():
         isButton = io_config.get('button')
         name = io_config.get('name')
         isTimer = io_config.get('timer')
+        influxWriteURL = io_config.get('influxWriteURL')
 
     except:
         print("Data Err. or '"+ configFile + "' does not exist")
@@ -316,28 +317,30 @@ def sendData():
         res = urequests.post(influxWriteURL, data=postdata_influx) 
         res.close()
      
-it = 0 # every 10 sec.
+itt = 0 # every 10 sec. / itteration timer
 def timerSend():
-    global it
-    it = it+1
-    if Debug: print("timer > "+str(it))
+    global itt
+    itt = itt + 1
+    if Debug: print("timer > "+str(itt))
+    if cm_SimpleBlinkTimer: simple_blink()    
 
     """
     if isLed7:
         if isTemp:
-            d7.write_to_buffer(str(it)+"-"+str(int(getTemp())))
+            d7.write_to_buffer(str(itt)+"-"+str(int(getTemp())))
             d7.display()
         else:
-            d7.write_to_buffer(str(it))
+            d7.write_to_buffer(str(itt))
             d7.display()
     """
     if isOLED:
-        displMessage2(str(it) + " | " + str(get_hhmm(rtc)),1)
+        displMessage2(str(itt) + " | " + str(get_hhmm(rtc)),1)
 
-    if (it >= 6*timeInterval): # 6 = 1min / 60 = 10min
-        if Debug: print(str(it) + " | " + str(timeInterval) + " min. > send data:")
-        it = 0
+    if (itt == 6*timeInterval): # 6 = 1min / 60 = 10min
+        if Debug: print(str(itt) + " | " + str(timeInterval) + " min. > send data:")
+        itt = 0
         sendData() # read sensors and send data
+        printFree()
        
 
 # Define function callback for connecting event
@@ -541,8 +544,6 @@ def mqtt_sub(topic, msg):
             print("Servo error")
             print(e)
 
-printFree()
-
 def handleAD():
     global ad_oldval, ad1_oldval, ad2_oldval
     if isAD:
@@ -614,7 +615,7 @@ def handleHardWireScripts(): # matrix of connections examples
             #print(hhmm)
             try:
                 fb.text(hhmm, 86, 148, color565(255,255,255))
-                fb.text(str(it), 10, 148, color565(0,0,255))
+                fb.text(str(itt), 10, 148, color565(0,0,255))
                 sleep(0.5)
             except:
                 print("err.cm_Time2Tft()")    
@@ -699,7 +700,7 @@ if isWS > 1:
 
 ts = []
 if isTemp:
-    print("dallas temp >")
+    print("dallas temp init >")
     from onewire import OneWire
     from ds18x20 import DS18X20
     dspin = machine.Pin(pinout.ONE_WIRE_PIN)
@@ -909,7 +910,6 @@ if isMqtt:
 
 if isInflux:
     print("setup Influx db")
-    influxWriteURL = "https://parallelgarden.surikata.info"
     influxTable = "hohome"
     influx_tags   = dict()
     influx_log = dict()
