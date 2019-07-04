@@ -14,7 +14,7 @@ https://boneskull.com/micropython-on-esp32-part-1/
 <pre>
 oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
                            -----------     (GPIO)
-                       EN -           - D23 (23)  MOSI       [SPI_MOSI_PIN] 
+                       EN -           - D23 (23)  MOSI       [SPI_MOSI_PIN]
 [PIN_ANALOG]     (36)  VP -           - D22 (22)  SCL(I2C)   [I2C_SCL_PIN]
 [I39_PIN]        (39)  VN -           - TXD (1)   D2
 [I34_PIN]             D34 -           - RXD (3)   D3
@@ -36,13 +36,13 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
 * install Python3 - https://www.python.org/downloads/
 * download MicroPython - https://micropython.org/download#esp32
 * install esptool - https://github.com/espressif/esptool
-* install ampy - https://github.com/adafruit/ampy
+* install ampy - `pip install adafruit-ampy` read more on https://github.com/adafruit/ampy
 
 ## Windows:
 * connect ESP32 and detect COM port
 * erase FLASH - During this phase the BOOT button needs to be pressed down until connection is established.
     <pre>esptool.py --chip esp32 -p /COM6 erase_flash</pre>
-* upload Micropython bin: 
+* upload Micropython bin:
     <pre>esptool.py --chip esp32 -p /COM6 write_flash -z 0x1000 ./down/esp32-_FileVersion_.bin</pre>
 * Now choose one of these options:
     * [Prepare](https://github.com/octopusengine/octopuslab/blob/master/esp32-micropython/prepare.bat)
@@ -59,6 +59,18 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
         if you're running the script from command line.</pre>
     * webrepl1
     * blockly and webrepl
+
+
+## Linux:
+
+Serial port is usually `/dev/ttyUSB0`, if not sure or does not work, you can read it in last line of `dmesg | tail` just after plugging USB
+
+To connect to REPL terminal use command `screen /dev/ttyUSB0 115200`
+
+Exiting terminal is little tricky, you need to use screen control sequence: <kbd>CTRL+A</kbd> <kbd>K</kbd>, then confirm pressing <kbd>y</kbd>
+
+If you exit any other way, connection may stay open and block other interaction (uploading files, reattaching to the REPL), safe way to fix this is to unplug USB and plug again.
+=======
     
 ## Linux (for all distors based on Debian)
 
@@ -99,6 +111,7 @@ For other distros please use this link: https://github.com/micropython/micropyth
 Serial port: /dev/ttyUSB0
 Tetminal: screen /dev/ttyUSB0 115200 > press ENTER 
 CTRL+A, K, (y) => screen, kill 
+
 
 ### Next steps
 
@@ -150,7 +163,7 @@ Press Ctrl+C to abort
     * select <b>sw</b> (set wifi) to assign wifi credentials
     * select <b>cw</b> (connect wifi) to reach the internets!
     * select <b>sd</b> (system downloads) to download and apply the rest of files
-    
+
 * Deploy
     * Once booted in by Putty (or similar software), run Octopus()
         <pre>
@@ -168,7 +181,7 @@ Press Ctrl+C to abort
     * select <b>ds</b> (device setting), then choose which board you're using
     * select <b>sw</b> (set wifi) to assign wifi credentials
     * select <b>cw</b> (connect wifi) to reach the internets!
-    
+
 
 ## File structure
 
@@ -190,10 +203,3 @@ root
  ║        ╠═ led/buzzer
  ╠═ ...   ╠═ ...
 </pre>
-
-
-
-
-
-
-

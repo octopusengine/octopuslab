@@ -1,11 +1,12 @@
-Configuration directory, please use .tpl, to create your versions of .json
+Configuration directory, please use .tpl, to create your versions of .json.
 
+> Don't forget to remove all comments
 
 
 Device config
 -------------
 
-This is important for corrects pinouts to be loaded automatically
+This is important for correct pinouts to be loaded automatically
 
 Copy device.json.tpl to device.json
 and edit wifi.json accordingly

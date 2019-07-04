@@ -78,15 +78,15 @@ def setupMenu():
     print("[w]   - wifi submenu")
     print("[cw]  - connect wifi")
     print("[ds]  - device setting")
-    print("[io]  - io setting")
+    print("[ios]  - I/O setting")
+    print("[iot]  - I/O test")
     print("[mq]  - mqtt() setup")
     print("[st]  - set time")
-    print("[sdp]  - system download > petrkr")
-    print("[sdo]  - system download > octopus")
-    print("(initial octopus modules)")
+    print("[sdp]  - system download > petrkr (update octopus modules from URL)")
+    print("[sdo]  - system download > octopus (update octopus modules from URL)")
     print("[si]  - system info")
     print("[o]   - run octopus() demo")
-    print("[e]   - exit setup")
+    print("[x]   - exit setup")
 
     print('=' * 30)
     sel = input("select: ")
@@ -105,20 +105,69 @@ def wifiMenu():
     sel = input("select: ")
     return sel
 
-def shutil(): 
+def ioMenu():
+    from util.io_config import io_conf_file, io_menu_layout, get_from_file as get_io_config_from_file
+    while True:
+        # read current settings from json to config object
+        io_conf = get_io_config_from_file()
+
+        print()
+        print('=' * 30)
+        print('        S E T U P - I / O')
+        print('=' * 30)
+        # show options with current values
+        c = 0
+        for i in io_menu_layout:
+            c += 1
+            print("[%2d] - %8s [%s] - %s" % (c, i['attr'], io_conf.get(i['attr'], 0), i['descr']))
+        print("[x]  - Exit from I/O setup")
+
+        print('=' * 30)
+        sele = input("select: ")
+
+        if sele == "x":
+            # done with editing
+            break
+
+        try:
+            sele = int(sele)
+        except ValueError:
+            print("Invalid input, try again.")
+
+        # change selected item if integer
+        if sele > 0 and sele <= len(io_menu_layout):
+            # print attribute name and description
+            print()
+            # print current value
+            try:
+                new_val = int(input("New Value [%s]: " % io_conf.get(io_menu_layout[sele - 1]['attr'], 0)))
+            except ValueError:
+                # if invalid input, 0 is inserted
+                new_val = 0
+            # update config object
+            io_conf[io_menu_layout[sele - 1]['attr']] = new_val
+            # dump updated setting into json
+            print("Writing new config to file %s" % io_conf_file)
+            with open(io_conf_file, 'w') as f:
+                ujson.dump(io_conf, f)
+        else:
+            print("Invalid input, try again.")
+
+
+def shutil():
     print("System download > (initial octopus modules)")
     import upip
     print("Installing shutil")
     upip.install("micropython-shutil")
     print("Running deploy")
-       
+
 
 def setup():
     mainOctopus()
     print("Hello, this will help you initialize your ESP")
     print("ver: " + ver + " (c)octopusLAB")
     print("Press Ctrl+C to abort")
-    
+
 
     # TODO improve this
     # prepare directory
@@ -129,7 +178,7 @@ def setup():
     while run:
         sele = setupMenu()
 
-        if sele == "e":
+        if sele == "x":
             print("Setup - exit >")
             time.sleep_ms(2000)
             print("all OK, press CTRL+D to soft reboot")
@@ -160,6 +209,16 @@ def setup():
             with open('config/device.json', 'w') as f:
                 ujson.dump(dc, f)
                 # ujson.dump(wc, f, ensure_ascii=False, indent=4)
+
+        if sele == "ios":
+            print("I/O setting:")
+            # io menu
+            ioMenu()
+
+        if sele == "iot":
+            print("Testing I/O")
+            from util import io_test
+            io_test.all()
 
         if sele == "w":
             from util.wifi_connect import WiFiConnect
@@ -198,7 +257,7 @@ def setup():
                 from util.mqtt import mqtt
                 mqtt()
             except:
-               print("Err.mqtt() or 'util.mqtt.py' does not exist")    
+               print("Err.mqtt() or 'util.mqtt.py' does not exist")
 
 
         if sele == "st":
@@ -225,4 +284,4 @@ def setup():
 
         if sele == "o":
             from util.octopus import octopus
-            octopus()    
+            octopus()
