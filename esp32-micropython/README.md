@@ -60,6 +60,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
     * webrepl1
     * blockly and webrepl
 
+
 ## Linux:
 
 Serial port is usually `/dev/ttyUSB0`, if not sure or does not work, you can read it in last line of `dmesg | tail` just after plugging USB
@@ -69,9 +70,52 @@ To connect to REPL terminal use command `screen /dev/ttyUSB0 115200`
 Exiting terminal is little tricky, you need to use screen control sequence: <kbd>CTRL+A</kbd> <kbd>K</kbd>, then confirm pressing <kbd>y</kbd>
 
 If you exit any other way, connection may stay open and block other interaction (uploading files, reattaching to the REPL), safe way to fix this is to unplug USB and plug again.
+=======
+    
+## Linux (for all distors based on Debian)
 
-...
-TODO   
+### Things you need to have
+
+Before anything else please make sure you have theese packages installed on your system:
+
+1. build-essential
+2. libreadline-dev
+3. libffi-dev
+4. git
+5. pkg-config (At least Ubuntu on version 14.04 or higher).
+
+### Installation
+
+To install theese packages (excluding git) use this command:
+
+```
+sudo apt-get install build-essential libreadline-dev libffi-dev git pkg-config
+```
+
+Clone Micropython repo using this command:
+
+```
+git clone --recurse-submodules https://github.com/micropython/micropython.git
+```
+
+Move to the build direcory > cd ./micropython/ports/unix
+Make executable > make axtls, make
+
+To run the executable file type ./micropython .
+
+### Other distors
+
+For other distros please use this link: https://github.com/micropython/micropython/wiki/Getting-Started
+
+### Port etc.
+Serial port: /dev/ttyUSB0
+Tetminal: screen /dev/ttyUSB0 115200 > press ENTER 
+CTRL+A, K, (y) => screen, kill 
+
+
+### Next steps
+
+Other steps for linux are the same as for Windows (see other sections)
 
 (1) Files required for Prepare are as follows: (directories included)
 <pre> boot_prepare.py

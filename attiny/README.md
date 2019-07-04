@@ -3,7 +3,7 @@ octopusLAB - temp_cz<br /><br />
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/attiny-schem3-export1.png" alt="attiny" width="500">
 <br />
 
-V našich ukázkách budeme používat některý z nejjozšířenějších "osminohých" mikrokotrolerů ATMEL -> Attiny:<br />
+V našich ukázkách budeme používat některý z nejrozšířenějších "osminohých" mikrokotrolerů ATMEL -> Attiny:<br />
 <pre>
 Attiny      13     45    85
 Flash [kB]   1      4     8
