@@ -17,7 +17,7 @@ def set_pinout():
         import pinouts.olab_esp32_default as pinout
 
     if device_config.get('board_type') == "oLAB Witty" and device_config.get('soc_type') == "esp8266":
-        import pinouts.olab_esp826_witty as pinout    
+        import pinouts.olab_esp8266_witty as pinout    
 
     if device_config.get('board_type') == "oLAB Tickernator" and device_config.get('soc_type') == "esp8266":
         import pinouts.olab_esp8266_tickernator as pinout

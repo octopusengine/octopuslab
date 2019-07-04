@@ -18,10 +18,16 @@ void setup() {
   Serial.begin(115200);
   while (!Serial) {
   }
+  Serial.println("Begin serial");
 
   // Set up custom CS pin - GPIO15 can be used, but with some HW modification due W5500's internal Pull-up
-  Ethernet.init(D1);
+  Serial.println("SPI Init");
+  SPI.begin(5, 18, 19, 23);
 
+  Serial.println("Ethernet Init");
+  Ethernet.init(23);
+
+  Serial.println("Ethernet begin...");
   // start the Ethernet connection:
   if (Ethernet.begin(mac) == 0) {
     Serial.println("Failed to configure Ethernet using DHCP");
@@ -30,6 +36,9 @@ void setup() {
     
     Ethernet.begin(mac, ip);
   }
+  Serial.println("Ethernet IP:");
+  Serial.println(Ethernet.localIP());
+
   // give the Ethernet shield a second to initialize:
   delay(1000);
   Serial.println("connecting...");
@@ -71,4 +80,3 @@ void loop()
     
   }
 }
-

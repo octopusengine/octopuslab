@@ -24,8 +24,8 @@ ampy -p  %PORT% ls
 
 @ECHO ON
 
-echo "boot prepare"
-ampy -p  %PORT% put boot_prepare.py boot.py
+echo "boot"
+ampy -p  %PORT% put boot.py boot.py
 
 echo "Util:"
 ampy -p  %PORT% mkdir util

@@ -4,6 +4,15 @@
 #import webrepl
 #webrepl.start()
 
+
+def setup():
+    import util.setup
+    util.setup.setup()
+
+def octopus():
+    import util.octopus
+    util.octopus.octopus()
+
 # when user enters REPL and executes setup()
-from util.setup import setup
-from util.octopus import octopus #beta
+#from util.setup import setup
+#from util.octopus import octopus #beta

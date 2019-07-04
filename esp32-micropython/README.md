@@ -32,11 +32,13 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
                            -----------
 </pre>     
 
-## Windows:
+
 * install Python3 - https://www.python.org/downloads/
 * download MicroPython - https://micropython.org/download#esp32
 * install esptool - https://github.com/espressif/esptool
 * install ampy - https://github.com/adafruit/ampy
+
+## Windows:
 * connect ESP32 and detect COM port
 * erase FLASH - During this phase the BOOT button needs to be pressed down until connection is established.
     <pre>esptool.py --chip esp32 -p /COM6 erase_flash</pre>
@@ -57,6 +59,14 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
         if you're running the script from command line.</pre>
     * webrepl1
     * blockly and webrepl
+    
+## Linux:
+Serial port: /dev/ttyUSB0
+Tetminal: screen /dev/ttyUSB0 115200 > press ENTER 
+CTRL+A, K, (y) => screen, kill 
+
+...
+TODO   
 
 (1) Files required for Prepare are as follows: (directories included)
 <pre> boot_prepare.py

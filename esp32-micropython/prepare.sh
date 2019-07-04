@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
 # TODO documentation
-# TODO check arguments
 
-export AMPY_PORT="/dev/ttyUSB0"
-export AMPY_BAUD=115200
+[ -z "$AMPY_PORT" ] && export AMPY_PORT="/dev/ttyUSB0"
+[ -z "$AMPY_BAUD" ] && export AMPY_BAUD=115200
+
+set -euo pipefail
 
 echo "Please only execute in venv with ampy installed"
 echo "Deploying to $AMPY_PORT"
@@ -18,8 +18,8 @@ read -p "Press enter to continue"
 
 ampy ls
 
-echo "boot prepare"
-ampy put boot_prepare.py boot.py
+echo "boot"
+ampy put boot.py boot.py
 
 echo "Config dir"
 ampy mkdir config 2> /dev/null || true
@@ -36,6 +36,9 @@ ampy put ./util/wifi_connect.py util/wifi_connect.py
 
 echo "util/mqtt_connect"
 ampy put ./util/mqtt_connect.py util/mqtt_connect.py
+
+echo "util/mqtt"
+ampy put ./util/mqtt.py util/mqtt.py
 
 # if local file with wifi setting exists, push it
 if [ -f 'config/wifi.json' ]; then

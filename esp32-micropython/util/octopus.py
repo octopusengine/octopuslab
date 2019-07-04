@@ -32,7 +32,7 @@ rtc = machine.RTC() # real time
 pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
 pwm0.duty(0)
 
-fet = Pin(pinout.MFET_PIN, Pin.OUT)
+fet = None
 
 """
 timNote = Timer(8, freq=3000)
@@ -177,6 +177,7 @@ def octopus():
     #global notInitServo
     notInitServo = True
     global oled
+    global fet
     ###beep(pwm0,500,100) # start beep
     #tim.init(period=1000, mode=Timer.ONE_SHOT, callback=lambda t:print("test timer - thread delay"))
     #tim.init(period=2000, mode=Timer.PERIODIC, callback=lambda t:print(2))
@@ -543,6 +544,9 @@ def octopus():
                  rel.value(0)
 
              if sel_r == "li":
+                 if not fet:
+                     fet = Pin(pinout.MFET_PIN, Pin.OUT)
+
                  print("led - pwm fade in - test >")
                  #lf = PWM(Pin(pinout.MFET_PIN))
                  #lf.duty(0)
@@ -554,6 +558,9 @@ def octopus():
                  fade_in(fet,500,5)
 
              if sel_r == "lo":
+                  if not fet:
+                     fet = Pin(pinout.MFET_PIN, Pin.OUT)
+
                   print("led - pwm fade out - test >")
                   #lf = PWM(Pin(pinout.MFET_PIN))
                   #lf.duty(1000)

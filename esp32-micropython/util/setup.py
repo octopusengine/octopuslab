@@ -7,7 +7,7 @@ import time, uos
 import ujson
 import machine #datetime
 
-ver = "2019/04 (c)octopusLAB"
+ver = "0.5 / 19.5.2019"
 
 devices = [
 ["oLAB Default","esp32"],
@@ -76,9 +76,9 @@ def setupMenu():
     print('        S E T U P')
     print('=' * 30)
     print("[ds]  - device setting")
-    print("[sw]  - set wifi")
+    print("[w]   - wifi submenu")
     print("[cw]  - connect wifi")
-    print("[mq]  - set mqtt")
+    print("[mq]  - mqtt() setup")
     print("[st]  - set time")
     print("[sdp]  - system download > petrkr")
     print("[sdo]  - system download > octopus")
@@ -86,6 +86,19 @@ def setupMenu():
     print("[si]  - system info")
     print("[o]   - run octopus() demo")
     print("[e]   - exit setup")
+
+    print('=' * 30)
+    sel = input("select: ")
+    return sel
+
+def wifiMenu():
+    print()
+    print('=' * 30)
+    print('        S E T U P - W I F I')
+    print('=' * 30)
+    print("[a]  - Add wifi network")
+    print("[r]  - Remove wifi network")
+    print("[s]  - Show configuration")
 
     print('=' * 30)
     sel = input("select: ")
@@ -102,7 +115,7 @@ def shutil():
 def setup():
     mainOctopus()
     print("Hello, this will help you initialize your ESP")
-    print(ver)
+    print("ver: " + ver + " (c)octopusLAB")
     print("Press Ctrl+C to abort")
     
 
@@ -147,49 +160,45 @@ def setup():
                 ujson.dump(dc, f)
                 # ujson.dump(wc, f, ensure_ascii=False, indent=4)
 
-        if sele == "sw":
-            print("Set WiFi >")
-            print()
-            wc = {}
-            wc['wifi_ssid'] = input("SSID: ")
-            wc['wifi_pass'] = input("PASSWORD: ")
+        if sele == "w":
+            from util.wifi_connect import WiFiConnect
+            w = WiFiConnect()
 
-            # TODO improve this
-            if 'config' not in uos.listdir():
-                uos.makedirs('config')
+            sel_w = wifiMenu()
 
-            print("Writing to file config/wifi.json")
-            with open('config/wifi.json', 'w') as f:
-                ujson.dump(wc, f)
-                # ujson.dump(wc, f, ensure_ascii=False, indent=4)
+            if sel_w == "a":
+                wifi_ssid = input("SSID: ")
+                wifi_pass = input("PASSWORD: ")
+                w.add_network(wifi_ssid, wifi_pass)
+
+            if sel_w == "r":
+                wifi_ssid = input("SSID: ")
+                w.remove_network(wifi_ssid)
+
+            if sel_w == "s":
+                print("Saved wifi networks")
+
+                for k, v in w.config['networks'].items():
+                    print ("SSID: {0}".format(k))
 
         if sele == "cw":
               print("Connect WiFi >")
-              from util.wifi_connect import read_wifi_config, WiFiConnect
-              time.sleep_ms(1000)
-              wifi_config = read_wifi_config()
-              print("config for: " + wifi_config["wifi_ssid"])
+              from util.wifi_connect import WiFiConnect
               w = WiFiConnect()
-              w.connect(wifi_config["wifi_ssid"], wifi_config["wifi_pass"])
-              print("WiFi: OK")
+              if w.connect():
+                  print("WiFi: OK")
+              else:
+                  print("WiFi: Connect error, check configuration")
 
         if sele == "mq":
-            print("Set mqtt >")
-            print()
-            mq = {}
-            mq['mqtt_broker_ip'] = input("BROKER IP: ")
-            mq['mqtt_ssl'] = input("> SSL (0/1): ")
-            mq['mqtt_port'] = input("> PORT (1883/8883/?): ")
-            mq['mqtt_clientid_prefix'] = input("CLIENT PREFIX: ")
-            mq['mqtt_root_topic'] = input("ROOT TOPIC: ")
+            print("mqtt setup >")
+            try:
+                print()
+                from util.mqtt import mqtt
+                mqtt()
+            except:
+               print("Err.mqtt() or 'util.mqtt.py' does not exist")    
 
-            # TODO improve this
-            if 'config' not in uos.listdir():
-                uos.makedirs('config')
-
-            print("Writing to file config/mqtt.json")
-            with open('config/mqtt.json', 'w') as f:
-                ujson.dump(mq, f)
 
         if sele == "st":
             print("Time setting >")
