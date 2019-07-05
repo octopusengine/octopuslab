@@ -146,23 +146,55 @@ Press Ctrl+C to abort
 "==============================
         S E T U P
 "===============================
-[ds]  - device setting
-[sw]  - set wifi
+[w]   - wifi submenu
 [cw]  - connect wifi
-[mq]  - set mqtt
+[sdp]  - system download > petrkr (update octopus modules from URL)
+[sdo]  - system download > octopus (update octopus modules from URL)
+[ds]  - device setting
+[ios]  - I/O setting submenu
+[iot]  - I/O test - run io_test()
+[mq]  - mqtt() setup
 [st]  - set time
-[sdp]  - system download > petrkr
-[sdo]  - system download > octopus
-(initial octopus modules)
 [si]  - system info
 [o]   - run octopus() demo
-[e]   - exit setup
+[x]   - exit setup
 "==============================
 </pre>
-    * select <b>ds</b> (device setting), then choose which board you're using
-    * select <b>sw</b> (set wifi) to assign wifi credentials
+    * select <b>w</b> (set wifi) to assign wifi credentials
+    * select <b>ds</b> (device setting), then choose which board you're using    
     * select <b>cw</b> (connect wifi) to reach the internets!
     * select <b>sd</b> (system downloads) to download and apply the rest of files
+    * select <b>ios</b> I/O input/output interface:
+<pre>
+"==================================================
+        S E T U P - I / O    (interfaces)
+"==================================================
+[ 1] -      led [1] - built in LED diode
+[ 2] -       ws [1] - WS RGB LED 0/1/8/...n
+[ 3] -     led7 [0] - SPI max 8x7 segm.display
+[ 4] -     led8 [0] - SPI max 8x8 matrix display
+[ 5] -     oled [0] - I2C oled display
+[ 6] -      lcd [0] - I2C LCD 0/2/4 row
+[ 7] -      tft [0] - SPI 128x160 color display
+[ 8] -       sm [0] - UART - serial monitor (display)
+[ 9] -     temp [0] - temperature Dallas sens.
+[10] -    light [0] - I2C light sens. (lux)
+[11] -     mois [0] - A/D moisture sensor
+[12] -    cmois [0] - A/D capacit. moisture sensor
+[13] -      ad0 [0] - A/D input voltage
+[14] -      ad1 [0] - A/D x / photoresistor
+[15] -      ad2 [0] - A/D y / thermistor
+[16] -   keypad [0] - Robot I2C+expander 4x4 keypad
+[17] -   button [0] - DEV2 Button
+[18] -      fet [0] - MOS FET PWM (IoTboard)
+[19] -    relay [0] - Relay (IoTboard)
+[20] -    servo [0] - PWM pins (both Robot and IoT have by default)
+[21] -  stepper [0] - Stepper motor (ROBOTboard)
+[22] -    motor [0] - DC motor (ROBOTboard)
+...
+</pre>
+    
+    
 
 * Deploy
     * Once booted in by Putty (or similar software), run Octopus()
