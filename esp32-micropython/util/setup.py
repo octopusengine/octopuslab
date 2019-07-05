@@ -7,7 +7,7 @@ import time, uos
 import ujson
 import machine #datetime
 
-ver = "0.5 / 19.5.2019"
+ver = "0.6 / 5.7.2019"
 
 devices = [
 ["oLAB Default","esp32"],
@@ -77,13 +77,13 @@ def setupMenu():
     print('=' * 30)
     print("[w]   - wifi submenu")
     print("[cw]  - connect wifi")
-    print("[ds]  - device setting")
-    print("[ios]  - I/O setting")
-    print("[iot]  - I/O test")
-    print("[mq]  - mqtt() setup")
-    print("[st]  - set time")
     print("[sdp]  - system download > petrkr (update octopus modules from URL)")
     print("[sdo]  - system download > octopus (update octopus modules from URL)")
+    print("[ds]  - device setting")
+    print("[ios]  - I/O setting submenu")
+    print("[iot]  - I/O test - run io_test()")
+    print("[mq]  - mqtt() setup")
+    print("[st]  - set time")
     print("[si]  - system info")
     print("[o]   - run octopus() demo")
     print("[x]   - exit setup")
@@ -112,9 +112,9 @@ def ioMenu():
         io_conf = get_io_config_from_file()
 
         print()
-        print('=' * 30)
-        print('        S E T U P - I / O')
-        print('=' * 30)
+        print('=' * 50)
+        print('        S E T U P - I / O    (interfaces)')
+        print('=' * 50)
         # show options with current values
         c = 0
         for i in io_menu_layout:
@@ -122,7 +122,7 @@ def ioMenu():
             print("[%2d] - %8s [%s] - %s" % (c, i['attr'], io_conf.get(i['attr'], 0), i['descr']))
         print("[x]  - Exit from I/O setup")
 
-        print('=' * 30)
+        print('=' * 50)
         sele = input("select: ")
 
         if sele == "x":
@@ -153,7 +153,6 @@ def ioMenu():
         else:
             print("Invalid input, try again.")
 
-
 def shutil():
     print("System download > (initial octopus modules)")
     import upip
@@ -161,13 +160,11 @@ def shutil():
     upip.install("micropython-shutil")
     print("Running deploy")
 
-
 def setup():
     mainOctopus()
     print("Hello, this will help you initialize your ESP")
     print("ver: " + ver + " (c)octopusLAB")
     print("Press Ctrl+C to abort")
-
 
     # TODO improve this
     # prepare directory
@@ -259,7 +256,6 @@ def setup():
             except:
                print("Err.mqtt() or 'util.mqtt.py' does not exist")
 
-
         if sele == "st":
             print("Time setting >")
             rtc = machine.RTC()
@@ -278,7 +274,6 @@ def setup():
 
         if sele == "sdo":
             shutil()
-            #deplUrl = "http://octopuslab.cz/download/latest.tar"
             deplUrl = "http://octopusengine.org/download/latest.tar"
             deploy(deplUrl)
 

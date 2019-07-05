@@ -8,27 +8,16 @@ from umqtt.simple import MQTTClient
 from util.mqtt_connect import read_mqtt_config
 from util.wifi_connect import read_wifi_config, WiFiConnect
 from util.pinout import set_pinout
-ver = "0.22 / 31.5.2019"
+ver = "0.23 / 5.7.2019"
 esp_id = ubinascii.hexlify(machine.unique_id()).decode()
-
-octopuASCII = [
-"      ,'''`.",
-"     /      \ ",
-"     |(@)(@)|",
-"     )      (",
-"    /,'))((`.\ ",
-"   (( ((  )) ))",
-"   )  \ `)(' / ( ",
-]
 
 pinout = set_pinout()
 pin_led = machine.Pin(pinout.BUILT_IN_LED, machine.Pin.OUT)
 wifi_retries = 100  # for wifi connecting
 
 def mainOctopus():
-    for ol in octopuASCII:
-        print(str(ol))
-    print()
+    from util.Setup import mainOctopus as printOctopus
+    printOctopus()
 
 def simple_blink():
     pin_led.value(0)
@@ -42,10 +31,10 @@ def setupMenu():
     print('      M Q T T    S E T U P')
     print('=' * 30)
     print("[ms]  - mqtt setup")
+    print("[sv]  - set system variables")
     print("[mt]  - mqtt simple test")
-    print("[io]  - set mqtt i/o devices")
     print("[si]  - system info")
-    print("[e]   - exit mqtt setup")
+    print("[x]   - exit mqtt setup")
 
     print('=' * 30)
     sel = input("select: ")
@@ -66,7 +55,7 @@ def connecting_callback(retries):
 
 def mqtt():
     mainOctopus()
-    print("Hello, this will help you initialize your ESP wit MQTT")
+    print("Hello, this will help you initialize MQTT client")
     print("ver: " + ver + " (c)octopusLAB")
     print("id: " + esp_id)
     print("Press Ctrl+C to abort")
@@ -80,7 +69,7 @@ def mqtt():
     while run:
         sele = setupMenu()
 
-        if sele == "e":
+        if sele == "x":
             print("Setup - exit >")
             time.sleep_ms(2000)
             print("all OK, press CTRL+D to soft reboot")
@@ -90,29 +79,10 @@ def mqtt():
             from util.sys_info import sys_info
             sys_info()
 
-        if sele == "io":
+        if sele == "sv":
             print("------- Set 0/1 for inpusts/outputs ------")
             print(" --> displays ---")
             wc = {}
-            wc['oled'] = int(input("oled: "))
-            wc['lcd'] = int(input("lcd: (2x16) "))
-            wc['8x7'] = int(input("spi: (8x7 segment) "))
-            wc['8x8'] = int(input("spi: (8x8 matrix) [0/1/4/..]"))
-            wc['tft'] = int(input("tft: (128x160) "))
-            wc['usm'] = int(input("UART: serial monitor "))
-            wc['ws'] = int(input("ws RGB: [0/1/8/16/..]"))
-            print(" --> sensors ---")
-            wc['temp'] = int(input("dallas temerature senzor: "))
-            wc['adv'] = int(input("adc: i36 (ad/power): "))
-            wc['adv1'] = int(input("adc: i34 (x/light): "))
-            wc['adv2'] = int(input("adc: i35 (y/temp): "))
-           
-            wc['light'] = int(input("light i2c senzor: "))
-            wc['relay'] = int(input("relay: "))
-            wc['button'] = int(input("button: "))
-            wc['keyboard'] = int(input("keyboard: "))
-            wc['servo'] = int(input("servo: "))
-            wc['stepper'] = int(input("stepper: "))
             wc['influxWriteURL'] = input("influxWriteURL: ") 
             # servo1/2/3,motroA/B,stepper1/2
             wc['timer'] = int(input("timer: "))
