@@ -5,14 +5,50 @@
 # printConfig()
 # printFree()
 from machine import Pin
+from time import sleep, sleep_ms
 from util.pinout import set_pinout
 pinout = set_pinout()
 
 from util.io_config import get_from_file
 io_conf = get_from_file()
 
+def printHead(s):
+    print()
+    print('-' * 30)
+    print("[--- " + s + " ---] ") 
+
+def getTemp():
+    tw=0
+    ds.convert_temp()
+    sleep_ms(750)
+    for t in ts:
+        temp = ds.read_temp(t)
+        tw = int(temp*10)/10
+    return tw    
+
+def getTempN():
+    tw=[]
+    ds.convert_temp()
+    sleep_ms(750)
+    for t in ts:
+        temp = ds.read_temp(t)
+        tw.append(int(temp*10)/10)
+    return tw     
+
+def test_led():
+    if io_conf.get('led'):
+        printHead("led")
+        print("LED init  >")
+        led = Pin(pinout.BUILT_IN_LED, Pin.OUT)
+
+        print("LED test >")
+        led.value(1)
+        sleep(1)
+        led.value(0)
+        
 def test_ws():
     if io_conf.get('ws'):
+        printHead("ws")
         print("WS RGB LED init neopixel >")
         from util.ws_rgb import simpleRgb, neopixelTest, setupNeopixel
         pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
@@ -29,13 +65,16 @@ def test_ws():
         if io_conf['ws'] > 1:
             neopixelTest(np, io_conf['ws'])
 
+ts = []
+ds = 0 
 def test_temp():
-    ts = []
+    global ts, ds
     if io_conf.get('temp'):
+        printHead("temp")
         print("dallas temp init >")
         from onewire import OneWire
         from ds18x20 import DS18X20
-        dspin = machine.Pin(pinout.ONE_WIRE_PIN)
+        dspin = Pin(pinout.ONE_WIRE_PIN)
         from util.octopus_lib import bytearrayToHexString
         try:
             ds = DS18X20(OneWire(dspin))
@@ -49,19 +88,42 @@ def test_temp():
         except:
             io_conf['temp'] = False
         print("Found {0} dallas sensors, temp active: {1}".format(len(ts), io_conf['temp']))
-#
-# if isLed7:
-#     from lib.max7219_8digit import Display
-#     # spi
-#     try:
-#         #spi.deinit()
-#         #print("spi > close")
-#         spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
-#         ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
-#         d7 = Display(spi, ss)
-#     except:
-#         print("spi.D7.ERR")
-#
+
+        if len(ts)>1:
+            print(getTempN())
+        else: 
+            print(getTemp())   
+
+def test_butt():
+    if io_conf.get("button"):
+        printHead("button")
+        # Button settings
+        BTN_Debounce   = 20
+        BTN_Tresh      = 10
+        BTN_Delay      = 250
+        BTN_LastPress  = 0
+        BTN_PressCount = 0
+        print("Initializing single Button, delay {0}".format(BTN_Delay))
+        try:
+            btn = Pin(pinout.DEV2_PIN, Pin.IN, Pin.PULL_UP)
+            #btn.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=handleButton)
+        except:
+            print("btn.Err")    
+
+def test_led7(): 
+    if io_conf.get('led7'): 
+        printHead("led7")      
+        from lib.max7219_8digit import Display
+        # spi
+        try:
+            #spi.deinit()
+            #print("spi > close")
+            spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
+            ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
+            d7 = Display(spi, ss)
+        except:
+            print("spi.D7.ERR")         
+
 # if isLed8:
 #     from lib.max7219_8digit import Display
 #     # spi
@@ -200,11 +262,11 @@ def test_temp():
 #         from lib.KeyPad_I2C import keypad
 #         kp = keypad(i2c, KP_ADDRESS)
 #
-# if isButton:
-#     print("Initializing Button, delay {0}".format(BTN_Delay))
-#     btn = Pin(pinout.DEV2_PIN, Pin.IN, Pin.PULL_UP)
-#     #btn.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=handleButton)
 
 def all():
+    test_led()
     test_ws()
     test_temp()
+    test_butt()
+    test_led7()
+    
