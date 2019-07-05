@@ -68,9 +68,8 @@ Serial port is usually `/dev/ttyUSB0`, if not sure or does not work, you can rea
 To connect to REPL terminal use command `screen /dev/ttyUSB0 115200`
 
 Exiting terminal is little tricky, you need to use screen control sequence: <kbd>CTRL+A</kbd> <kbd>K</kbd>, then confirm pressing <kbd>y</kbd>
-
 If you exit any other way, connection may stay open and block other interaction (uploading files, reattaching to the REPL), safe way to fix this is to unplug USB and plug again.
-=======
+
     
 ## Linux (for all distors based on Debian)
 
