@@ -1,5 +1,5 @@
 """
-octopusLAB - IoT client - ESP32 easy - MQTT "slave" manager / and or / influx db
+octopusLAB ESP32 easy - MQTT client manager and/or influx db
 need ROBOTboard or IoTboard (it depends on the project)
 > Inputs:
 Button, keyboard, analog Joystick
@@ -8,6 +8,7 @@ Sensors: A/D, One wire temperature, I2C light, ...
 Relay, MOS-FER PWM (IoT board), Servo, DC motor, stepper (Robot board)
 > Displays:
 I2C OLED, I2C LCD, SPI 8x7 segment, SPI 4x 8x8 matrix, UART Nextion, UART Serial display, SPI TTF
+2019 | Octopus engine s.r.o.
 """
 import machine, time, ubinascii, json
 from time import sleep, ticks_ms, sleep_ms, sleep_us
@@ -20,8 +21,8 @@ import urequests
 pinout = set_pinout()
 
 printLog(1,"boot device >")
-print("mqtt-slave.py > ESP32")
-ver = "0.50 / 5.7.2019"
+print("iot-client.py > ESP32")
+ver = "0.51 / 5.7.2019"
 
 # hard-code config / daefault
 Debug = True        # TODO: debugPrint()?        
@@ -29,31 +30,22 @@ timeInterval = 10    # 1/10 for data send
 wifi_retries = 100  # for wifi connecting
 
 name = ""       # device name/describe
-
-isTimer = 0         # config
+isTimer = 1         # config
 isTime = 1          # setup time from cloud
-isMqtt = False      # hardcode
-isInflux = False     # influx and grafana db
+isMqtt = True       # hardcode
+isInflux = False    # influx and grafana db
 influxWriteURL = "" # from i/o config
 isMySQl = False
+
 # simple orchestrator connection manager / hard wire matrix
 cm_Light2M8 = 0
 cm_Light2M8brightness = 0
 cm_Keypad2Lcd = 0
 cm_Time2Tft = 0
 cm_Temp2Tft = 0
-cm_DisplayTemp = 0
+cm_DisplayTemp = 1
+cm_DisplayTime = 0
 cm_SimpleBlinkTimer = 0
-#
-LCD_ADDRESS=0x27
-LCD_ROWS=2
-LCD_COLS=16
-
-#OLED size and position
-OLEDX = 128
-OLEDY = 64
-OLED_x0 = 3
-OLED_ydown = OLEDY-7
 
 # Button settings
 BTN_Debounce   = 20
@@ -61,11 +53,6 @@ BTN_Tresh      = 10
 BTN_Delay      = 250
 BTN_LastPress  = 0
 BTN_PressCount = 0
-
-# Keyboard settings timer
-KP_ADDRESS=0x23
-KP_Delay = 250
-KP_LastPress = 0
 
 #ADC/ADL
 pin_analog = 36         # analog or power management
@@ -99,8 +86,8 @@ bd = bytes.decode
 
 from util.io_config import io_conf_file, io_menu_layout, get_from_file as get_io_config_from_file
 io_conf = get_io_config_from_file()
-print('        S E T U P - I / O    (interfaces)')
-print('=' * 50)
+print('        I / O    (interfaces)')
+print('=' * 30)
 # show options with current values
 
 for i in io_menu_layout:
@@ -130,11 +117,47 @@ isLed8 = io_conf.get('led8') #  SPI max 8x8 matrix display
 isTft = io_conf.get('tft') # 128x160      
 isSD = 0        #* UART
 
+print('        M Q T T  (config)')
+print('=' * 30)
+mq_config = {}
+configFileMq = 'config/mqtt_io.json'
+try:
+    with open(configFileMq, 'r') as f:
+        d = f.read()
+        f.close()
+        mq_config = json.loads(d)
+
+    name = mq_config.get('name')
+    isTimer = mq_config.get('timer')
+    influxWriteURL = mq_config.get('influxWriteURL')
+
+except:
+    print("Data Err. or '"+ configFileMq + "' does not exist")
+
+print("hostName:" + str(name))
+print()
+
 # Set up I2C
 print("init i2c >")
 i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
 # 100kHz because PCF is slow
 printFree()
+
+#
+LCD_ADDRESS=0x27
+LCD_ROWS=2
+LCD_COLS=16
+
+#OLED size and position
+OLEDX = 128
+OLEDY = 64
+OLED_x0 = 3
+OLED_ydown = OLEDY-7
+
+# Keyboard settings timer
+KP_ADDRESS=0x23
+KP_Delay = 250
+KP_LastPress = 0
 
 # Detect I2C bus
 def detect_i2c_dev():
@@ -290,18 +313,12 @@ def timerSend():
         sendData() # read sensors and send data
         printFree()
        
-
 # Define function callback for connecting event
 def connected_callback(sta):
-    simple_blink()
-    #np[0] = (0, 128, 0)
-    #np.write()
     simple_blink()
     print(sta.ifconfig())
 
 def connecting_callback(retries):
-    #np[0] = (0, 0, 128)
-    #np.write()
     simple_blink()
 
 # ----------------------------------
@@ -313,7 +330,6 @@ def mqtt_sub(topic, msg):
     if "led" in topic:
         print("led:")
         
-
         if data[0] == 'N':  # oN
             print("-> on")
             pin_led.value(1)
@@ -537,7 +553,6 @@ def handleHardWireScripts(): # matrix of connections examples
                     d8.fill(0)
                     d8.text(str(aval), 0, 0, 1)
                 d8.show()
-
     
     if cm_DisplayTemp:
         if isLed7 and isTemp:
@@ -640,7 +655,6 @@ if isWS > 1:
     neopixelTest(np, isWS)        
 
 ts = []
-isTemp = io_conf.get('temp')
 if isTemp:
     print("dallas temp init >")
     from onewire import OneWire
@@ -688,10 +702,8 @@ if isLed8:
         d8.fill(0)
         d8.text('1234', 0, 0, 1)
         d8.show()
-    """except:
-        print("spi.D8.ERR")
-    """
-if io_conf.get('tft'):
+
+if isTft:
     print("spi.TFT 128x160 init >")
     printFree()
     from lib import st7735
@@ -726,7 +738,6 @@ if io_conf.get('tft'):
     # reset display
     fb.fill(0)
     tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
-
     sleep(1)    
 
     for i in range(0,3):
@@ -749,7 +760,6 @@ if isStepper:
         # motor id 1 or 2
         MOTOR_ID1 = 1
         #MOTOR_ID2 = 2
-
         i2c_sda = Pin(pinout.I2C_SDA_PIN, Pin.IN,  Pin.PULL_UP)
         i2c_scl = Pin(pinout.I2C_SCL_PIN, Pin.OUT, Pin.PULL_UP)
 
