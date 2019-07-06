@@ -7,7 +7,7 @@ import time, uos
 import ujson
 import machine #datetime
 
-ver = "0.6 / 5.7.2019"
+ver = "0.61 / 5.7.2019"
 
 devices = [
 ["oLAB Default","esp32"],
@@ -82,7 +82,7 @@ def setupMenu():
     print("[ds]  - device setting")
     print("[ios]  - I/O setting submenu")
     print("[iot]  - I/O test - run io_test()")
-    print("[mq]  - mqtt() setup")
+    print("[mq]  - mqtt() and sending data setup")
     print("[st]  - set time")
     print("[si]  - system info")
     print("[o]   - run octopus() demo")
