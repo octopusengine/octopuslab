@@ -1,4 +1,45 @@
 <pre>
+==============================
+        S E T U P
+==============================
+[w]   - wifi submenu
+[cw]  - connect wifi
+[sdp]  - system download > petrkr (update octopus modules from URL)
+[sdo]  - system download > octopus (update octopus modules from URL)
+[ds]  - device setting
+[ios]  - I/O setting submenu
+[iot]  - I/O test - run io_test()
+[mq]  - mqtt() and sending data setup
+[st]  - set time
+[si]  - system info
+[o]   - run octopus() demo
+[x]   - exit setup
+"==============================
+
+mq >
+
+"==============================
+      M Q T T    S E T U P
+"==============================
+[ms]  - mqtt setup
+[cv]  - set communications variables
+[mt]  - mqtt simple test
+[si]  - system info
+[x]   - exit mqtt setup
+"==============================
+select: cv
+------- Set 0/1/str for settings ------
+device (host)name/describe: wood7
+get time from server? [1/0]: 1
+send data to mysql db [1/0]: 0
+mqtt client [1/0]: 1
+send data to influx db [1/0]: 0
+timer: 1
+Writing to file config/mqtt_io.json
+
+
+
+
 >>>
 MPY: soft reboot
       ,'''`.
@@ -44,15 +85,13 @@ Free: 54048
  stepper [0] - Stepper motor (ROBOTboard)
    motor [0] - DC motor (ROBOTboard)
         M Q T T  (config)
-==============================
+"==============================
 hostName:wood
 
 init i2c >
 Free: 47360
 WS RGB LED init neopixel >
 WS RGB LED test >
-Traceback (most recent call last):
-  File "main.py", line 657, in <module>
-  File "util/ws_rgb.py", line 72, in neopixelTest
-  ...
+...
+    
 </pre>  
