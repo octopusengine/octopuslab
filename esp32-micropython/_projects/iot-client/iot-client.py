@@ -20,9 +20,11 @@ from util.pinout import set_pinout
 import urequests
 pinout = set_pinout()
 
+from util.Setup import mainOctopus as printOctopus
+printOctopus()
 printLog(1,"boot device >")
 print("iot-client.py > ESP32")
-ver = "0.51 / 5.7.2019"
+ver = "0.52 / 6.7.2019"
 
 # hard-code config / daefault
 Debug = True        # TODO: debugPrint()?        
@@ -30,10 +32,10 @@ timeInterval = 10    # 1/10 for data send
 wifi_retries = 100  # for wifi connecting
 
 name = ""       # device name/describe
-isTimer = 1         # config
-isTime = 1          # setup time from cloud
-isMqtt = True       # hardcode
-isInflux = False    # influx and grafana db
+isTimer = 0      # config
+isTime = 0       # setup time from cloud
+isMqtt = False   # hardcode
+isInflux = False # influx and grafana db
 influxWriteURL = "" # from i/o config
 isMySQl = False
 
@@ -97,16 +99,16 @@ for i in io_menu_layout:
 isTemp = io_conf.get('temp')
 isLight = io_conf.get('light')
 isMoist = io_conf.get('moist')
-isAD = 0        #* A/D input voltage
-isAD1 = 0       #  A/D x / photoresistor
-isAD2 = 0       #  A/D y / thermistor
-isKeypad = 0    # Robot I2C+expander 4x4 keypad
-isButton = io_conf.get('button')    # DEV2 Button
+isAD = io_conf.get('ad0')  # A/D input voltage
+isAD1 = io_conf.get('ad1') # A/D x / photoresistor
+isAD2 = io_conf.get('ad2') # A/D y / thermistor
+isKeypad = io_conf.get('keypad') # Robot I2C+expander 4x4 keypad
+isButton = io_conf.get('button') # DEV2 Button
 # Outpusts
 isRelay = io_conf.get('relay') # Have Relay
 isStepper = io_conf.get('stepper')  
 isServo = io_conf.get('servo') # Have PWM pins (both Robot and IoT have by default)
-isFet = io_conf.get('fet') # We have FET
+isFet = io_conf.get('fet') # have mos-FET
 # Displays / LED
 isLed = io_conf.get('led')
 isWS = io_conf.get('ws') #  WS RGB LED 0/1/8/...n
@@ -128,13 +130,22 @@ try:
         mq_config = json.loads(d)
 
     name = mq_config.get('name')
-    isTimer = mq_config.get('timer')
+    isTime = mq_config.get('time')    
+    isMqtt = mq_config.get('mqtt')
+    isInflux = mq_config.get('influx')
     influxWriteURL = mq_config.get('influxWriteURL')
+    isMySQl = mq_config.get('mysql')
+    isTimer = mq_config.get('timer')
 
 except:
     print("Data Err. or '"+ configFileMq + "' does not exist")
 
-print("hostName:" + str(name))
+print("hostName " + str(name))
+print("isTime: " + str(isTime))
+print("isMqtt: " + str(isMqtt))
+print("isInflux: " + str(isInflux))
+print("isMySQl: " + str(isMySQl))
+print("isTimer: " + str(isTimer))
 print()
 
 # Set up I2C
@@ -824,6 +835,7 @@ if isKeypad:
 if isButton:
     print("Initializing Button, delay {0}".format(BTN_Delay))
     btn = Pin(pinout.DEV2_PIN, Pin.IN, Pin.PULL_UP)
+
     #btn.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=handleButton)
 
 printLog(4,"wifi and mqtt >")
