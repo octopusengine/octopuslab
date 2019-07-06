@@ -77,15 +77,16 @@ def setupMenu():
     print('=' * 30)
     print("[w]   - wifi submenu")
     print("[cw]  - connect wifi")
-    print("[sdp]  - system download > petrkr (update octopus modules from URL)")
-    print("[sdo]  - system download > octopus (update octopus modules from URL)")
+    print("[sdp] - system download > petrkr (update octopus modules from URL)")
+    print("[sdo] - system download > octopus (update octopus modules from URL)")
     print("[ds]  - device setting")
-    print("[ios]  - I/O setting submenu")
-    print("[iot]  - I/O test - run io_test()")
+    print("[ios] - I/O setting submenu")
+    print("[iot] - I/O test - run io_test()")
     print("[mq]  - mqtt() and sending data setup")
     print("[st]  - set time")
     print("[si]  - system info")
-    print("[o]   - run octopus() demo")
+    print("[wr]  - run web repl")
+    print("[od]  - run octopus() demo")
     print("[x]   - exit setup")
 
     print('=' * 30)
@@ -277,6 +278,13 @@ def setup():
             deplUrl = "http://octopusengine.org/download/latest.tar"
             deploy(deplUrl)
 
-        if sele == "o":
+        if sele == "od":
             from util.octopus import octopus
             octopus()
+
+        if sele == "wr":
+            print("under reconstruction <") 
+            import esp
+            esp.osdebug(None)
+            import webrepl
+            webrepl.start()
