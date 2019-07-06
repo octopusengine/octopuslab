@@ -1,6 +1,7 @@
 """
 octopusLAB ESP32 easy - MQTT client manager and/or influx db
 need ROBOTboard or IoTboard (it depends on the project)
+limit: 1000 lines ;)
 > Inputs:
 Button, keyboard, analog Joystick
 Sensors: A/D, One wire temperature, I2C light, ...
@@ -24,7 +25,7 @@ from util.Setup import mainOctopus as printOctopus
 printOctopus()
 printLog(1,"boot device >")
 print("iot-client.py > ESP32")
-ver = "0.52 / 6.7.2019"
+ver = "0.53 / 6.7.2019"
 
 # hard-code config / daefault
 Debug = True        # TODO: debugPrint()?        
@@ -40,6 +41,9 @@ influxWriteURL = "" # from i/o config
 isMySQl = False
 
 # simple orchestrator connection manager / hard wire matrix
+menuVal = 0
+menuValOld = -1
+cm_RunMenu = 1
 cm_Light2M8 = 0
 cm_Light2M8brightness = 0
 cm_Keypad2Lcd = 0
@@ -50,7 +54,7 @@ cm_DisplayTime = 0
 cm_SimpleBlinkTimer = 0
 
 # Button settings
-BTN_Debounce   = 20
+BTN_Debounce   = 10 # ms
 BTN_Tresh      = 10
 BTN_Delay      = 250
 BTN_LastPress  = 0
@@ -194,24 +198,41 @@ def oled_intit():
     sleep(1)
     oled = ssd1306.SSD1306_I2C(OLEDX, OLEDY, i2c)
 
-def displMessage2(mess,timm): # OLEDdisplMessage()
-    #TODO: OLED/TFT/LCD...
+def displMessage2(mess,timm): 
     try:
         oled.fill_rect(0,OLED_ydown,OLEDX,10,0)
         oled.text(mess, OLED_x0, OLED_ydown)
         oled.show()
         sleep_ms(timm*1000)
     except Exception as e:
-       print("Err. displMessage() Exception: {0}".format(e))
+       print("Err. displMessage2() Exception: {0}".format(e))
 
-def displMessage(mess,timm):
+def displMessage1(mess,timm):
     try:
         oled.fill_rect(0,OLED_ydown-17,OLEDX,10,0)
         oled.text(mess, OLED_x0, OLED_ydown-17)
         oled.show()
         sleep_ms(timm*1000)
     except Exception as e:
-       print("Err. displMessage2() Exception: {0}".format(e))
+       print("Err. displMessage1() Exception: {0}".format(e))
+
+def displMessage(mess,timm):
+    try:
+        if isOLED:
+            oled.fill_rect(0,OLED_ydown-17,OLEDX,10,0)
+            oled.text(str(mess), OLED_x0, OLED_ydown-17)
+            oled.show()
+        if isLed7:
+            d7.write_to_buffer(str(mess))
+            d7.display()
+        if isLCD:
+            lcd.move_to(0, 0)
+            lcd.putstr(str(mess))    
+
+        sleep(timm)
+
+    except Exception as e:
+        print("Err. displMessage() Exception: {0}".format(e))
 
 def scroll(text,num): # TODO speed, timer? / NO "sleep"
     WIDTH = 8*4
@@ -493,7 +514,7 @@ def mqtt_sub(topic, msg):
 
     if "oled1" in topic:
         try:
-            displMessage(data,2)
+            displMessage1(data,2)
         except:
             print("oled.ERR")
 
@@ -550,8 +571,32 @@ def handleAD():
 
 it = 0
 def handleHardWireScripts(): # matrix of connections examples
-    global ad_oldval, ad1_oldval, ad2_oldval, it
+    global ad_oldval, ad1_oldval, ad2_oldval, it, menuValOld
     it = it + 1 
+    if cm_RunMenu:
+        if (menuVal != menuValOld): # run olny once
+            print("menu: " + str(menuVal))
+            np[0] = (BLACK)
+            np.write()
+
+            if (menuVal == 1):
+                np[0] = (RED)
+                np.write()
+                displMessage(get_hh_mm(rtc),3) # hh:mm > hh-mm for 7seg 
+            
+            if (menuVal == 2):
+                np[0] = (GREEN)
+                np.write()
+                displMessage(esp_id,3)
+
+            if (menuVal == 3):
+                np[0] = (BLUE)
+                np.write()
+                displMessage("octopus",3)
+            
+            menuValOld = menuVal 
+            sleep(2)    
+
     if cm_Light2M8brightness:
         if isAD1 and isLed8:
             aval = get_adc_value(adc1)
@@ -627,7 +672,7 @@ def handleKeyPad():
 
 BTN_LastState = False
 def handleButton(pin):
-    global BTN_LastPress, BTN_PressCount, BTN_LastState
+    global BTN_LastPress, BTN_PressCount, BTN_LastState, menuVal
 
     if ticks_ms() > BTN_LastPress + BTN_Delay:
         BTN_LastPress = ticks_ms()
@@ -637,13 +682,15 @@ def handleButton(pin):
             debounce += pin.value()
             sleep_ms(1)
 
-        print("Handling button, debounce value: {0}".format(debounce))
+        #print("Handling button, debounce value: {0}".format(debounce))
 
         if debounce < BTN_Tresh:
             if not BTN_LastState:
-                print(pin)
+                #print(pin)
                 BTN_PressCount += 1
                 BTN_LastState = True
+                menuVal = menuVal + 1
+                if menuVal > 3: menuVal = 0
                 c.publish("octopus/{0}/button".format(esp_id), str(BTN_PressCount))
         else:
             BTN_LastState = False 
@@ -835,8 +882,7 @@ if isKeypad:
 if isButton:
     print("Initializing Button, delay {0}".format(BTN_Delay))
     btn = Pin(pinout.DEV2_PIN, Pin.IN, Pin.PULL_UP)
-
-    #btn.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=handleButton)
+    btn.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=handleButton) # irq or handle
 
 printLog(4,"wifi and mqtt >")
 printFree()
@@ -915,6 +961,6 @@ printFree()
 while True:
     if isMqtt: c.check_msg()
     if isKeypad: handleKeyPad()
-    if isButton: handleButton(btn)
+    #if isButton: handleButton(btn)
     handleAD()
     handleHardWireScripts() # testing hw connections
