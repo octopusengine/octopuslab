@@ -30,8 +30,8 @@ def setupMenu():
     print('=' * 30)
     print('      M Q T T    S E T U P')
     print('=' * 30)
-    print("[ms]  - mqtt setup")
-    print("[sv]  - set system variables")
+    print("[ms]  - mqtt broker and topics setup")
+    print("[cv]  - set communications variables")
     print("[mt]  - mqtt simple test")
     print("[si]  - system info")
     print("[x]   - exit mqtt setup")
@@ -79,19 +79,21 @@ def mqtt():
             from util.sys_info import sys_info
             sys_info()
 
-        if sele == "sv":
-            print("------- Set 0/1 for inpusts/outputs ------")
-            print(" --> displays ---")
+        if sele == "cv":
+            print("------- Set 0/1/str for settings ------")
             wc = {}
-            wc['influxWriteURL'] = input("influxWriteURL: ") 
-            # servo1/2/3,motroA/B,stepper1/2
-            wc['timer'] = int(input("timer: "))
-            wc['name'] = input("device name/describe: ")
+            wc['name'] = input("device (host)name/describe: ")
+            wc['time'] = int(input("get time from server? [1/0]: "))
+            wc['mysql'] = int(input("send data to mysql db [1/0]: "))
+            if wc['mysql']: wc['mysqlURL'] = input("mysql Write URL: ") 
+            wc['mqtt'] = int(input("mqtt client [1/0]: "))
+            wc['influx'] = int(input("send data to influx db [1/0]: "))
+            if wc['influx']: wc['influxWriteURL'] = input("influx Write URL: ") 
+            wc['timer'] = int(input("timer: "))            
                 
             print("Writing to file config/mqtt_io.json")
             with open('config/mqtt_io.json', 'w') as f:
                 ujson.dump(wc, f)
-                # ujson.dump(wc, f, ensure_ascii=False, indent=4)
 
         if sele == "ms":
             print("Set mqtt >")
