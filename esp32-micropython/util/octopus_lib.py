@@ -37,6 +37,11 @@ def get_hhmm(rtc):
     mm=add0(rtc.datetime()[5])
     return hh+":"+mm 
 
+def get_hh_mm(rtc):
+    hh=add0(rtc.datetime()[4])
+    mm=add0(rtc.datetime()[5])
+    return hh+"-"+mm     
+
 def blinkOledPoint(oled):
     oled.fill_rect(x0,y0,5,5,1)
     oled.show()
