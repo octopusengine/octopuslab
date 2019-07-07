@@ -56,6 +56,7 @@ def send_id(out_signal, pin_name):
 	# send_id("11001101001100100111001110001100",'PA5')
 
 def read_id(pin_name):
+	key = ""
 	L1 = Pin(pin_name, Pin.IN, Pin.PULL_UP)
 	a = []
 	while L1.value() == 1:
@@ -90,20 +91,22 @@ def read_id(pin_name):
 	B1 = "".join(a_c) #print (B1) # convert into string
 
 	Data_device = B1[0:16]
-	print ("device: " + Data_device)
+	if len(Data_device) > 0: print ("device: " + Data_device)
 
 	Data_buttom = str(B1[16:32])
-	print ("button: " + Data_buttom)
+	if len(Data_buttom) > 0: print ("button: " + Data_buttom)
 
 	for key_d in Device_dict.keys():
 		if  str(Data_device) == str(key_d):
 			print (Device_dict[key_d], end = ' ')
 
 	if Data_buttom in Buttom_dict.keys():
-		print(Buttom_dict[Data_buttom])
-	return B1
+		key = Buttom_dict[Data_buttom]        
+		print(key)
+
+	return key
 
 while True:
     f = read_id(33)
-    print(str(f))
-    #send_id(f)
+    if len(f)>0 : print("key: " + f)
+    # send_id(f)
