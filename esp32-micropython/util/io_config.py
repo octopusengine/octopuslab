@@ -19,6 +19,7 @@ io_menu_layout = [
     {'attr': 'ad2', 'descr': 'A/D y / thermistor'},
     {'attr': 'keypad', 'descr': 'Robot I2C+expander 4x4 keypad'},
     {'attr': 'button', 'descr': 'DEV2 Button'},
+    {'attr': 'ir', 'descr': 'DEV2 ir remote'},
     {'attr': 'fet', 'descr': 'MOS FET PWM (IoTboard)'},
     {'attr': 'relay', 'descr': 'Relay (IoTboard)'},
     {'attr': 'servo', 'descr': 'PWM pins (both Robot and IoT have by default)'},
