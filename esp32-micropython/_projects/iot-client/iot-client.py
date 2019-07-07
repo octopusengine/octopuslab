@@ -108,6 +108,7 @@ isAD1 = io_conf.get('ad1') # A/D x / photoresistor
 isAD2 = io_conf.get('ad2') # A/D y / thermistor
 isKeypad = io_conf.get('keypad') # Robot I2C+expander 4x4 keypad
 isButton = io_conf.get('button') # DEV2 Button
+isIR = io_conf.get('ir') # DEV2 IR rec.
 # Outpusts
 isRelay = io_conf.get('relay') # Have Relay
 isStepper = io_conf.get('stepper')  
@@ -578,6 +579,9 @@ def handleHardWireScripts(): # matrix of connections examples
             print("menu: " + str(menuVal))
             np[0] = (BLACK)
             np.write()
+            if isMqtt:
+                publishTopic = mqtt_root_topic + "/{0}/menu/".format(esp_id) 
+                c.publish(publishTopic,str(menuVal))
 
             if (menuVal == 1):
                 np[0] = (RED)
@@ -669,6 +673,18 @@ def handleKeyPad():
                 lcd.putstr(key)
 
         c.publish("octopus/{0}/keypad/key".format(esp_id), key)
+
+def handleIR():
+    global menuVal
+    # print(".", end = ' ') 
+    f = read_id(pinout.DEV2_PIN)
+    if len(f)>0 : 
+        key = f[3]
+        print("key: " + key)
+        try:
+            menuVal = int(key)
+        except:
+            print("e")    
 
 BTN_LastState = False
 def handleButton(pin):
@@ -894,6 +910,9 @@ wifi.events_add_connected(connected_callback)
 print("wifi.connect")
 wifi_status = wifi.connect()
 
+if isIR:
+    from lib.ir_remote import read_id
+
 # url config: TODO > extern.
 
 if isMqtt:
@@ -962,5 +981,6 @@ while True:
     if isMqtt: c.check_msg()
     if isKeypad: handleKeyPad()
     #if isButton: handleButton(btn)
+    if isIR: handleIR()
     handleAD()
     handleHardWireScripts() # testing hw connections
