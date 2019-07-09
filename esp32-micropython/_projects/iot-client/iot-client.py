@@ -25,7 +25,7 @@ from util.Setup import mainOctopus as printOctopus
 printOctopus()
 printLog(1,"boot device >")
 print("iot-client.py > ESP32")
-ver = "0.53 / 6.7.2019"
+ver = "0.55 / 8.7.2019" #984
 
 # hard-code config / daefault
 Debug = True        # TODO: debugPrint()?        
@@ -139,6 +139,7 @@ try:
     isMqtt = mq_config.get('mqtt')
     isInflux = mq_config.get('influx')
     influxWriteURL = mq_config.get('influxWriteURL')
+    influxTable = mq_config.get('influxTable')
     isMySQl = mq_config.get('mysql')
     isTimer = mq_config.get('timer')
 
@@ -324,7 +325,7 @@ def sendData():
         print("send influx data >")
         influx_fields["temp"] = temp/10
         postdata_fields = ','.join(["%s=%s" % (k, v) for (k, v) in influx_fields.items()])
-        postdata_influx = "hohome,{0} {1}".format(postdata_tags, postdata_fields)
+        postdata_influx = "{0}{1} {2}".format(influxTable+",", postdata_tags, postdata_fields)
         #postdata_influx = "hohome,place="+name+",device="+esp_id+" temp="+str(temp/10)
         print(postdata_influx)
         res = urequests.post(influxWriteURL, data=postdata_influx) 
@@ -913,8 +914,6 @@ wifi_status = wifi.connect()
 if isIR:
     from lib.ir_remote import read_id
 
-# url config: TODO > extern.
-
 if isMqtt:
     from umqtt.simple import MQTTClient
     print("mqtt_config >")
@@ -941,7 +940,6 @@ if isMqtt:
 
 if isInflux:
     print("setup Influx db")
-    influxTable = "hohome"
     influx_tags   = dict()
     influx_log = dict()
     influx_fields = dict()
@@ -955,7 +953,7 @@ if isInflux:
     influx_log["log"] = 1
 
     postdata_fields = ','.join(["%s=%s" % (k, v) for (k, v) in influx_log.items()])
-    postdata_influx = "hohome,{0} {1}".format(postdata_tags, postdata_fields)
+    postdata_influx = "{0}{1} {2}".format(influxTable+",", postdata_tags, postdata_fields)
     print(postdata_influx)
     try:
         res = urequests.post(influxWriteURL, data=postdata_influx) 
@@ -980,7 +978,7 @@ printFree()
 while True:
     if isMqtt: c.check_msg()
     if isKeypad: handleKeyPad()
-    #if isButton: handleButton(btn)
+    #if isButton: handleButton(btn) # > irq
     if isIR: handleIR()
     handleAD()
-    handleHardWireScripts() # testing hw connections
+    handleHardWireScripts() # test hw connections
