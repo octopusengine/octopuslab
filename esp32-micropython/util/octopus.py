@@ -1,11 +1,9 @@
 # this module is for Basic simple examples & tests
-# it's loaded in boot.py and provides function octopus()
 # user is questioned in interactive mode
-
-# esp8266 / wemos / esp32 doit...
-
-# ampy -p /COM4 put util/octopus-8266.py util/octopus.py
-ver = "25.2.2019-v:0.27"
+# or directly in terminal: 
+# >>> from util.octopus import *
+# >>> help()
+ver = "9.7.2019-v:0.28"
 
 from micropython import const
 import time, os, math
@@ -53,7 +51,51 @@ def get_hhmm():
     hh=add0(rtc.datetime()[4])
     mm=add0(rtc.datetime()[5])
     return hh+":"+mm
+# -------------------------------- common terminal function ---------------
+def o_help():
+    mainOctopus()
+    print("Welcome to MicroPython on the ESP32 and octopusLAB board!")
+    print("clt() clear terminal")
+    print("led.value(1)        >>> led.value(0)")
+    print("np[0] = (128, 0, 0) >>> np.write()")
+    #print("npRGB(RED)          >>> color = (r,g,b)")
+    print("npRGBtest()")
+    print("i2c_scann()")
+    print("w_connect()")
 
+def npRBG((r,g,b)):
+    np[0] = ((r,g,b))
+    np.write()
+
+def npRGBtest(): 
+    np = neo_init(1)
+
+    np[0] = (128, 0, 0) #R
+    np.write()
+    time.sleep_ms(1000)
+
+    np[0] = (0,128, 0) #G
+    np.write()
+    time.sleep_ms(1000)
+
+    np[0] = (0, 0, 128) #B
+    np.write()
+    time.sleep_ms(1000)
+
+    np[0] = (0, 0, 0) #0
+    np.write()       
+
+def i2c_scann():
+    print("i2c_scann() > devices:")
+    i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
+    devices = i2c.scan()
+    print(devices)    
+
+def clt():
+    print(chr(27) + "[2J") # clear terminal
+    print("\x1b[2J\x1b[H") # cursor up
+
+# -------------------------------- /common terminal function --------------
 octopuASCII = [
 "      ,'''`.",
 "     /      \ ",
@@ -224,8 +266,7 @@ def octopus():
                blink(led, 500)
 
       if sel == "c":
-          print(chr(27) + "[2J") # clear terminal
-          print("\x1b[2J\x1b[H") # cursor up
+          clt()
           mainOctopus()
 
       if sel == "f":
@@ -235,10 +276,7 @@ def octopus():
           print("> util: "+str(os.listdir("util")))
           print("> pinouts: "+str(os.listdir("pinouts")))
 
-          print("i2c.scann() >")
-          i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
-          devices = i2c.scan()
-          print(devices)
+          i2c_scann()
 
       if sel == "i":
           print("System info:")
@@ -253,22 +291,7 @@ def octopus():
           pwm0.duty(0)
 
       if sel == "r1":
-        np = neo_init(1)
-
-        np[0] = (128, 0, 0) #R
-        np.write()
-        time.sleep_ms(1000)
-
-        np[0] = (0,128, 0) #G
-        np.write()
-        time.sleep_ms(1000)
-
-        np[0] = (0, 0, 128) #B
-        np.write()
-        time.sleep_ms(1000)
-
-        np[0] = (0, 0, 0) #0
-        np.write()
+        npRGBtest()
 
       if sel == "r8":
        np = neo_init(8)
