@@ -35,7 +35,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
 
 * install Python3 - https://www.python.org/downloads/
 * download MicroPython - https://micropython.org/download#esp32
-* install esptool - https://github.com/espressif/esptool
+* install esptool - https://github.com/espressif/esptool  `pip install esptool`
 * install ampy - `pip install adafruit-ampy` read more on https://github.com/adafruit/ampy
 
 ## Windows:
