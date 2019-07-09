@@ -20,12 +20,12 @@ from util.octopus_lib import *
 from util.pinout import set_pinout
 import urequests
 pinout = set_pinout()
-
 from util.Setup import mainOctopus as printOctopus
+
 printOctopus()
 printLog(1,"boot device >")
 print("iot-client.py > ESP32")
-ver = "0.55 / 8.7.2019" #984
+ver = "0.55 / 9.7.2019" #979
 
 # hard-code config / daefault
 Debug = True        # TODO: debugPrint()?        
@@ -40,7 +40,7 @@ isInflux = False # influx and grafana db
 influxWriteURL = "" # from i/o config
 isMySQl = False
 
-# simple orchestrator connection manager / hard wire matrix
+# simple orchestrator connection manager / hard wire TODO better "matrix"
 menuVal = 0
 menuValOld = -1
 cm_RunMenu = 1
@@ -60,12 +60,13 @@ BTN_Delay      = 250
 BTN_LastPress  = 0
 BTN_PressCount = 0
 
+pin_led = Pin(pinout.BUILT_IN_LED, Pin.OUT)
 #ADC/ADL
-pin_analog = 36         # analog or power management
+pin_analog = 36 #pinout.I36_PIN # analog or power management
 adc = ADC(Pin(pin_analog))
-pin_analog_1 = 34       # x
-adc1 = ADC(Pin(pin_analog_1)) # AC1 == "ACL"
-pin_analog_2 = 35       # y
+pin_analog_1 = 35 #I34_PIN      # x
+adc1 = ADC(Pin(pin_analog_1))   # AC1 == "ACL"
+pin_analog_2 = 35 #I35_PIN      # y
 adc2 = ADC(Pin(pin_analog_2))
 
 ADC_SAMPLES=100
@@ -77,8 +78,6 @@ adc.atten(ADC.ATTN_11DB) # setup
 adc1.atten(ADC.ATTN_11DB)
 adc2.atten(ADC.ATTN_11DB)
 
-pin_led = Pin(pinout.BUILT_IN_LED, Pin.OUT)
-
 rtc = machine.RTC() # real time
 tim1 = Timer(0)     # for main 10 sec timer
 
@@ -87,15 +86,15 @@ esp_id = ubinascii.hexlify(machine.unique_id()).decode()
 print("id: " + esp_id)
 printFree()
 
-printLog(2,"init - variables and functions >")
+printLog(2,"init - variables and functions, load setup >")
 bd = bytes.decode
 
 from util.io_config import io_conf_file, io_menu_layout, get_from_file as get_io_config_from_file
 io_conf = get_io_config_from_file()
-print('        I / O    (interfaces)')
-print('=' * 30)
-# show options with current values
 
+TW = 35 # title width
+printTitle("I / O   (interfaces)",TW)
+# show options with current values
 for i in io_menu_layout:
     print("%8s [%s] - %s" % (i['attr'], io_conf.get(i['attr'], 0), i['descr']))
 
@@ -124,8 +123,7 @@ isLed8 = io_conf.get('led8') #  SPI max 8x8 matrix display
 isTft = io_conf.get('tft') # 128x160      
 isSD = 0        #* UART
 
-print('        M Q T T  (config)')
-print('=' * 30)
+printTitle("Data / MQTT  (config)",TW)
 mq_config = {}
 configFileMq = 'config/mqtt_io.json'
 try:
@@ -142,7 +140,6 @@ try:
     influxTable = mq_config.get('influxTable')
     isMySQl = mq_config.get('mysql')
     isTimer = mq_config.get('timer')
-
 except:
     print("Data Err. or '"+ configFileMq + "' does not exist")
 
@@ -298,7 +295,6 @@ def fade_sw_in(p, r, m):
           sleep_us(i*m)
 
 def fade_sw_out(p, r, m):
-     # pin - range - multipl
      for i in range(r):
           p.value(1)
           sleep_us((r-i)*m)
@@ -354,7 +350,6 @@ def connected_callback(sta):
 
 def connecting_callback(retries):
     simple_blink()
-
 # ----------------------------------
 def mqtt_sub(topic, msg):
     data = bd(msg)
