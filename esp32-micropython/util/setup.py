@@ -279,8 +279,8 @@ def setup():
             deploy(deplUrl)
 
         if sele == "od":
-            from util.octopus import octopus
-            octopus()
+            from util.octopus_demo import octopus_demo
+            octopus_demo()
 
         if sele == "wr":
             print("under reconstruction <") 
