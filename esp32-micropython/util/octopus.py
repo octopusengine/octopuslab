@@ -4,9 +4,7 @@
 # >>> from util.octopus import *
 # >>> help()
 ver = "9.7.2019"
-
 # todo object "o"
-
 
 from micropython import const
 import time, os, math
@@ -27,6 +25,17 @@ pwm0.duty(0)
 fet = None
 led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
 
+LCD_ADDR=0x27
+OLED_ADDR=0x3c
+# spi init?
+try:
+    #spi.deinit()
+    #print("spi > close")
+    spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
+    ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
+except:
+    print("Err.SPI")
+
 WT = 39 # widt terminal / 39*=
 
 menuList = [
@@ -35,8 +44,9 @@ menuList = [
 "led.value(1)      | led.value(0)",
 "np[0]=(128, 0, 0) | np.write()",
 "npRGBtest()",
-"oledTest()",
-"led7Test()",
+"d = oledinit()",
+"d = disp7init()   > disp7(d,123)",
+"d = lcd2init()    > disp2(d,1,123) /R1",
 "getTemp()",
 "i2c_scann()",
 "w_connect()",
@@ -76,13 +86,71 @@ def npRGBtest():
     sleep(1)
 
     np[0] = (0, 0, 0) #0
-    np.write()       
+    np.write() 
+
+def disp7init():
+    printTitle("disp7init()",WT)
+    from lib.max7219_8digit import Display
+    #spi = SPI(-1, baudrate=100000, polarity=1, phase=0, sck=Pin(14), mosi=Pin(13), miso=Pin(2))
+    #ss = Pin(15, Pin.OUT)
+    print("display test: octopus")
+    d7 = Display(spi, ss)
+    d7.write_to_buffer('octopus')
+    d7.display()
+    return d7
+
+def disp7(d,mess):
+    d.write_to_buffer(str(mess))
+    d.display()
 
 def i2c_scann():
-    printTitle("i2c_scann() > devices:",WT)
+    print("i2c_scann() > devices:")
     i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
-    devices = i2c.scan()
-    print(devices)    
+    i2cdevs = i2c.scan()
+    print(i2cdevs) 
+    if (OLED_ADDR in i2cdevs): print("ok > OLED: "+str(OLED_ADDR))
+    if (LCD_ADDR in i2cdevs): print("ok > LCD: "+str(LCD_ADDR))
+    bhLight = 0x23 in i2cdevs
+    bh2Light = 0x5c in i2cdevs
+    tslLight = 0x39 in i2cdevs
+
+
+    return i2c   
+
+def lcd2init():
+    printTitle("lcd2init()",WT)
+    i2c = i2c_scann()
+    LCD_ROWS=2
+    LCD_COLS=16
+    from lib.esp8266_i2c_lcd import I2cLcd
+    lcd = I2cLcd(i2c, LCD_ADDR, LCD_ROWS, LCD_COLS)
+    print("display test: octopusLAB")
+    lcd.clear()
+    lcd.putstr("octopusLAB")
+    return lcd
+
+def disp2(d,mess):
+    d.clear()
+    d.putstr(str(mess)) 
+
+def oled_init():
+    printTitle("oled_init()",WT)
+    i2c = i2c_scann()
+    OLEDX = 128
+    OLEDY = 64
+    OLED_x0 = 3
+    OLED_ydown = OLEDY-7
+    from lib import ssd1306
+    time.sleep_ms(1000)
+    #i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
+    oled = ssd1306.SSD1306_I2C(OLEDX, OLEDY, i2c)
+    print("display test: oled display init")
+    oled.text('oled display init', OLED_x0, 3)
+    # oled.text(get_hhmm(), 45,29) #time HH:MM
+    oled.hline(0,50,128,1)
+    oled.text("octopusLAB 2019",OLED_x0,OLED_ydown)
+    oled.show()
+    return oled
 
 def clt():
     print(chr(27) + "[2J") # clear terminal
@@ -165,4 +233,6 @@ def w_connect():
     led.value(0)    
 
 def octopus():
-    print("this is basic library, type o_help() for help")    
+    printOctopus()
+    print("("+getVer()+")")
+    print("This is basic library, type o_help() for help")    
