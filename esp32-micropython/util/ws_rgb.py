@@ -1,6 +1,6 @@
 # library for ws rgb neopisel led - single / strip / ring
 # octopusLAB 2019
-from time import sleep
+from time import sleep, sleep_ms
 from neopixel import NeoPixel
 
 # WS neopixel:
@@ -57,6 +57,7 @@ def rainbow_cycle(np, num_pixels,wait):
             rc_index = (i * 256 // num_pixels) + j
             np[i] = wheel(rc_index & 255)
         np.write()
+        sleep_ms(wait)
 
 def neopixelTest(np, num_pixels):
         #https://github.com/maxking/micropython/blob/master/rainbow.py
