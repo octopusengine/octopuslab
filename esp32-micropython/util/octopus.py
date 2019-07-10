@@ -4,7 +4,7 @@
 # >>> octopus()
 # >>> o_help()
 
-ver = "9.7.2019" #238
+ver = "10.7.2019" #288
 # todo object "o"
 from micropython import const
 import time, os, math
@@ -43,13 +43,15 @@ menuList = [
 "printOctopus()    > print ASCII logo",
 "led.value(1)      | led.value(0)",
 "np[0]=(128, 0, 0) + np.write()",
-"npRGBtest()       | npRainbow(8)",
+"npRGBtest()       | npRainbow()",
 "d = disp7_init()  > disp7(d,123)",
 "d = lcd2_init()   > disp2(d,1,123) /R1",
 "d = oled_init()   > oled(d,txt)",
 "t = temp_init()   > getTemp(t[0],t[1])",
 "i2c_scann()",
 "w_connect()",
+"...",
+"...",
 "...",
 "sleep(1)          > 1 s pause"
 ]
@@ -71,7 +73,7 @@ def o_help():
 #    np.write()
 
 def npRGBtest(): 
-    np = neo_init(1)
+    np = neo_init(io_conf['ws'])
 
     np[0] = (128, 0, 0) #R
     np.write()
@@ -87,6 +89,12 @@ def npRGBtest():
 
     np[0] = (0, 0, 0) #0
     np.write() 
+
+def npRainbow(wait=50):
+    print("np")
+    np = neo_init(io_conf['ws'])
+    from util.ws_rgb import rainbow_cycle
+    rainbow_cycle(np, io_conf['ws'],wait)
 
 def disp7_init():
     printTitle("disp7init()",WT)
@@ -113,8 +121,6 @@ def i2c_scann():
     bhLight = 0x23 in i2cdevs
     bh2Light = 0x5c in i2cdevs
     tslLight = 0x39 in i2cdevs
-
-
     return i2c   
 
 def lcd2_init():
