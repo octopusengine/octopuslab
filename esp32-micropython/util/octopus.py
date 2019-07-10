@@ -1,23 +1,23 @@
 # this module is main library
 # for other modules
 # or directly in terminal: 
-# >>> from util.octopus import *
-# >>> help()
-ver = "9.7.2019"
-# todo object "o"
+# >>> octopus()
+# >>> o_help()
 
+ver = "9.7.2019" #238
+# todo object "o"
 from micropython import const
 import time, os, math
-from time import sleep
+from time import sleep, sleep_ms
 import machine, gc, ubinascii
 from machine import Pin, PWM, SPI, Timer
-
 from util.buzzer import beep, play_melody
 from util.led import blink
 from util.pinout import set_pinout
 pinout = set_pinout()
-
 from util.display_segment import *
+from util.io_config import get_from_file
+io_conf = get_from_file()
 
 rtc = machine.RTC() # real time
 pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
@@ -42,12 +42,12 @@ menuList = [
 "clt()             > clear terminal",
 "printOctopus()    > print ASCII logo",
 "led.value(1)      | led.value(0)",
-"np[0]=(128, 0, 0) | np.write()",
-"npRGBtest()",
-"d = oledinit()",
-"d = disp7init()   > disp7(d,123)",
-"d = lcd2init()    > disp2(d,1,123) /R1",
-"getTemp()",
+"np[0]=(128, 0, 0) + np.write()",
+"npRGBtest()       | npRainbow(8)",
+"d = disp7_init()  > disp7(d,123)",
+"d = lcd2_init()   > disp2(d,1,123) /R1",
+"d = oled_init()   > oled(d,txt)",
+"t = temp_init()   > getTemp(t[0],t[1])",
 "i2c_scann()",
 "w_connect()",
 "...",
@@ -88,7 +88,7 @@ def npRGBtest():
     np[0] = (0, 0, 0) #0
     np.write() 
 
-def disp7init():
+def disp7_init():
     printTitle("disp7init()",WT)
     from lib.max7219_8digit import Display
     #spi = SPI(-1, baudrate=100000, polarity=1, phase=0, sck=Pin(14), mosi=Pin(13), miso=Pin(2))
@@ -117,7 +117,7 @@ def i2c_scann():
 
     return i2c   
 
-def lcd2init():
+def lcd2_init():
     printTitle("lcd2init()",WT)
     i2c = i2c_scann()
     LCD_ROWS=2
@@ -172,6 +172,11 @@ def printOctopus():
         print(str(ol))
     print()        
 
+def printHead(s):
+    print()
+    print('-' * WT)
+    print("[--- " + s + " ---] ") 
+
 def printTitle(t,num):
     print()
     print('=' * num)
@@ -180,7 +185,7 @@ def printTitle(t,num):
 
 def printLog(i,s):
     print()
-    print('-' * 35)
+    print('-' * WT)
     print("[--- " + str(i) + " ---] " + s)  
 
 def printFree():
@@ -220,6 +225,51 @@ def neo_init(num_led):
 def connecting_callback():
     blink(led, 50, 100)
 """
+def temp_init():
+    printHead("temp")
+    print("dallas temp init >")
+    from onewire import OneWire
+    from ds18x20 import DS18X20
+    dspin = Pin(pinout.ONE_WIRE_PIN)
+    from util.octopus_lib import bytearrayToHexString
+    try:
+        ds = DS18X20(OneWire(dspin))
+        ts = ds.scan()
+
+        if len(ts) <= 0:
+            io_conf['temp'] = False
+
+        for t in ts:
+            print(" --{0}".format(bytearrayToHexString(t)))
+    except:
+        io_conf['temp'] = False
+        print("Err.temp")
+
+    print("Found {0} dallas sensors, temp active: {1}".format(len(ts), io_conf['temp']))
+
+    if len(ts)>1:
+        print(getTempN(ds,ts))
+    else: 
+        print(getTemp(ds,ts))
+
+    return ds,ts       
+
+def getTemp(ds,ts): # return single/first value
+    tw=0
+    ds.convert_temp()
+    sleep_ms(750)
+    temp = ds.read_temp(ts[0])
+    tw = int(temp*10)/10
+    return tw    
+
+def getTempN(ds,ts):
+    tw=[]
+    ds.convert_temp()
+    sleep_ms(750)
+    for t in ts:
+        temp = ds.read_temp(t)
+        tw.append(int(temp*10)/10)
+    return tw 
 
 def w_connect():
     led.value(1)
