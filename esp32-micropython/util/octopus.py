@@ -4,13 +4,15 @@
 # >>> octopus()
 # >>> o_help()
 
-ver = "10.7.2019" #288
+ver = "11.7.2019" #316
 # todo object "o"
-from micropython import const
-import time, os, math
-from time import sleep, sleep_ms
-import machine, gc, ubinascii
-from machine import Pin, PWM, SPI, Timer
+
+import time, os, urequests # import math
+# from micropython import const
+from time import sleep, sleep_ms, sleep_us
+import gc, ubinascii # machine >
+from machine import Pin, I2C, PWM, SPI, Timer, RTC
+
 from util.buzzer import beep, play_melody
 from util.led import blink
 from util.pinout import set_pinout
@@ -19,14 +21,17 @@ from util.display_segment import *
 from util.io_config import get_from_file
 io_conf = get_from_file()
 
-rtc = machine.RTC() # real time
+led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
+rtc = RTC() # real time
 pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
 pwm0.duty(0)
-fet = None
-led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
 
+WT = 39 # widt terminal / 39*=
+
+# I2C address:
 LCD_ADDR=0x27
 OLED_ADDR=0x3c
+
 # spi init?
 try:
     #spi.deinit()
@@ -36,23 +41,28 @@ try:
 except:
     print("Err.SPI")
 
-WT = 39 # widt terminal / 39*=
-
 menuList = [
 "clt()             > clear terminal",
 "printOctopus()    > print ASCII logo",
+"> basic simple examples:",
 "led.value(1)      | led.value(0)",
+"RGBtest()         | Rainbow()",
+"RGB(BLUE)         | RGBi(5,RED)",
 "np[0]=(128, 0, 0) + np.write()",
-"npRGBtest()       | npRainbow()",
+"> SPI 8 x 7 segment display:",
 "d = disp7_init()  > disp7(d,123)",
-"d = lcd2_init()   > disp2(d,1,123) /R1",
+"> I2C LCD 2/4 row display:",
+"d = lcd2_init()   > disp2(d,text,[0/1])",
+"d.clear()",
+"> I2C OLED 128x64 pix display:",
 "d = oled_init()   > oled(d,txt)",
+"> sensors / communications / etc.",
 "t = temp_init()   > getTemp(t[0],t[1])",
 "i2c_scann()",
 "w_connect()",
-"...",
-"...",
-"...",
+"timeSetup()       > from URL(urlApi)",
+"get_hhmm(separator)",
+"> standard lib. functions",
 "sleep(1)          > 1 s pause"
 ]
 
@@ -67,32 +77,30 @@ def o_help():
     printTitle("example - list commands",WT)
     for ml in menuList:
         print(ml)
+
+def rgb_init(num_led=io_conf['ws']):
+    from util.ws_rgb import setupNeopixel
+    pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
+    npObj = setupNeopixel(pin_ws, num_led)
+    np = npObj
+    return npObj 
+
+np = rgb_init(io_conf['ws'])          
   
-#def npRBG((r,g,b)):
-#    np[0] = ((r,g,b))
-#    np.write()
-
-def npRGBtest(): 
-    np = neo_init(io_conf['ws'])
-
-    np[0] = (128, 0, 0) #R
+def RGB(color,np=np):
+    np.fill(color)
     np.write()
-    sleep(1)
+ 
+def RGBi(i,color, np=np):
+    np[i] = color
+    np.write()    
 
-    np[0] = (0,128, 0) #G
-    np.write()
-    time.sleep_ms(1)
+def RGBtest(wait=500): 
+    from util.ws_rgb import simpleRgb
+    simpleRgb(np,wait)
 
-    np[0] = (0, 0, 128) #B
-    np.write()
-    sleep(1)
-
-    np[0] = (0, 0, 0) #0
-    np.write() 
-
-def npRainbow(wait=50):
+def Rainbow(wait=50):
     print("np")
-    np = neo_init(io_conf['ws'])
     from util.ws_rgb import rainbow_cycle
     rainbow_cycle(np, io_conf['ws'],wait)
 
@@ -113,7 +121,7 @@ def disp7(d,mess):
 
 def i2c_scann():
     print("i2c_scann() > devices:")
-    i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
+    i2c = I2C(-1, Pin(pinout.I2C_SCL_PIN), Pin(pinout.I2C_SDA_PIN))
     i2cdevs = i2c.scan()
     print(i2cdevs) 
     if (OLED_ADDR in i2cdevs): print("ok > OLED: "+str(OLED_ADDR))
@@ -135,8 +143,9 @@ def lcd2_init():
     lcd.putstr("octopusLAB")
     return lcd
 
-def disp2(d,mess):
-    d.clear()
+def disp2(d,mess,r=0,s=0):
+    #d.clear()
+    d.move_to(s, r) # x/y
     d.putstr(str(mess)) 
 
 def oled_init():
@@ -195,7 +204,10 @@ def printLog(i,s):
     print("[--- " + str(i) + " ---] " + s)  
 
 def printFree():
-    print("Free: "+str(gc.mem_free()))    
+    print("Free: "+str(gc.mem_free()))  
+
+def bytearrayToHexString(ba):
+    return ''.join('{:02X}'.format(x) for x in ba)      
 
 def map(x, in_min, in_max, out_min, out_max):
     return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)      
@@ -209,17 +221,11 @@ def add0(sn):
        ret_str = "0"+str(sn)
     return ret_str
 
-def get_hhmm(rtc):
+def get_hhmm(separator=":",rtc=rtc):
     #print(str(rtc.datetime()[4])+":"+str(rtc.datetime()[5]))
     hh=add0(rtc.datetime()[4])
     mm=add0(rtc.datetime()[5])
-    return hh+":"+mm
-
-def neo_init(num_led):
-    from neopixel import NeoPixel
-    pin = Pin(pinout.WS_LED_PIN, Pin.OUT)
-    npObj = NeoPixel(pin, num_led)
-    return npObj 
+    return hh + separator + mm
 
 # Define function callback for connecting event
 """def connected_callback(sta):
@@ -237,7 +243,7 @@ def temp_init():
     from onewire import OneWire
     from ds18x20 import DS18X20
     dspin = Pin(pinout.ONE_WIRE_PIN)
-    from util.octopus_lib import bytearrayToHexString
+    # from util.octopus_lib import bytearrayToHexString
     try:
         ds = DS18X20(OneWire(dspin))
         ts = ds.scan()
@@ -286,7 +292,23 @@ def w_connect():
         print("WiFi: OK")
     else:
         print("WiFi: Connect error, check configuration")
-    led.value(0)    
+    led.value(0) 
+
+def timeSetup(urlApi ="http://www.octopusengine.org/api/hydrop"):
+    printTitle("time setup from url",WT)    
+    urltime=urlApi+"/get-datetime.php"
+    print("https://urlApi/"+urltime)
+    try:
+        response = urequests.get(urltime)
+        dt_str = (response.text+(",0,0")).split(",")
+        print(str(dt_str))
+        dt_int = [int(numeric_string) for numeric_string in dt_str]
+        rtc.init(dt_int)
+        #print(str(rtc.datetime()))
+        print("time: " + get_hhmm())
+    except:
+        print("Err. Setup time from URL")
+
 
 def octopus():
     printOctopus()
