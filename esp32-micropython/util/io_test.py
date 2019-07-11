@@ -4,36 +4,15 @@
 # loadConfig()
 # printConfig()
 # printFree()
+
 from machine import Pin
 from time import sleep, sleep_ms
+from util.octopus import *
 from util.pinout import set_pinout
 pinout = set_pinout()
 
 from util.io_config import get_from_file
 io_conf = get_from_file()
-
-def printHead(s):
-    print()
-    print('-' * 30)
-    print("[--- " + s + " ---] ") 
-
-def getTemp():
-    tw=0
-    ds.convert_temp()
-    sleep_ms(750)
-    for t in ts:
-        temp = ds.read_temp(t)
-        tw = int(temp*10)/10
-    return tw    
-
-def getTempN():
-    tw=[]
-    ds.convert_temp()
-    sleep_ms(750)
-    for t in ts:
-        temp = ds.read_temp(t)
-        tw.append(int(temp*10)/10)
-    return tw     
 
 def test_led():
     if io_conf.get('led'):
@@ -60,39 +39,14 @@ def test_ws():
         ws_b = 0
         print("WS RGB LED test >")
 
-        simpleRgb(np)
+        simpleRgb(np,500)
 
         if io_conf['ws'] > 1:
             neopixelTest(np, io_conf['ws'])
 
-ts = []
-ds = 0 
+#ts = []
 def test_temp():
-    global ts, ds
-    if io_conf.get('temp'):
-        printHead("temp")
-        print("dallas temp init >")
-        from onewire import OneWire
-        from ds18x20 import DS18X20
-        dspin = Pin(pinout.ONE_WIRE_PIN)
-        from util.octopus_lib import bytearrayToHexString
-        try:
-            ds = DS18X20(OneWire(dspin))
-            ts = ds.scan()
-
-            if len(ts) <= 0:
-                io_conf['temp'] = False
-
-            for t in ts:
-                print(" --{0}".format(bytearrayToHexString(t)))
-        except:
-            io_conf['temp'] = False
-        print("Found {0} dallas sensors, temp active: {1}".format(len(ts), io_conf['temp']))
-
-        if len(ts)>1:
-            print(getTempN())
-        else: 
-            print(getTemp())   
+    temp_init()  
 
 def test_butt():
     if io_conf.get("button"):
@@ -268,5 +222,4 @@ def all():
     test_ws()
     test_temp()
     test_butt()
-    test_led7()
-    
+    test_led7()   
