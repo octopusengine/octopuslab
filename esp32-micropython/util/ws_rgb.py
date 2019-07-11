@@ -16,18 +16,18 @@ def setupNeopixel(pin,num):
    np = NeoPixel(pin, num)
    return np
 
-def simpleRgb(np):
+def simpleRgb(np, wait_ms):
     np[0] = RED #R
     np.write()
-    sleep(1)
+    sleep_ms(wait_ms)
 
     np[0] = GREEN #G
     np.write()
-    sleep(1)
+    sleep_ms(wait_ms)
 
     np[0] = BLUE #B
     np.write()
-    sleep(1)
+    sleep_ms(wait_ms)
 
     np[0] = (0, 0, 0)
     np.write()   
