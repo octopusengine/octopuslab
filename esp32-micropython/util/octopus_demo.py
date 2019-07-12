@@ -184,7 +184,7 @@ def octopus_demo():
 
       if sel == "c":
           clt()
-          mainOctopus()
+          printOctopus()
 
       if sel == "f":
           print("file info /dir/ls:") #
@@ -256,7 +256,7 @@ def octopus_demo():
           run = False
 
       if sel == "d":
-         mainOctopus()
+         printOctopus()
          print(">>> Display test submenu")
          print('=' * 30)
          print("--- [od] --- oled display test")
@@ -373,7 +373,7 @@ def octopus_demo():
                        time.sleep_ms(500)
 
       if sel == "r":
-             mainOctopus()
+             printOctopus()
              print()
              print('=' * 30)
              print(">>> Boards special test")
@@ -508,7 +508,7 @@ def octopus_demo():
                       pulse(lf, 200)
 
       if sel == "p":
-            mainOctopus()
+            printOctopus()
             print()
             print(">>> Projects submenu")
             print('=' * 30)
