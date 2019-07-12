@@ -4,7 +4,7 @@
 # >>> octopus()
 # >>> o_help()
 
-ver = "12.7.2019" #331
+ver = "12.7.2019" #398
 # todo object "o"
 
 import time, os, urequests, network # import math
@@ -18,7 +18,6 @@ from util.buzzer import beep, play_melody
 from util.led import blink
 from util.pinout import set_pinout
 pinout = set_pinout()
-from util.display_segment import *
 from util.io_config import get_from_file
 io_conf = get_from_file()
 
@@ -36,6 +35,12 @@ WT = 50 # widt terminal / 39*=
 # I2C address:
 LCD_ADDR=0x27
 OLED_ADDR=0x3c
+
+#if io_conf['oled'] is not None:
+from util.display_segment import threeDigits
+OLEDX = 128
+OLEDY = 64
+OLED_x0 = 3
 
 # spi init?
 try:
@@ -61,6 +66,9 @@ menuList = [
 "   d.clear()",
 ">> I2C OLED 128x64 pix display:",
 '   d = oled_init()            > oled(d,"text")',
+"   d.fill(0/1)  |  d.show()   | d.text(text,x,y)",
+"   d.hline(*) |  d.vline(*)   | d.pixel(x,y,1)",
+"   (*) x, y, w/h, color       > d.show()",
 ">> sensors/communications/etc.",
 "   get_adc(pin)               > return analog RAW",
 "   adc_test()                 > simple adc test",
@@ -179,25 +187,35 @@ def disp2(d,mess,r=0,s=0):
     d.putstr(str(mess)) 
 
 def oled_init():
+    from util.display_segment import * 
+
     printTitle("oled_init()",WT)
     i2c = i2c_scann()
-    OLEDX = 128
-    OLEDY = 64
-    OLED_x0 = 3
     OLED_ydown = OLEDY-7
     from lib import ssd1306
     time.sleep_ms(1000)
     #i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
     oled = ssd1306.SSD1306_I2C(OLEDX, OLEDY, i2c)
-    print("display test: oled display init")
-    oled.text('oled display init', OLED_x0, 3)
+    print("display test: oled display OK")
+    oled.text('oled display OK', OLED_x0, 3)
     # oled.text(get_hhmm(), 45,29) #time HH:MM
     oled.hline(0,50,128,1)
     oled.text("octopusLAB 2019",OLED_x0,OLED_ydown)
     oled.show()
     return oled
 
-def oledImage(oled, file):
+def oledSegment(oled,num,point=False,deg=False):
+    threeDigits(oled,num,point,deg)   
+
+def oledSegmentTest(oled):
+    print("oled segment test >")
+    oled.fill(0)
+    oled.text('octopusLAB test', OLED_x0, 3)
+    for num in range(100):
+        oledSegment(oled,100-num)
+        sleep_ms(50)
+
+def oledImage(oled, file="assets/octopus_image.pbm"):
     IMAGE_WIDTH = 63
     IMAGE_HEIGHT = 63
 
