@@ -4,7 +4,7 @@
 # >>> octopus()
 # >>> o_help()
 
-ver = "12.7.2019" #398
+ver = "12.7.2019" #434
 # todo object "o"
 
 import time, os, urequests, network # import math
@@ -41,6 +41,30 @@ from util.display_segment import threeDigits
 OLEDX = 128
 OLEDY = 64
 OLED_x0 = 3
+
+#adc1
+#ADC/ADL
+"""pin_analog = 36 #pinout.I36_PIN # analog or power management
+adc = ADC(Pin(pin_analog))
+pin_analog_1 = 39 #I34_PIN      # x
+adc1 = ADC(Pin(pin_analog_1))   # AC1 == "ACL"
+pin_analog_2 = 35 #I35_PIN      # y
+adc2 = ADC(Pin(pin_analog_2))
+
+ADC_SAMPLES=100
+ADC_HYSTERESIS=50
+ad_oldval=0
+ad1_oldval=0
+ad2_oldval=0
+adc.atten(ADC.ATTN_11DB) # setup
+adc1.atten(ADC.ATTN_11DB)
+adc2.atten(ADC.ATTN_11DB)
+"""
+#adcpin = pinout.ANALOG_PIN
+adcpin = 39 #default
+pin_an = Pin(adcpin, Pin.IN)
+adc = ADC(pin_an)
+adc.atten(ADC.ATTN_11DB) # setup
 
 # spi init?
 try:
@@ -303,18 +327,30 @@ def get_hhmm(separator=":",rtc=rtc):
 def connecting_callback():
     blink(led, 50, 100)
 """
-def adc_test(adcpin = pinout.ANALOG_PIN):
+def adc_test():
     print("analog input test: ")
-    an = get_adc(adcpin)
+    #an = get_adc(adcpin)
+    an = adc.read()
     print("RAW: " + str(an))
     # TODO improve mapping formula, doc: https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/adc.html
     #print("volts: {0:.2f} V".format(an/4096*10.74), 20, 50)
 
-def get_adc(adcpin = pinout.ANALOG_PIN):    
+def get_adc(adcpin = adcpin):    
     pin_an = Pin(adcpin, Pin.IN)
     adc = ADC(pin_an)
+    adc.atten(ADC.ATTN_11DB) # setup
     an = adc.read()
     return an # single read, better average
+
+def get_adc_aver(adcpin = adcpin, num=10):    
+    #pin_an = Pin(adcpin, Pin.IN)
+    #adc = ADC(pin_an)
+    suman = 0
+    for i in range(num):
+        an = adc.read()
+        suman = suman + an
+        sleep_us(10)
+    return int(suman/num) # single read, better average    
 
 def temp_init():
     printHead("temp")
