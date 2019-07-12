@@ -7,12 +7,12 @@
 ver = "12.7.2019" #331
 # todo object "o"
 
-import time, os, urequests # import math
+import time, os, urequests, network # import math
 from os import urandom
 # from micropython import const
 from time import sleep, sleep_ms, sleep_us
 import gc, ubinascii # machine >
-from machine import Pin, I2C, PWM, SPI, Timer, RTC
+from machine import Pin, I2C, PWM, SPI, Timer, ADC, RTC, unique_id
 
 from util.buzzer import beep, play_melody
 from util.led import blink
@@ -31,7 +31,7 @@ if pinout.PIEZZO_PIN is not None:
     pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
     pwm0.duty(0)
 
-WT = 39 # widt terminal / 39*=
+WT = 50 # widt terminal / 39*=
 
 # I2C address:
 LCD_ADDR=0x27
@@ -47,34 +47,41 @@ except:
     print("Err.SPI")
 
 menuList = [
-"clt()             > clear terminal",
-"printOctopus()    > print ASCII logo",
-"> basic simple examples:",
-"led.value(1)      | led.value(0)",
-"RGBtest()         | Rainbow()",
-"RGB(BLUE)         | RGBi(5,RED)",
-"np[0]=(128, 0, 0) + np.write()",
-"> SPI 8 x 7 segment display:",
-"d = disp7_init()  > disp7(d,123)",
-"> I2C LCD 2/4 row display:",
-"d = lcd2_init()   > disp2(d,text,[0/1])",
-"d.clear()",
-"> I2C OLED 128x64 pix display:",
-"d = oled_init()   > oled(d,txt)",
-"> sensors / communications / etc.",
-"t = temp_init()   > getTemp(t[0],t[1])",
-"i2c_scann()",
-"w_connect()",
-"timeSetup()       > from URL(urlApi)",
-"get_hhmm(separator)",
-"> standard lib. functions",
-"sleep(1)          > 1 s pause",
-"urandom(1)[0]     > random num."
+"   clt()                      = clear terminal",
+"   printOctopus()             = print ASCII logo",
+">> basic simple examples:",
+"   led.value(1)               | led.value(0)",
+"   RGBtest()                  | Rainbow()",
+"   RGB(BLUE)                  | RGBi(5,RED)",
+"   np[0]=(128, 0, 0)          + np.write()",
+">> SPI 8 x 7 segment display:",
+"   d = disp7_init()           > disp7(d,123)",
+">> I2C LCD 2/4 row display:",
+"   d = lcd2_init()            > disp2(d,text,[0/1])",
+"   d.clear()",
+">> I2C OLED 128x64 pix display:",
+'   d = oled_init()            > oled(d,"text")',
+">> sensors/communications/etc.",
+"   get_adc(pin)               > return analog RAW",
+"   adc_test()                 > simple adc test",
+"   t = temp_init()            > getTemp(t[0],t[1])",
+"   i2c_scann()                = find I2C devices",
+"   w_connect()                = connect to WiFi ",
+"   timeSetup()                > from URL(urlApi)",
+'   get_hhmm(separator)        > get_hhmm("-")',
+">> standard lib. functions:",
+"   sleep(1)                   = 1 s pause",
+"   urandom(1)[0]              = random num.",
+"   import webrepl_setup       = remote access"
 ]
 
 # -------------------------------- common terminal function ---------------
 def getVer():
     return "octopus lib.ver: " + ver 
+
+def get_eui():
+    id = ubinascii.hexlify(unique_id()).decode()
+    return id #mac2eui(id) 
 
 def o_help():
     printOctopus()
@@ -83,6 +90,15 @@ def o_help():
     printTitle("example - list commands",WT)
     for ml in menuList:
         print(ml)
+
+def printInfo():
+    print('-' * WT)
+    print("ESP UID: " + get_eui() + " | RAM free: "+ str(getFree()) + " | " + get_hhmm())  
+    print('-' * WT)      
+
+def h():
+    o_help()    
+    printInfo()       
 
 def rgb_init(num_led=io_conf['ws']):
     if num_led is None or num_led == 0:
@@ -181,6 +197,21 @@ def oled_init():
     oled.show()
     return oled
 
+def oledImage(oled, file):
+    IMAGE_WIDTH = 63
+    IMAGE_HEIGHT = 63
+
+    with open('assets/'+file, 'rb') as f:
+        f.readline() # Magic number
+        f.readline() # Creator comment
+        f.readline() # Dimensions
+        data = bytearray(f.read())
+        fbuf = framebuf.FrameBuffer(data, IMAGE_WIDTH, IMAGE_HEIGHT, framebuf.MONO_HLSB)
+        # To display just blit it to the display's framebuffer (note you need to invert, since ON pixels are dark on a normal screen, light on OLED).
+        oled.invert(1)
+        oled.blit(fbuf, 0, 0)        
+    oled.show()    
+
 def clt():
     print(chr(27) + "[2J") # clear terminal
     print("\x1b[2J\x1b[H") # cursor up
@@ -192,13 +223,13 @@ octopuASCII = [
 "     )      (",
 "    /,'))((`.\ ",
 "   (( ((  )) ))",
-"   )  \ `)(' / ( ",
+"   ) \ `)(' / ( ",
 ]
 
 def printOctopus():
     print()
     for ol in octopuASCII:
-        print(str(ol))
+        print("     " + str(ol))
     print()        
 
 def printHead(s):
@@ -215,10 +246,13 @@ def printTitle(t,num):
 def printLog(i,s):
     print()
     print('-' * WT)
-    print("[--- " + str(i) + " ---] " + s)  
+    print("[--- " + str(i) + " ---] " + s)
+
+def getFree():
+    return gc.mem_free()      
 
 def printFree():
-    print("Free: "+str(gc.mem_free()))  
+    print("Free: "+str(getFree()))  
 
 def bytearrayToHexString(ba):
     return ''.join('{:02X}'.format(x) for x in ba)      
@@ -251,6 +285,19 @@ def get_hhmm(separator=":",rtc=rtc):
 def connecting_callback():
     blink(led, 50, 100)
 """
+def adc_test(adcpin = pinout.ANALOG_PIN):
+    print("analog input test: ")
+    an = get_adc(adcpin)
+    print("RAW: " + str(an))
+    # TODO improve mapping formula, doc: https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/adc.html
+    #print("volts: {0:.2f} V".format(an/4096*10.74), 20, 50)
+
+def get_adc(adcpin = pinout.ANALOG_PIN):    
+    pin_an = Pin(adcpin, Pin.IN)
+    adc = ADC(pin_an)
+    an = adc.read()
+    return an # single read, better average
+
 def temp_init():
     printHead("temp")
     print("dallas temp init >")
@@ -307,6 +354,9 @@ def w_connect():
     else:
         print("WiFi: Connect error, check configuration")
     led.value(0) 
+    wlan = network.WLAN(network.STA_IF)
+    print('network config:', wlan.ifconfig())
+    return wlan
 
 def timeSetup(urlApi ="http://www.octopusengine.org/api/hydrop"):
     printTitle("time setup from url",WT)    
@@ -323,9 +373,8 @@ def timeSetup(urlApi ="http://www.octopusengine.org/api/hydrop"):
     except:
         print("Err. Setup time from URL")
 
-
 def octopus():
     printOctopus()
     print("("+getVer()+")")
-    print("This is basic library, type o_help() for help")
-    printFree()
+    printInfo()
+    print("This is basic library, type o_help() or h() for help")
