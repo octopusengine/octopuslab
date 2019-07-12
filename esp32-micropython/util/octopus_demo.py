@@ -5,7 +5,7 @@ ver = "9.7.2019-v:0.28"
 from micropython import const
 import time, os, math
 import machine, ubinascii
-from machine import Pin, PWM, SPI, Timer
+from machine import Pin, PWM, SPI, Timer, RTC
 
 from util.buzzer import beep, play_melody
 from util.led import blink
@@ -32,10 +32,11 @@ if pinout.PIEZZO_PIN is not None:
 
 fet = None
 led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
+rtc = RTC() # real time
 
 def mainMenu():
     print()
-    print(get_hhmm())
+    print(get_hhmm(":",rtc))
     print('=' * 35)
     print("     O C T O P U S    M E N U")
     print('=' * 35)
@@ -206,23 +207,14 @@ def octopus_demo():
           play_melody(pwm0, mario)
           pwm0.duty(0)
 
-      if sel == "r1":
-        npRGBtest()
-
-      if sel == "r8":
-       np = neo_init(8)
-
-       np[0] = (32, 0, 0) #R
-       np[1] = (0,32, 0) #G
-       np[2] = (0, 0, 32) #B
-       np[5] = (32, 0, 0) #R
-       np[6] = (0,32, 0) #G
-       np[7] = (0, 0, 32) #B
-       np.write()
-
+      if sel == "r1": RGBtest()
+      if sel == "r8":  
+        np = rgb_init(8)
+        Rainbow()
+        
       if sel == "r80":
          NUMBER_LED = 8
-         np = neo_init(NUMBER_LED)
+         np = rgb_init(NUMBER_LED)
          for i in range(NUMBER_LED):
            np[i] = (1, 0, 0)
            time.sleep_ms(1)# REVIEW:
@@ -245,7 +237,7 @@ def octopus_demo():
 
       if sel == "wr1":
             w_connect()
-            np = neo_init(1)
+            np = rgb_init(1)
             import urequests
             import json
             url1="http://octopuslab.cz/api/ws.json"
@@ -290,7 +282,7 @@ def octopus_demo():
 
               # write text on x, y
               oled.text('OLED test', 25, 10)
-              oled.text(get_hhmm(), 45,29) #time HH:MM
+              oled.text(get_hhmm(":",rtc), 45,29) #time HH:MM
               oled.hline(0,50,128,1)
               oled.text("octopusLAB 2018",5,55) #time HH:MM
               oled.show()
