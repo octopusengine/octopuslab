@@ -17,5 +17,10 @@ def octopus_demo():
     import util.octopus_demo
     util.octopus_demo.octopus_demo()
 
+def reset():
+    import machine
+    machine.reset()
+
+
 # when user enters REPL and executes setup()
 
