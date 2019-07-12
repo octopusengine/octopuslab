@@ -4,10 +4,11 @@
 # >>> octopus()
 # >>> o_help()
 
-ver = "11.7.2019" #316
+ver = "12.7.2019" #331
 # todo object "o"
 
 import time, os, urequests # import math
+from os import urandom
 # from micropython import const
 from time import sleep, sleep_ms, sleep_us
 import gc, ubinascii # machine >
@@ -67,7 +68,8 @@ menuList = [
 "timeSetup()       > from URL(urlApi)",
 "get_hhmm(separator)",
 "> standard lib. functions",
-"sleep(1)          > 1 s pause"
+"sleep(1)          > 1 s pause",
+"urandom(1)[0]     > random num."
 ]
 
 # -------------------------------- common terminal function ---------------
@@ -112,7 +114,7 @@ def RGBtest(wait=500):
     simpleRgb(np,wait)
 
 def Rainbow(wait=50):
-    print("np")
+    print("> RGB Rainbow")
     from util.ws_rgb import rainbow_cycle
     rainbow_cycle(np, io_conf['ws'],wait)
 
@@ -326,3 +328,4 @@ def octopus():
     printOctopus()
     print("("+getVer()+")")
     print("This is basic library, type o_help() for help")
+    printFree()
