@@ -83,7 +83,15 @@ def o_help():
         print(ml)
 
 def rgb_init(num_led=io_conf['ws']):
+    if num_led is None or num_led == 0:
+        return
+
     from util.ws_rgb import setupNeopixel
+
+    if pinout.WS_LED_PIN is None:
+        print("Error: WS LED not supported on this board")
+        return
+
     pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
     npObj = setupNeopixel(pin_ws, num_led)
     np = npObj
