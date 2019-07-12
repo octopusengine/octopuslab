@@ -23,8 +23,12 @@ io_conf = get_from_file()
 
 led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
 rtc = RTC() # real time
-pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
-pwm0.duty(0)
+
+# not all boards must have piezzo
+pwm0 = None
+if pinout.PIEZZO_PIN is not None:
+    pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
+    pwm0.duty(0)
 
 WT = 39 # widt terminal / 39*=
 

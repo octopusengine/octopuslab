@@ -25,8 +25,11 @@ except:
     print()
 #rtc = machine.RTC() # real time
 
-pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
-pwm0.duty(0)
+pwm0 = None
+if pinout.PIEZZO_PIN is not None:
+    pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
+    pwm0.duty(0)
+
 fet = None
 led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
 
