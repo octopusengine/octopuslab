@@ -325,4 +325,4 @@ def timeSetup(urlApi ="http://www.octopusengine.org/api/hydrop"):
 def octopus():
     printOctopus()
     print("("+getVer()+")")
-    print("This is basic library, type o_help() for help")    
+    print("This is basic library, type o_help() for help")
