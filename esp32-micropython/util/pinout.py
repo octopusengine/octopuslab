@@ -37,4 +37,7 @@ def set_pinout():
     if device_config.get('board_type') == "oLAB IoTBoard1" and device_config.get('soc_type') == "esp32":
         import pinouts.olab_esp32_iot_board1 as pinout
 
+    if device_config.get('board_type') == "oLAB LANboard1" and device_config.get('soc_type') == "esp32":
+        import pinouts.olab_esp32_lan_board1 as pinout
+
     return pinout

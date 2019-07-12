@@ -17,7 +17,8 @@ devices = [
 ["oLAB RobotBoard1 v1","esp32"],
 ["oLAB RobotBoard1","esp32"],
 ["oLAB IoTBoard1","esp8266"],
-["oLAB IoTBoard1","esp32"]
+["oLAB IoTBoard1","esp32"],
+["oLAB LANboard1","esp32"]
 ]
 
 octopuASCII = [
