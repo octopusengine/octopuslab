@@ -23,7 +23,7 @@ try:
     ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
 except:
     print()
-rtc = machine.RTC() # real time
+#rtc = machine.RTC() # real time
 
 pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
 pwm0.duty(0)
@@ -32,7 +32,7 @@ led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
 
 def mainMenu():
     print()
-    print(get_hhmm(rtc))
+    print(get_hhmm())
     print('=' * 35)
     print("     O C T O P U S    M E N U")
     print('=' * 35)
