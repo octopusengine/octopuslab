@@ -7,6 +7,9 @@ def play_tone(pwm_pin, freq, length, volume=50):
     sleep_ms(length)
 
 def beep(p,f,t):  # port,freq,time
+    if p is None:
+        return
+
     #pwm0.freq()  # get current frequency
     p.freq(f)     # set frequency
     #pwm0.duty()  # get current duty cycle
@@ -16,6 +19,9 @@ def beep(p,f,t):  # port,freq,time
     #b.deinit()
 
 def play_melody(pwm_pin, melody, volume=50):
+    if pwm_pin is None:
+        return
+
     for note in melody:
         if note == 0:
             pwm_pin.duty(0)
