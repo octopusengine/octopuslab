@@ -49,7 +49,7 @@ def deploy(url):
     if not res.status_code == 200:
         return
 
-    def dir_exists(path):
+    def exists(path):
         try:
             os.stat(path)
             return True
@@ -66,7 +66,7 @@ def deploy(url):
             else:
                 name = f.name
 
-            if not dir_exists(name):
+            if not exists(name):
                 os.mkdir(name)
         else:
             extracted = t.extractfile(f)
