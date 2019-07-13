@@ -21,7 +21,10 @@ pinout = set_pinout()
 from util.io_config import get_from_file
 io_conf = get_from_file()
 
-led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
+led = None
+if pinout.BUILT_IN_LED is not None:
+    led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
+
 rtc = RTC() # real time
 
 # not all boards must have piezzo
@@ -399,7 +402,9 @@ def getTempN(ds,ts):
     return tw 
 
 def w_connect():
-    led.value(1)
+    if led is not None:
+        led.value(1)
+
     from util.wifi_connect import  WiFiConnect
     sleep(1)
     w = WiFiConnect()
@@ -407,7 +412,9 @@ def w_connect():
         print("WiFi: OK")
     else:
         print("WiFi: Connect error, check configuration")
-    led.value(0) 
+
+    if led is not None:
+        led.value(0)
     wlan = network.WLAN(network.STA_IF)
     print('network config:', wlan.ifconfig())
     return wlan
