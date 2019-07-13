@@ -70,6 +70,8 @@ adc = ADC(pin_an)
 adc.atten(ADC.ATTN_11DB) # setup
 
 # spi init?
+spi = None
+ss  = None
 try:
     #spi.deinit()
     #print("spi > close")
