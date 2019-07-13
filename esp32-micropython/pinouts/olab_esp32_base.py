@@ -2,6 +2,9 @@
 
 from pinouts.base import *
 
+BUILT_IN_LED = const(2)
+HALL_SENSOR = const(8)
+
 #I2C:
 I2C_SCL_PIN = const(22)
 I2C_SDA_PIN = const(21)
