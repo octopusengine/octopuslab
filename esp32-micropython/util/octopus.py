@@ -132,8 +132,8 @@ def h():
     o_help()    
     printInfo()       
 
-def rgb_init(num_led=io_conf['ws']):
-    if num_led is None or num_led == 0:
+def rgb_init(num_led):
+    if num_led == 0:
         return
 
     from util.ws_rgb import * # setupNeopixel
@@ -147,7 +147,7 @@ def rgb_init(num_led=io_conf['ws']):
     np = npObj
     return npObj 
 
-np = rgb_init(io_conf['ws'])          
+np = rgb_init(io_conf['ws'] if 'ws' in io_conf else 0)
   
 def RGB(color,np=np):
     np.fill(color)
