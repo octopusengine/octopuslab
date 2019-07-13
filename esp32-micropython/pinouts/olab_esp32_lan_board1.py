@@ -1,7 +1,6 @@
 """
-This is octopusLab basic library for iotBoard PCB and esp32 soc
-I2C / SPI / MOTORs / SERVO / PWM...
-Edition: --- 2.1.2019 ---
+This is octopusLab basic library for LANboard PCB and esp32 soc
+Edition: --- 13.7.2019 ---
 """
 from micropython import const
 from pinouts.olab_esp32_base import *
@@ -21,15 +20,4 @@ SPI_MISO_PIN = const(35)
 SPI_MOSI_PIN = const(33)
 SPI_CS0_PIN  = const(5)
 
-#---esp32---LAN board:
-PIEZZO_PIN = None
-WS_LED_PIN = None
-ANALOG_PIN = const(34)
-ONE_WIRE_PIN = const(32) # = DEV1_PIN
-
 BUTT1_PIN = const(0) # up
-
-#inputs:
-I39_PIN = const(39)
-I34_PIN = const(34)
-I35_PIN = const(35) #analog in for moisture
