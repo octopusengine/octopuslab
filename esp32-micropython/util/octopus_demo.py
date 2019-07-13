@@ -15,24 +15,7 @@ pinout = set_pinout()
 from util.display_segment import *
 from util.octopus import * # main library
 
-# spi
-try:
-    #spi.deinit()
-    #print("spi > close")
-    spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
-    ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
-except:
-    print()
-#rtc = machine.RTC() # real time
-
-pwm0 = None
-if pinout.PIEZZO_PIN is not None:
-    pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
-    pwm0.duty(0)
-
 fet = None
-led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
-rtc = RTC() # real time
 
 def mainMenu():
     print()
