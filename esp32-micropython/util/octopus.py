@@ -79,7 +79,10 @@ except:
     print("Err.SPI")
 
 menuList = [
-"   clt()                      = clear terminal",
+"   h()  /  o_help()           = this quick HELP", 
+"   i()                        = basic system info",    
+"   c()  /  clt()              = clear terminal",
+"   f(file)                    - file info / print",
 "   printOctopus()             = print ASCII logo",
 ">> basic simple examples:",
 "   led.value(1)               | led.value(0)",
@@ -101,13 +104,14 @@ menuList = [
 "   adc_test()                 > simple adc test",
 "   t = temp_init()            > getTemp(t[0],t[1])",
 "   i2c_scann()                = find I2C devices",
-"   w_connect()                = connect to WiFi ",
+"   w()   /   w_connect()      = connect to WiFi ",
 "   timeSetup()                > from URL(urlApi)",
 '   get_hhmm(separator)        > get_hhmm("-")',
 ">> standard lib. functions:",
 "   sleep(1)                   = 1 s pause",
 "   urandom(1)[0]              = random num.",
-"   import webrepl_setup       = remote access"
+"   import webrepl_setup       = remote access",
+"   r() = reset()              = reset/reboot system"
 ]
 
 # -------------------------------- common terminal function ---------------
@@ -133,7 +137,18 @@ def printInfo():
 
 def h():
     o_help()    
-    printInfo()       
+    printInfo()
+
+def i():
+    printTitle("basic info > ",WT)
+    printInfo()
+
+def f(file='config/device.json'):
+    printTitle("file > " + file, WT)
+    with open(file, 'r') as f:
+            d = f.read()
+            f.close()
+            print(d)      
 
 def rgb_init(num_led):
     if num_led == 0:
@@ -260,6 +275,13 @@ def oledImage(oled, file="assets/octopus_image.pbm"):
 def clt():
     print(chr(27) + "[2J") # clear terminal
     print("\x1b[2J\x1b[H") # cursor up
+
+def c():
+    clt()
+
+def r():
+    import machine
+    machine.reset()            
 
 octopuASCII = [
 "      ,'''`.",
@@ -418,6 +440,11 @@ def w_connect():
     wlan = network.WLAN(network.STA_IF)
     print('network config:', wlan.ifconfig())
     return wlan
+
+def w():  
+    printInfo()
+    printTitle("WiFi connect > ",WT)
+    w_connect()  
 
 def timeSetup(urlApi ="http://www.octopusengine.org/api/hydrop"):
     printTitle("time setup from url",WT)    
