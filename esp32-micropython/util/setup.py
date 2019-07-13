@@ -70,7 +70,13 @@ def deploy(url):
                 os.mkdir(name)
         else:
             extracted = t.extractfile(f)
-            shutil.copyfileobj(extracted, open(f.name, "wb"))
+
+            if exists(f.name):
+                os.remove(f.name)
+
+            with open(f.name, "wb") as fobj:
+                shutil.copyfileobj(extracted, fobj)
+
 
 def setupMenu():
     print()
