@@ -15,7 +15,7 @@ import gc, ubinascii # machine >
 from machine import Pin, I2C, PWM, SPI, Timer, ADC, RTC, unique_id
 
 from util.buzzer import beep, play_melody
-from util.led import blink
+from util.led import blink, ledvalue
 from util.pinout import set_pinout
 pinout = set_pinout()
 from util.io_config import get_from_file
@@ -424,8 +424,7 @@ def getTempN(ds,ts):
     return tw 
 
 def w_connect():
-    if led is not None:
-        led.value(1)
+    ledvalue(led, 1)
 
     from util.wifi_connect import  WiFiConnect
     sleep(1)
@@ -435,8 +434,7 @@ def w_connect():
     else:
         print("WiFi: Connect error, check configuration")
 
-    if led is not None:
-        led.value(0)
+    ledvalue(led, 0)
     wlan = network.WLAN(network.STA_IF)
     print('network config:', wlan.ifconfig())
     return wlan
