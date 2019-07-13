@@ -4,7 +4,7 @@
 # >>> octopus()
 # >>> o_help()
 
-ver = "12.7.2019" #434
+ver = "13.7.2019" #465
 # todo object "o"
 
 import time, os, urequests, network # import math
@@ -136,7 +136,7 @@ def rgb_init(num_led=io_conf['ws']):
     if num_led is None or num_led == 0:
         return
 
-    from util.ws_rgb import setupNeopixel
+    from util.ws_rgb import * # setupNeopixel
 
     if pinout.WS_LED_PIN is None:
         print("Error: WS LED not supported on this board")
@@ -426,6 +426,37 @@ def timeSetup(urlApi ="http://www.octopusengine.org/api/hydrop"):
         print("time: " + get_hhmm())
     except:
         print("Err. Setup time from URL")
+
+def getApiJson(urlApi ="http://www.octopusengine.org/api"):
+    import json
+    urljson=urlApi+"/led3.json"
+    aj = ""
+    try:
+        response = urequests.get(urljson)
+        dt_str = (response.text)
+        #print(str(dt_str))
+        j = json.loads(dt_str)
+        #print(str(j))
+        aj = j['light'] 
+    except:
+        print("Err. read json from URL")  
+    return aj    
+
+def getApiTest():
+    printTitle("data from url",WT)
+    #print("https://urlApi/"+urljson)
+    print("htts://public_unsecure_web/data.json")    
+    print(getApiJson())
+
+def getApiText(urlApi ="http://www.octopusengine.org/api"):
+    import json
+    urltxt=urlApi+"/text123.txt"
+    try:
+        response = urequests.get(urltxt)
+        dt_str = response.text
+    except:
+        print("Err. read txt from URL")  
+    return dt_str        
 
 def octopus():
     printOctopus()
