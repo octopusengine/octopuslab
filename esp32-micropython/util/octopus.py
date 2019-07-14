@@ -4,7 +4,7 @@
 # >>> octopus()
 # >>> o_help()
 
-ver = "14.7.2019" #543
+ver = "14.7.2019" #545
 # Led > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
 
 import time, os, urequests, network # import math
@@ -95,10 +95,10 @@ menuList = [
 "   d = lcd2_init()            > disp2(d,text,[0/1])",
 "   d.clear()",
 ">> I2C OLED 128x64 pix display:",
-'   d = oled_init()            > oled(d,"text")',
-"   d.fill(0/1)  |  d.show()   | d.text(text,x,y)",
-"   d.hline(*) |  d.vline(*)   | d.pixel(x,y,1)",
-"   (*) x, y, w/h, color       > d.show()",
+'   o = oled_init()            > oled(o,"text")',
+"   o.fill(0/1)  |  o.show()   | o.text(text,x,y)",
+"   o.hline(*) |  d.vline(*)   | o.pixel(x,y,1)",
+"   (*) x, y, w/h, color       > o.show()",
 ">> sensors/communications/etc.",
 "   get_adc(pin)               > return analog RAW",
 "   adc_test()                 > simple adc test",
@@ -142,7 +142,7 @@ def h():
 def i():
     printTitle("basic info > ",WT)
     printInfo()
-    print("[device]")
+    printLog("device")
     try:
         with open('config/device.json', 'r') as f:
             d = f.read()
@@ -152,8 +152,10 @@ def i():
     except:
         print("Device config 'config/device.json' does not exist, please run setup()") 
 
-    print("[pinout]") 
-    print(pinout)   
+    printLog("pinout")
+    print(pinout) 
+    printLog("io_conf") 
+    print(io_conf)  
 
 def f(file='config/device.json'):
     printTitle("file > " + file, WT)
@@ -356,7 +358,7 @@ def printTitle(t,num):
     print(t.center(num))
     print('=' * num)    
 
-def printLog(i,s):
+def printLog(i,s=""):
     print()
     print('-' * WT)
     print("[--- " + str(i) + " ---] " + s)
