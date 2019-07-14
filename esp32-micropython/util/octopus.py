@@ -15,15 +15,13 @@ import gc, ubinascii # machine >
 from machine import Pin, I2C, PWM, SPI, Timer, ADC, RTC, unique_id
 
 from util.buzzer import beep, play_melody
-from util.led import blink, ledvalue
+from util.led import Led
 from util.pinout import set_pinout
 pinout = set_pinout()
 from util.io_config import get_from_file
 io_conf = get_from_file()
 
-led = None
-if pinout.BUILT_IN_LED is not None:
-    led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
+led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED
 
 rtc = RTC() # real time
 
