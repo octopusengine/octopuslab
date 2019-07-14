@@ -4,8 +4,8 @@
 # >>> octopus()
 # >>> o_help()
 
-ver = "13.7.2019" #465
-# todo object "o"
+ver = "14.7.2019" #543
+# Led > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
 
 import time, os, urequests, network # import math
 from os import urandom
@@ -142,6 +142,18 @@ def h():
 def i():
     printTitle("basic info > ",WT)
     printInfo()
+    print("[device]")
+    try:
+        with open('config/device.json', 'r') as f:
+            d = f.read()
+            f.close()
+            print(" > config/device: " + d)
+            # device_config = json.loads(d)
+    except:
+        print("Device config 'config/device.json' does not exist, please run setup()") 
+
+    print("[pinout]") 
+    print(pinout)   
 
 def f(file='config/device.json'):
     printTitle("file > " + file, WT)
@@ -270,7 +282,41 @@ def oledImage(oled, file="assets/octopus_image.pbm"):
         # To display just blit it to the display's framebuffer (note you need to invert, since ON pixels are dark on a normal screen, light on OLED).
         oled.invert(1)
         oled.blit(fbuf, 0, 0)        
-    oled.show()    
+    oled.show() 
+
+def servo_init(pin = pinout.PWM1_PIN):
+    SERVO_MIN = const(45)
+    pwm_center = const(60)
+    SERVO_MAX = const(130)
+    pin_servo = Pin(pin, Pin.OUT)
+    servo = PWM(pin_servo, freq=50, duty=pwm_center)
+    return servo
+
+def set_degree(servo, angle):
+    servo.duty(map(angle, 0,150, SERVO_MIN, SERVO_MAX))            
+
+def servo_test():
+    printTitle("servo1 test >",WT)
+    #pwm_center = int(pinout.SERVO_MIN + (pinout.SERVO_MAX-pinout.SERVO_MIN)/2)
+
+    #if notInitServo:
+    print("init-servo:")
+    servo1 = servo_init()
+                
+    sleep(2)
+    servo1.duty(SERVO_MAX)
+    sleep(2)
+    servo1.duty(SERVO_MIN)
+    sleep(2)
+    
+    print("degree > 0")
+    set_degree(servo1,0)
+    sleep(2) 
+    print("degree > 45")
+    set_degree(servo1,45) 
+    sleep(2) 
+    print("degree > 90")
+    set_degree(servo1,90) 
 
 def clt():
     print(chr(27) + "[2J") # clear terminal
