@@ -1,15 +1,18 @@
 from time import sleep_ms
 
-def blink(pin_obj, length_on=1000, length_off=1000):
-    if pin_obj is None:
+def blink(pin, length_on=1000, length_off=1000):
+    print("WARGNING: DEPRECATED: Do not USE, Use Led class instead!!")
+
+    if pin is None:
+        print("DUMMY_LED DEPRECATED: Blink")
         return
 
     if length_off == 1000 and length_on != 1000:
         length_off = length_on
 
-    pin_obj.value(1)
+    pin.value(1)
     sleep_ms(length_on)
-    pin_obj.value(0)
+    pin.value(0)
     sleep_ms(length_off)
 
 def ledvalue(pin_obj, value):
