@@ -426,7 +426,7 @@ def getTempN(ds,ts):
     return tw 
 
 def w_connect():
-    ledvalue(led, 1)
+    led.value(1)
 
     from util.wifi_connect import  WiFiConnect
     sleep(1)
@@ -436,7 +436,7 @@ def w_connect():
     else:
         print("WiFi: Connect error, check configuration")
 
-    ledvalue(led, 0)
+    led.value(0)
     wlan = network.WLAN(network.STA_IF)
     print('network config:', wlan.ifconfig())
     return wlan
