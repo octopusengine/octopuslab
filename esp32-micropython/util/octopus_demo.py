@@ -8,7 +8,6 @@ import machine, ubinascii
 from machine import Pin, PWM, SPI, Timer, RTC
 
 from util.buzzer import beep, play_melody
-from util.led import blink
 from util.pinout import set_pinout
 pinout = set_pinout()
 
@@ -52,17 +51,17 @@ def mainMenu():
 # Define function callback for connecting event
 def connected_callback(sta):
     global WSBindIP
-    blink(led, 50, 100)
+    led.blink(50, 100)
     # np[0] = (0, 128, 0)
     # np.write()
-    blink(led, 50, 100)
+    led.blink(50, 100)
     print(sta.ifconfig())
     WSBindIP = sta.ifconfig()[0]
 
 def connecting_callback():
     # np[0] = (0, 0, 128)
     # np.write()
-    blink(led, 50, 100)
+    led.blink(50, 100)
 
 #servo
 SERVO_MIN = const(45)
@@ -129,7 +128,7 @@ def octopus_demo():
     print()
 
     time.sleep_us(10)       # sleep for 10 microseconds
-    blink(led, 500)
+    led.blink(500)
     time.sleep_ms(300)     # 1s
     start = time.ticks_ms()
 
@@ -151,7 +150,7 @@ def octopus_demo():
            count = 5
            for _ in range(count):
                beep(pwm0, 500, 100)
-               blink(led, 500)
+               led.blink(500)
 
       if sel == "bt":
            butt1 = Pin(pinout.BUTT1_PIN, Pin.IN, Pin.PULL_UP)
@@ -163,7 +162,7 @@ def octopus_demo():
                print("b2-"+str(butt2.value())),
                print("b3-"+str(butt3.value()))
                beep(pwm0, 500, 100)
-               blink(led, 500)
+               led.blink(500)
 
       if sel == "c":
           clt()
@@ -508,4 +507,4 @@ def octopus_demo():
     print("> delta time: "+str(delta))
     beep(pwm0, 2000, 50)
     print("all OK, press CTRL+D to soft reboot")
-    blink(led, 50)
+    led.blink(50)
