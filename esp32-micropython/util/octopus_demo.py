@@ -7,7 +7,6 @@ import time, os, math
 import machine, ubinascii
 from machine import Pin, PWM, SPI, Timer, RTC
 
-from util.buzzer import beep, play_melody
 from util.pinout import set_pinout
 pinout = set_pinout()
 
@@ -135,7 +134,7 @@ def octopus_demo():
     run= True
     while run:
       sel = mainMenu()
-      beep(pwm0, 1000, 50)
+      piezzo.beep(1000, 50)
 
       if sel == "a":
           print("analog input test: ")
@@ -149,7 +148,7 @@ def octopus_demo():
       if sel == "b":
            count = 5
            for _ in range(count):
-               beep(pwm0, 500, 100)
+               piezzo.beep(500, 100)
                led.blink(500)
 
       if sel == "bt":
@@ -161,7 +160,7 @@ def octopus_demo():
                print("b1-"+str(butt1.value())),
                print("b2-"+str(butt2.value())),
                print("b3-"+str(butt3.value()))
-               beep(pwm0, 500, 100)
+               piezzo.beep(500, 100)
                led.blink(500)
 
       if sel == "c":
@@ -186,8 +185,8 @@ def octopus_demo():
       if sel == "m":
           time.sleep_ms(500)
           from util.buzzer.melody import mario
-          play_melody(pwm0, mario)
-          pwm0.duty(0)
+          piezzo.play_melody(mario)
+          piezzo.nosound()
 
       if sel == "r1": RGBtest()
       if sel == "r8":  
@@ -505,6 +504,6 @@ def octopus_demo():
 
     delta = time.ticks_diff(time.ticks_ms(), start) # compute time difference
     print("> delta time: "+str(delta))
-    beep(pwm0, 2000, 50)
+    piezzo.beep(2000, 50)
     print("all OK, press CTRL+D to soft reboot")
     led.blink(50)

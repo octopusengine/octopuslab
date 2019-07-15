@@ -14,7 +14,7 @@ from time import sleep, sleep_ms, sleep_us
 import gc, ubinascii # machine >
 from machine import Pin, I2C, PWM, SPI, Timer, ADC, RTC, unique_id
 
-from util.buzzer import beep, play_melody
+from util.buzzer import Buzzer
 from util.led import Led
 from util.pinout import set_pinout
 pinout = set_pinout()
@@ -25,11 +25,7 @@ led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED
 
 rtc = RTC() # real time
 
-# not all boards must have piezzo
-pwm0 = None
-if pinout.PIEZZO_PIN is not None:
-    pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
-    pwm0.duty(0)
+piezzo = Buzzer(pinout.PIEZZO_PIN)
 
 WT = 50 # widt terminal / 39*=
 
