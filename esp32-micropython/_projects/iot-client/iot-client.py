@@ -14,7 +14,7 @@ I2C OLED, I2C LCD, SPI 8x7 segment, SPI 4x 8x8 matrix, UART Nextion, UART Serial
 import machine, time, ubinascii, json
 from time import sleep, ticks_ms, sleep_ms, sleep_us
 from machine import Pin, Timer, PWM, SPI
-from util.wifi_connect import read_wifi_config, WiFiConnect
+from util.wifi_connect import WiFiConnect
 from util.mqtt_connect import read_mqtt_config
 from util.octopus_lib import *
 from util.pinout import set_pinout
