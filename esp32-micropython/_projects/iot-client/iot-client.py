@@ -356,7 +356,7 @@ def mqtt_sub(topic, msg):
     global ws_r, ws_g, ws_b
 
     print("MQTT Topic {0}: {1}".format(topic, msg))
-    if "led" in topic:
+    if "/led" in topic:
         print("led:")
         
         if data[0] == 'N':  # oN
@@ -369,7 +369,7 @@ def mqtt_sub(topic, msg):
             pin_led.value(0)
             #c.publish(mqtt_root_topic+esp_id,0)
 
-    if "wsled" in topic:
+    if "/wsled" in topic:
         if data[0] == 'R':
            ws_r = int(data[1:])
         elif data[0] == 'G':
@@ -385,15 +385,15 @@ def mqtt_sub(topic, msg):
         np[0] = (ws_r, ws_g, ws_b)
         np.write()
 
-    if "wsled/rainbow" in topic:
+    if "/wsled/rainbow" in topic:
         rainbow_cycle(np, isWS,2)  # Increase to slow down
         time.sleep(1)
 
-    if "wsled/off" in topic:
+    if "/wsled/off" in topic:
         np.fill(BLACK)
         np.write()            
 
-    if "relay" in topic and isRelay:
+    if "/relay" in topic and isRelay:
         print("relay")
         if data[0] == 'N':  # oN
             print("R > on")
@@ -402,7 +402,7 @@ def mqtt_sub(topic, msg):
             print("R > off")
             rel.value(0)
 
-    if "pwm/freq" in topic:
+    if "/pwm/freq" in topic:
         try:
             value = int(data)
             print("PWM Freq: {0}".format(value))
@@ -411,7 +411,7 @@ def mqtt_sub(topic, msg):
         except:
             pass
 
-    if "pwm/duty" in topic:
+    if "/pwm/duty" in topic:
         try:
             value = int(data)
             print("PWM Duty: {0}".format(value))
@@ -420,7 +420,7 @@ def mqtt_sub(topic, msg):
         except:
             pass
 
-    if "pwmx" in topic and isFET:
+    if "/pwmx" in topic and isFET:
         if data[0] == '1':
            #pwm = int(data[1:])
             print("led1 - pwm fade in >")
@@ -431,47 +431,47 @@ def mqtt_sub(topic, msg):
             print("led0 - pwm fade out >")
             fade_sw_out(fet,500,5)
 
-    if "lcd/clear" in topic:
+    if "/lcd/clear" in topic:
         print("raw test: {0}".format(data))
         if isLCD:
             lcd.clear()
 
-    if "lcd/rawtext" in topic:
+    if "/lcd/rawtext" in topic:
         print("raw test: {0}".format(data))
         if isLCD:
             lcd.clear()
             lcd.putstr(data)
 
-    if "lcd/line1text" in topic:
+    if "/lcd/line1text" in topic:
         print("line 1 text: {0}".format(data))
         if isLCD:
             lcd.move_to(0, 0)
             lcd.putstr(data[:LCD_COLS])
 
-    if "lcd/line2text" in topic:
+    if "/lcd/line2text" in topic:
         print("line 2 text: {0}".format(data))
         if isLCD:
             lcd.move_to(0, 1)
             lcd.putstr(data[:LCD_COLS])
 
-    if "lcd/line3text" in topic:
+    if "/lcd/line3text" in topic:
         print("line 3 text: {0}".format(data))
         if isLCD:
             lcd.move_to(0, 2)
             lcd.putstr(data[:LCD_COLS])
 
-    if "lcd/line4text" in topic:
+    if "/lcd/line4text" in topic:
         print("line 4 text: {0}".format(data))
         if isLCD:
             lcd.move_to(0, 3)
             lcd.putstr(data[:LCD_COLS])
 
-    if "lcd/write" in topic:
+    if "/lcd/write" in topic:
         print("text: {0}".format(data))
         if isLCD:
              lcd.putstr(data)
 
-    if "lcd/set_cursor" in topic:
+    if "/lcd/set_cursor" in topic:
         x=0
         y=0
         print("Cursor set: {0}".format(data))
@@ -488,14 +488,14 @@ def mqtt_sub(topic, msg):
             print("Error parse message")
             print(e)        
 
-    if "8x7seg" in topic:
+    if "/8x7seg" in topic:
         try:
             d7.write_to_buffer(data)
             d7.display()
         except:
             print("mqtt.8x7segment.ERR")
 
-    if "8x8mtx/stat" in topic: # show simple 1 or 4 chars
+    if "/8x8mtx/stat" in topic: # show simple 1 or 4 chars
         try:
             d8.fill(0)
             d8.text(data, 0, 0, 1)
@@ -503,25 +503,25 @@ def mqtt_sub(topic, msg):
         except:
             print("mqtt.8x8matrix/stat.ERR")
 
-    if "8x8mtx/scroll" in topic: #
+    if "/8x8mtx/scroll" in topic: #
         try:
             scroll(data,5) # .upper()
         except:
             print("mqtt.8x8matrix/scroll.ERR")
 
-    if "oled1" in topic:
+    if "/oled1" in topic:
         try:
             displMessage1(data,2)
         except:
             print("oled.ERR")
 
-    if "oled2" in topic:
+    if "/oled2" in topic:
         try:
             displMessage2(data,2)
         except:
             print("oled.ERR")
 
-    if "servo/" in topic and isServo:
+    if "/servo/" in topic and isServo:
         try:
             servo = str(topic).split('servo/')[1]
             print("Setting servo {0} to value {1}".format(servo, data))
