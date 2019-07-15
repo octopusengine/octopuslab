@@ -4,7 +4,7 @@
 # >>> octopus()
 # >>> o_help()
 
-ver = "14.7.2019" #545
+ver = "15.7.2019" #545
 # Led > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
 
 import time, os, urequests, network # import math
@@ -14,18 +14,16 @@ from time import sleep, sleep_ms, sleep_us
 import gc, ubinascii # machine >
 from machine import Pin, I2C, PWM, SPI, Timer, ADC, RTC, unique_id
 
-from util.buzzer import Buzzer
 from util.led import Led
+from util.buzzer import Buzzer
 from util.pinout import set_pinout
 pinout = set_pinout()
 from util.io_config import get_from_file
 io_conf = get_from_file()
 
 led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED
-
-rtc = RTC() # real time
-
 piezzo = Buzzer(pinout.PIEZZO_PIN)
+rtc = RTC() # real time
 
 WT = 50 # widt terminal / 39*=
 
@@ -75,12 +73,12 @@ except:
     print("Err.SPI")
 
 menuList = [
-"   h()  /  o_help()           = this quick HELP", 
-"   i()                        = basic system info",    
-"   c()  /  clt()              = clear terminal",
+"   h() / o_help() = HELP      | i() = basic info", 
+"   c()  = clt clear terminal  | r() = reset / reboot system",
+"   w() / w_connect()          = connect to WiFi ",
 "   f(file)                    - file info / print",
 "   printOctopus()             = print ASCII logo",
-">> basic simple examples:",
+">> basic simple HW examples:",
 "   led.value(1)               | led.value(0)",
 "   RGBtest()                  | Rainbow()",
 "   RGB(BLUE)                  | RGBi(5,RED)",
@@ -100,14 +98,12 @@ menuList = [
 "   adc_test()                 > simple adc test",
 "   t = temp_init()            > getTemp(t[0],t[1])",
 "   i2c_scann()                = find I2C devices",
-"   w()   /   w_connect()      = connect to WiFi ",
 "   timeSetup()                > from URL(urlApi)",
 '   get_hhmm(separator)        > get_hhmm("-")',
 ">> standard lib. functions:",
-"   sleep(1)                   = 1 s pause",
+"   sleep(1)  / sleep_ms(1)    = 1 s/ms pause",
 "   urandom(1)[0]              = random num.",
 "   import webrepl_setup       = remote access",
-"   r() = reset()              = reset/reboot system"
 ]
 
 # -------------------------------- common terminal function ---------------
