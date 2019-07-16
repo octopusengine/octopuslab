@@ -19,6 +19,7 @@ devices = [
 ["oLAB IoTBoard1","esp8266"],
 ["oLAB IoTBoard1","esp32"],
 ["oLAB LANboard1","esp32"],
+["oLAB ESP32board1", "esp32"],
 ["WeMos OLED","esp32"]
 ]
 
