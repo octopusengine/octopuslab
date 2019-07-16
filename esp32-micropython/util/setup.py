@@ -23,7 +23,7 @@ devices = [
 ["WeMos OLED","esp32"]
 ]
 
-octopuASCII = [
+octopusASCII = [
 "      ,'''`.",
 "     /      \ ",
 "     |(@)(@)|",
@@ -34,7 +34,7 @@ octopuASCII = [
 ]
 
 def mainOctopus():
-    for ol in octopuASCII:
+    for ol in octopusASCII:
         print(str(ol))
     print()
 

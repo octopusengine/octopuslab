@@ -323,7 +323,7 @@ def r():
     import machine
     machine.reset()            
 
-octopuASCII = [
+octopusASCII = [
 "      ,'''`.",
 "     /      \ ",
 "     |(@)(@)|",
@@ -335,7 +335,7 @@ octopuASCII = [
 
 def printOctopus():
     print()
-    for ol in octopuASCII:
+    for ol in octopusASCII:
         print("     " + str(ol))
     print()        
 
