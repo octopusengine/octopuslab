@@ -42,6 +42,7 @@ PWM3_PIN = None
 # DEV pins
 DEV1_PIN = None
 DEV2_PIN = None
+DEV3_PIN = None
 
 # DC motors
 MOTOR_12EN = None
@@ -55,3 +56,9 @@ MOTOR_4A = None
 LED_RED = None
 LED_GRE = None
 LED_BLU = None
+
+# UART
+RXD0 = None # Used for REPL
+TXD0 = None # Used for REPL
+RXD1 = None
+TXD1 = None
