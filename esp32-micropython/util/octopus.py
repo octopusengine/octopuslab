@@ -4,7 +4,7 @@
 # >>> octopus()
 # >>> o_help()
 
-ver = "15.7.2019" #545
+ver = "16.7.2019 #548" 
 # Led > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
 
 import time, os, urequests, network # import math
@@ -22,7 +22,11 @@ from util.io_config import get_from_file
 io_conf = get_from_file()
 
 led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED
-piezzo = Buzzer(pinout.PIEZZO_PIN)
+if io_conf['piezzo']: 
+    piezzo = Buzzer(pinout.PIEZZO_PIN)
+    piezzo.beep(1000,50)
+    from util.buzzer import Notes
+
 rtc = RTC() # real time
 
 WT = 50 # widt terminal / 39*=
@@ -83,6 +87,7 @@ menuList = [
 "   RGBtest()                  | Rainbow()",
 "   RGB(BLUE)                  | RGBi(5,RED)",
 "   np[0]=(128, 0, 0)          + np.write()",
+"   beep(f,l) > freq, lenght   | tone(Notes.C5)",
 ">> SPI 8 x 7 segment display:",
 "   d = disp7_init()           > disp7(d,123)",
 ">> I2C LCD 2/4 row display:",
@@ -156,6 +161,12 @@ def f(file='config/device.json'):
             f.close()
             print(d)      
 
+def beep(f=1000,l=50):
+    piezzo.beep(f,l)
+
+def tone(f, l=300): 
+    piezzo.play_tone(f,l)
+
 def rgb_init(num_led):
     if num_led == 0:
         return
@@ -171,7 +182,7 @@ def rgb_init(num_led):
     np = npObj
     return npObj 
 
-np = rgb_init(io_conf['ws'] if 'ws' in io_conf else 0)
+np = rgb_init(io_conf['ws'] if 'ws' in io_conf else 0)    
   
 def RGB(color,np=np):
     np.fill(color)
