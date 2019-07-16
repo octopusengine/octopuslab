@@ -2,7 +2,7 @@
 # for other modules
 # or directly in terminal: 
 # >>> octopus()
-# >>> o_help()
+# >>> h() help / i() info
 
 ver = "16.7.2019 #548" 
 # Led > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
@@ -545,4 +545,4 @@ def octopus():
     printOctopus()
     print("("+getVer()+")")
     printInfo()
-    print("This is basic library, type o_help() or h() for help")
+    print("This is basic library, type h() for help")
