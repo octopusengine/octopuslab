@@ -69,7 +69,7 @@ class Buzzer():
         self.pwm.freq(freq)
         sleep_ms(length)
 
-    def beep(self, freq, length):  # port,freq,time
+    def beep(self, freq=1000, length=100):  # port,freq,time / default 1000,100
         self.play_tone(freq, length, 512)
         self.nosound()
 
