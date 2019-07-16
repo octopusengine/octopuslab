@@ -4,6 +4,7 @@ io_conf_file = 'config/io.json'
 io_menu_layout = [
     {'attr': 'led', 'descr': 'built in LED diode'},
     {'attr': 'ws', 'descr': 'WS RGB LED 0/1/8/...n'},
+    {'attr': 'piezzo', 'descr': 'Piezzo buzzer'},
     {'attr': 'led7', 'descr': 'SPI max 8x7 segm.display'},
     {'attr': 'led8', 'descr': 'SPI max 8x8 matrix display'},
     {'attr': 'oled', 'descr': 'I2C oled display'},
