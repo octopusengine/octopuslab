@@ -4,8 +4,8 @@
 # >>> octopus()
 # >>> h() help / i() info
 
-ver = "17.7.2019 #575" 
-# Led > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
+ver = "17.7.2019 #589" 
+# Led, Buzzer > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
 
 import time, os, urequests, network # import math
 from os import urandom
@@ -27,9 +27,9 @@ if io_conf['piezzo']:
     piezzo.beep(1000,50)
     from util.buzzer import Notes
 
-if io_conf['oled']:
-    from assets.icons9x9 import ICON_clr, ICON_wifi
-    # draw_icon(o,ICON_wifi,115,15)
+#if io_conf['oled']:
+from assets.icons9x9 import ICON_clr, ICON_wifi
+# draw_icon(o,ICON_wifi,115,15)
 
 rtc = RTC() # real time
 
@@ -233,6 +233,20 @@ def disp8_init():
     d8.fill(0)
     d8.show()
     return d8
+
+def scroll(d8, text,num): # TODO speed, timer? / NO "sleep"
+    WIDTH = 8*4
+    x = WIDTH + 2
+    for _ in range(8*len(text)*num):
+        time.sleep(0.03)
+        d8.fill(0)
+        x -= 1
+        if x < - (8*len(text)):
+            x = WIDTH + 2
+        d8.text(text, x, 0, 1)
+        d8.show()
+    d8.fill(0)
+    d8.show()    
 
 def disp7(d,mess):
     d.write_to_buffer(str(mess))
