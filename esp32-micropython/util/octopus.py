@@ -4,7 +4,7 @@
 # >>> octopus()
 # >>> h() help / i() info
 
-ver = "16.7.2019 #548" 
+ver = "17.7.2019 #575" 
 # Led > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
 
 import time, os, urequests, network # import math
@@ -26,6 +26,10 @@ if io_conf['piezzo']:
     piezzo = Buzzer(pinout.PIEZZO_PIN)
     piezzo.beep(1000,50)
     from util.buzzer import Notes
+
+if io_conf['oled']:
+    from assets.icons9x9 import ICON_clr, ICON_wifi
+    # draw_icon(o,ICON_wifi,115,15)
 
 rtc = RTC() # real time
 
@@ -212,6 +216,24 @@ def disp7_init():
     d7.display()
     return d7
 
+def disp8_init():
+    printTitle("disp8init()",WT)
+    from lib.max7219 import Matrix8x8
+    d8 = Matrix8x8(spi, ss, 1) #1/4
+    #print("SPI device already in use")
+
+    count = 6
+    for i in range(count):
+        d8.fill(0)
+        d8.text(str(i),0,0,1)
+        d8.show()
+        print(i)
+        time.sleep_ms(500)
+
+    d8.fill(0)
+    d8.show()
+    return d8
+
 def disp7(d,mess):
     d.write_to_buffer(str(mess))
     d.display()
@@ -247,7 +269,6 @@ def disp2(d,mess,r=0,s=0):
 
 def oled_init():
     from util.display_segment import * 
-
     printTitle("oled_init()",WT)
     i2c = i2c_scann()
     OLED_ydown = OLEDY-7
@@ -273,6 +294,12 @@ def oledSegmentTest(oled):
     for num in range(100):
         oledSegment(oled,100-num)
         sleep_ms(50)
+
+def draw_icon(oled, icon, posx, posy):
+    for y, row in enumerate(icon):
+        for x, c in enumerate(row):
+            oled.pixel(x+posx, y+posy, c) 
+    oled.show()                
 
 def oledImage(oled, file="assets/octopus_image.pbm"):
     IMAGE_WIDTH = 63
