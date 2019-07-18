@@ -186,7 +186,7 @@ def rgb_init(num_led):
     np = npObj
     return npObj 
 
-np = rgb_init(io_conf.get('ws')
+np = rgb_init(io_conf.get('ws'))
   
 def RGB(color,np=np):
     np.fill(color)
