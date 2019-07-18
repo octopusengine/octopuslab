@@ -36,6 +36,7 @@ def test_ws():
 
 def test_piezzo():
     if io_conf.get('piezzo'):
+        printHead("piezzo - beep()")       
         beep()            
 
 #ts = []
@@ -63,24 +64,22 @@ def test_led7():
         printHead("led7")      
         d = disp7_init()
 
-# if isLed8:
-#     from lib.max7219_8digit import Display
-#     # spi
-#     if True: #try:
-#         #spi.deinit()
-#         spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
-#         ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
-#
-#         from lib.max7219 import Matrix8x8
-#         d8 = Matrix8x8(spi, ss, 4) #1/4
-#         #print("SPI device already in use")
-#         d8.brightness(15)
-#         d8.fill(0)
-#         d8.text('1234', 0, 0, 1)
-#         d8.show()
-#     """except:
-#         print("spi.D8.ERR")
-#     """
+def test_led8():
+    if io_conf.get('led8'): 
+        printHead("led8")  
+
+def test_oled():
+    if io_conf.get('oled'): 
+        printHead("oled")          
+        o = oled_init()
+
+def test_ad():
+    if io_conf.get('ad0'):
+        printHead("ADC test")
+        for i in range(30):
+             print(get_adc(36))
+             sleep_ms(300)            
+     
 # if isTft:
 #     print("spi.TFT 128x160 init >")
 #     printFree()
@@ -180,18 +179,6 @@ def test_led7():
 #     lcd.clear()
 #     lcd.putstr("octopusLAB")
 #
-# if isOLED:
-#     oled_intit()
-#     oled.text('MQTT-SLAVE test', 5, 3)
-#     # oled.text(get_hhmm(), 45,29) #time HH:MM
-#     oled.hline(0,50,128,1)
-#     oled.text("octopusLAB 2019",5,OLED_ydown)
-#     oled.show()
-#
-# if isLed7:
-#     print("Testing 7seg")
-#     test7seg()
-#
 # if isKeypad:
 #     print("I2C epander Keypad 4x4")
 #     if not KP_ADDRESS in i2c.scan():
@@ -209,3 +196,5 @@ def all():
     #test_temp()
     #test_butt()
     test_led7()   
+    test_oled()
+    test_ad()   
