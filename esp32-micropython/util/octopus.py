@@ -22,7 +22,7 @@ from util.io_config import get_from_file
 io_conf = get_from_file()
 
 led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED
-if io_conf['piezzo']: 
+if io_conf.get('piezzo'):
     piezzo = Buzzer(pinout.PIEZZO_PIN)
     piezzo.beep(1000,50)
     from util.buzzer import Notes
@@ -172,7 +172,7 @@ def tone(f, l=300):
     piezzo.play_tone(f,l)
 
 def rgb_init(num_led):
-    if num_led == 0:
+    if num_led is None or num_led == 0:
         return
 
     from util.ws_rgb import * # setupNeopixel
@@ -186,7 +186,7 @@ def rgb_init(num_led):
     np = npObj
     return npObj 
 
-np = rgb_init(io_conf['ws'] if 'ws' in io_conf else 0)    
+np = rgb_init(io_conf.get('ws')
   
 def RGB(color,np=np):
     np.fill(color)
@@ -203,7 +203,7 @@ def RGBtest(wait=500):
 def Rainbow(wait=50):
     print("> RGB Rainbow")
     from util.ws_rgb import rainbow_cycle
-    rainbow_cycle(np, io_conf['ws'],wait)
+    rainbow_cycle(np, io_conf.get('ws'), wait)
 
 def disp7_init():
     printTitle("disp7init()",WT)
@@ -400,7 +400,7 @@ def printTitle(t,num):
     print()
     print('=' * num)
     print(t.center(num))
-    print('=' * num)    
+    print('=' * num)
 
 def printLog(i,s=""):
     print()
