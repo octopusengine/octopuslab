@@ -14,7 +14,11 @@ class Buzzer():
         self.pwm = PWM(Pin(pin, Pin.OUT), 0, 0)
 
     def nosound(self):
-        self.play_tone(0, 0, 0)
+        if self.pwm is None:
+            print("DUMMY_BUZZ: nosound")
+            return
+
+        self.pwm.duty(0)
 
     def play_tone(self, freq, length, volume=50):
         if self.pwm is None:
