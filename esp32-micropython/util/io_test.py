@@ -29,20 +29,14 @@ def test_ws():
     if io_conf.get('ws'):
         printHead("ws")
         print("WS RGB LED init neopixel >")
-        from util.ws_rgb import simpleRgb, neopixelTest, setupNeopixel
-        pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
-        np = setupNeopixel(pin_ws, io_conf['ws'])
+        np = rgb_init(io_conf['ws'] if 'ws' in io_conf else 0)
 
-        # num_pixels = 12
-        ws_r = 0
-        ws_g = 0
-        ws_b = 0
         print("WS RGB LED test >")
+        RGBtest(1000)
 
-        simpleRgb(np,500)
-
-        if io_conf['ws'] > 1:
-            neopixelTest(np, io_conf['ws'])
+def test_piezzo():
+    if io_conf.get('piezzo'):
+        beep()            
 
 #ts = []
 def test_temp():
@@ -67,16 +61,7 @@ def test_butt():
 def test_led7(): 
     if io_conf.get('led7'): 
         printHead("led7")      
-        from lib.max7219_8digit import Display
-        # spi
-        try:
-            #spi.deinit()
-            #print("spi > close")
-            spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
-            ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
-            d7 = Display(spi, ss)
-        except:
-            print("spi.D7.ERR")         
+        d = disp7_init()
 
 # if isLed8:
 #     from lib.max7219_8digit import Display
@@ -220,6 +205,7 @@ def test_led7():
 def all():
     test_led()
     test_ws()
-    test_temp()
-    test_butt()
+    test_piezzo()
+    #test_temp()
+    #test_butt()
     test_led7()   
