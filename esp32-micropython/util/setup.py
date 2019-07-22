@@ -7,7 +7,7 @@ import time, uos
 import ujson
 import machine #datetime
 
-ver = "0.62 / 13.7.2019"
+ver = "0.63 / 22.7.2019"
 
 devices = [
 ["oLAB Default","esp32"],
@@ -71,13 +71,11 @@ def deploy(url):
                 os.mkdir(name)
         else:
             extracted = t.extractfile(f)
-
             if exists(f.name):
                 os.remove(f.name)
 
             with open(f.name, "wb") as fobj:
                 shutil.copyfileobj(extracted, fobj)
-
 
 def setupMenu():
     print()
