@@ -1,8 +1,9 @@
 # octopusLAB test - 2019
 # more project details at https://RandomNerdTutorials.com
-ver = "22.7.2019 #78"
+ver = "23.7.2019 #79"
 
-from util.octopus import printLog, printFree
+from util.octopus import printLog, printFree, get_eui
+
 from util.pinout import set_pinout
 pinout = set_pinout()
 from util.led import Led #?VCh
@@ -39,7 +40,7 @@ wcss = """<style>html{font-family: Helvetica; display:inline-block; margin: 0px 
   border-radius: 4px; color: white; padding: 16px 40px; text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}
   .button2{background-color: Navy;}</style>"""
 
-wbott = "<br /><hr />2019 - workskop test"
+wbott = "<br /><hr />2019 - workskop test<br />" + get_eui()
 
 def web_page():
   if led.value() == 1: gpio_state="ON"
