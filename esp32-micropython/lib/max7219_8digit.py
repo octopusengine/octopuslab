@@ -1,5 +1,5 @@
-# Licence: GPLv3
 # Copyright 2017 Paul Dwerryhouse <paul@dwerryhouse.com.au>
+from math import ceil, log10
 
 CHAR_MAP = {
     '0': 0x7e, '1': 0x30, '2': 0x6d, '3': 0x79,
@@ -60,10 +60,63 @@ class Display:
             s = "%-8s" % s
         for i in range(0,8):
             self.buffer[7-i] = self.decode_char(s[i])
+   
+    def getDecPointPosition(self,num):
+        decPointPos = ceil(log10(num)) -1
+        if(decPointPos > 7): decPointPos = 7
+        return decPointPos 
+
+    def deldot(self, sdot):
+        s = "" 
+        for i in sdot:
+            if i not in ".,":
+                s +=i
+        return s  
+
+    def write_num_to_buffer(self, n):
+        dot = self.getDecPointPosition(n)
+        sdot = str(n)
+        l = len(sdot)
+        s = self.deldot(sdot)
+
+        if l < 8:
+            s = "%-8s" % s
+        for i in range(0,8):
+            decode = self.decode_char(s[i])
+            if i == dot: decode = self.decode_char(s[i])  + self.decode_char(".")    
+            self.buffer[7-i] = decode
+
+        #if l < 8:
+        #    s = "%-8s" % s
+        """
+        i = 0 
+        j = 0
+        for ch in s:
+            if j < 8:
+                if i < l and s[i+1] == ".":
+                    self.buffer[7-j] = self.decode_char(s[i])  + self.decode_char(".")
+                else:            
+                    self.buffer[7-j] = self.decode_char(s[i])
+                    j += 1 
+            i += 1 
+        """              
 
     def display(self):
         for i in range(0,8):
             self.set_register(REG_DIGIT_BASE + i, self.buffer[i])
+
+    def display_text(self, s):
+        self.write_to_buffer(s)
+        self.display()
+
+    def display_num(self, n):
+        self.write_num_to_buffer(n)
+        self.display()
+        #size = len(str(n))
+        #sizeint = len(str(int(n)))
+        #print(self.getDecPointPosition(n))
+        #print(size)
+               
 
     def intensity(self, i):
         self.send(self.INTENSITY, i)
