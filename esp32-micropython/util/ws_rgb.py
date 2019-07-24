@@ -5,6 +5,7 @@ from neopixel import NeoPixel
 
 # WS neopixel:
 RED = (255, 0, 0)
+ORANGE = (255, 64, 0)
 YELLOW = (255, 150, 0)
 GREEN = (0, 255, 0)
 CYAN = (0, 255, 255)
