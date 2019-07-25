@@ -4,8 +4,8 @@
 # >>> octopus()
 # >>> h() help / i() info
 
-ver = "0.71"
-verDat = "25.7.2019 #606" 
+ver = "0.71" #log: num = ver*100
+verDat = "25.7.2019 #607" 
 # Led, Buzzer > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
 
 import time, os, urequests, network # import math
@@ -33,8 +33,8 @@ from assets.icons9x9 import ICON_clr, ICON_wifi
 # draw_icon(o,ICON_wifi,115,15)
 
 rtc = RTC() # real time
-
 WT = 50 # widt terminal / 39*=
+logDev = True
 
 # I2C address:
 LCD_ADDR=0x27
@@ -551,8 +551,8 @@ def logDevice(urlPOST = "http://www.octopusengine.org/iot17/add18.php"):
 def w():  
     printInfo()
     printTitle("WiFi connect > ",WT)
-    w_connect() 
-    logDevice() 
+    w_connect()
+    if logDev: logDevice() 
 
 def timeSetup(urlApi ="http://www.octopusengine.org/api/hydrop"):
     printTitle("time setup from url",WT)    
