@@ -4,7 +4,8 @@
 # >>> octopus()
 # >>> h() help / i() info
 
-ver = "17.7.2019 #589" 
+ver = "0.71"
+verDat = "25.7.2019 #606" 
 # Led, Buzzer > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
 
 import time, os, urequests, network # import math
@@ -81,8 +82,8 @@ except:
     print("Err.SPI")
 
 menuList = [
-"   h() / o_help() = HELP      | i() = basic info", 
-"   c()  = clt clear terminal  | r() = reset / reboot system",
+"   h() / o_help() = HELP      | i() = system info", 
+"   c()  = clt clear terminal  | r() = system reset / reboot",
 "   w() / w_connect()          = connect to WiFi ",
 "   f(file)                    - file info / print",
 "   printOctopus()             = print ASCII logo",
@@ -94,6 +95,7 @@ menuList = [
 "   beep(f,l) > freq, lenght   | tone(Notes.C5)",
 ">> SPI 8 x 7 segment display:",
 "   d = disp7_init()           > disp7(d,123)",
+"   d.display_text(txt)        d.display_num(123.567) "
 ">> I2C LCD 2/4 row display:",
 "   d = lcd2_init()            > disp2(d,text,[0/1])",
 "   d.clear()",
@@ -117,7 +119,7 @@ menuList = [
 
 # -------------------------------- common terminal function ---------------
 def getVer():
-    return "octopus lib.ver: " + ver 
+    return "octopus lib.ver: " + ver + " > " + verDat
 
 def get_eui():
     id = ubinascii.hexlify(unique_id()).decode()
@@ -152,11 +154,11 @@ def i():
             # device_config = json.loads(d)
     except:
         print("Device config 'config/device.json' does not exist, please run setup()") 
-
+    
     printLog("pinout")
     print(pinout) 
     printLog("io_conf") 
-    print(io_conf)  
+    print(io_conf)          
 
 def f(file='config/device.json'):
     printTitle("file > " + file, WT)
@@ -531,10 +533,26 @@ def w_connect():
     print('network config:', wlan.ifconfig())
     return wlan
 
+def logDevice(urlPOST = "http://www.octopusengine.org/iot17/add18.php"):
+    header = {}
+    header["Content-Type"] = "application/x-www-form-urlencoded"
+    deviceID = get_eui()
+    place = "octoPy32"
+    logVer =  int(float(ver)*100)
+    try:
+        postdata_v = "device={0}&place={1}&value={2}&type={3}".format(deviceID, place, logVer,"log_ver")
+        #print(postdata_v)
+        res = urequests.post(urlPOST, data=postdata_v, headers=header)
+        sleep_ms(100)
+        print("logDevice.ok")  
+    except:
+        print("E.logDevice")    
+
 def w():  
     printInfo()
     printTitle("WiFi connect > ",WT)
-    w_connect()  
+    w_connect() 
+    logDevice() 
 
 def timeSetup(urlApi ="http://www.octopusengine.org/api/hydrop"):
     printTitle("time setup from url",WT)    
