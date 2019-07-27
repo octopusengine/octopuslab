@@ -4,8 +4,8 @@
 # >>> octopus()
 # >>> h() help / i() info
 
-ver = "0.71" #log: num = ver*100
-verDat = "25.7.2019 #607" 
+ver = "0.72" #log: num = ver*100
+verDat = "27.7.2019 #638" 
 # Led, Buzzer > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
 
 import time, os, urequests, network # import math
@@ -446,6 +446,33 @@ def get_hhmm(separator=":",rtc=rtc):
 def connecting_callback():
     blink(led, 50, 100)
 """
+def wait_pin_change(pin):
+    # wait for pin to change value, it needs to be stable for a continuous 20ms
+    cur_value = pin.value()
+    active = 0
+    while active < 20:
+        if pin.value() != cur_value:
+            active += 1
+        else:
+            active = 0
+        sleep_ms(1)
+
+#test for Shield1 or FirstBoard hack buttons
+def button_init(L = 34, R = 35):
+    b34 = Pin(L, Pin.IN) #SL
+    b35 = Pin(R, Pin.IN) #SR
+    return b34, b35
+
+def button(pin): #debounce
+    value0 = value1 = 0
+    for i in range(10):
+        if pin.value() == 0:
+            value0 += 1
+        else:
+            value1 += 1
+        sleep_us(500)  # 5ms = 10*0.5
+    return value0, value1
+
 def adc_test():
     print("analog input test: ")
     #an = get_adc(adcpin)
@@ -598,7 +625,11 @@ def getApiText(urlApi ="http://www.octopusengine.org/api"):
         dt_str = response.text
     except:
         print("Err. read txt from URL")  
-    return dt_str        
+    return dt_str  
+
+class var: # for temporary global variables
+    # var.xy = value
+    pass
 
 def octopus():
     printOctopus()
