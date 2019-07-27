@@ -1,6 +1,7 @@
 # library for ws rgb neopisel led - single / strip / ring
 # octopusLAB 2019
 from time import sleep, sleep_ms
+from neopixel import NeoPixel
 
 # WS neopixel:
 RED = (255, 0, 0)
@@ -11,18 +12,26 @@ BLUE = (0, 0, 255)
 PURPLE = (180, 0, 255)
 BLACK = (0, 0, 0) # = off
 
-class Rgb:
+class Rgb(NeoPixel):
     def __init__(self, pin, num=1):
-        from neopixel import NeoPixel
         self.pin = pin
         self.num = num
 
         #if pin is None:
         #    print("WARN: Pin is None, this led will be dummy")
         #    return
-        self.np = NeoPixel(self.pin, self.num)
+        
+        ## self.np = NeoPixel(pin, num)
+        #>>> from util.rgb import Rgb
+        #>>> ws = Rgb(15)
+        #... AttributeError: 'int' object has no attribute 'init'
+
+    def init(self):
+        self.np = NeoPixel(self.pin, self.num)    
     
     def simpleTest(self, wait_ms):
+        # AttributeError: 'Rgb' object has no attribute 'np'
+
         self.np[0] = RED #R
         self.np.write()
         sleep_ms(wait_ms)
