@@ -9,7 +9,7 @@ class var: # for temporary global variables and config setup
     pass
 
 var.ver = "0.73" #log: num = ver*100
-var.verDat = "28.7.2019 #656" 
+var.verDat = "28.7.2019 #655" 
 var.debug = True
 var.auoTest = False
 # Led, Buzzer > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
@@ -441,14 +441,14 @@ def button_init(L = 34, R = 35):
     b35 = Pin(R, Pin.IN) #SR
     return b34, b35
 
-def button(pin): #debounce
+def button(pin, num=10): #num for debounce
     value0 = value1 = 0
-    for i in range(10):
+    for i in range(num):
         if pin.value() == 0:
             value0 += 1
         else:
             value1 += 1
-        sleep_us(100)  # 1ms = 10*0.1
+        sleep_us(50)  
     return value0, value1
 
 def adc_test():
@@ -613,7 +613,6 @@ def octopus(autoIni = False): # automaticaly start init_X according to the setti
     print("This is basic library, type h() for help")
 
 # --------------- init ---------------
-# 
 if True: # var.autoIni: //test
     print("--> autoInit: ",end="")
     if io_conf.get('ws'):
@@ -636,7 +635,7 @@ if True: # var.autoIni: //test
     print()
 
 # --------------- after init ---------------
-# np was still None
+# for example: np was still None, need init before
 
 def RGB(color,np=np):
     np.fill(color)
