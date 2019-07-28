@@ -4,8 +4,14 @@
 # >>> octopus()
 # >>> h() help / i() info
 
-ver = "0.72" #log: num = ver*100
-verDat = "27.7.2019 #638" 
+class var: # for temporary global variables and config setup
+    # var.xy = value
+    pass
+
+var.ver = "0.73" #log: num = ver*100
+var.verDat = "28.7.2019 #656" 
+var.debug = True
+var.auoTest = False
 # Led, Buzzer > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
 
 import time, os, urequests, network # import math
@@ -14,27 +20,22 @@ from os import urandom
 from time import sleep, sleep_ms, sleep_us
 import gc, ubinascii # machine >
 from machine import Pin, I2C, PWM, SPI, Timer, ADC, RTC, unique_id
+var.uID = ubinascii.hexlify(unique_id()).decode()
 
 from util.led import Led
 from util.buzzer import Buzzer
 from util.pinout import set_pinout
 pinout = set_pinout()
+
 from util.io_config import get_from_file
 io_conf = get_from_file()
 
 led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED
-if io_conf.get('piezzo'):
-    piezzo = Buzzer(pinout.PIEZZO_PIN)
-    piezzo.beep(1000,50)
-    from util.buzzer import Notes
-
-#if io_conf['oled']:
-from assets.icons9x9 import ICON_clr, ICON_wifi
-# draw_icon(o,ICON_wifi,115,15)
 
 rtc = RTC() # real time
 WT = 50 # widt terminal / 39*=
-logDev = True
+var.logDev = True
+np = None
 
 # I2C address:
 LCD_ADDR=0x27
@@ -82,8 +83,8 @@ except:
     print("Err.SPI")
 
 menuList = [
-"   h() / o_help() = HELP      | i() = system info", 
-"   c()  = clt clear terminal  | r() = system reset / reboot",
+"   h() / o_help() = HELP      | i() / o_info() = system info", 
+"   c() / clt() clear terminal | r() = system reset / reboot",
 "   w() / w_connect()          = connect to WiFi ",
 "   f(file)                    - file info / print",
 "   printOctopus()             = print ASCII logo",
@@ -119,11 +120,15 @@ menuList = [
 
 # -------------------------------- common terminal function ---------------
 def getVer():
-    return "octopus lib.ver: " + ver + " > " + verDat
+    return "octopus lib.ver: " + var.ver + " > " + var.verDat
 
 def get_eui():
-    id = ubinascii.hexlify(unique_id()).decode()
-    return id #mac2eui(id) 
+    return var.uID #mac2eui(id) 
+
+def printInfo():
+    print('-' * WT)
+    print("ESP UID: " + var.uID + " | RAM free: "+ str(getFree()) + " | " + get_hhmm())  
+    print('-' * WT)      
 
 def o_help():
     printOctopus()
@@ -133,16 +138,11 @@ def o_help():
     for ml in menuList:
         print(ml)
 
-def printInfo():
-    print('-' * WT)
-    print("ESP UID: " + get_eui() + " | RAM free: "+ str(getFree()) + " | " + get_hhmm())  
-    print('-' * WT)      
-
 def h():
     o_help()    
     printInfo()
 
-def i():
+def o_info():
     printTitle("basic info > ",WT)
     printInfo()
     printLog("device")
@@ -158,7 +158,10 @@ def i():
     printLog("pinout")
     print(pinout) 
     printLog("io_conf") 
-    print(io_conf)          
+    print(io_conf)     
+
+def i(): 
+    o_info()             
 
 def f(file='config/device.json'):
     printTitle("file > " + file, WT)
@@ -173,40 +176,15 @@ def beep(f=1000,l=50):
 def tone(f, l=300): 
     piezzo.play_tone(f,l)
 
-def rgb_init(num_led):
+def rgb_init(num_led, pin = pinout.WS_LED_PIN):
     if num_led is None or num_led == 0:
         return
 
-    from util.ws_rgb import * # setupNeopixel
+    from util.ws_rgb import * # setupNeopixel    
 
-    if pinout.WS_LED_PIN is None:
-        print("Error: WS LED not supported on this board")
-        return
-
-    pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
-    npObj = setupNeopixel(pin_ws, num_led)
-    np = npObj
-    return npObj 
-
-np = rgb_init(io_conf.get('ws'))
+    np = setupNeopixel(Pin(pin, Pin.OUT), num_led)
+    return np 
   
-def RGB(color,np=np):
-    np.fill(color)
-    np.write()
- 
-def RGBi(i,color, np=np):
-    np[i] = color
-    np.write()    
-
-def RGBtest(wait=500): 
-    from util.ws_rgb import simpleRgb
-    simpleRgb(np,wait)
-
-def Rainbow(wait=50):
-    print("> RGB Rainbow")
-    from util.ws_rgb import rainbow_cycle
-    rainbow_cycle(np, io_conf.get('ws'), wait)
-
 def disp7_init():
     printTitle("disp7init()",WT)
     from lib.max7219_8digit import Display
@@ -470,7 +448,7 @@ def button(pin): #debounce
             value0 += 1
         else:
             value1 += 1
-        sleep_us(500)  # 5ms = 10*0.5
+        sleep_us(100)  # 1ms = 10*0.1
     return value0, value1
 
 def adc_test():
@@ -563,9 +541,9 @@ def w_connect():
 def logDevice(urlPOST = "http://www.octopusengine.org/iot17/add18.php"):
     header = {}
     header["Content-Type"] = "application/x-www-form-urlencoded"
-    deviceID = get_eui()
+    deviceID = var.uID
     place = "octoPy32"
-    logVer =  int(float(ver)*100)
+    logVer =  int(float(var.ver)*100)
     try:
         postdata_v = "device={0}&place={1}&value={2}&type={3}".format(deviceID, place, logVer,"log_ver")
         #print(postdata_v)
@@ -579,7 +557,7 @@ def w():
     printInfo()
     printTitle("WiFi connect > ",WT)
     w_connect()
-    if logDev: logDevice() 
+    if var.logDev: logDevice() 
 
 def timeSetup(urlApi ="http://www.octopusengine.org/api/hydrop"):
     printTitle("time setup from url",WT)    
@@ -627,12 +605,52 @@ def getApiText(urlApi ="http://www.octopusengine.org/api"):
         print("Err. read txt from URL")  
     return dt_str  
 
-class var: # for temporary global variables
-    # var.xy = value
-    pass
-
-def octopus():
+def octopus(autoIni = False): # automaticaly start init_X according to the settings io_conf.get(X)
+    var.autoIni = autoIni
     printOctopus()
     print("("+getVer()+")")
     printInfo()
     print("This is basic library, type h() for help")
+
+# --------------- init ---------------
+# 
+if True: # var.autoIni: //test
+    print("--> autoInit: ",end="")
+    if io_conf.get('ws'):
+        print("WS | ",end="")
+        if pinout.WS_LED_PIN is None:
+            print("Warning: WS LED not supported on this board")
+        else:    
+            np = rgb_init(io_conf.get('ws')) 
+
+    if io_conf.get('piezzo'):
+        print("piezzo | ",end="")
+        piezzo = Buzzer(pinout.PIEZZO_PIN)
+        piezzo.beep(1000,50)
+        from util.buzzer import Notes    
+
+    if io_conf.get('oled'):
+        print("OLED icon | ",end="")
+        from assets.icons9x9 import ICON_clr, ICON_wifi 
+
+    print()
+
+# --------------- after init ---------------
+# np was still None
+
+def RGB(color,np=np):
+    np.fill(color)
+    np.write()
+ 
+def RGBi(i,color, np=np):
+    np[i] = color
+    np.write()    
+
+def RGBtest(wait=500): 
+    from util.ws_rgb import simpleRgb
+    simpleRgb(np,wait)
+
+def Rainbow(wait=50):
+    print("> RGB Rainbow")
+    from util.ws_rgb import rainbow_cycle
+    rainbow_cycle(np, io_conf.get('ws'), wait)    
