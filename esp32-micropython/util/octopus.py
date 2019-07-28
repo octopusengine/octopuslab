@@ -9,7 +9,7 @@ class var: # for temporary global variables and config setup
     pass
 
 var.ver = "0.73" #log: num = ver*100
-var.verDat = "28.7.2019 #655" 
+var.verDat = "28.7.2019 #658" 
 var.debug = True
 var.auoTest = False
 # Led, Buzzer > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
@@ -96,7 +96,7 @@ menuList = [
 "   beep(f,l) > freq, lenght   | tone(Notes.C5)",
 ">> SPI 8 x 7 segment display:",
 "   d = disp7_init()           > disp7(d,123)",
-"   d.display_text(txt)        d.display_num(123.567) "
+"   d.display_text(txt)        d.display_num(123.567)",
 ">> I2C LCD 2/4 row display:",
 "   d = lcd2_init()            > disp2(d,text,[0/1])",
 "   d.clear()",
@@ -125,16 +125,16 @@ def getVer():
 def get_eui():
     return var.uID #mac2eui(id) 
 
-def printInfo():
-    print('-' * WT)
+def printInfo(w=WT):
+    print('-' * w)
     print("ESP UID: " + var.uID + " | RAM free: "+ str(getFree()) + " | " + get_hhmm())  
-    print('-' * WT)      
+    print('-' * w)      
 
 def o_help():
     printOctopus()
-    print("Welcome to MicroPython on the ESP32 and octopusLAB board!")
+    print("Welcome to MicroPython on the ESP32 octopusLAB board")
     print("("+getVer()+")")
-    printTitle("example - list commands",WT)
+    printTitle("example - list commands")
     for ml in menuList:
         print(ml)
 
@@ -143,8 +143,8 @@ def h():
     printInfo()
 
 def o_info():
-    printTitle("basic info > ",WT)
-    printInfo()
+    printTitle("basic info > ")
+    print("This is basic info about system setup")
     printLog("device")
     try:
         with open('config/device.json', 'r') as f:
@@ -158,13 +158,14 @@ def o_info():
     printLog("pinout")
     print(pinout) 
     printLog("io_conf") 
-    print(io_conf)     
+    print(io_conf) 
+    printInfo()    
 
 def i(): 
     o_info()             
 
 def f(file='config/device.json'):
-    printTitle("file > " + file, WT)
+    printTitle("file > " + file)
     with open(file, 'r') as f:
             d = f.read()
             f.close()
@@ -186,7 +187,7 @@ def rgb_init(num_led, pin = pinout.WS_LED_PIN):
     return np 
   
 def disp7_init():
-    printTitle("disp7init()",WT)
+    printTitle("disp7init()")
     from lib.max7219_8digit import Display
     #spi = SPI(-1, baudrate=100000, polarity=1, phase=0, sck=Pin(14), mosi=Pin(13), miso=Pin(2))
     #ss = Pin(15, Pin.OUT)
@@ -197,7 +198,7 @@ def disp7_init():
     return d7
 
 def disp8_init():
-    printTitle("disp8init()",WT)
+    printTitle("disp8init()")
     from lib.max7219 import Matrix8x8
     d8 = Matrix8x8(spi, ss, 1) #1/4
     #print("SPI device already in use")
@@ -245,7 +246,7 @@ def i2c_scann():
     return i2c   
 
 def lcd2_init():
-    printTitle("lcd2init()",WT)
+    printTitle("lcd2init()")
     i2c = i2c_scann()
     LCD_ROWS=2
     LCD_COLS=16
@@ -263,7 +264,7 @@ def disp2(d,mess,r=0,s=0):
 
 def oled_init():
     from util.display_segment import * 
-    printTitle("oled_init()",WT)
+    printTitle("oled_init()")
     i2c = i2c_scann()
     OLED_ydown = OLEDY-7
     from lib import ssd1306
@@ -322,7 +323,7 @@ def set_degree(servo, angle):
     servo.duty(map(angle, 0,150, SERVO_MIN, SERVO_MAX))            
 
 def servo_test():
-    printTitle("servo1 test >",WT)
+    printTitle("servo1 test >")
     #pwm_center = int(pinout.SERVO_MIN + (pinout.SERVO_MAX-pinout.SERVO_MIN)/2)
 
     #if notInitServo:
@@ -376,11 +377,13 @@ def printHead(s):
     print('-' * WT)
     print("[--- " + s + " ---] ") 
 
-def printTitle(t,num):
+def printTitle(t,w=WT):
     print()
-    print('=' * num)
-    print(t.center(num))
-    print('=' * num)
+    print('=' * w)
+    print("|",end="")
+    print(t.center(w-2),end="")
+    print("|")
+    print('=' * w)
 
 def printLog(i,s=""):
     print()
@@ -555,12 +558,12 @@ def logDevice(urlPOST = "http://www.octopusengine.org/iot17/add18.php"):
 
 def w():  
     printInfo()
-    printTitle("WiFi connect > ",WT)
+    printTitle("WiFi connect > ")
     w_connect()
     if var.logDev: logDevice() 
 
 def timeSetup(urlApi ="http://www.octopusengine.org/api/hydrop"):
-    printTitle("time setup from url",WT)    
+    printTitle("time setup from url")    
     urltime=urlApi+"/get-datetime.php"
     print("https://urlApi/"+urltime)
     try:
@@ -590,7 +593,7 @@ def getApiJson(urlApi ="http://www.octopusengine.org/api"):
     return aj    
 
 def getApiTest():
-    printTitle("data from url",WT)
+    printTitle("data from url")
     #print("https://urlApi/"+urljson)
     print("htts://public_unsecure_web/data.json")    
     print(getApiJson())
