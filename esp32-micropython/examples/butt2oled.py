@@ -11,9 +11,9 @@ L,R = button_init()
 # button(L)  
 # (0, 10)  ## loop 10x  > count on / off
 
-def horizontal():
-   if button(L)[0] > 8: var.h -= 1 ## debounce 10x, 9 is OK
-   if button(R)[0] > 8: var.h += 1
+def horizontal(step=2):
+   if button(L)[0] > 8: var.h -= step ## debounce 10x, 9 is OK
+   if button(R)[0] > 8: var.h += step
    return var.h
 
 var.h = 63
