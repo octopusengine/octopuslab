@@ -31,6 +31,18 @@ io_conf = get_from_file()
 
 led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED
 
+piezzo = None
+if io_conf.get('piezzo'):
+    piezzo = Buzzer(pinout.PIEZZO_PIN)
+    piezzo.beep(1000,50)
+    from util.buzzer import Notes
+else:
+    piezzo = Buzzer(None)
+
+#if io_conf['oled']:
+from assets.icons9x9 import ICON_clr, ICON_wifi
+# draw_icon(o,ICON_wifi,115,15)
+
 rtc = RTC() # real time
 WT = 50 # widt terminal / 39*=
 var.logDev = True
