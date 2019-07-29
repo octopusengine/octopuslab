@@ -1,17 +1,16 @@
-# this module is main library
-# for other modules
+# this module is main library - for other modules
 # or directly in terminal: 
 # >>> octopus()
-# >>> h() help / i() info
+# >>> h() help / i() info / w() wifi connect
 
 class var: # for temporary global variables and config setup
     # var.xy = value
     pass
 
 var.ver = "0.73" #log: num = ver*100
-var.verDat = "28.7.2019 #658" 
+var.verDat = "28.7.2019 #665" 
 var.debug = True
-var.auoTest = False
+var.autoTest = False
 # Led, Buzzer > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
 
 import time, os, urequests, network # import math
@@ -42,13 +41,13 @@ LCD_ADDR=0x27
 OLED_ADDR=0x3c
 
 #if io_conf['oled'] is not None:
-from util.display_segment import threeDigits
 OLEDX = 128
 OLEDY = 64
 OLED_x0 = 3
+if io_conf.get('oled'):
+    from util.display_segment import threeDigits
 
-#adc1
-#ADC/ADL
+#adc1 - #ADC/ADL
 """pin_analog = 36 #pinout.I36_PIN # analog or power management
 adc = ADC(Pin(pin_analog))
 pin_analog_1 = 39 #I34_PIN      # x
@@ -60,10 +59,8 @@ ADC_SAMPLES=100
 ADC_HYSTERESIS=50
 ad_oldval=0
 ad1_oldval=0
-ad2_oldval=0
 adc.atten(ADC.ATTN_11DB) # setup
 adc1.atten(ADC.ATTN_11DB)
-adc2.atten(ADC.ATTN_11DB)
 """
 #adcpin = pinout.ANALOG_PIN
 adcpin = 39 #default
@@ -83,8 +80,8 @@ except:
     print("Err.SPI")
 
 menuList = [
-"   h() / o_help() = HELP      | i() / o_info() = system info", 
-"   c() / clt() clear terminal | r() = system reset / reboot",
+"   h() / o_help() = HELP      | i() /o_info() = INFO", 
+"   c() / clt() clear terminal | r() = system reset",
 "   w() / w_connect()          = connect to WiFi ",
 "   f(file)                    - file info / print",
 "   printOctopus()             = print ASCII logo",
@@ -120,14 +117,14 @@ menuList = [
 
 # -------------------------------- common terminal function ---------------
 def getVer():
-    return "octopus lib.ver: " + var.ver + " > " + var.verDat
+    return "octopusLAB - lib.version: " + var.ver + " > " + var.verDat
 
 def get_eui():
     return var.uID #mac2eui(id) 
 
 def printInfo(w=WT):
     print('-' * w)
-    print("ESP UID: " + var.uID + " | RAM free: "+ str(getFree()) + " | " + get_hhmm())  
+    print("| ESP UID: " + var.uID + " | RAM free: "+ str(getFree()) + " | " + get_hhmm())  
     print('-' * w)      
 
 def o_help():
@@ -144,7 +141,14 @@ def h():
 
 def o_info():
     printTitle("basic info > ")
-    print("This is basic info about system setup")
+    print("This is basic info about system and setup")
+    from machine import freq
+    print("> machine.freq: "+str(freq()) + " [Hz]")
+    printLog("memory")
+    print("> ram free: "+str(gc.mem_free()) + " [B]")
+    #print("> flash: "+str(os.statvfs("/")))
+    ff =int(os.statvfs("/")[0])*int(os.statvfs("/")[3])
+    print("> flash free: "+str(int(ff/1000)) + " [kB]")
     printLog("device")
     try:
         with open('config/device.json', 'r') as f:
@@ -165,9 +169,11 @@ def i():
     o_info()             
 
 def f(file='config/device.json'):
+    """ print data: f("filename") """
     printTitle("file > " + file)
     with open(file, 'r') as f:
             d = f.read()
+            #print(os.size(f))
             f.close()
             print(d)      
 
@@ -612,6 +618,7 @@ def octopus(autoIni = False): # automaticaly start init_X according to the setti
     var.autoIni = autoIni
     printOctopus()
     print("("+getVer()+")")
+    gc.collect()
     printInfo()
     print("This is basic library, type h() for help")
 
