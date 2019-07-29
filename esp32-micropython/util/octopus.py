@@ -8,7 +8,7 @@ class var: # for temporary global variables and config setup
     pass
 
 var.ver = "0.73" #log: num = ver*100
-var.verDat = "28.7.2019 #665" 
+var.verDat = "28.7.2019 #661" 
 var.debug = True
 var.autoTest = False
 # Led, Buzzer > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
@@ -29,20 +29,6 @@ pinout = set_pinout()
 from util.io_config import get_from_file
 io_conf = get_from_file()
 
-led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED
-
-piezzo = None
-if io_conf.get('piezzo'):
-    piezzo = Buzzer(pinout.PIEZZO_PIN)
-    piezzo.beep(1000,50)
-    from util.buzzer import Notes
-else:
-    piezzo = Buzzer(None)
-
-#if io_conf['oled']:
-from assets.icons9x9 import ICON_clr, ICON_wifi
-# draw_icon(o,ICON_wifi,115,15)
-
 rtc = RTC() # real time
 WT = 50 # widt terminal / 39*=
 var.logDev = True
@@ -56,8 +42,6 @@ OLED_ADDR=0x3c
 OLEDX = 128
 OLEDY = 64
 OLED_x0 = 3
-if io_conf.get('oled'):
-    from util.display_segment import threeDigits
 
 #adc1 - #ADC/ADL
 """pin_analog = 36 #pinout.I36_PIN # analog or power management
@@ -187,22 +171,24 @@ def f(file='config/device.json'):
             d = f.read()
             #print(os.size(f))
             f.close()
-            print(d)      
+            print(d) 
+
+try:
+    PIN_WS = pinout.WS_LED_PIN
+except:
+    PIN_WS = 15
+def rgb_init(num_led, pin = PIN_WS):
+    if num_led is None or num_led == 0:
+        return
+    from util.ws_rgb import * # setupNeopixel
+    np = setupNeopixel(Pin(pin, Pin.OUT), num_led)
+    return np          
 
 def beep(f=1000,l=50):
     piezzo.beep(f,l)
 
 def tone(f, l=300): 
     piezzo.play_tone(f,l)
-
-def rgb_init(num_led, pin = pinout.WS_LED_PIN):
-    if num_led is None or num_led == 0:
-        return
-
-    from util.ws_rgb import * # setupNeopixel    
-
-    np = setupNeopixel(Pin(pin, Pin.OUT), num_led)
-    return np 
   
 def disp7_init():
     printTitle("disp7init()")
@@ -328,14 +314,6 @@ def oledImage(oled, file="assets/octopus_image.pbm"):
         oled.invert(1)
         oled.blit(fbuf, 0, 0)        
     oled.show() 
-
-def servo_init(pin = pinout.PWM1_PIN):
-    SERVO_MIN = const(45)
-    pwm_center = const(60)
-    SERVO_MAX = const(130)
-    pin_servo = Pin(pin, Pin.OUT)
-    servo = PWM(pin_servo, freq=50, duty=pwm_center)
-    return servo
 
 def set_degree(servo, angle):
     servo.duty(map(angle, 0,150, SERVO_MIN, SERVO_MAX))            
@@ -634,31 +612,37 @@ def octopus(autoIni = False): # automaticaly start init_X according to the setti
     printInfo()
     print("This is basic library, type h() for help")
 
-# --------------- init ---------------
+# --------------- init --------------
 if True: # var.autoIni: //test
     print("--> autoInit: ",end="")
+    if io_conf.get('led'):
+        print("led | ",end="")
+        led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED
+
+    piezzo = None
+    if io_conf.get('piezzo'):
+        print("piezzo | ",end="")
+        piezzo = Buzzer(pinout.PIEZZO_PIN)
+        piezzo.beep(1000,50)
+        from util.buzzer import Notes
+    else:
+        piezzo = Buzzer(None)
+
     if io_conf.get('ws'):
         print("WS | ",end="")
         if pinout.WS_LED_PIN is None:
             print("Warning: WS LED not supported on this board")
         else:    
-            np = rgb_init(io_conf.get('ws')) 
-
-    if io_conf.get('piezzo'):
-        print("piezzo | ",end="")
-        piezzo = Buzzer(pinout.PIEZZO_PIN)
-        piezzo.beep(1000,50)
-        from util.buzzer import Notes    
+            np = rgb_init(io_conf.get('ws'))  
 
     if io_conf.get('oled'):
-        print("OLED icon | ",end="")
+        print("OLED lib | ",end="")
         from assets.icons9x9 import ICON_clr, ICON_wifi 
+        from util.display_segment import threeDigits    
 
     print()
-
 # --------------- after init ---------------
 # for example: np was still None, need init before
-
 def RGB(color,np=np):
     np.fill(color)
     np.write()
@@ -674,4 +658,4 @@ def RGBtest(wait=500):
 def Rainbow(wait=50):
     print("> RGB Rainbow")
     from util.ws_rgb import rainbow_cycle
-    rainbow_cycle(np, io_conf.get('ws'), wait)    
+    rainbow_cycle(np, io_conf.get('ws'), wait)        
