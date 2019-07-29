@@ -280,7 +280,7 @@ def oled_init():
     print("display test: oled display OK")
     oled.text('oled display OK', OLED_x0, 3)
     # oled.text(get_hhmm(), 45,29) #time HH:MM
-    oled.hline(0,50,128,1)
+    oled.hline(0,52,128,1)
     oled.text("octopusLAB 2019",OLED_x0,OLED_ydown)
     oled.show()
     return oled
