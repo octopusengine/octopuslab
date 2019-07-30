@@ -7,8 +7,8 @@ class var: # for temporary global variables and config setup
     # var.xy = value
     pass
 
-var.ver = "0.74" #log: num = ver*100
-var.verDat = "29.7.2019 #665" 
+var.ver = "0.75" #log: num = ver*100
+var.verDat = "30.7.2019 #661" 
 var.debug = True
 var.autoTest = False
 # Led, Buzzer > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
@@ -21,8 +21,6 @@ import gc, ubinascii # machine >
 from machine import Pin, I2C, PWM, SPI, Timer, ADC, RTC, unique_id
 var.uID = ubinascii.hexlify(unique_id()).decode()
 
-from util.led import Led
-from util.buzzer import Buzzer
 from util.pinout import set_pinout
 pinout = set_pinout()
 
@@ -535,7 +533,6 @@ def logDevice(urlPOST = "http://www.octopusengine.org/iot17/add18.php"):
     logVer =  int(float(var.ver)*100)
     try:
         postdata_v = "device={0}&place={1}&value={2}&type={3}".format(deviceID, place, logVer,"log_ver")
-        #print(postdata_v)
         res = urequests.post(urlPOST, data=postdata_v, headers=header)
         sleep_ms(100)
         print("logDevice.ok")  
@@ -618,16 +615,18 @@ if True: # var.autoIni: //test
 
     if io_conf.get('led'):
         print("led | ",end="")
+        from util.led import Led
         led = Led(LED_PIN) # BUILT_IN_LED
 
     piezzo = None
     if io_conf.get('piezzo'):
         print("piezzo | ",end="")
+        from util.buzzer import Buzzer
         piezzo = Buzzer(pinout.PIEZZO_PIN)
         piezzo.beep(1000,50)
         from util.buzzer import Notes
-    else:
-        piezzo = Buzzer(None)
+    # else:
+    #    piezzo =Buzzer(None)
 
     if io_conf.get('ws'):
         print("WS | ",end="")
