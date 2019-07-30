@@ -7,8 +7,8 @@ class var: # for temporary global variables and config setup
     # var.xy = value
     pass
 
-var.ver = "0.75" #log: num = ver*100
-var.verDat = "30.7.2019 #661" 
+var.ver = "0.75" # log: num = ver*100
+var.verDat = "30.7.2019 #677" 
 var.debug = True
 var.autoTest = False
 # Led, Buzzer > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
@@ -302,6 +302,19 @@ def oledImage(oled, file="assets/octopus_image.pbm"):
         oled.invert(1)
         oled.blit(fbuf, 0, 0)        
     oled.show() 
+
+try: PIN_SER = pinout.PWM1_PIN
+except: PIN_SER = 17 # ROBOT
+def servo_init(pin = PIN_SER):
+    SERVO_MIN = const(45)
+    pwm_center = const(60)
+    SERVO_MAX = const(130)
+    pin_servo = Pin(pin, Pin.OUT)
+    servo = PWM(pin_servo, freq=50, duty=pwm_center)
+    return servo
+
+def set_degree(servo, angle):
+    servo.duty(map(angle, 0,150, SERVO_MIN, SERVO_MAX))      
 
 def set_degree(servo, angle):
     servo.duty(map(angle, 0,150, SERVO_MIN, SERVO_MAX))            
@@ -638,7 +651,10 @@ if True: # var.autoIni: //test
     if io_conf.get('oled'):
         print("OLED lib | ",end="")
         from assets.icons9x9 import ICON_clr, ICON_wifi 
-        from util.display_segment import threeDigits    
+        from util.display_segment import threeDigits 
+
+    if io_conf.get('servo'): 
+        print("servo | ",end="")  
 
     print()
 # --------------- after init ---------------
