@@ -7,8 +7,8 @@ class var: # for temporary global variables and config setup
     # var.xy = value
     pass
 
-var.ver = "0.73" #log: num = ver*100
-var.verDat = "28.7.2019 #661" 
+var.ver = "0.74" #log: num = ver*100
+var.verDat = "29.7.2019 #665" 
 var.debug = True
 var.autoTest = False
 # Led, Buzzer > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
@@ -25,6 +25,9 @@ from util.led import Led
 from util.buzzer import Buzzer
 from util.pinout import set_pinout
 pinout = set_pinout()
+
+try: LED_PIN = pinout.BUILT_IN_LED
+except: LED_PIN = 2
 
 from util.io_config import get_from_file
 io_conf = get_from_file()
@@ -63,17 +66,6 @@ adcpin = 39 #default
 pin_an = Pin(adcpin, Pin.IN)
 adc = ADC(pin_an)
 adc.atten(ADC.ATTN_11DB) # setup
-
-# spi init?
-spi = None
-ss  = None
-try:
-    #spi.deinit()
-    #print("spi > close")
-    spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
-    ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
-except:
-    print("Err.SPI")
 
 menuList = [
 "   h() / o_help() = HELP      | i() /o_info() = INFO", 
@@ -173,10 +165,8 @@ def f(file='config/device.json'):
             f.close()
             print(d) 
 
-try:
-    PIN_WS = pinout.WS_LED_PIN
-except:
-    PIN_WS = 15
+try: PIN_WS = pinout.WS_LED_PIN
+except: PIN_WS = 15
 def rgb_init(num_led, pin = PIN_WS):
     if num_led is None or num_led == 0:
         return
@@ -615,9 +605,20 @@ def octopus(autoIni = False): # automaticaly start init_X according to the setti
 # --------------- init --------------
 if True: # var.autoIni: //test
     print("--> autoInit: ",end="")
+    if io_conf.get('led7') or io_conf.get('led8'):
+        print("SPI | ",end="")
+        spi = None
+        ss  = None
+        try:
+            #spi.deinit() #print("spi > close")            
+            spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
+            ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
+        except:
+            print("Err.SPI")
+
     if io_conf.get('led'):
         print("led | ",end="")
-        led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED
+        led = Led(LED_PIN) # BUILT_IN_LED
 
     piezzo = None
     if io_conf.get('piezzo'):
