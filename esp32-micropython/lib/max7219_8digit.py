@@ -1,5 +1,4 @@
 # Copyright 2017 Paul Dwerryhouse <paul@dwerryhouse.com.au>
-from math import ceil, log10
 
 CHAR_MAP = {
     '0': 0x7e, '1': 0x30, '2': 0x6d, '3': 0x79,
@@ -18,7 +17,7 @@ CHAR_MAP = {
     'Q': 0x73, 'R': 0x05, 'S': 0x5b, 'T': 0x0f,
     'U': 0x1c, 'V': 0x3e, 'W': 0x2a, 'X': 0x37,
     'Y': 0x3b, 'Z': 0x6d, ' ': 0x00, '-': 0x01,
-    '\xb0': 0x63, '.': 0x80
+            '\xb0': 0x63,            '.': 0x80
 }
 
 REG_NO_OP           = 0x00
@@ -49,74 +48,57 @@ class Display:
         self.ss.value(0)
         self.spi.write(bytearray([register, value]))
         self.ss.value(1)
+    
+    def intensity(self, i):
+        self.send(self.INTENSITY, i)
 
     def decode_char(self, c):
-        d = CHAR_MAP.get(c)
-        return d if d != None else ' '
+        disp = CHAR_MAP.get(c)
+        return disp if disp is not None else ' '
 
-    def write_to_buffer(self, s):
-        l = len(s)
-        if l < 8:
-            s = "%-8s" % s
-        for i in range(0,8):
-            self.buffer[7-i] = self.decode_char(s[i])
-   
-    def getDecPointPosition(self,num):
-        decPointPos = ceil(log10(num)) -1
-        if(decPointPos > 7): decPointPos = 7
-        return decPointPos 
+    def split_dots_chars(self, msg):
+        dots  = dotRemoved = ""
+        index              = 0
+        while(index < len(msg)-1):
+            char = msg[index]
+            nextChar = msg[index+1]
+            if  (char  not in ".," and nextChar not in ".,"):  # aa
+                dotRemoved += char
+                dots       += " "
+                index      += 1
+            elif(char  not in ",." and nextChar     in ".,"):  # a.
+                dotRemoved += char
+                dots       += "."
+                index      += 2
+            elif(char      in ".," and nextChar not in ".,"):  # .a
+                dotRemoved += " "
+                dots       += "."
+                index      += 1
+            elif(char      in ".," and nextChar     in ".,"):  # ..
+                dotRemoved += " "
+                dots       += ".."
+                index      += 2
+        if(len(dotRemoved)-dotRemoved.count(" ")+dots.count(".") < len(msg)): # loop missed last character
+            lastChar        = msg[len(msg)-1]
+            if(lastChar    in ".,"):
+                dots       += "."
+            else:
+                dotRemoved += lastChar
+                dots       += " "
+        return  dotRemoved,   dots
 
-    def deldot(self, sdot):
-        s = "" 
-        for i in sdot:
-            if i not in ".,":
-                s +=i
-        return s  
-
-    def write_num_to_buffer(self, n):
-        dot = self.getDecPointPosition(n)
-        sdot = str(n)
-        l = len(sdot)
-        s = self.deldot(sdot)
-
-        if l < 8:
-            s = "%-8s" % s
-        for i in range(0,8):
-            decode = self.decode_char(s[i])
-            if i == dot: decode = self.decode_char(s[i])  + self.decode_char(".")    
-            self.buffer[7-i] = decode
-
-        #if l < 8:
-        #    s = "%-8s" % s
-        """
-        i = 0 
-        j = 0
-        for ch in s:
-            if j < 8:
-                if i < l and s[i+1] == ".":
-                    self.buffer[7-j] = self.decode_char(s[i])  + self.decode_char(".")
-                else:            
-                    self.buffer[7-j] = self.decode_char(s[i])
-                    j += 1 
-            i += 1 
-        """              
+    def write_to_buffer(self, toWrite):
+        dotRemoved, dots = self.split_dots_chars(str(toWrite))
+        if(len(dotRemoved)) < 8:
+            dotRemoved   = "%-8s" % dotRemoved
+            dots         = "%-8s" % dots
+        for index in range(0,8):
+            self.buffer[7-index] = self.decode_char(dotRemoved[index]) + self.decode_char(dots[index])
 
     def display(self):
         for i in range(0,8):
             self.set_register(REG_DIGIT_BASE + i, self.buffer[i])
 
-    def display_text(self, s):
-        self.write_to_buffer(s)
+    def show(self, toDisplay):
+        self.write_to_buffer(toDisplay)
         self.display()
-
-    def display_num(self, n):
-        self.write_num_to_buffer(n)
-        self.display()
-        #size = len(str(n))
-        #sizeint = len(str(int(n)))
-        #print(self.getDecPointPosition(n))
-        #print(size)
-               
-
-    def intensity(self, i):
-        self.send(self.INTENSITY, i)
