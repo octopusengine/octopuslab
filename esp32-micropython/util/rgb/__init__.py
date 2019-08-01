@@ -60,7 +60,7 @@ class Rgb(NeoPixel):
             self.np.write()
             sleep(wait)
 
-    def rainbow_cycle(self, np, num_pixels,wait):
+    def rainbow_cycle(self, wait=3):
         for j in range(255):
             for i in range(self.num):
                 rc_index = (i * 256 // self.num) + j
@@ -79,7 +79,7 @@ class Rgb(NeoPixel):
         self.color_chase(self.np, self.num,BLUE, 0.1)
         self.color_chase(self.np, self.num,PURPLE, 0.1)
 
-        self.rainbow_cycle(self.np, self.num,2)  # Increase the number to slow down the rainbow
+        self.rainbow_cycle()  # Increase the number to slow down the rainbow
         sleep(1)
 
         self.np.fill(BLACK)
