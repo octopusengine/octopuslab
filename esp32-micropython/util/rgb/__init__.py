@@ -1,4 +1,4 @@
-# library for ws rgb neopisel led - single / strip / ring
+# library for ws rgb neopixel led - single / strip / ring
 # octopusLAB 2019
 from time import sleep, sleep_ms
 from machine import Pin
@@ -6,6 +6,7 @@ from neopixel import NeoPixel
 
 # WS neopixel:
 RED = (255, 0, 0)
+ORANGE = (255, 64, 0)
 YELLOW = (255, 150, 0)
 GREEN = (0, 255, 0)
 CYAN = (0, 255, 255)
@@ -17,28 +18,19 @@ class Rgb(NeoPixel):
     def __init__(self, pin, num=1):
         self.pin = pin
         self.num = num
-
-        #if pin is None:
-        #    print("WARN: Pin is None, this led will be dummy")
-        #    return
-        self.np = NeoPixel(Pin(self.pin, Pin.OUT), self.num)   
-        ## self.np = NeoPixel(pin, num)
-        #>>> from util.rgb import Rgb
-        #>>> ws = Rgb(15)
-        #... AttributeError: 'int' object has no attribute 'init'    
+        self.np = NeoPixel(Pin(self.pin, Pin.OUT), self.num)    
     
     def simpleTest(self, wait_ms=500):
-        # AttributeError: 'Rgb' object has no attribute 'np'
 
-        self.np[0] = RED #R
+        self.np[0] = RED
         self.np.write()
         sleep_ms(wait_ms)
 
-        self.np[0] = GREEN #G
+        self.np[0] = GREEN
         self.np.write()
         sleep_ms(wait_ms)
 
-        self.np[0] = BLUE #B
+        self.np[0] = BLUE
         self.np.write()
         sleep_ms(wait_ms)
 
@@ -46,7 +38,6 @@ class Rgb(NeoPixel):
         self.np.write()   
 
     def color(self, color=RED, i=0):
-        # AttributeError: 'Rgb' object has no attribute 'np'
         self.np[i] = color
         self.np.write()
 
@@ -64,42 +55,32 @@ class Rgb(NeoPixel):
         return (pos * 3, 0, 255 - pos * 3)
 
     def color_chase(self, np, num_pixels, color, wait):
-        for i in range(num_pixels):
+        for i in range(self.num):
             self.np[i] = color
             self.np.write()
             sleep(wait)
 
     def rainbow_cycle(self, np, num_pixels,wait):
         for j in range(255):
-            for i in range(num_pixels):
-                rc_index = (i * 256 // num_pixels) + j
-                self.np[i] = wheel(rc_index & 255)
+            for i in range(self.num):
+                rc_index = (i * 256 // self.num) + j
+                self.np[i] = self.wheel(rc_index & 255)
             self.np.write()
             sleep_ms(wait)
 
-def neopixelTest(np, num_pixels):
+    def test(self):
         #https://github.com/maxking/micropython/blob/master/rainbow.py
-        np.fill(RED)
-        np.write()
-        # Increase or decrease to change the speed of the solid color change.
-        sleep(1)
-        np.fill(GREEN)
-        np.write()
-        sleep(1)
-        np.fill(BLUE)
-        np.write()
+        self.simpleTest()
+
+        self.color_chase(self.np, self.num,RED, 0.1)  # Increase the number to slow down the color chase
+        self.color_chase(self.np, self.num,YELLOW, 0.1)
+        self.color_chase(self.np, self.num,GREEN, 0.1)
+        self.color_chase(self.np, self.num,CYAN, 0.1)
+        self.color_chase(self.np, self.num,BLUE, 0.1)
+        self.color_chase(self.np, self.num,PURPLE, 0.1)
+
+        self.rainbow_cycle(self.np, self.num,2)  # Increase the number to slow down the rainbow
         sleep(1)
 
-        color_chase(np, num_pixels,RED, 0.1)  # Increase the number to slow down the color chase
-        color_chase(np, num_pixels,YELLOW, 0.1)
-        color_chase(np, num_pixels,GREEN, 0.1)
-        color_chase(np, num_pixels,CYAN, 0.1)
-        color_chase(np, num_pixels,BLUE, 0.1)
-        color_chase(np, num_pixels,PURPLE, 0.1)
-
-        rainbow_cycle(np, num_pixels,2)  # Increase the number to slow down the rainbow
-        sleep(1)
-
-        np.fill(BLACK)
-        np.write()
-   
+        self.np.fill(BLACK)
+        self.np.write()   
