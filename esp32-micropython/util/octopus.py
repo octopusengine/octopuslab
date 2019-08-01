@@ -8,8 +8,9 @@ class var: # for temporary global variables and config setup
     pass
 
 var.ver = "0.75" # log: num = ver*100
-var.verDat = "30.7.2019 #677" 
+var.verDat = "31.7.2019 #691" 
 var.debug = True
+var.autoInit = False
 var.autoTest = False
 # Led, Buzzer > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
 
@@ -155,7 +156,7 @@ def i():
     o_info()             
 
 def f(file='config/device.json'):
-    """ print data: f("filename") """
+    """print data: f("filename") """
     printTitle("file > " + file)
     with open(file, 'r') as f:
             d = f.read()
@@ -409,6 +410,7 @@ def add0(sn):
     return ret_str
 
 def get_hhmm(separator=":",rtc=rtc):
+    """get_hhmm(separator) | separator = string: "-" / " " """
     #print(str(rtc.datetime()[4])+":"+str(rtc.datetime()[5]))
     hh=add0(rtc.datetime()[4])
     mm=add0(rtc.datetime()[5])
@@ -476,12 +478,14 @@ def get_adc_aver(adcpin = adcpin, num=10):
         sleep_us(10)
     return int(suman/num) # single read, better average    
 
-def temp_init():
+try: PIN_TEMP = pinout.ONE_WIRE_PIN
+except: PIN_TEMP = 17 # ROBOT
+def temp_init(pin = PIN_TEMP):
     printHead("temp")
     print("dallas temp init >")
     from onewire import OneWire
     from ds18x20 import DS18X20
-    dspin = Pin(pinout.ONE_WIRE_PIN)
+    dspin = Pin(pin)
     # from util.octopus_lib import bytearrayToHexString
     try:
         ds = DS18X20(OneWire(dspin))
@@ -506,6 +510,7 @@ def temp_init():
     return ds,ts       
 
 def getTemp(ds,ts): # return single/first value
+    """getTemp(t[0],t[1])"""
     tw=0
     ds.convert_temp()
     sleep_ms(750)
@@ -604,8 +609,8 @@ def getApiText(urlApi ="http://www.octopusengine.org/api"):
         print("Err. read txt from URL")  
     return dt_str  
 
-def octopus(autoIni = False): # automaticaly start init_X according to the settings io_conf.get(X)
-    var.autoIni = autoIni
+def octopus(autoInit = False): # automaticaly start init_X according to the settings io_conf.get(X)
+    var.autoInit = autoInit
     printOctopus()
     print("("+getVer()+")")
     gc.collect()
@@ -613,7 +618,7 @@ def octopus(autoIni = False): # automaticaly start init_X according to the setti
     print("This is basic library, type h() for help")
 
 # --------------- init --------------
-if True: # var.autoIni: //test
+if True: # var.autoInit: //test
     print("--> autoInit: ",end="")
     if io_conf.get('led7') or io_conf.get('led8'):
         print("SPI | ",end="")
@@ -642,16 +647,20 @@ if True: # var.autoIni: //test
     #    piezzo =Buzzer(None)
 
     if io_conf.get('ws'):
-        print("WS | ",end="")
+        print("ws | ",end="")
+        from util.rgb import Rgb
         if pinout.WS_LED_PIN is None:
             print("Warning: WS LED not supported on this board")
-        else:    
-            np = rgb_init(io_conf.get('ws'))  
+        else:   
+            ws = Rgb(pinout.WS_LED_PIN,io_conf.get('ws')) 
 
     if io_conf.get('oled'):
         print("OLED lib | ",end="")
         from assets.icons9x9 import ICON_clr, ICON_wifi 
-        from util.display_segment import threeDigits 
+        from util.display_segment import threeDigits
+
+    if io_conf.get('temp'): 
+        print("temp | ",end="")      
 
     if io_conf.get('servo'): 
         print("servo | ",end="")  
@@ -662,11 +671,7 @@ if True: # var.autoIni: //test
 def RGB(color,np=np):
     np.fill(color)
     np.write()
- 
-def RGBi(i,color, np=np):
-    np[i] = color
-    np.write()    
-
+   
 def RGBtest(wait=500): 
     from util.ws_rgb import simpleRgb
     simpleRgb(np,wait)
@@ -674,4 +679,13 @@ def RGBtest(wait=500):
 def Rainbow(wait=50):
     print("> RGB Rainbow")
     from util.ws_rgb import rainbow_cycle
-    rainbow_cycle(np, io_conf.get('ws'), wait)        
+    rainbow_cycle(np, io_conf.get('ws'), wait) 
+
+# print("auto Init" + str(var.autoInit))
+if var.autoInit:
+    printTitle("> auto Init ")
+    if io_conf.get('led7'):
+        d7 = disp7_init()
+
+    if io_conf.get('temp'):
+        t = temp_init()                   
