@@ -12,8 +12,8 @@
 class Env: # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
-    ver = "0.76" # log: num = ver*100
-    verDat = "2.8.2019 #674"
+    ver = "0.77" # log: num = ver*100
+    verDat = "2.8.2019 #656"
     debug = True
     logDev = True
     autoInit = True
@@ -201,7 +201,7 @@ def disp8_init():
         d8.text(str(i),0,0,1)
         d8.show()
         print(i)
-        time.sleep_ms(500)
+        sleep_ms(500)
 
     d8.fill(0)
     d8.show()
@@ -211,7 +211,7 @@ def scroll(d8, text,num): # TODO speed, timer? / NO "sleep"
     WIDTH = 8*4
     x = WIDTH + 2
     for _ in range(8*len(text)*num):
-        time.sleep(0.03)
+        sleep(0.03)
         d8.fill(0)
         x -= 1
         if x < - (8*len(text)):
@@ -260,7 +260,7 @@ def oled_init():
     i2c = i2c_scann()
     OLED_ydown = OLEDY-7
     from lib import ssd1306
-    time.sleep_ms(1000)
+    sleep_ms(1000)
     #i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
     oled = ssd1306.SSD1306_I2C(OLEDX, OLEDY, i2c)
     print("display test: oled display OK")
@@ -654,3 +654,5 @@ if Env.autoInit:  # test
         from util.servo import Servo
 
     print()
+
+    
