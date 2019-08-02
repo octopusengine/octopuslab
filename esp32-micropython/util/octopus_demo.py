@@ -189,10 +189,10 @@ def octopus_demo():
           piezzo.nosound()
 
       if sel == "r1": RGBtest()
-      if sel == "r8":  
+      if sel == "r8":
         np = rgb_init(8)
         Rainbow()
-        
+
       if sel == "r80":
          NUMBER_LED = 8
          np = rgb_init(NUMBER_LED)
