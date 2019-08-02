@@ -292,7 +292,7 @@ def setup():
             octopus_demo()
 
         if sele == "wr":
-            print("under reconstruction <") 
+            print("under reconstruction <")
             import esp
             esp.osdebug(None)
             import webrepl

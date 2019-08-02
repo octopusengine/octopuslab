@@ -5,52 +5,38 @@
  *
 """
 # this module is main library - for other modules
-# or directly in terminal: 
+# or directly in terminal:
 # >>> octopus()
 # >>> h() help / i() info / w() wifi connect
 
-class var: # for temporary global variables and config setup
+class Env: # for temporary global variables and config setup
+    from ubinascii import hexlify
+    from machine import unique_id
     ver = "0.76" # log: num = ver*100
-    verDat = "2.8.2019 #674" 
+    verDat = "2.8.2019 #674"
     debug = True
-    # autoInit = False
+    logDev = True
+    autoInit = True
     autoTest = False
+    uID = hexlify(unique_id()).decode()
+    TW = 50  # terminal width
 
-import time, os, urequests, network # import math
 from os import urandom
-# from micropython import const
 from time import sleep, sleep_ms, sleep_us
-import gc, ubinascii # machine >
-from machine import Pin, I2C, PWM, SPI, Timer, ADC, RTC, unique_id
-var.uID = ubinascii.hexlify(unique_id()).decode()
+from machine import Pin, I2C, PWM, SPI, Timer, ADC, RTC
 
+from util.colors import *
 from util.pinout import set_pinout
-pinout = set_pinout()
-
-try: LED_PIN = pinout.BUILT_IN_LED
-except: LED_PIN = 2
-
 from util.io_config import get_from_file
-io_conf = get_from_file()
 
-rtc = RTC() # real time
-WT = 50 # widt terminal / 39*=
-var.logDev = True
-np = None
+pinout = set_pinout()  # set board pinout
+rtc = RTC()  # real time
+io_conf = get_from_file()  # read configuration for peripherals
+
 
 # I2C address:
 LCD_ADDR=0x27
 OLED_ADDR=0x3c
-
-# WS neopixel:
-RED = (255, 0, 0)
-ORANGE = (255, 64, 0)
-YELLOW = (255, 150, 0)
-GREEN = (0, 255, 0)
-CYAN = (0, 255, 255)
-BLUE = (0, 0, 255)
-PURPLE = (180, 0, 255)
-BLACK = (0, 0, 0) # = off
 
 #if io_conf['oled'] is not None:
 OLEDX = 128
@@ -78,73 +64,74 @@ pin_an = Pin(adcpin, Pin.IN)
 adc = ADC(pin_an)
 adc.atten(ADC.ATTN_11DB) # setup
 
-menuList = [
-"   h() / o_help() = HELP      | i() /o_info() = INFO", 
-"   c() / clt() clear terminal | r() = system reset",
-"   w() / w_connect()          = connect to WiFi ",
-"   f(file)                    - file info / print",
-"   printOctopus()             = print ASCII logo",
-">> basic simple HW examples:",
-"   led.value(1)               | led.value(0)",
-"   ws = Rgb(p,n) > pin, num   | ws.simpleTest()",
-"   ws.color(BLUE)             | RGBi(5,RED)",
-"   beep(f,l) > freq, lenght   | tone(Notes.C5)",
-">> SPI 8 x 7 segment display:",
-"   d7 = disp7_init()          > d7.show(123.567)",
-">> I2C LCD 2/4 row display:",
-"   d = lcd2_init()            > disp2(d,text,[0/1])",
-"   d.clear()",
-">> I2C OLED 128x64 pix display:",
-'   o = oled_init()            > oled(o,"text")',
-"   o.fill(0/1)  |  o.show()   | o.text(text,x,y)",
-"   o.hline(*) |  d.vline(*)   | o.pixel(x,y,1)",
-"   (*) x, y, w/h, color       > o.show()",
-">> sensors/communications/etc.",
-"   get_adc(pin)               > return analog RAW",
-"   adc_test()                 > simple adc test",
-"   t = temp_init()            > getTemp(t[0],t[1])",
-"   i2c_scann()                = find I2C devices",
-"   timeSetup()                > from URL(urlApi)",
-'   get_hhmm(separator)        > get_hhmm("-")',
-">> standard lib. functions:",
-"   sleep(1)  / sleep_ms(1)    = 1 s/ms pause",
-"   urandom(1)[0]              = random num.",
-"   import webrepl_setup       = remote access",
-]
 
 # -------------------------------- common terminal function ---------------
 def getVer():
-    return "octopusLAB - lib.version: " + var.ver + " > " + var.verDat
+    return "octopusLAB - lib.version: " + Env.ver + " > " + Env.verDat
 
 def get_eui():
-    return var.uID #mac2eui(id) 
+    return Env.uID #mac2eui(id)
 
-def printInfo(w=WT):
+def printInfo(w=Env.TW):
     print('-' * w)
-    print("| ESP UID: " + var.uID + " | RAM free: "+ str(getFree()) + " | " + get_hhmm())  
-    print('-' * w)      
+    print("| ESP UID: " + Env.uID + " | RAM free: "+ str(getFree()) + " | " + get_hhmm())
+    print('-' * w)
 
 def o_help():
     printOctopus()
     print("Welcome to MicroPython on the ESP32 octopusLAB board")
     print("("+getVer()+")")
     printTitle("example - list commands")
-    for ml in menuList:
-        print(ml)
+    help_text = """\
+   h() / o_help() = HELP      | i() / o_info() = INFO
+   c() / clt() clear terminal | r() = system reset
+   w() / w_connect()          = connect to WiFi
+   f(file)                    - file info / print
+   printOctopus()             = print ASCII logo
+>> basic simple HW examples:
+   led.value(1)               | led.value(0)
+   ws = Rgb(p, n) > pin, num  | ws.simpleTest()
+   ws.color(BLUE)             | RGBi(5, RED)
+   beep(f, l) > freq, lenght  | tone(Notes.C5)
+>> SPI 8 x 7 segment display:
+   d7 = disp7_init()          > d7.show(123.567)
+>> I2C LCD 2/4 row display:
+   d = lcd2_init()            > disp2(d, text, [0/1])
+   d.clear()
+>> I2C OLED 128x64 pix display:
+   o = oled_init()            > oled(o, "text")
+   o.fill(0/1)  |  o.show()   | o.text(text, x, y)
+   o.hline(*) |  d.vline(*)   | o.pixel(x, y, 1)
+   (*) x, y, w/h, color       > o.show()
+>> sensors/communications/etc.
+   get_adc(pin)               > return analog RAW
+   adc_test()                 > simple adc test
+   t = temp_init()            > getTemp(t[0], t[1])
+   i2c_scann()                = find I2C devices
+   timeSetup()                > from URL(urlApi)
+   get_hhmm(separator)        > get_hhmm("-")
+>> standard lib. functions:
+   sleep(1)  / sleep_ms(1)    = 1 s/ms pause
+   urandom(1)[0]              = random num.
+   import webrepl_setup       = remote access
+"""
+    print(help_text)
 
 def h():
-    o_help()    
+    o_help()
     printInfo()
 
 def o_info():
+    from os import statvfs
+    from gc import mem_free
     printTitle("basic info > ")
     print("This is basic info about system and setup")
     from machine import freq
     print("> machine.freq: "+str(freq()) + " [Hz]")
     printLog("memory")
-    print("> ram free: "+str(gc.mem_free()) + " [B]")
+    print("> ram free: "+str(mem_free()) + " [B]")
     #print("> flash: "+str(os.statvfs("/")))
-    ff =int(os.statvfs("/")[0])*int(os.statvfs("/")[3])
+    ff =int(statvfs("/")[0])*int(statvfs("/")[3])
     print("> flash free: "+str(int(ff/1000)) + " [kB]")
     printLog("device")
     try:
@@ -154,16 +141,16 @@ def o_info():
             print(" > config/device: " + d)
             # device_config = json.loads(d)
     except:
-        print("Device config 'config/device.json' does not exist, please run setup()") 
-    
-    printLog("pinout")
-    print(pinout) 
-    printLog("io_conf") 
-    print(io_conf) 
-    printInfo()    
+        print("Device config 'config/device.json' does not exist, please run setup()")
 
-def i(): 
-    o_info()             
+    printLog("pinout")
+    print(pinout)
+    printLog("io_conf")
+    print(io_conf)
+    printInfo()
+
+def i():
+    o_info()
 
 def f(file='config/device.json'):
     """print data: f("filename") """
@@ -172,23 +159,25 @@ def f(file='config/device.json'):
             d = f.read()
             #print(os.size(f))
             f.close()
-            print(d) 
+            print(d)
 
-try: PIN_WS = pinout.WS_LED_PIN
-except: PIN_WS = 15
-def rgb_init(num_led, pin = PIN_WS):
+def rgb_init(num_led, pin=None):
+    if pinout.WS_LED_PIN is None:
+        print("Warning: WS LED not supported on this board")
+        return
     if num_led is None or num_led == 0:
+        print("Warning: Number of WS LED is 0")
         return
     from util.ws_rgb import * # setupNeopixel
-    np = setupNeopixel(Pin(pin, Pin.OUT), num_led)
-    return np          
+    np = setupNeopixel(Pin(pinout.WS_LED_PIN, Pin.OUT), num_led)
+    return np
 
 def beep(f=1000,l=50):
     piezzo.beep(f,l)
 
-def tone(f, l=300): 
+def tone(f, l=300):
     piezzo.play_tone(f,l)
-  
+
 def disp7_init():
     printTitle("disp7init()")
     from lib.max7219_8digit import Display
@@ -230,7 +219,7 @@ def scroll(d8, text,num): # TODO speed, timer? / NO "sleep"
         d8.text(text, x, 0, 1)
         d8.show()
     d8.fill(0)
-    d8.show()    
+    d8.show()
 
 def disp7(d,mess):
     d.write_to_buffer(str(mess))
@@ -240,13 +229,13 @@ def i2c_scann():
     print("i2c_scann() > devices:")
     i2c = I2C(-1, Pin(pinout.I2C_SCL_PIN), Pin(pinout.I2C_SDA_PIN))
     i2cdevs = i2c.scan()
-    print(i2cdevs) 
+    print(i2cdevs)
     if (OLED_ADDR in i2cdevs): print("ok > OLED: "+str(OLED_ADDR))
     if (LCD_ADDR in i2cdevs): print("ok > LCD: "+str(LCD_ADDR))
     bhLight = 0x23 in i2cdevs
     bh2Light = 0x5c in i2cdevs
     tslLight = 0x39 in i2cdevs
-    return i2c   
+    return i2c
 
 def lcd2_init():
     printTitle("lcd2init()")
@@ -263,10 +252,10 @@ def lcd2_init():
 def disp2(d,mess,r=0,s=0):
     #d.clear()
     d.move_to(s, r) # x/y
-    d.putstr(str(mess)) 
+    d.putstr(str(mess))
 
 def oled_init():
-    from util.display_segment import * 
+    from util.display_segment import *
     printTitle("oled_init()")
     i2c = i2c_scann()
     OLED_ydown = OLEDY-7
@@ -283,7 +272,7 @@ def oled_init():
     return oled
 
 def oledSegment(oled,num,point=False,deg=False):
-    threeDigits(oled,num,point,deg)   
+    threeDigits(oled,num,point,deg)
 
 def oledSegmentTest(oled):
     print("oled segment test >")
@@ -296,8 +285,8 @@ def oledSegmentTest(oled):
 def draw_icon(oled, icon, posx, posy):
     for y, row in enumerate(icon):
         for x, c in enumerate(row):
-            oled.pixel(x+posx, y+posy, c) 
-    oled.show()                
+            oled.pixel(x+posx, y+posy, c)
+    oled.show()
 
 def oledImage(oled, file="assets/octopus_image.pbm"):
     IMAGE_WIDTH = 63
@@ -311,8 +300,8 @@ def oledImage(oled, file="assets/octopus_image.pbm"):
         fbuf = framebuf.FrameBuffer(data, IMAGE_WIDTH, IMAGE_HEIGHT, framebuf.MONO_HLSB)
         # To display just blit it to the display's framebuffer (note you need to invert, since ON pixels are dark on a normal screen, light on OLED).
         oled.invert(1)
-        oled.blit(fbuf, 0, 0)        
-    oled.show() 
+        oled.blit(fbuf, 0, 0)
+    oled.show()
 
 try: PIN_SER = pinout.PWM1_PIN
 except: PIN_SER = 17 # ROBOT
@@ -329,7 +318,7 @@ def c():
 
 def r():
     import machine
-    machine.reset()            
+    machine.reset()
 
 octopusASCII = [
 "      ,'''`.",
@@ -345,14 +334,14 @@ def printOctopus():
     print()
     for ol in octopusASCII:
         print("     " + str(ol))
-    print()        
+    print()
 
 def printHead(s):
     print()
-    print('-' * WT)
-    print("[--- " + s + " ---] ") 
+    print('-' * Env.TW)
+    print("[--- " + s + " ---] ")
 
-def printTitle(t,w=WT):
+def printTitle(t,w=Env.TW):
     print()
     print('=' * w)
     print("|",end="")
@@ -362,20 +351,21 @@ def printTitle(t,w=WT):
 
 def printLog(i,s=""):
     print()
-    print('-' * WT)
+    print('-' * Env.TW)
     print("[--- " + str(i) + " ---] " + s)
 
 def getFree():
-    return gc.mem_free()      
+    from gc import mem_free
+    return mem_free()
 
 def printFree():
-    print("Free: "+str(getFree()))  
+    print("Free: "+str(getFree()))
 
 def bytearrayToHexString(ba):
-    return ''.join('{:02X}'.format(x) for x in ba)      
+    return ''.join('{:02X}'.format(x) for x in ba)
 
 def map(x, in_min, in_max, out_min, out_max):
-    return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)      
+    return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)
 
 def bytearrayToHexString(ba):
     return ''.join('{:02X}'.format(x) for x in ba)
@@ -427,7 +417,7 @@ def button(pin, num=10): #num for debounce
             value0 += 1
         else:
             value1 += 1
-        sleep_us(50)  
+        sleep_us(50)
     return value0, value1
 
 def adc_test():
@@ -438,14 +428,14 @@ def adc_test():
     # TODO improve mapping formula, doc: https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/adc.html
     #print("volts: {0:.2f} V".format(an/4096*10.74), 20, 50)
 
-def get_adc(adcpin = adcpin):    
+def get_adc(adcpin = adcpin):
     pin_an = Pin(adcpin, Pin.IN)
     adc = ADC(pin_an)
     adc.atten(ADC.ATTN_11DB) # setup
     an = adc.read()
     return an # single read, better average
 
-def get_adc_aver(adcpin = adcpin, num=10):    
+def get_adc_aver(adcpin = adcpin, num=10):
     #pin_an = Pin(adcpin, Pin.IN)
     #adc = ADC(pin_an)
     suman = 0
@@ -453,7 +443,7 @@ def get_adc_aver(adcpin = adcpin, num=10):
         an = adc.read()
         suman = suman + an
         sleep_us(10)
-    return int(suman/num) # single read, better average    
+    return int(suman/num) # single read, better average
 
 try: PIN_TEMP = pinout.ONE_WIRE_PIN
 except: PIN_TEMP = 17 # ROBOT
@@ -481,10 +471,10 @@ def temp_init(pin = PIN_TEMP):
 
     if len(ts)>1:
         print(getTempN(ds,ts))
-    else: 
+    else:
         print(getTemp(ds,ts))
 
-    return ds,ts       
+    return ds,ts
 
 def getTemp(ds,ts): # return single/first value
     """getTemp(t[0],t[1])"""
@@ -493,7 +483,7 @@ def getTemp(ds,ts): # return single/first value
     sleep_ms(750)
     temp = ds.read_temp(ts[0])
     tw = int(temp*10)/10
-    return tw    
+    return tw
 
 def getTempN(ds,ts):
     tw=[]
@@ -502,9 +492,10 @@ def getTempN(ds,ts):
     for t in ts:
         temp = ds.read_temp(t)
         tw.append(int(temp*10)/10)
-    return tw 
+    return tw
 
 def w_connect():
+    from network import WLAN, STA_IF
     led.value(1)
 
     from util.wifi_connect import  WiFiConnect
@@ -516,36 +507,38 @@ def w_connect():
         print("WiFi: Connect error, check configuration")
 
     led.value(0)
-    wlan = network.WLAN(network.STA_IF)
+    wlan = WLAN(STA_IF)
     print('network config:', wlan.ifconfig())
     return wlan
 
 def logDevice(urlPOST = "http://www.octopusengine.org/iot17/add18.php"):
+    from urequests import post
     header = {}
     header["Content-Type"] = "application/x-www-form-urlencoded"
-    deviceID = var.uID
+    deviceID = Env.uID
     place = "octoPy32"
-    logVer =  int(float(var.ver)*100)
+    logVer =  int(float(Env.ver)*100)
     try:
         postdata_v = "device={0}&place={1}&value={2}&type={3}".format(deviceID, place, logVer,"log_ver")
-        res = urequests.post(urlPOST, data=postdata_v, headers=header)
+        res = post(urlPOST, data=postdata_v, headers=header)
         sleep_ms(100)
-        print("logDevice.ok")  
+        print("logDevice.ok")
     except:
-        print("E.logDevice")    
+        print("E.logDevice")
 
-def w():  
+def w():
     printInfo()
     printTitle("WiFi connect > ")
     w_connect()
-    if var.logDev: logDevice() 
+    if Env.logDev: logDevice()
 
 def timeSetup(urlApi ="http://www.octopusengine.org/api/hydrop"):
-    printTitle("time setup from url")    
+    from urequests import get
+    printTitle("time setup from url")
     urltime=urlApi+"/get-datetime.php"
     print("https://urlApi/"+urltime)
     try:
-        response = urequests.get(urltime)
+        response = get(urltime)
         dt_str = (response.text+(",0,0")).split(",")
         print(str(dt_str))
         dt_int = [int(numeric_string) for numeric_string in dt_str]
@@ -556,53 +549,67 @@ def timeSetup(urlApi ="http://www.octopusengine.org/api/hydrop"):
         print("Err. Setup time from URL")
 
 def getApiJson(urlApi ="http://www.octopusengine.org/api"):
-    import json
+    from urequests import get
+    from json import loads
     urljson=urlApi+"/led3.json"
     aj = ""
     try:
-        response = urequests.get(urljson)
+        response = get(urljson)
         dt_str = (response.text)
         #print(str(dt_str))
-        j = json.loads(dt_str)
+        j = loads(dt_str)
         #print(str(j))
-        aj = j['light'] 
+        aj = j['light']
     except:
-        print("Err. read json from URL")  
-    return aj    
+        print("Err. read json from URL")
+    return aj
 
 def getApiTest():
     printTitle("data from url")
     #print("https://urlApi/"+urljson)
-    print("htts://public_unsecure_web/data.json")    
+    print("htts://public_unsecure_web/data.json")
     print(getApiJson())
 
 def getApiText(urlApi ="http://www.octopusengine.org/api"):
-    import json
+    from urequests import get
     urltxt=urlApi+"/text123.txt"
     try:
-        response = urequests.get(urltxt)
+        response = get(urltxt)
         dt_str = response.text
     except:
-        print("Err. read txt from URL")  
-    return dt_str  
+        print("Err. read txt from URL")
+    return dt_str
 
-def octopus(autoInit = False): # automaticaly start init_X according to the settings io_conf.get(X)
-    var.autoInit = autoInit
+def octopus():
+    from gc import collect
+
     printOctopus()
     print("("+getVer()+")")
-    gc.collect()
+    collect()
     printInfo()
     print("This is basic library, type h() for help")
 
+
+def octopus_init():
+    print("auto Init: " + str(Env.autoInit))
+    #if Env.autoInit:
+    printTitle("> auto Init ")
+    if io_conf.get('led7'):
+        d7 = disp7_init()
+
+    if io_conf.get('temp'):
+        t = temp_init()
+
+
 # --------------- init --------------
-if True: # var.autoInit: //test
+if Env.autoInit:  # test
     print("--> autoInit: ",end="")
     if io_conf.get('led7') or io_conf.get('led8'):
         print("SPI | ",end="")
         spi = None
         ss  = None
         try:
-            #spi.deinit() #print("spi > close")            
+            #spi.deinit() #print("spi > close")
             spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
             ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
         except:
@@ -611,7 +618,10 @@ if True: # var.autoInit: //test
     if io_conf.get('led'):
         print("led | ",end="")
         from util.led import Led
-        led = Led(LED_PIN) # BUILT_IN_LED
+        if pinout.BUILT_IN_LED is None:
+            print("Warning: BUILD-IN LED not supported on this board")
+        else:
+            led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED
 
     piezzo = None
     if io_conf.get('piezzo'):
@@ -628,43 +638,19 @@ if True: # var.autoInit: //test
         from util.rgb import Rgb
         if pinout.WS_LED_PIN is None:
             print("Warning: WS LED not supported on this board")
-        else:   
-            ws = Rgb(pinout.WS_LED_PIN,io_conf.get('ws')) 
+        else:
+            ws = Rgb(pinout.WS_LED_PIN,io_conf.get('ws'))
 
     if io_conf.get('oled'):
         print("OLED lib | ",end="")
-        from assets.icons9x9 import ICON_clr, ICON_wifi 
+        from assets.icons9x9 import ICON_clr, ICON_wifi
         from util.display_segment import threeDigits
 
-    if io_conf.get('temp'): 
-        print("temp | ",end="")      
+    if io_conf.get('temp'):
+        print("temp | ",end="")
 
-    if io_conf.get('servo'): 
+    if io_conf.get('servo'):
         print("servo | ",end="")
-        from util.servo import Servo  
+        from util.servo import Servo
 
     print()
-# --------------- after init ---------------
-# for example: np was still None, need init before
-def RGB(color,np=np):
-    np.fill(color)
-    np.write()
-   
-def RGBtest(wait=500): 
-    from util.ws_rgb import simpleRgb
-    simpleRgb(np,wait)
-
-def Rainbow(wait=50):
-    print("> RGB Rainbow")
-    from util.ws_rgb import rainbow_cycle
-    rainbow_cycle(np, io_conf.get('ws'), wait) 
-
-def octopus_init():
-        print("auto Init: " + str(var.autoInit))
-        #if var.autoInit:
-        printTitle("> auto Init ")
-        if io_conf.get('led7'):
-            d7 = disp7_init()
-
-        if io_conf.get('temp'):
-            t = temp_init()                   

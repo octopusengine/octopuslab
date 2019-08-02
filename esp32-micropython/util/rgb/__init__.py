@@ -4,14 +4,16 @@ from time import sleep, sleep_ms
 from machine import Pin
 from neopixel import NeoPixel
 
+from util.colors import *
+
 class Rgb(NeoPixel):
     def __init__(self, pin, num=1):
         self.pin = pin
         self.num = num
-        self.np = NeoPixel(Pin(self.pin, Pin.OUT), self.num)    
-    
-    def simpleTest(self, wait_ms=500):
+        self.np = NeoPixel(Pin(self.pin, Pin.OUT), self.num)
+        # self.np = super().__init__(Pin(self.pin, Pin.OUT), self.num)
 
+    def simpleTest(self, wait_ms=500):
         self.np[0] = RED
         self.np.write()
         sleep_ms(wait_ms)
@@ -25,7 +27,7 @@ class Rgb(NeoPixel):
         sleep_ms(wait_ms)
 
         self.np[0] = (0, 0, 0)
-        self.np.write()   
+        self.np.write()
 
     def color(self, color=RED, i=0):
         self.np[i] = color
@@ -73,4 +75,4 @@ class Rgb(NeoPixel):
         sleep(1)
 
         self.np.fill(BLACK)
-        self.np.write()   
+        self.np.write()
