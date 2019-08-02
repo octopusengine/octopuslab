@@ -1,18 +1,20 @@
+"""
+ * This file is part of the octopusLAB project
+ * The MIT License (MIT)
+ * Copyright (c) 2016, 2019 Jan Copak, Petr Kracik, Vasek Chalupnicek
+ *
+"""
 # this module is main library - for other modules
 # or directly in terminal: 
 # >>> octopus()
 # >>> h() help / i() info / w() wifi connect
 
 class var: # for temporary global variables and config setup
-    # var.xy = value
-    pass
-
-var.ver = "0.75" # log: num = ver*100
-var.verDat = "31.7.2019 #657" 
-var.debug = True
-var.autoInit = False
-var.autoTest = False
-# Led, Buzzer > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
+    ver = "0.76" # log: num = ver*100
+    verDat = "2.8.2019 #674" 
+    debug = True
+    # autoInit = False
+    autoTest = False
 
 import time, os, urequests, network # import math
 from os import urandom
@@ -39,6 +41,16 @@ np = None
 # I2C address:
 LCD_ADDR=0x27
 OLED_ADDR=0x3c
+
+# WS neopixel:
+RED = (255, 0, 0)
+ORANGE = (255, 64, 0)
+YELLOW = (255, 150, 0)
+GREEN = (0, 255, 0)
+CYAN = (0, 255, 255)
+BLUE = (0, 0, 255)
+PURPLE = (180, 0, 255)
+BLACK = (0, 0, 0) # = off
 
 #if io_conf['oled'] is not None:
 OLEDX = 128
@@ -647,11 +659,12 @@ def Rainbow(wait=50):
     from util.ws_rgb import rainbow_cycle
     rainbow_cycle(np, io_conf.get('ws'), wait) 
 
-# print("auto Init" + str(var.autoInit))
-if var.autoInit:
-    printTitle("> auto Init ")
-    if io_conf.get('led7'):
-        d7 = disp7_init()
+def octopus_init():
+        print("auto Init: " + str(var.autoInit))
+        #if var.autoInit:
+        printTitle("> auto Init ")
+        if io_conf.get('led7'):
+            d7 = disp7_init()
 
-    if io_conf.get('temp'):
-        t = temp_init()                   
+        if io_conf.get('temp'):
+            t = temp_init()                   
