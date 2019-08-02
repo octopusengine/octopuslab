@@ -1,46 +1,372 @@
-# this module is for Basic simple examples & tests
-# it's loaded in boot.py and provides function octopus()
-# user is questioned in interactive mode
+# this module is main library - for other modules
+# or directly in terminal: 
+# >>> octopus()
+# >>> h() help / i() info / w() wifi connect
 
-# esp8266 / wemos / esp32 doit...
+class var: # for temporary global variables and config setup
+    # var.xy = value
+    pass
 
-# ampy -p /COM4 put util/octopus-8266.py util/octopus.py
-ver = "25.2.2019-v:0.27"
+var.ver = "0.75" # log: num = ver*100
+var.verDat = "31.7.2019 #657" 
+var.debug = True
+var.autoInit = False
+var.autoTest = False
+# Led, Buzzer > class: rgb, oled, servo, stepper, motor, pwm, relay, lan? 
 
-from micropython import const
-import time, os, math
-import machine, ubinascii
-from machine import Pin, PWM, SPI, Timer
+import time, os, urequests, network # import math
+from os import urandom
+# from micropython import const
+from time import sleep, sleep_ms, sleep_us
+import gc, ubinascii # machine >
+from machine import Pin, I2C, PWM, SPI, Timer, ADC, RTC, unique_id
+var.uID = ubinascii.hexlify(unique_id()).decode()
 
-from util.buzzer import beep, play_melody
-from util.led import blink
 from util.pinout import set_pinout
 pinout = set_pinout()
 
-from util.display_segment import *
+try: LED_PIN = pinout.BUILT_IN_LED
+except: LED_PIN = 2
 
-# spi
-try:
-    #spi.deinit()
-    #print("spi > close")
-    spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
-    ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
-except:
+from util.io_config import get_from_file
+io_conf = get_from_file()
+
+rtc = RTC() # real time
+WT = 50 # widt terminal / 39*=
+var.logDev = True
+np = None
+
+# I2C address:
+LCD_ADDR=0x27
+OLED_ADDR=0x3c
+
+#if io_conf['oled'] is not None:
+OLEDX = 128
+OLEDY = 64
+OLED_x0 = 3
+
+#adc1 - #ADC/ADL
+"""pin_analog = 36 #pinout.I36_PIN # analog or power management
+adc = ADC(Pin(pin_analog))
+pin_analog_1 = 39 #I34_PIN      # x
+adc1 = ADC(Pin(pin_analog_1))   # AC1 == "ACL"
+pin_analog_2 = 35 #I35_PIN      # y
+adc2 = ADC(Pin(pin_analog_2))
+
+ADC_SAMPLES=100
+ADC_HYSTERESIS=50
+ad_oldval=0
+ad1_oldval=0
+adc.atten(ADC.ATTN_11DB) # setup
+adc1.atten(ADC.ATTN_11DB)
+"""
+#adcpin = pinout.ANALOG_PIN
+adcpin = 39 #default
+pin_an = Pin(adcpin, Pin.IN)
+adc = ADC(pin_an)
+adc.atten(ADC.ATTN_11DB) # setup
+
+menuList = [
+"   h() / o_help() = HELP      | i() /o_info() = INFO", 
+"   c() / clt() clear terminal | r() = system reset",
+"   w() / w_connect()          = connect to WiFi ",
+"   f(file)                    - file info / print",
+"   printOctopus()             = print ASCII logo",
+">> basic simple HW examples:",
+"   led.value(1)               | led.value(0)",
+"   ws = Rgb(p,n) > pin, num   | ws.simpleTest()",
+"   ws.color(BLUE)             | RGBi(5,RED)",
+"   beep(f,l) > freq, lenght   | tone(Notes.C5)",
+">> SPI 8 x 7 segment display:",
+"   d7 = disp7_init()          > d7.show(123.567)",
+">> I2C LCD 2/4 row display:",
+"   d = lcd2_init()            > disp2(d,text,[0/1])",
+"   d.clear()",
+">> I2C OLED 128x64 pix display:",
+'   o = oled_init()            > oled(o,"text")',
+"   o.fill(0/1)  |  o.show()   | o.text(text,x,y)",
+"   o.hline(*) |  d.vline(*)   | o.pixel(x,y,1)",
+"   (*) x, y, w/h, color       > o.show()",
+">> sensors/communications/etc.",
+"   get_adc(pin)               > return analog RAW",
+"   adc_test()                 > simple adc test",
+"   t = temp_init()            > getTemp(t[0],t[1])",
+"   i2c_scann()                = find I2C devices",
+"   timeSetup()                > from URL(urlApi)",
+'   get_hhmm(separator)        > get_hhmm("-")',
+">> standard lib. functions:",
+"   sleep(1)  / sleep_ms(1)    = 1 s/ms pause",
+"   urandom(1)[0]              = random num.",
+"   import webrepl_setup       = remote access",
+]
+
+# -------------------------------- common terminal function ---------------
+def getVer():
+    return "octopusLAB - lib.version: " + var.ver + " > " + var.verDat
+
+def get_eui():
+    return var.uID #mac2eui(id) 
+
+def printInfo(w=WT):
+    print('-' * w)
+    print("| ESP UID: " + var.uID + " | RAM free: "+ str(getFree()) + " | " + get_hhmm())  
+    print('-' * w)      
+
+def o_help():
+    printOctopus()
+    print("Welcome to MicroPython on the ESP32 octopusLAB board")
+    print("("+getVer()+")")
+    printTitle("example - list commands")
+    for ml in menuList:
+        print(ml)
+
+def h():
+    o_help()    
+    printInfo()
+
+def o_info():
+    printTitle("basic info > ")
+    print("This is basic info about system and setup")
+    from machine import freq
+    print("> machine.freq: "+str(freq()) + " [Hz]")
+    printLog("memory")
+    print("> ram free: "+str(gc.mem_free()) + " [B]")
+    #print("> flash: "+str(os.statvfs("/")))
+    ff =int(os.statvfs("/")[0])*int(os.statvfs("/")[3])
+    print("> flash free: "+str(int(ff/1000)) + " [kB]")
+    printLog("device")
+    try:
+        with open('config/device.json', 'r') as f:
+            d = f.read()
+            f.close()
+            print(" > config/device: " + d)
+            # device_config = json.loads(d)
+    except:
+        print("Device config 'config/device.json' does not exist, please run setup()") 
+    
+    printLog("pinout")
+    print(pinout) 
+    printLog("io_conf") 
+    print(io_conf) 
+    printInfo()    
+
+def i(): 
+    o_info()             
+
+def f(file='config/device.json'):
+    """print data: f("filename") """
+    printTitle("file > " + file)
+    with open(file, 'r') as f:
+            d = f.read()
+            #print(os.size(f))
+            f.close()
+            print(d) 
+
+try: PIN_WS = pinout.WS_LED_PIN
+except: PIN_WS = 15
+def rgb_init(num_led, pin = PIN_WS):
+    if num_led is None or num_led == 0:
+        return
+    from util.ws_rgb import * # setupNeopixel
+    np = setupNeopixel(Pin(pin, Pin.OUT), num_led)
+    return np          
+
+def beep(f=1000,l=50):
+    piezzo.beep(f,l)
+
+def tone(f, l=300): 
+    piezzo.play_tone(f,l)
+  
+def disp7_init():
+    printTitle("disp7init()")
+    from lib.max7219_8digit import Display
+    #spi = SPI(-1, baudrate=100000, polarity=1, phase=0, sck=Pin(14), mosi=Pin(13), miso=Pin(2))
+    #ss = Pin(15, Pin.OUT)
+    print("display test: octopus")
+    d7 = Display(spi, ss)
+    d7.write_to_buffer('octopus')
+    d7.display()
+    return d7
+
+def disp8_init():
+    printTitle("disp8init()")
+    from lib.max7219 import Matrix8x8
+    d8 = Matrix8x8(spi, ss, 1) #1/4
+    #print("SPI device already in use")
+
+    count = 6
+    for i in range(count):
+        d8.fill(0)
+        d8.text(str(i),0,0,1)
+        d8.show()
+        print(i)
+        time.sleep_ms(500)
+
+    d8.fill(0)
+    d8.show()
+    return d8
+
+def scroll(d8, text,num): # TODO speed, timer? / NO "sleep"
+    WIDTH = 8*4
+    x = WIDTH + 2
+    for _ in range(8*len(text)*num):
+        time.sleep(0.03)
+        d8.fill(0)
+        x -= 1
+        if x < - (8*len(text)):
+            x = WIDTH + 2
+        d8.text(text, x, 0, 1)
+        d8.show()
+    d8.fill(0)
+    d8.show()    
+
+def disp7(d,mess):
+    d.write_to_buffer(str(mess))
+    d.display()
+
+def i2c_scann():
+    print("i2c_scann() > devices:")
+    i2c = I2C(-1, Pin(pinout.I2C_SCL_PIN), Pin(pinout.I2C_SDA_PIN))
+    i2cdevs = i2c.scan()
+    print(i2cdevs) 
+    if (OLED_ADDR in i2cdevs): print("ok > OLED: "+str(OLED_ADDR))
+    if (LCD_ADDR in i2cdevs): print("ok > LCD: "+str(LCD_ADDR))
+    bhLight = 0x23 in i2cdevs
+    bh2Light = 0x5c in i2cdevs
+    tslLight = 0x39 in i2cdevs
+    return i2c   
+
+def lcd2_init():
+    printTitle("lcd2init()")
+    i2c = i2c_scann()
+    LCD_ROWS=2
+    LCD_COLS=16
+    from lib.esp8266_i2c_lcd import I2cLcd
+    lcd = I2cLcd(i2c, LCD_ADDR, LCD_ROWS, LCD_COLS)
+    print("display test: octopusLAB")
+    lcd.clear()
+    lcd.putstr("octopusLAB")
+    return lcd
+
+def disp2(d,mess,r=0,s=0):
+    #d.clear()
+    d.move_to(s, r) # x/y
+    d.putstr(str(mess)) 
+
+def oled_init():
+    from util.display_segment import * 
+    printTitle("oled_init()")
+    i2c = i2c_scann()
+    OLED_ydown = OLEDY-7
+    from lib import ssd1306
+    time.sleep_ms(1000)
+    #i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
+    oled = ssd1306.SSD1306_I2C(OLEDX, OLEDY, i2c)
+    print("display test: oled display OK")
+    oled.text('oled display OK', OLED_x0, 3)
+    # oled.text(get_hhmm(), 45,29) #time HH:MM
+    oled.hline(0,52,128,1)
+    oled.text("octopusLAB 2019",OLED_x0,OLED_ydown)
+    oled.show()
+    return oled
+
+def oledSegment(oled,num,point=False,deg=False):
+    threeDigits(oled,num,point,deg)   
+
+def oledSegmentTest(oled):
+    print("oled segment test >")
+    oled.fill(0)
+    oled.text('octopusLAB test', OLED_x0, 3)
+    for num in range(100):
+        oledSegment(oled,100-num)
+        sleep_ms(50)
+
+def draw_icon(oled, icon, posx, posy):
+    for y, row in enumerate(icon):
+        for x, c in enumerate(row):
+            oled.pixel(x+posx, y+posy, c) 
+    oled.show()                
+
+def oledImage(oled, file="assets/octopus_image.pbm"):
+    IMAGE_WIDTH = 63
+    IMAGE_HEIGHT = 63
+
+    with open('assets/'+file, 'rb') as f:
+        f.readline() # Magic number
+        f.readline() # Creator comment
+        f.readline() # Dimensions
+        data = bytearray(f.read())
+        fbuf = framebuf.FrameBuffer(data, IMAGE_WIDTH, IMAGE_HEIGHT, framebuf.MONO_HLSB)
+        # To display just blit it to the display's framebuffer (note you need to invert, since ON pixels are dark on a normal screen, light on OLED).
+        oled.invert(1)
+        oled.blit(fbuf, 0, 0)        
+    oled.show() 
+
+try: PIN_SER = pinout.PWM1_PIN
+except: PIN_SER = 17 # ROBOT
+def servo_init(pin = PIN_SER):
+    servo = Servo(PIN_SER)
+    return servo
+
+def clt():
+    print(chr(27) + "[2J") # clear terminal
+    print("\x1b[2J\x1b[H") # cursor up
+
+def c():
+    clt()
+
+def r():
+    import machine
+    machine.reset()            
+
+octopusASCII = [
+"      ,'''`.",
+"     /      \ ",
+"     |(@)(@)|",
+"     )      (",
+"    /,'))((`.\ ",
+"   (( ((  )) ))",
+"   ) \ `)(' / ( ",
+]
+
+def printOctopus():
     print()
-rtc = machine.RTC() # real time
+    for ol in octopusASCII:
+        print("     " + str(ol))
+    print()        
 
-pwm0 = PWM(Pin(pinout.PIEZZO_PIN)) # create PWM object from a pin
-pwm0.duty(0)
+def printHead(s):
+    print()
+    print('-' * WT)
+    print("[--- " + s + " ---] ") 
 
-fet = None
+def printTitle(t,w=WT):
+    print()
+    print('=' * w)
+    print("|",end="")
+    print(t.center(w-2),end="")
+    print("|")
+    print('=' * w)
 
-"""
-timNote = Timer(8, freq=3000)
-ch = timNote.channel(2, Timer.PWM, pin=Pin(pinout.PIEZZO_PIN))
+def printLog(i,s=""):
+    print()
+    print('-' * WT)
+    print("[--- " + str(i) + " ---] " + s)
 
-tim = Timer(-1)
-"""
-led = Pin(pinout.BUILT_IN_LED, Pin.OUT) # BUILT_IN_LED
+def getFree():
+    return gc.mem_free()      
+
+def printFree():
+    print("Free: "+str(getFree()))  
+
+def bytearrayToHexString(ba):
+    return ''.join('{:02X}'.format(x) for x in ba)      
+
+def map(x, in_min, in_max, out_min, out_max):
+    return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)      
+
+def bytearrayToHexString(ba):
+    return ''.join('{:02X}'.format(x) for x in ba)
 
 def add0(sn):
     ret_str=str(sn)
@@ -48,550 +374,284 @@ def add0(sn):
        ret_str = "0"+str(sn)
     return ret_str
 
-def get_hhmm():
+def get_hhmm(separator=":",rtc=rtc):
+    """get_hhmm(separator) | separator = string: "-" / " " """
     #print(str(rtc.datetime()[4])+":"+str(rtc.datetime()[5]))
     hh=add0(rtc.datetime()[4])
     mm=add0(rtc.datetime()[5])
-    return hh+":"+mm
-
-octopuASCII = [
-"      ,'''`.",
-"     /      \ ",
-"     |(@)(@)|",
-"     )      (",
-"    /,'))((`.\ ",
-"   (( ((  )) ))",
-"   )  \ `)(' / ( ",
-]
-
-def mainOctopus():
-    for ol in octopuASCII:
-        print(str(ol))
-    print()
-
-def mainMenu():
-    print()
-    print(get_hhmm())
-    print('=' * 35)
-    print("     O C T O P U S    M E N U")
-    print('=' * 35)
-    print("SYSTEM & SETTINGS")
-    print("[i] - device & system info")
-    print("[s] - setup machine and wifi")
-    print("[w] - wifi test")
-    print("[f] - file info/dir")
-    print("[c] - clear terminal")
-    print('.' * 30)
-    print("EXAMPLES & TESTS")
-    print("[b] - built-in led/beep/button")
-    print("[r1] - RGB WS led test (/wr1)")
-    print("[r8] - 8x RGB WS led test (/r80)")
-    print("[m] - piezzo melody")
-    print("[a] - analog input test")
-    print("[t] - temperature")
-    print("[d] - displays        --- >>>")
-    print("[r] - robot/iot Board --- >>>")
-    print("[p] - projects        --- >>>")
-    #print("[u] * uart test")
-    print("[q] - QUIT")
-    print('-' * 35)
-
-    sel = input("select: ")
-    #print("your select: "+str(sel))
-    return sel
-    print()
+    return hh + separator + mm
 
 # Define function callback for connecting event
-def connected_callback(sta):
+"""def connected_callback(sta):
     global WSBindIP
-    blink(led, 50, 100)
-    # np[0] = (0, 128, 0)
-    # np.write()
     blink(led, 50, 100)
     print(sta.ifconfig())
     WSBindIP = sta.ifconfig()[0]
 
 def connecting_callback():
-    # np[0] = (0, 0, 128)
-    # np.write()
     blink(led, 50, 100)
+"""
+def wait_pin_change(pin):
+    # wait for pin to change value, it needs to be stable for a continuous 20ms
+    cur_value = pin.value()
+    active = 0
+    while active < 20:
+        if pin.value() != cur_value:
+            active += 1
+        else:
+            active = 0
+        sleep_ms(1)
 
-#servo
-SERVO_MIN = const(45)
-SERVO_MAX = const(130)
+#test for Shield1 or FirstBoard hack buttons
+def button_init(L = 34, R = 35):
+    b34 = Pin(L, Pin.IN) #SL
+    b35 = Pin(R, Pin.IN) #SR
+    return b34, b35
 
-def map(x, in_min, in_max, out_min, out_max):
-    return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)
+def button(pin, num=10): #num for debounce
+    value0 = value1 = 0
+    for i in range(num):
+        if pin.value() == 0:
+            value0 += 1
+        else:
+            value1 += 1
+        sleep_us(50)  
+    return value0, value1
 
-def set_degree(servo, angle):
-    servo.duty(map(angle, 0,150, SERVO_MIN, SERVO_MAX))
+def adc_test():
+    print("analog input test: ")
+    #an = get_adc(adcpin)
+    an = adc.read()
+    print("RAW: " + str(an))
+    # TODO improve mapping formula, doc: https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/adc.html
+    #print("volts: {0:.2f} V".format(an/4096*10.74), 20, 50)
+
+def get_adc(adcpin = adcpin):    
+    pin_an = Pin(adcpin, Pin.IN)
+    adc = ADC(pin_an)
+    adc.atten(ADC.ATTN_11DB) # setup
+    an = adc.read()
+    return an # single read, better average
+
+def get_adc_aver(adcpin = adcpin, num=10):    
+    #pin_an = Pin(adcpin, Pin.IN)
+    #adc = ADC(pin_an)
+    suman = 0
+    for i in range(num):
+        an = adc.read()
+        suman = suman + an
+        sleep_us(10)
+    return int(suman/num) # single read, better average    
+
+try: PIN_TEMP = pinout.ONE_WIRE_PIN
+except: PIN_TEMP = 17 # ROBOT
+def temp_init(pin = PIN_TEMP):
+    printHead("temp")
+    print("dallas temp init >")
+    from onewire import OneWire
+    from ds18x20 import DS18X20
+    dspin = Pin(pin)
+    # from util.octopus_lib import bytearrayToHexString
+    try:
+        ds = DS18X20(OneWire(dspin))
+        ts = ds.scan()
+
+        if len(ts) <= 0:
+            io_conf['temp'] = False
+
+        for t in ts:
+            print(" --{0}".format(bytearrayToHexString(t)))
+    except:
+        io_conf['temp'] = False
+        print("Err.temp")
+
+    print("Found {0} dallas sensors, temp active: {1}".format(len(ts), io_conf['temp']))
+
+    if len(ts)>1:
+        print(getTempN(ds,ts))
+    else: 
+        print(getTemp(ds,ts))
+
+    return ds,ts       
+
+def getTemp(ds,ts): # return single/first value
+    """getTemp(t[0],t[1])"""
+    tw=0
+    ds.convert_temp()
+    sleep_ms(750)
+    temp = ds.read_temp(ts[0])
+    tw = int(temp*10)/10
+    return tw    
+
+def getTempN(ds,ts):
+    tw=[]
+    ds.convert_temp()
+    sleep_ms(750)
+    for t in ts:
+        temp = ds.read_temp(t)
+        tw.append(int(temp*10)/10)
+    return tw 
 
 def w_connect():
-    from util.wifi_connect import read_wifi_config, WiFiConnect
-    time.sleep_ms(1000)
-    wifi_config = read_wifi_config()
-    print("config for: " + wifi_config["wifi_ssid"])
+    led.value(1)
+
+    from util.wifi_connect import  WiFiConnect
+    sleep(1)
     w = WiFiConnect()
-    w.events_add_connecting(connecting_callback)
-    w.events_add_connected(connected_callback)
-    w.connect(wifi_config["wifi_ssid"], wifi_config["wifi_pass"])
-    print("WiFi: OK")
+    if w.connect():
+        print("WiFi: OK")
+    else:
+        print("WiFi: Connect error, check configuration")
 
-def neo_init(num_led):
-    from neopixel import NeoPixel
-    pin = Pin(pinout.WS_LED_PIN, Pin.OUT)
-    npObj = NeoPixel(pin, num_led)
-    return npObj
+    led.value(0)
+    wlan = network.WLAN(network.STA_IF)
+    print('network config:', wlan.ifconfig())
+    return wlan
 
-oled = 0
-def oled_intit():
-    global oled
-    from lib import ssd1306
-    time.sleep_ms(1000)
-    i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
-    oled = ssd1306.SSD1306_I2C(128, 64, i2c)
+def logDevice(urlPOST = "http://www.octopusengine.org/iot17/add18.php"):
+    header = {}
+    header["Content-Type"] = "application/x-www-form-urlencoded"
+    deviceID = var.uID
+    place = "octoPy32"
+    logVer =  int(float(var.ver)*100)
+    try:
+        postdata_v = "device={0}&place={1}&value={2}&type={3}".format(deviceID, place, logVer,"log_ver")
+        res = urequests.post(urlPOST, data=postdata_v, headers=header)
+        sleep_ms(100)
+        print("logDevice.ok")  
+    except:
+        print("E.logDevice")    
 
-def pulse(l, t):
-     for i in range(20):
-         l.duty(int(math.sin(i / 10 * math.pi) * 500 + 500))
-         time.sleep_ms(t)
+def w():  
+    printInfo()
+    printTitle("WiFi connect > ")
+    w_connect()
+    if var.logDev: logDevice() 
 
-def fade_in(p, r, m):
-     # pin - range - multipl
-     for i in range(r):
-          p.value(0)
-          time.sleep_us((r-i)*m*2) # multH/L *2
-          p.value(1)
-          time.sleep_us(i*m)
+def timeSetup(urlApi ="http://www.octopusengine.org/api/hydrop"):
+    printTitle("time setup from url")    
+    urltime=urlApi+"/get-datetime.php"
+    print("https://urlApi/"+urltime)
+    try:
+        response = urequests.get(urltime)
+        dt_str = (response.text+(",0,0")).split(",")
+        print(str(dt_str))
+        dt_int = [int(numeric_string) for numeric_string in dt_str]
+        rtc.init(dt_int)
+        #print(str(rtc.datetime()))
+        print("time: " + get_hhmm())
+    except:
+        print("Err. Setup time from URL")
 
-def fade_out(p, r, m):
-     # pin - range - multipl
-     for i in range(r):
-          p.value(1)
-          time.sleep_us((r-i)*m)
-          p.value(0)
-          time.sleep_us(i*m*2)
-#-------------
-def octopus():
+def getApiJson(urlApi ="http://www.octopusengine.org/api"):
+    import json
+    urljson=urlApi+"/led3.json"
+    aj = ""
+    try:
+        response = urequests.get(urljson)
+        dt_str = (response.text)
+        #print(str(dt_str))
+        j = json.loads(dt_str)
+        #print(str(j))
+        aj = j['light'] 
+    except:
+        print("Err. read json from URL")  
+    return aj    
+
+def getApiTest():
+    printTitle("data from url")
+    #print("https://urlApi/"+urljson)
+    print("htts://public_unsecure_web/data.json")    
+    print(getApiJson())
+
+def getApiText(urlApi ="http://www.octopusengine.org/api"):
+    import json
+    urltxt=urlApi+"/text123.txt"
+    try:
+        response = urequests.get(urltxt)
+        dt_str = response.text
+    except:
+        print("Err. read txt from URL")  
+    return dt_str  
+
+def octopus(autoInit = False): # automaticaly start init_X according to the settings io_conf.get(X)
+    var.autoInit = autoInit
+    printOctopus()
+    print("("+getVer()+")")
+    gc.collect()
+    printInfo()
+    print("This is basic library, type h() for help")
+
+# --------------- init --------------
+if True: # var.autoInit: //test
+    print("--> autoInit: ",end="")
+    if io_conf.get('led7') or io_conf.get('led8'):
+        print("SPI | ",end="")
+        spi = None
+        ss  = None
+        try:
+            #spi.deinit() #print("spi > close")            
+            spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
+            ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
+        except:
+            print("Err.SPI")
+
+    if io_conf.get('led'):
+        print("led | ",end="")
+        from util.led import Led
+        led = Led(LED_PIN) # BUILT_IN_LED
+
+    piezzo = None
+    if io_conf.get('piezzo'):
+        print("piezzo | ",end="")
+        from util.buzzer import Buzzer
+        piezzo = Buzzer(pinout.PIEZZO_PIN)
+        piezzo.beep(1000,50)
+        from util.buzzer import Notes
+    # else:
+    #    piezzo =Buzzer(None)
+
+    if io_conf.get('ws'):
+        print("ws | ",end="")
+        from util.rgb import Rgb
+        if pinout.WS_LED_PIN is None:
+            print("Warning: WS LED not supported on this board")
+        else:   
+            ws = Rgb(pinout.WS_LED_PIN,io_conf.get('ws')) 
+
+    if io_conf.get('oled'):
+        print("OLED lib | ",end="")
+        from assets.icons9x9 import ICON_clr, ICON_wifi 
+        from util.display_segment import threeDigits
+
+    if io_conf.get('temp'): 
+        print("temp | ",end="")      
+
+    if io_conf.get('servo'): 
+        print("servo | ",end="")
+        from util.servo import Servo  
+
     print()
-    #global notInitServo
-    notInitServo = True
-    global oled
-    global fet
-    ###beep(pwm0,500,100) # start beep
-    #tim.init(period=1000, mode=Timer.ONE_SHOT, callback=lambda t:print("test timer - thread delay"))
-    #tim.init(period=2000, mode=Timer.PERIODIC, callback=lambda t:print(2))
-    mainOctopus()
-    print("Hello, this is basic octopusLAB example (2018/12)")
-    print(" (Press Ctrl+C to abort | CTRL+D to soft reboot)")
-    print()
-
-    time.sleep_us(10)       # sleep for 10 microseconds
-    blink(led, 500)
-    time.sleep_ms(300)     # 1s
-    start = time.ticks_ms()
-
-    run= True
-    while run:
-      sel = mainMenu()
-      beep(pwm0, 1000, 50)
-
-      if sel == "a":
-          print("analog input test: ")
-          pin_an = Pin(pinout.ANALOG_PIN, Pin.IN)
-          adc = machine.ADC(pin_an)
-          an = adc.read()
-          print("RAW: " + str(an))
-          # TODO improve mapping formula, doc: https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/adc.html
-          print("volts: {0:.2f} V".format(an/4096*10.74), 20, 50)
-
-      if sel == "b":
-           count = 5
-           for _ in range(count):
-               beep(pwm0, 500, 100)
-               blink(led, 500)
-
-      if sel == "bt":
-           butt1 = Pin(pinout.BUTT1_PIN, Pin.IN, Pin.PULL_UP)
-           butt2 = Pin(pinout.BUTT2_PIN, Pin.IN, Pin.PULL_UP)
-           butt3 = Pin(pinout.BUTT3_PIN, Pin.IN, Pin.PULL_UP)
-           count = 10
-           for _ in range(count):
-               print("b1-"+str(butt1.value())),
-               print("b2-"+str(butt2.value())),
-               print("b3-"+str(butt3.value()))
-               beep(pwm0, 500, 100)
-               blink(led, 500)
-
-      if sel == "c":
-          print(chr(27) + "[2J") # clear terminal
-          print("\x1b[2J\x1b[H") # cursor up
-          mainOctopus()
-
-      if sel == "f":
-          print("file info /dir/ls:") #
-          print(os.listdir())
-          print("> lib: "+str(os.listdir("lib")))
-          print("> util: "+str(os.listdir("util")))
-          print("> pinouts: "+str(os.listdir("pinouts")))
-
-          print("i2c.scann() >")
-          i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
-          devices = i2c.scan()
-          print(devices)
-
-      if sel == "i":
-          print("System info:")
-          print("> octopus() ver: " + ver)
-          from util.sys_info import sys_info
-          sys_info()
-
-      if sel == "m":
-          time.sleep_ms(500)
-          from util.buzzer.melody import mario
-          play_melody(pwm0, mario)
-          pwm0.duty(0)
-
-      if sel == "r1":
-        np = neo_init(1)
-
-        np[0] = (128, 0, 0) #R
-        np.write()
-        time.sleep_ms(1000)
-
-        np[0] = (0,128, 0) #G
-        np.write()
-        time.sleep_ms(1000)
-
-        np[0] = (0, 0, 128) #B
-        np.write()
-        time.sleep_ms(1000)
-
-        np[0] = (0, 0, 0) #0
-        np.write()
-
-      if sel == "r8":
-       np = neo_init(8)
-
-       np[0] = (32, 0, 0) #R
-       np[1] = (0,32, 0) #G
-       np[2] = (0, 0, 32) #B
-       np[5] = (32, 0, 0) #R
-       np[6] = (0,32, 0) #G
-       np[7] = (0, 0, 32) #B
-       np.write()
-
-      if sel == "r80":
-         NUMBER_LED = 8
-         np = neo_init(NUMBER_LED)
-         for i in range(NUMBER_LED):
-           np[i] = (1, 0, 0)
-           time.sleep_ms(1)# REVIEW:
-         np.write()
-
-      if sel == "s":
-            from util.setup import setup
-            setup()
-
-      if sel == "t":
-            print("temperature >")
-            from lib.temperature import TemperatureSensor
-            ts = TemperatureSensor(pinout.ONE_WIRE_PIN)
-            temp = ts.read_temp()
-            # print to console
-            print(temp)
-
-      if sel == "w":
-            w_connect()
-
-      if sel == "wr1":
-            w_connect()
-            np = neo_init(1)
-            import urequests
-            import json
-            url1="http://octopuslab.cz/api/ws.json"
-            print(url1)
-            r1 = urequests.post(url1)
-            j = json.loads(r1.text)
-            time.sleep_ms(2000)
-            print(j["r"])
-            np[0] = (j["r"], j["g"], j["b"]) #R
-            np.write()
-
-      if sel == "q":
-          print("machine.reset() and Exit")
-          time.sleep_ms(1000)
-          machine.reset()
-          run = False
-
-      if sel == "d":
-         mainOctopus()
-         print(">>> Display test submenu")
-         print('=' * 30)
-         print("--- [od] --- oled display test")
-         print("--- [os] --- oled 3segment")
-         print("--- [oi] --- oled display image")
-         print("--- [m7] --- max display 8x7-segm")
-         print("--- [m8] --- max display 8x8-matrix")
-         print("--- [sd] --- serial display")
-         print("-+- [nd] -+- Nextion display")
-         print("-+- [id] -+- ink display")
-         print('=' * 30)
-         sel_d = input("select: ")
-
-         if sel_d == "od":
-              print("oled display test >")
-              oled_intit()
-
-              oled.fill(1)
-              oled.show()
-              time.sleep_ms(300)
-              oled.fill(0)                # reset display
-              oled.show()
-
-              # write text on x, y
-              oled.text('OLED test', 25, 10)
-              oled.text(get_hhmm(), 45,29) #time HH:MM
-              oled.hline(0,50,128,1)
-              oled.text("octopusLAB 2018",5,55) #time HH:MM
-              oled.show()
-              time.sleep_ms(1000)
-
-         if sel_d == "os":
-              print("oled segment test >")
-              oled_intit()
-              #from util.display_segment import * #???
-              for num in range(10):
-                  threeDigits(oled,20+num,True,True)
-                  time.sleep_ms(50)
-
-         if sel_d == "oi":
-             print("oled image test >")
-             oled_intit()
-             import framebuf
-
-             IMAGE_WIDTH = 63
-             IMAGE_HEIGHT = 63
-
-             with open('assets/octopus_image.pbm', 'rb') as f:
-                 f.readline() # Magic number
-                 f.readline() # Creator comment
-                 f.readline() # Dimensions
-                 data = bytearray(f.read())
-                 fbuf = framebuf.FrameBuffer(data, IMAGE_WIDTH, IMAGE_HEIGHT, framebuf.MONO_HLSB)
-                 # To display just blit it to the display's framebuffer (note you need to invert, since ON pixels are dark on a normal screen, light on OLED).
-                 oled.invert(1)
-                 oled.blit(fbuf, 0, 0)
-
-             oled.text("Octopus", 66,6)
-             oled.text("Lab", 82,16)
-             oled.text("Micro", 74,35)
-             oled.text("Python", 70,45)
-             oled.show()
-
-         if sel_d == "m7":
-             from lib.max7219_8digit import Display
-             #spi = SPI(-1, baudrate=100000, polarity=1, phase=0, sck=Pin(14), mosi=Pin(13), miso=Pin(2))
-             #ss = Pin(15, Pin.OUT)
-             d7 = Display(spi, ss)
-             d7.write_to_buffer('12345678')
-             d7.display()
-
-         if sel_d == "m8":
-           from lib.max7219 import Matrix8x8
-           d8 = Matrix8x8(spi, ss, 1) #1/4
-           #print("SPI device already in use")
-
-           count = 6
-           for i in range(count):
-             d8.fill(0)
-             d8.text(str(i),0,0,1)
-             d8.show()
-             print(i)
-             time.sleep_ms(500)
-
-           d8.fill(0)
-           d8.show()
-
-         if sel_d == "sd":
-                   from machine import UART
-                   uart = UART(2, 9600) #UART2 > #U2TXD(SERVO1/PWM1_PIN)
-                   uart.write('C')      #test quick clear display
-
-                   uart.write('W7')   #change color
-                   uart.write('h30')  #horizontal line
-                   uart.write('h230') #horizontal line
-
-                   uart.write('R0')
-                   uart.write('W2')   #color
-                   uart.write('QoctopusLAB - UART2 test*')
-                   time.sleep_ms(100)
-                   uart.write('R2')
-                   uart.write('W1')   #color
-                   uart.write('QESP32 & ROBOTboard*')
-                   time.sleep_ms(100)
-
-                   uart.write('R5')
-                   uart.write('W2')   #color
-
-                   num=9
-                   for i in range(num):
-                       uart.write('Q')
-                       uart.write(str(num-i-1))
-                       uart.write('*')
-                       time.sleep_ms(500)
-
-      if sel == "r":
-             mainOctopus()
-             print()
-             print('=' * 30)
-             print(">>> Boards special test")
-             print('.' * 30)
-             print("    Robot board")
-             print("--- [dc] --- dc motor test")
-             print("--- [se] --- servo")
-             print("--- [sm] --- step motor")
-             print('.' * 30)
-             print("    IoT board")
-             print("--- [re] --- relay test")
-             print("--- [fa] --- pwm fan test")
-             print("--- [li] --- led fade in")
-             print("--- [lo] --- led fade out")
-             print("--- [lp] --- led pulse")
-             print('=' * 30)
-
-             sel_r = input("select: ")
-             if sel_r == "dc":
-                  print("dc motor test >")
-                  a1 = Pin(pinout.MOTOR_1A, Pin.OUT)
-                  a2 = Pin(pinout.MOTOR_2A, Pin.OUT)
-                  a12 = Pin(pinout.MOTOR_12EN, Pin.OUT)
-                  a3 = Pin(pinout.MOTOR_3A, Pin.OUT)
-                  a4 = Pin(pinout.MOTOR_4A, Pin.OUT)
-                  a34 = Pin(pinout.MOTOR_34EN, Pin.OUT)
-
-                  a34.value(0)
-                  a12.value(1)
-
-                  print("a12:10")
-                  a1.value(1)
-                  a2.value(0)
-                  time.sleep_ms(3000)
-                  print("a12:01")
-                  a1.value(0)
-                  a2.value(1)
-                  time.sleep_ms(3000)
-
-                  a12.value(0)
-                  a34.value(1)
-
-                  print("a34:01")
-                  a3.value(0)
-                  a4.value(1)
-                  time.sleep_ms(3000)
-                  print("a12:10")
-                  a3.value(1)
-                  a4.value(0)
-                  time.sleep_ms(3000)
-                  a34.value(0)
-
-             if sel_r == "se":
-                print("servo1 test >")
-                #pwm_center = int(pinout.SERVO_MIN + (pinout.SERVO_MAX-pinout.SERVO_MIN)/2)
-                pwm_center = 60
-
-                #if notInitServo:
-                print("init-servo:")
-                pin_servo1 = Pin(pinout.PWM1_PIN, Pin.OUT)
-                servo1 = PWM(pin_servo1, freq=50, duty=pwm_center)
-                print("OK")
-                time.sleep_ms(1500)
-                #notInitServo = False
-
-                time.sleep_ms(1500)
-                servo1.duty(SERVO_MAX)
-                time.sleep_ms(1500)
-                servo1.duty(SERVO_MIN)
-                time.sleep_ms(1500)
-
-                print("degree45")
-                set_degree(servo1,45)
-
-             if sel_r == "sm":
-                from lib.sm28byj48 import SM28BYJ48
-                #PCF address = 35 #33-0x21/35-0x23
-                ADDRESS = 0x23
-                # motor id 1 or 2
-                MOTOR_ID1 = 1
-                #MOTOR_ID2 = 2
-
-                i2c_sda = Pin(pinout.I2C_SDA_PIN, Pin.IN,  Pin.PULL_UP)
-                i2c_scl = Pin(pinout.I2C_SCL_PIN, Pin.OUT, Pin.PULL_UP)
-
-                i2c = machine.I2C(scl=i2c_scl, sda=i2c_sda, freq=100000) # 100kHz as Expander is slow :(
-                motor1 = SM28BYJ48(i2c, ADDRESS, MOTOR_ID1)
-
-                # turn right 90 deg
-                motor1.turn_degree(90)
-                # turn left 90 deg
-                motor1.turn_degree(90, 1)
-
-             if sel_r == "re":
-                 print("relay test >")
-                 rel = Pin(pinout.RELAY_PIN, Pin.OUT)
-                 rel.value(1)
-                 time.sleep_ms(3000)
-                 rel.value(0)
-
-             if sel_r == "li":
-                 if not fet:
-                     fet = Pin(pinout.MFET_PIN, Pin.OUT)
-
-                 print("led - pwm fade in - test >")
-                 #lf = PWM(Pin(pinout.MFET_PIN))
-                 #lf.duty(0)
-                 #lf.freq(5000)
-                 #time.sleep_ms(1000)
-                 #for i in range(100):
-                 #     lf.duty(i*10)
-                 #     time.sleep_ms(20)
-                 fade_in(fet,500,5)
-
-             if sel_r == "lo":
-                  if not fet:
-                     fet = Pin(pinout.MFET_PIN, Pin.OUT)
-
-                  print("led - pwm fade out - test >")
-                  #lf = PWM(Pin(pinout.MFET_PIN))
-                  #lf.duty(1000)
-                  #lf.freq(5000)
-                  #time.sleep_ms(1000)
-                  #for i in range(100):
-                  #      lf.duty(1000-i*10)
-                  #      time.sleep_ms(20)
-                  fade_out(fet,500,5)
-
-             if sel_r == "lp":
-                  lf = PWM(Pin(pinout.MFET_PIN))
-                  for i in range(5):
-                      pulse(lf, 200)
-
-      if sel == "p":
-            mainOctopus()
-            print()
-            print(">>> Projects submenu")
-            print('=' * 30)
-            print("--- [1] --- temporary")
-            print("--- [2] --- todo")
-            print("--- [3] --- ")
-            print('=' * 30)
-
-            sel_p = input("select: ")
-            if sel_p == "1":
-                 print("project 1 >")
-
-    delta = time.ticks_diff(time.ticks_ms(), start) # compute time difference
-    print("> delta time: "+str(delta))
-    beep(pwm0, 2000, 50)
-    print("all OK, press CTRL+D to soft reboot")
-    blink(led, 50)
+# --------------- after init ---------------
+# for example: np was still None, need init before
+def RGB(color,np=np):
+    np.fill(color)
+    np.write()
+   
+def RGBtest(wait=500): 
+    from util.ws_rgb import simpleRgb
+    simpleRgb(np,wait)
+
+def Rainbow(wait=50):
+    print("> RGB Rainbow")
+    from util.ws_rgb import rainbow_cycle
+    rainbow_cycle(np, io_conf.get('ws'), wait) 
+
+# print("auto Init" + str(var.autoInit))
+if var.autoInit:
+    printTitle("> auto Init ")
+    if io_conf.get('led7'):
+        d7 = disp7_init()
+
+    if io_conf.get('temp'):
+        t = temp_init()                   

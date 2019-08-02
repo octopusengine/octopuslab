@@ -7,7 +7,7 @@ import time, uos
 import ujson
 import machine #datetime
 
-ver = "0.5 / 19.5.2019"
+ver = "0.62 / 13.7.2019"
 
 devices = [
 ["oLAB Default","esp32"],
@@ -17,10 +17,13 @@ devices = [
 ["oLAB RobotBoard1 v1","esp32"],
 ["oLAB RobotBoard1","esp32"],
 ["oLAB IoTBoard1","esp8266"],
-["oLAB IoTBoard1","esp32"]
+["oLAB IoTBoard1","esp32"],
+["oLAB LANboard1","esp32"],
+["oLAB ESP32board1", "esp32"],
+["WeMos OLED","esp32"]
 ]
 
-octopuASCII = [
+octopusASCII = [
 "      ,'''`.",
 "     /      \ ",
 "     |(@)(@)|",
@@ -31,7 +34,7 @@ octopuASCII = [
 ]
 
 def mainOctopus():
-    for ol in octopuASCII:
+    for ol in octopusASCII:
         print(str(ol))
     print()
 
@@ -47,7 +50,7 @@ def deploy(url):
     if not res.status_code == 200:
         return
 
-    def dir_exists(path):
+    def exists(path):
         try:
             os.stat(path)
             return True
@@ -64,11 +67,17 @@ def deploy(url):
             else:
                 name = f.name
 
-            if not dir_exists(name):
+            if not exists(name):
                 os.mkdir(name)
         else:
             extracted = t.extractfile(f)
-            shutil.copyfileobj(extracted, open(f.name, "wb"))
+
+            #if exists(f.name):
+            #    os.remove(f.name)
+
+            with open(f.name, "wb") as fobj:
+                shutil.copyfileobj(extracted, fobj)
+
 
 def setupMenu():
     print()
@@ -77,15 +86,16 @@ def setupMenu():
     print('=' * 30)
     print("[w]   - wifi submenu")
     print("[cw]  - connect wifi")
+    print("[sdp] - system download > petrkr (update octopus modules from URL)")
+    print("[sdo] - system download > octopus (update octopus modules from URL)")
     print("[ds]  - device setting")
-    print("[ios]  - I/O setting")
-    print("[iot]  - I/O test")
-    print("[mq]  - mqtt() setup")
+    print("[ios] - I/O setting submenu")
+    print("[iot] - I/O test - run io_test()")
+    print("[mq]  - mqtt() and sending data setup")
     print("[st]  - set time")
-    print("[sdp]  - system download > petrkr (update octopus modules from URL)")
-    print("[sdo]  - system download > octopus (update octopus modules from URL)")
     print("[si]  - system info")
-    print("[o]   - run octopus() demo")
+    print("[wr]  - run web repl")
+    print("[od]  - run octopus() demo")
     print("[x]   - exit setup")
 
     print('=' * 30)
@@ -112,9 +122,9 @@ def ioMenu():
         io_conf = get_io_config_from_file()
 
         print()
-        print('=' * 30)
-        print('        S E T U P - I / O')
-        print('=' * 30)
+        print('=' * 50)
+        print('        S E T U P - I / O    (interfaces)')
+        print('=' * 50)
         # show options with current values
         c = 0
         for i in io_menu_layout:
@@ -122,7 +132,7 @@ def ioMenu():
             print("[%2d] - %8s [%s] - %s" % (c, i['attr'], io_conf.get(i['attr'], 0), i['descr']))
         print("[x]  - Exit from I/O setup")
 
-        print('=' * 30)
+        print('=' * 50)
         sele = input("select: ")
 
         if sele == "x":
@@ -153,7 +163,6 @@ def ioMenu():
         else:
             print("Invalid input, try again.")
 
-
 def shutil():
     print("System download > (initial octopus modules)")
     import upip
@@ -161,13 +170,11 @@ def shutil():
     upip.install("micropython-shutil")
     print("Running deploy")
 
-
 def setup():
     mainOctopus()
     print("Hello, this will help you initialize your ESP")
     print("ver: " + ver + " (c)octopusLAB")
     print("Press Ctrl+C to abort")
-
 
     # TODO improve this
     # prepare directory
@@ -259,7 +266,6 @@ def setup():
             except:
                print("Err.mqtt() or 'util.mqtt.py' does not exist")
 
-
         if sele == "st":
             print("Time setting >")
             rtc = machine.RTC()
@@ -278,10 +284,16 @@ def setup():
 
         if sele == "sdo":
             shutil()
-            #deplUrl = "http://octopuslab.cz/download/latest.tar"
             deplUrl = "http://octopusengine.org/download/latest.tar"
             deploy(deplUrl)
 
-        if sele == "o":
-            from util.octopus import octopus
-            octopus()
+        if sele == "od":
+            from util.octopus_demo import octopus_demo
+            octopus_demo()
+
+        if sele == "wr":
+            print("under reconstruction <") 
+            import esp
+            esp.osdebug(None)
+            import webrepl
+            webrepl.start()

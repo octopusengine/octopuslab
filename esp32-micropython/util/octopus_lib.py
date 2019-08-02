@@ -6,11 +6,17 @@ import machine, time, os, ubinascii, framebuf, gc
 
 # ---------------- procedures
 def getOctopusLibVer():
-    return "octopus lib.ver: 10.3.2019"
+    return "octopus lib.ver: 9.7.2019"
+
+def printTitle(t,num):
+    print()
+    print('=' * num)
+    print(t.center(num))
+    print('=' * num)    
 
 def printLog(i,s):
     print()
-    print('-' * 30)
+    print('-' * 35)
     print("[--- " + str(i) + " ---] " + s)  
 
 def printFree():
@@ -37,6 +43,11 @@ def get_hhmm(rtc):
     mm=add0(rtc.datetime()[5])
     return hh+":"+mm 
 
+def get_hh_mm(rtc):
+    hh=add0(rtc.datetime()[4])
+    mm=add0(rtc.datetime()[5])
+    return hh+"-"+mm     
+
 def blinkOledPoint(oled):
     oled.fill_rect(x0,y0,5,5,1)
     oled.show()
@@ -47,7 +58,6 @@ def blinkOledPoint(oled):
     time.sleep_ms(2000)
 
 def oledImage(oled, file):
-
     IMAGE_WIDTH = 63
     IMAGE_HEIGHT = 63
 

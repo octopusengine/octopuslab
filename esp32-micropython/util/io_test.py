@@ -4,82 +4,82 @@
 # loadConfig()
 # printConfig()
 # printFree()
+
 from machine import Pin
+from time import sleep, sleep_ms
+from util.octopus import *
 from util.pinout import set_pinout
 pinout = set_pinout()
 
 from util.io_config import get_from_file
 io_conf = get_from_file()
 
+def test_led():
+    if io_conf.get('led'):
+        printHead("led")
+        print("LED init  >")
+        led = Pin(pinout.BUILT_IN_LED, Pin.OUT)
+
+        print("LED test >")
+        led.value(1)
+        sleep(1)
+        led.value(0)
+        
 def test_ws():
     if io_conf.get('ws'):
+        printHead("ws")
         print("WS RGB LED init neopixel >")
-        from util.ws_rgb import simpleRgb, neopixelTest, setupNeopixel
-        pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
-        np = setupNeopixel(pin_ws, io_conf['ws'])
+        np = rgb_init(io_conf['ws'] if 'ws' in io_conf else 0)
 
-        # num_pixels = 12
-        ws_r = 0
-        ws_g = 0
-        ws_b = 0
         print("WS RGB LED test >")
+        RGBtest(1000)
 
-        simpleRgb(np)
+def test_piezzo():
+    if io_conf.get('piezzo'):
+        printHead("piezzo - beep()")       
+        beep()            
 
-        if io_conf['ws'] > 1:
-            neopixelTest(np, io_conf['ws'])
-
+#ts = []
 def test_temp():
-    ts = []
-    if io_conf.get('temp'):
-        print("dallas temp init >")
-        from onewire import OneWire
-        from ds18x20 import DS18X20
-        dspin = machine.Pin(pinout.ONE_WIRE_PIN)
-        from util.octopus_lib import bytearrayToHexString
+    temp_init()  
+
+def test_butt():
+    if io_conf.get("button"):
+        printHead("button")
+        # Button settings
+        BTN_Debounce   = 20
+        BTN_Tresh      = 10
+        BTN_Delay      = 250
+        BTN_LastPress  = 0
+        BTN_PressCount = 0
+        print("Initializing single Button, delay {0}".format(BTN_Delay))
         try:
-            ds = DS18X20(OneWire(dspin))
-            ts = ds.scan()
-
-            if len(ts) <= 0:
-                io_conf['temp'] = False
-
-            for t in ts:
-                print(" --{0}".format(bytearrayToHexString(t)))
+            btn = Pin(pinout.DEV2_PIN, Pin.IN, Pin.PULL_UP)
+            #btn.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=handleButton)
         except:
-            io_conf['temp'] = False
-        print("Found {0} dallas sensors, temp active: {1}".format(len(ts), io_conf['temp']))
-#
-# if isLed7:
-#     from lib.max7219_8digit import Display
-#     # spi
-#     try:
-#         #spi.deinit()
-#         #print("spi > close")
-#         spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
-#         ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
-#         d7 = Display(spi, ss)
-#     except:
-#         print("spi.D7.ERR")
-#
-# if isLed8:
-#     from lib.max7219_8digit import Display
-#     # spi
-#     if True: #try:
-#         #spi.deinit()
-#         spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
-#         ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
-#
-#         from lib.max7219 import Matrix8x8
-#         d8 = Matrix8x8(spi, ss, 4) #1/4
-#         #print("SPI device already in use")
-#         d8.brightness(15)
-#         d8.fill(0)
-#         d8.text('1234', 0, 0, 1)
-#         d8.show()
-#     """except:
-#         print("spi.D8.ERR")
-#     """
+            print("btn.Err")    
+
+def test_led7(): 
+    if io_conf.get('led7'): 
+        printHead("led7")      
+        d = disp7_init()
+
+def test_led8():
+    if io_conf.get('led8'): 
+        printHead("led8")  
+
+def test_oled():
+    if io_conf.get('oled'): 
+        printHead("oled")          
+        o = oled_init()
+
+def test_ad():
+    if io_conf.get('ad0'):
+        printHead("ADC test")
+        for i in range(30):
+             print(get_adc(36))
+             sleep_ms(300)            
+     
 # if isTft:
 #     print("spi.TFT 128x160 init >")
 #     printFree()
@@ -179,18 +179,6 @@ def test_temp():
 #     lcd.clear()
 #     lcd.putstr("octopusLAB")
 #
-# if isOLED:
-#     oled_intit()
-#     oled.text('MQTT-SLAVE test', 5, 3)
-#     # oled.text(get_hhmm(), 45,29) #time HH:MM
-#     oled.hline(0,50,128,1)
-#     oled.text("octopusLAB 2019",5,OLED_ydown)
-#     oled.show()
-#
-# if isLed7:
-#     print("Testing 7seg")
-#     test7seg()
-#
 # if isKeypad:
 #     print("I2C epander Keypad 4x4")
 #     if not KP_ADDRESS in i2c.scan():
@@ -200,11 +188,13 @@ def test_temp():
 #         from lib.KeyPad_I2C import keypad
 #         kp = keypad(i2c, KP_ADDRESS)
 #
-# if isButton:
-#     print("Initializing Button, delay {0}".format(BTN_Delay))
-#     btn = Pin(pinout.DEV2_PIN, Pin.IN, Pin.PULL_UP)
-#     #btn.irq(trigger=Pin.IRQ_FALLING | Pin.IRQ_RISING, handler=handleButton)
 
 def all():
+    test_led()
     test_ws()
-    test_temp()
+    test_piezzo()
+    #test_temp()
+    #test_butt()
+    test_led7()   
+    test_oled()
+    test_ad()   

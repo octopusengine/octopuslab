@@ -1,9 +1,9 @@
 #include <ETH.h>
 
 // TODO: Pin# of the enable signal for the external crystal oscillator (-1 to disable for internal APLL source)
-#define ETH_POWER_PIN   5
-
+#define ETH_POWER_PIN   -1
 #define ETH_ADDR        1
+
 
 static bool eth_connected = false;
 
@@ -69,19 +69,43 @@ void setup() {
   Serial.begin(115200);
 
   //Built in LED
-  pinMode(2, OUTPUT);
-  digitalWrite(2, LOW);
-  
+  pinMode(4, OUTPUT);
+  pinMode(15, OUTPUT);
+  digitalWrite(4, LOW);
+  digitalWrite(15, LOW);
+
   Serial.println("Program RUN");
   WiFi.onEvent(WiFiEvent);
   ETH.begin(ETH_ADDR, ETH_POWER_PIN, ETH_PHY_MDC, ETH_PHY_MDIO, ETH_PHY_TYPE, ETH_CLOCK_GPIO17_OUT);
-  //ETH.begin(ETH_ADDR, ETH_POWER_PIN);
 }
 
+long previousKeepAliveMillis = 0;
+void handleKeepAlive() {
+  if (millis() - previousKeepAliveMillis >= 1000) {
+    previousKeepAliveMillis = millis();
+
+    Serial.println("Keep Alive");
+  }
+}
+
+long previousTimer1 = 0;
+void handleTimer1() {
+  if (millis() - previousTimer1 >= 5000) {
+    previousTimer1 = millis();
+
+    if (eth_connected) {
+      digitalWrite(15, HIGH);
+      testClient("ifconfig.co", 80, "/json");
+      digitalWrite(15, LOW);
+    }
+
+  }
+}
 
 void loop() {
-  if (eth_connected) {
-    testClient("ifconfig.co", 80, "/json");
-  }
-  delay(10000);
+  digitalWrite(4, eth_connected);
+
+  handleKeepAlive();
+
+  handleTimer1();
 }

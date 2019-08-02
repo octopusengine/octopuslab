@@ -1,7 +1,7 @@
+# Base Octopuslab based board, some basic interfaces like I2C, SPI
 
-from micropython import const
+from pinouts.base import *
 
-# PIN as on octopusLAB Wemos ESP8266 IoTBoard1
 BUILT_IN_LED = const(2)
 HALL_SENSOR = const(8)
 
