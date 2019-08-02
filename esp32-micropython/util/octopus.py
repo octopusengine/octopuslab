@@ -8,7 +8,7 @@ class var: # for temporary global variables and config setup
     pass
 
 var.ver = "0.75" # log: num = ver*100
-var.verDat = "31.7.2019 #691" 
+var.verDat = "31.7.2019 #657" 
 var.debug = True
 var.autoInit = False
 var.autoTest = False
@@ -78,7 +78,7 @@ menuList = [
 "   ws.color(BLUE)             | RGBi(5,RED)",
 "   beep(f,l) > freq, lenght   | tone(Notes.C5)",
 ">> SPI 8 x 7 segment display:",
-"   d7 = disp7_init()           > d7.show(123.567)",
+"   d7 = disp7_init()          > d7.show(123.567)",
 ">> I2C LCD 2/4 row display:",
 "   d = lcd2_init()            > disp2(d,text,[0/1])",
 "   d.clear()",
@@ -305,41 +305,8 @@ def oledImage(oled, file="assets/octopus_image.pbm"):
 try: PIN_SER = pinout.PWM1_PIN
 except: PIN_SER = 17 # ROBOT
 def servo_init(pin = PIN_SER):
-    SERVO_MIN = const(45)
-    pwm_center = const(60)
-    SERVO_MAX = const(130)
-    pin_servo = Pin(pin, Pin.OUT)
-    servo = PWM(pin_servo, freq=50, duty=pwm_center)
+    servo = Servo(PIN_SER)
     return servo
-
-def set_degree(servo, angle):
-    servo.duty(map(angle, 0,150, SERVO_MIN, SERVO_MAX))      
-
-def set_degree(servo, angle):
-    servo.duty(map(angle, 0,150, SERVO_MIN, SERVO_MAX))            
-
-def servo_test():
-    printTitle("servo1 test >")
-    #pwm_center = int(pinout.SERVO_MIN + (pinout.SERVO_MAX-pinout.SERVO_MIN)/2)
-
-    #if notInitServo:
-    print("init-servo:")
-    servo1 = servo_init()
-                
-    sleep(2)
-    servo1.duty(SERVO_MAX)
-    sleep(2)
-    servo1.duty(SERVO_MIN)
-    sleep(2)
-    
-    print("degree > 0")
-    set_degree(servo1,0)
-    sleep(2) 
-    print("degree > 45")
-    set_degree(servo1,45) 
-    sleep(2) 
-    print("degree > 90")
-    set_degree(servo1,90) 
 
 def clt():
     print(chr(27) + "[2J") # clear terminal
@@ -661,7 +628,8 @@ if True: # var.autoInit: //test
         print("temp | ",end="")      
 
     if io_conf.get('servo'): 
-        print("servo | ",end="")  
+        print("servo | ",end="")
+        from util.servo import Servo  
 
     print()
 # --------------- after init ---------------
