@@ -13,7 +13,7 @@ class Env: # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
     ver = "0.77" # version - log: num = ver*100
-    verDat = "2.8.2019 #662"
+    verDat = "2.8.2019 #679"
     debug = True
     logDev = True
     autoInit = True
@@ -155,7 +155,13 @@ def f(file='config/device.json'):
             f.close()
             print(d)
 
-def rgb_init(num_led, pin=None):
+def beep(f=1000,l=50):
+    piezzo.beep(f,l)
+
+def tone(f, l=300):
+    piezzo.play_tone(f,l)            
+
+def rgb_init(num_led, pin=None): # default autoinit ws
     if pinout.WS_LED_PIN is None:
         print("Warning: WS LED not supported on this board")
         return
@@ -165,12 +171,6 @@ def rgb_init(num_led, pin=None):
     from util.ws_rgb import * # setupNeopixel
     np = setupNeopixel(Pin(pinout.WS_LED_PIN, Pin.OUT), num_led)
     return np
-
-def beep(f=1000,l=50):
-    piezzo.beep(f,l)
-
-def tone(f, l=300):
-    piezzo.play_tone(f,l)
 
 def disp7_init():
     printTitle("disp7init()")
@@ -212,10 +212,6 @@ def scroll(d8, text,num): # TODO speed, timer? / NO "sleep"
         d8.show()
     d8.fill(0)
     d8.show()
-
-def disp7(d,mess):
-    d.write_to_buffer(str(mess))
-    d.display()
 
 def i2c_scann(printInfo=True):
     if printInfo: print("i2c_scann() > devices:")
@@ -381,6 +377,14 @@ def get_hhmm(separator=":",rtc=rtc):
     hh=add0(rtc.datetime()[4])
     mm=add0(rtc.datetime()[5])
     return hh + separator + mm
+
+def get_hhmmss(separator=":",rtc=rtc):
+    """get_hhmm(separator) | separator = string: "-" / " " """
+    #print(str(rtc.datetime()[4])+":"+str(rtc.datetime()[5]))
+    hh=add0(rtc.datetime()[4])
+    mm=add0(rtc.datetime()[5])
+    ss=add0(rtc.datetime()[6])
+    return hh + separator + mm + separator + ss    
 
 # Define function callback for connecting event
 """def connected_callback(sta):
@@ -593,8 +597,21 @@ def octopus_init():
     print("auto Init: " + str(Env.autoInit))
     #if Env.autoInit:
     printTitle("> auto Init ")
+    if io_conf.get('led'):
+        printLog("led.blink()")
+        print("testing led")
+        led.blink()
+
+    if io_conf.get('ws'):
+        printLog("ws.test()")
+        print("testing ws - RGB led")
+        ws.test()    
+
     if io_conf.get('led7'):
         d7 = disp7_init()
+
+    if io_conf.get('oled'):
+        o = oled_init()    
 
     if io_conf.get('temp'):
         t = temp_init()
@@ -638,13 +655,13 @@ if Env.autoInit:  # test
     # else:
     #    piezzo =Buzzer(None)
 
-    if io_conf.get('ws'):
+    if io_conf.get('ws'): 
         print("ws | ",end="")
         from util.rgb import Rgb
         if pinout.WS_LED_PIN is None:
             print("Warning: WS LED not supported on this board")
         else:
-            ws = Rgb(pinout.WS_LED_PIN,io_conf.get('ws'))
+            ws = Rgb(pinout.WS_LED_PIN,io_conf.get('ws')) # default rgb init
 
     if io_conf.get('oled'):
         print("OLED | ",end="")
