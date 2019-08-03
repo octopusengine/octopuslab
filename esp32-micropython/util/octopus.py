@@ -13,13 +13,15 @@ class Env: # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
     ver = "0.77" # version - log: num = ver*100
-    verDat = "2.8.2019 #679"
+    verDat = "2.8.2019 #672"
     debug = True
     logDev = True
     autoInit = True
     autoTest = False
     uID = hexlify(unique_id()).decode()
     TW = 50  # terminal width
+
+olab = Env() # for initialized equipment
 
 from os import urandom
 from time import sleep, sleep_ms, sleep_us
@@ -159,7 +161,7 @@ def beep(f=1000,l=50):
     piezzo.beep(f,l)
 
 def tone(f, l=300):
-    piezzo.play_tone(f,l)            
+    piezzo.play_tone(f,l)
 
 def rgb_init(num_led, pin=None): # default autoinit ws
     if pinout.WS_LED_PIN is None:
@@ -245,25 +247,16 @@ def disp2(d,mess,r=0,s=0):
     d.putstr(str(mess))
 
 def oled_init():
-    OLEDX = 128
-    OLEDY = 64
-    OLED_x0 = 3
-    OLED_ydown = OLEDY-7
-
     printTitle("oled_init()")
     i2c = i2c_scann()
 
-    from lib import ssd1306
+    from util.oled import Oled
     from util.display_segment import *
-    sleep_ms(1000)
-    #i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
-    oled = ssd1306.SSD1306_I2C(OLEDX, OLEDY, i2c)
-    print("display test: oled display OK")
-    oled.text('oled display OK', OLED_x0, 3)
-    # oled.text(get_hhmm(), 45,29) #time HH:MM
-    oled.hline(0,52,128,1)
-    oled.text("octopusLAB 2019",OLED_x0,OLED_ydown)
-    oled.show()
+    sleep_ms(1000) 
+
+    oled = Oled(i2c) # Oled(OLEDX, OLEDY, i2c)
+    print("test oled display: OK")
+    oled.test()
     return oled
 
 def oledSegment(oled,num,point=False,deg=False):
@@ -287,7 +280,7 @@ def oledImage(oled, file="assets/octopus_image.pbm"):
     IMAGE_WIDTH = 63
     IMAGE_HEIGHT = 63
 
-    with open('assets/'+file, 'rb') as f:
+    with open(file, 'rb') as f:
         f.readline() # Magic number
         f.readline() # Creator comment
         f.readline() # Dimensions
@@ -384,7 +377,7 @@ def get_hhmmss(separator=":",rtc=rtc):
     hh=add0(rtc.datetime()[4])
     mm=add0(rtc.datetime()[5])
     ss=add0(rtc.datetime()[6])
-    return hh + separator + mm + separator + ss    
+    return hh + separator + mm + separator + ss
 
 # Define function callback for connecting event
 """def connected_callback(sta):
@@ -608,13 +601,13 @@ def octopus_init():
         ws.test()    
 
     if io_conf.get('led7'):
-        d7 = disp7_init()
+        Env.d7 = disp7_init()
 
     if io_conf.get('oled'):
-        o = oled_init()    
+        Env.o = oled_init()    
 
     if io_conf.get('temp'):
-        t = temp_init()
+        Env.t = temp_init()
 
 # --------------- init --------------
 if Env.autoInit:  # test
