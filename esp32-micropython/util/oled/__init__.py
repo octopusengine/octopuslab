@@ -15,17 +15,17 @@ class Oled(ssd1306.SSD1306_I2C):
         print(ox)
         print(oy)
         sleep_ms(500)
-        self.oled = ssd1306.SSD1306_I2C(128, 64, i2c)
+        super().__init__(128, 64, i2c)
 
     def test(self):
-        self.oled.text('oled display OK', OLED_x0, 3)
-        self.oled.hline(0,52,128,1)
-        self.oled.text("octopusLAB 2019",OLED_x0,OLED_ydown)
-        self.oled.show() 
+        self.text('oled display OK', OLED_x0, 3)
+        self.hline(0,52,128,1)
+        self.text("octopusLAB 2019",OLED_x0,OLED_ydown)
+        self.show()
 
     def draw_icon(self, icon, posx, posy):
         for y, row in enumerate(icon):
             for x, c in enumerate(row):
-                self.oled.pixel(x+posx, y+posy, c)
-        self.oled.show()
+                self.pixel(x+posx, y+posy, c)
+        self.show()
        
