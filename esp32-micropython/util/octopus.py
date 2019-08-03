@@ -60,7 +60,6 @@ pin_an = Pin(adcpin, Pin.IN)
 adc = ADC(pin_an)
 adc.atten(ADC.ATTN_11DB) # setup
 
-
 # -------------------------------- common terminal function ---------------
 def getVer():
     return "octopusLAB - lib.version: " + Env.ver + " > " + Env.verDat
@@ -251,45 +250,12 @@ def oled_init():
     i2c = i2c_scann()
 
     from util.oled import Oled
-    from util.display_segment import *
     sleep_ms(1000) 
 
     oled = Oled(i2c) # Oled(OLEDX, OLEDY, i2c)
     print("test oled display: OK")
     oled.test()
     return oled
-
-def oledSegment(oled,num,point=False,deg=False):
-    threeDigits(oled,num,point,deg)
-
-def oledSegmentTest(oled):
-    print("oled segment test >")
-    oled.fill(0)
-    oled.text('octopusLAB test', OLED_x0, 3)
-    for num in range(100):
-        oledSegment(oled,100-num)
-        sleep_ms(50)
-
-def draw_icon(oled, icon, posx, posy):
-    for y, row in enumerate(icon):
-        for x, c in enumerate(row):
-            oled.pixel(x+posx, y+posy, c)
-    oled.show()
-
-def oledImage(oled, file="assets/octopus_image.pbm"):
-    IMAGE_WIDTH = 63
-    IMAGE_HEIGHT = 63
-
-    with open(file, 'rb') as f:
-        f.readline() # Magic number
-        f.readline() # Creator comment
-        f.readline() # Dimensions
-        data = bytearray(f.read())
-        fbuf = framebuf.FrameBuffer(data, IMAGE_WIDTH, IMAGE_HEIGHT, framebuf.MONO_HLSB)
-        # To display just blit it to the display's framebuffer (note you need to invert, since ON pixels are dark on a normal screen, light on OLED).
-        oled.invert(1)
-        oled.blit(fbuf, 0, 0)
-    oled.show()
 
 try: PIN_SER = pinout.PWM1_PIN
 except: PIN_SER = 17 # ROBOT
