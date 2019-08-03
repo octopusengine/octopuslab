@@ -12,8 +12,8 @@
 class Env: # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
-    ver = "0.77" # log: num = ver*100
-    verDat = "2.8.2019 #674"
+    ver = "0.77" # version - log: num = ver*100
+    verDat = "2.8.2019 #662"
     debug = True
     logDev = True
     autoInit = True
@@ -33,15 +33,9 @@ pinout = set_pinout()  # set board pinout
 rtc = RTC()  # real time
 io_conf = get_from_file()  # read configuration for peripherals
 
-
 # I2C address:
 LCD_ADDR=0x27
 OLED_ADDR=0x3c
-
-#if io_conf['oled'] is not None:
-OLEDX = 128
-OLEDY = 64
-OLED_x0 = 3
 
 #adc1 - #ADC/ADL
 """pin_analog = 36 #pinout.I36_PIN # analog or power management
@@ -223,13 +217,15 @@ def disp7(d,mess):
     d.write_to_buffer(str(mess))
     d.display()
 
-def i2c_scann():
-    print("i2c_scann() > devices:")
+def i2c_scann(printInfo=True):
+    if printInfo: print("i2c_scann() > devices:")
     i2c = I2C(-1, Pin(pinout.I2C_SCL_PIN), Pin(pinout.I2C_SDA_PIN))
     i2cdevs = i2c.scan()
-    print(i2cdevs)
-    if (OLED_ADDR in i2cdevs): print("ok > OLED: "+str(OLED_ADDR))
-    if (LCD_ADDR in i2cdevs): print("ok > LCD: "+str(LCD_ADDR))
+    if printInfo: print(i2cdevs)
+    if (OLED_ADDR in i2cdevs): 
+        if printInfo: print("ok > OLED: "+str(OLED_ADDR))
+    if (LCD_ADDR in i2cdevs): 
+        if printInfo: print("ok > LCD: "+str(LCD_ADDR))
     bhLight = 0x23 in i2cdevs
     bh2Light = 0x5c in i2cdevs
     tslLight = 0x39 in i2cdevs
@@ -253,11 +249,16 @@ def disp2(d,mess,r=0,s=0):
     d.putstr(str(mess))
 
 def oled_init():
-    from util.display_segment import *
+    OLEDX = 128
+    OLEDY = 64
+    OLED_x0 = 3
+    OLED_ydown = OLEDY-7
+
     printTitle("oled_init()")
     i2c = i2c_scann()
-    OLED_ydown = OLEDY-7
+
     from lib import ssd1306
+    from util.display_segment import *
     sleep_ms(1000)
     #i2c = machine.I2C(-1, machine.Pin(pinout.I2C_SCL_PIN), machine.Pin(pinout.I2C_SDA_PIN))
     oled = ssd1306.SSD1306_I2C(OLEDX, OLEDY, i2c)
@@ -598,7 +599,6 @@ def octopus_init():
     if io_conf.get('temp'):
         t = temp_init()
 
-
 # --------------- init --------------
 if Env.autoInit:  # test
     print("--> autoInit: ",end="")
@@ -611,7 +611,14 @@ if Env.autoInit:  # test
             spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
             ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
         except:
-            print("Err.SPI")
+            print("Err.spi")
+
+    if io_conf.get('oled') or io_conf.get('lcd'):
+        print("I2C | ",end="")
+        try:
+            i2c = i2c_scann(False)
+        except:
+            print("Err.i2c")
 
     if io_conf.get('led'):
         print("led | ",end="")
@@ -640,9 +647,10 @@ if Env.autoInit:  # test
             ws = Rgb(pinout.WS_LED_PIN,io_conf.get('ws'))
 
     if io_conf.get('oled'):
-        print("OLED lib | ",end="")
+        print("OLED | ",end="")
         from assets.icons9x9 import ICON_clr, ICON_wifi
         from util.display_segment import threeDigits
+        from util.oled import Oled        
 
     if io_conf.get('temp'):
         print("temp | ",end="")
