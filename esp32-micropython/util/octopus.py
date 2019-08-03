@@ -13,7 +13,7 @@ class Env: # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
     ver = "0.77" # log: num = ver*100
-    verDat = "2.8.2019 #656"
+    verDat = "2.8.2019 #674"
     debug = True
     logDev = True
     autoInit = True
@@ -180,11 +180,9 @@ def tone(f, l=300):
 
 def disp7_init():
     printTitle("disp7init()")
-    from lib.max7219_8digit import Display
-    #spi = SPI(-1, baudrate=100000, polarity=1, phase=0, sck=Pin(14), mosi=Pin(13), miso=Pin(2))
-    #ss = Pin(15, Pin.OUT)
+    from util.display7 import Display7
     print("display test: octopus")
-    d7 = Display(spi, ss)
+    d7 = Display7(spi, ss)
     d7.write_to_buffer('octopus')
     d7.display()
     return d7
@@ -654,5 +652,3 @@ if Env.autoInit:  # test
         from util.servo import Servo
 
     print()
-
-    
