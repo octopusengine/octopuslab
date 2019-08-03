@@ -466,17 +466,17 @@ def temp_init(pin = PIN_TEMP):
         io_conf['temp'] = False
         print("Err.temp")
 
-    print("Found {0} dallas sensors, temp active: {1}".format(len(ts), io_conf['temp']))
+    print("Found {0} dallas sensors, temp active: {1}".format(len(ts), io_conf.get('temp')))
 
     if len(ts)>1:
-        print(getTempN(ds,ts))
+        print(get_temp_n(ds,ts))
     else:
-        print(getTemp(ds,ts))
+        print(get_temp(ds,ts))
 
     return ds,ts
 
-def getTemp(ds,ts): # return single/first value
-    """getTemp(t[0],t[1])"""
+def get_temp(ds,ts): # return single/first value
+    """get_temp(t[0],t[1]) or get_temp(*t)"""
     tw=0
     ds.convert_temp()
     sleep_ms(750)
@@ -484,7 +484,7 @@ def getTemp(ds,ts): # return single/first value
     tw = int(temp*10)/10
     return tw
 
-def getTempN(ds,ts):
+def get_temp_n(ds,ts):
     tw=[]
     ds.convert_temp()
     sleep_ms(750)
