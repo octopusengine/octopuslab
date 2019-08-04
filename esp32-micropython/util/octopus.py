@@ -1,8 +1,7 @@
 """
  * This file is part of the octopusLAB project
  * The MIT License (MIT)
- * Copyright (c) 2016, 2019 Jan Copak, Petr Kracik, Vasek Chalupnicek
- *
+ * Copyright (c) 2016-2019 Jan Copak, Petr Kracik, Vasek Chalupnicek
 """
 # this module is main library - for other modules
 # or directly in terminal:
@@ -13,7 +12,7 @@ class Env: # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
     ver = "0.77" # version - log: num = ver*100
-    verDat = "2.8.2019 #672"
+    verDat = "3.8.2019 #633"
     debug = True
     logDev = True
     autoInit = True
@@ -76,36 +75,35 @@ def o_help():
     printOctopus()
     print("Welcome to MicroPython on the ESP32 octopusLAB board")
     print("("+getVer()+")")
-    printTitle("example - list commands")
+    printTitle("basic commands - list, examples", 53)
     help_text = """\
-   h() / o_help() = HELP      | i() / o_info() = INFO
+   setup() > octopus()        | 
+   h() / o_help() HELP        | i() / o_info() INFO
    c() / clt() clear terminal | r() = system reset
    w() / w_connect()          = connect to WiFi
    f(file)                    - file info / print
    printOctopus()             = print ASCII logo
->> basic simple HW examples:
-   led.value(1)               | led.value(0)
+>> basic simple HW examples -------------------------
+   led.value(1)  / (1)        | led.blink()
    ws = Rgb(p, n) > pin, num  | ws.simpleTest()
    ws.color(BLUE)             | RGBi(5, RED)
    beep(f, l) > freq, lenght  | tone(Notes.C5)
->> SPI 8 x 7 segment display:
+>> displays -----------------------------------------
    d7 = disp7_init()          > d7.show(123.567)
->> I2C LCD 2/4 row display:
-   d = lcd2_init()            > disp2(d, text, [0/1])
-   d.clear()
->> I2C OLED 128x64 pix display:
-   o = oled_init()            > oled(o, "text")
+   d2 = lcd2_init()           > disp2(d2,text,[0/1])
+   d2.clear()
+   o = oled_init()            > 
    o.fill(0/1)  |  o.show()   | o.text(text, x, y)
    o.hline(*) |  d.vline(*)   | o.pixel(x, y, 1)
    (*) x, y, w/h, color       > o.show()
->> sensors/communications/etc.
+>> sensors/communications/... ----------------------
    get_adc(pin)               > return analog RAW
    adc_test()                 > simple adc test
-   t = temp_init()            > getTemp(t[0], t[1])
+   t = temp_init()    > (*t)  > getTemp(t[0], t[1])
    i2c_scann()                = find I2C devices
-   timeSetup()                > from URL(urlApi)
-   get_hhmm(separator)        > get_hhmm("-")
->> standard lib. functions:
+   time_init()                > from URL(urlApi)
+   get_hhmm(separator)        > get_hhmmss("-")
+>> standard lib. functions --------------------------
    sleep(1)  / sleep_ms(1)    = 1 s/ms pause
    urandom(1)[0]              = random num.
    import webrepl_setup       = remote access
@@ -162,16 +160,16 @@ def beep(f=1000,l=50):
 def tone(f, l=300):
     piezzo.play_tone(f,l)
 
-def rgb_init(num_led, pin=None): # default autoinit ws
+def rgb_init(num_led=io_conf.get('ws'), pin=None): # default autoinit ws
     if pinout.WS_LED_PIN is None:
         print("Warning: WS LED not supported on this board")
         return
     if num_led is None or num_led == 0:
         print("Warning: Number of WS LED is 0")
         return
-    from util.ws_rgb import * # setupNeopixel
-    np = setupNeopixel(Pin(pinout.WS_LED_PIN, Pin.OUT), num_led)
-    return np
+    from util.rgb import Rgb # setupNeopixel
+    ws = Rgb(pin, num_led)
+    return ws
 
 def disp7_init():
     printTitle("disp7init()")
@@ -186,7 +184,6 @@ def disp8_init():
     printTitle("disp8init()")
     from lib.max7219 import Matrix8x8
     d8 = Matrix8x8(spi, ss, 1) #1/4
-    #print("SPI device already in use")
 
     count = 6
     for i in range(count):
@@ -195,7 +192,6 @@ def disp8_init():
         d8.show()
         print(i)
         sleep_ms(500)
-
     d8.fill(0)
     d8.show()
     return d8
@@ -494,7 +490,7 @@ def w():
     w_connect()
     if Env.logDev: logDevice()
 
-def timeSetup(urlApi ="http://www.octopusengine.org/api/hydrop"):
+def time_init(urlApi ="http://www.octopusengine.org/api/hydrop"):
     from urequests import get
     printTitle("time setup from url")
     urltime=urlApi+"/get-datetime.php"
@@ -611,8 +607,7 @@ if Env.autoInit:  # test
         piezzo = Buzzer(pinout.PIEZZO_PIN)
         piezzo.beep(1000,50)
         from util.buzzer import Notes
-    # else:
-    #    piezzo =Buzzer(None)
+    # else:   #    piezzo =Buzzer(None)
 
     if io_conf.get('ws'): 
         print("ws | ",end="")
