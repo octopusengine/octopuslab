@@ -11,7 +11,7 @@ def clock():
 	disp7(d,get_hhmm(" "))        
 	sleep(0.5)
 
-timeSetup() 		# server > time setup
+time_init() 		# server > time setup
 
 while True:
 	clock()
