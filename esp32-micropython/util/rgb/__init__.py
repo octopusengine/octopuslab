@@ -1,6 +1,8 @@
 # library for ws rgb neopixel led - single / strip / ring
 # octopusLAB 2019
+
 from time import sleep, sleep_ms
+from os import urandom
 from machine import Pin
 from neopixel import NeoPixel
 
@@ -18,6 +20,9 @@ def wheel(pos):
             return (0, 255 - pos * 3, pos * 3)
         pos -= 170
         return (pos * 3, 0, 255 - pos * 3)
+
+def random_color():
+    return wheel(urandom(1)[0])        
 
 class Rgb(NeoPixel):
     def __init__(self, pin, num=1):
