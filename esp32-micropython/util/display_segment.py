@@ -20,7 +20,7 @@ sevenSeg = [      #seven segment display
  [0,0,0,0,0,0,1]  #-
 ]
 
-def oneDigit(d,seg,x,y,a): #segment /x,y position / a=size
+def oneDigit(d, seg, x, y, a):  #segment /x,y position / a=size
     d.hline(x,y,a,seg[0])
     d.vline(x+a,y,a,seg[1])
     d.vline(x+a,y+a,a,seg[2])
@@ -29,7 +29,7 @@ def oneDigit(d,seg,x,y,a): #segment /x,y position / a=size
     d.vline(x,y,a,seg[5])
     d.hline(x,y+a,a,seg[6])
 
-def threeDigits(d, dnum,point,deg): #display number 0-999 / point 99.9 / degrees
+def threeDigits(d, dnum, point=False, deg=False):  #display number 0-999 / point 99.9 / degrees
     d100=int(dnum/100)
     d10=int((dnum-d100*100)/10)
     d1= dnum-d100*100-d10*10
@@ -37,7 +37,7 @@ def threeDigits(d, dnum,point,deg): #display number 0-999 / point 99.9 / degrees
     oneDigit(d,sevenSeg[d10],x0+aa+int(aa/2),y0,aa)
     oneDigit(d,sevenSeg[d1],x0+(aa+int(aa/2))*2,y0,aa)
     if point:
-       d.fill_rect(x0+(aa+int(aa/2))*2-5,y0+aa+aa,2,3,1) #test poin
+       d.fill_rect(x0+(aa+int(aa/2))*2-5,y0+aa+aa,2,3,1)  #test poin
     if deg:
-       oneDigit(d, sevenSeg[10],x0+(aa+int(aa/2))*3,y0,aa) #test deg
+       oneDigit(d, sevenSeg[10],x0+(aa+int(aa/2))*3,y0,aa)  #test deg
     d.show()
