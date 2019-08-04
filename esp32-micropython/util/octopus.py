@@ -246,11 +246,13 @@ def oled_init():
     i2c = i2c_scann()
 
     from util.oled import Oled
+    from util.display_segment import threeDigits
     sleep_ms(1000) 
 
     oled = Oled(i2c) # Oled(OLEDX, OLEDY, i2c)
     print("test oled display: OK")
     oled.test()
+    threeDigits(oled,123)
     return oled
 
 try: PIN_SER = pinout.PWM1_PIN
@@ -620,7 +622,7 @@ if Env.autoInit:  # test
     if io_conf.get('oled'):
         print("OLED | ",end="")
         from assets.icons9x9 import ICON_clr, ICON_wifi
-        from util.display_segment import threeDigits
+        from util.display_segment import oneDigit, threeDigits
         from util.oled import Oled        
 
     if io_conf.get('temp'):
