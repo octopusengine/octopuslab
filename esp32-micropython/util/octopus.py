@@ -250,7 +250,7 @@ def disp2(d,mess,r=0,s=0):
     d.move_to(s, r) # x/y
     d.putstr(str(mess))
 
-def oled_init():
+def oled_init(ox=128, oy=64):
     printTitle("oled_init()")
     i2c = i2c_scann()
 
@@ -258,7 +258,7 @@ def oled_init():
     from util.display_segment import threeDigits
     sleep_ms(1000) 
 
-    oled = Oled(i2c) # Oled(OLEDX, OLEDY, i2c)
+    oled = Oled(i2c, ox, oy)
     print("test oled display: OK")
     oled.test()
     threeDigits(oled,123)
