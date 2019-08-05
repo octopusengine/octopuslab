@@ -11,14 +11,19 @@
 class Env: # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
-    ver = "0.77" # version - log: num = ver*100
-    verDat = "3.8.2019 #633"
+    ver = "0.78" # version - log: num = ver*100
+    verDat = "5.8.2019 #672"
     debug = True
     logDev = True
     autoInit = True
     autoTest = False
     uID = hexlify(unique_id()).decode()
     TW = 50  # terminal width
+    isTimer = True
+    timerFlag = 0
+    timerCounter = 0
+    timerLed = True
+    timerBeep = False
 
 olab = Env() # for initialized equipment
 
@@ -58,6 +63,10 @@ adcpin = 39 #default
 pin_an = Pin(adcpin, Pin.IN)
 adc = ADC(pin_an)
 adc.atten(ADC.ATTN_11DB) # setup
+
+if Env.isTimer:
+    from machine import Timer
+    tim1 = Timer(0)
 
 # -------------------------------- common terminal function ---------------
 def getVer():
@@ -261,6 +270,14 @@ def servo_init(pin = PIN_SER):
     servo = Servo(PIN_SER)
     return servo
 
+def stepper_init(ADDRESS = 0x23, MOTOR_ID = 1): # ID 1 / 2
+    motor = SM28BYJ48(i2c, ADDRESS, MOTOR_ID)
+    # turn right 90 deg
+    motor.turn_degree(90, 0)
+    # turn left 90 deg
+    motor.turn_degree(90, 1)
+    return motor
+
 def clt():
     print(chr(27) + "[2J") # clear terminal
     print("\x1b[2J\x1b[H") # cursor up
@@ -353,6 +370,21 @@ def get_hhmmss(separator=":",rtc=rtc):
 def connecting_callback():
     blink(led, 50, 100)
 """
+def timer_init():
+    printLog("timer_init")
+    print("timer tim1 is ready - periodic - 10s")
+    print("for deactivite: tim1.deinit()")
+    tim1.init(period=10000, mode=Timer.PERIODIC, callback=lambda t:timerAction())
+    Env.timerCounter = 0
+
+def timerAction():
+    print("timerAction " + str(Env.timerCounter))
+    Env.timerFlag = 1
+    Env.timerCounter += 1
+    if Env.timerLed: led.blink(100,50)
+    if Env.timerBeep: beep()
+    Env.timerFlag = 0   
+
 def wait_pin_change(pin):
     # wait for pin to change value, it needs to be stable for a continuous 20ms
     cur_value = pin.value()
@@ -632,4 +664,9 @@ if Env.autoInit:  # test
         print("servo | ",end="")
         from util.servo import Servo
 
+    if io_conf.get('stepper'):
+        print("stepper | ",end="")
+        from lib.sm28byj48 import SM28BYJ48
+        #PCF address = 35 #33-0x21/35-0x23
+                  
     print()
