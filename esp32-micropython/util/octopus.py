@@ -503,6 +503,29 @@ def w_connect():
     print('network config:', wlan.ifconfig())
     return wlan
 
+def lan_connect():
+    from network import LAN, ETH_CLOCK_GPIO17_OUT, PHY_LAN8720
+    led.value(1)
+    lan = LAN(mdc = Pin(23), mdio=Pin(18), phy_type=PHY_LAN8720, phy_addr=1, clock_mode=ETH_CLOCK_GPIO17_OUT)
+    lan.active(1)
+
+    retry = 0
+    while not lan.isconnected() or lan.ifconfig()[0] is '0.0.0.0':
+        retry+=1
+        sleep_ms(500)
+
+        if retry > 20:
+            break;
+
+    if not lan.isconnected():
+        print("LAN: Connect error, check cable or DHCP server")
+        return None
+
+    print("LAN: OK")
+    led.value(0)
+    print('network config:', lan.ifconfig())
+    return lan
+
 def logDevice(urlPOST = "http://www.octopusengine.org/iot17/add18.php"):
     from urequests import post
     header = {}

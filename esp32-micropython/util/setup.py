@@ -86,6 +86,7 @@ def setupMenu():
     print('=' * 30)
     print("[w]   - wifi submenu")
     print("[cw]  - connect wifi")
+    print("[cl]  - connect LAN")
     print("[sdp] - system download > petrkr (update octopus modules from URL)")
     print("[sdo] - system download > octopus (update octopus modules from URL)")
     print("[ds]  - device setting")
@@ -256,6 +257,24 @@ def setup():
                   print("WiFi: OK")
               else:
                   print("WiFi: Connect error, check configuration")
+
+        if sele == "cl":
+              print("Connect LAN >")
+              import network
+              lan = network.LAN(mdc = machine.Pin(23), mdio=machine.Pin(18), phy_type=network.PHY_LAN8720, phy_addr=1, clock_mode=network.ETH_CLOCK_GPIO17_OUT)
+              lan.active(1)
+              retry = 0
+              while not lan.isconnected() or lan.ifconfig()[0] is '0.0.0.0':
+                  retry+=1
+                  time.sleep_ms(500)
+
+                  if retry > 20:
+                      break;
+
+              if lan.isconnected():
+                  print("LAN: OK")
+              else:
+                  print("LAN: Connect error, check cable or DHCP server")
 
         if sele == "mq":
             print("mqtt setup >")
