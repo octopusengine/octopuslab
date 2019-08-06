@@ -12,7 +12,7 @@ class Env: # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
     ver = "0.78" # version - log: num = ver*100
-    verDat = "5.8.2019 #672"
+    verDat = "5.8.2019 #677"
     debug = True
     logDev = True
     autoInit = True
@@ -28,7 +28,7 @@ class Env: # for temporary global variables and config setup
 olab = Env() # for initialized equipment
 
 from os import urandom
-from time import sleep, sleep_ms, sleep_us
+from time import sleep, sleep_ms, sleep_us, ticks_ms, ticks_diff
 from machine import Pin, I2C, PWM, SPI, Timer, ADC, RTC
 
 from util.colors import *
@@ -583,6 +583,7 @@ def octopus():
 
 
 def octopus_init():
+    Env.start = ticks_ms()
     print("auto Init: " + str(Env.autoInit))
     #if Env.autoInit:
     printTitle("> auto Init ")
@@ -604,6 +605,10 @@ def octopus_init():
 
     if io_conf.get('temp'):
         Env.t = temp_init()
+
+    printLog("ticks_diff(ticks_ms(), Env.start)")
+    delta = ticks_diff(ticks_ms(), Env.start)
+    print("delta_time: " + str(delta))   
 
 # --------------- init --------------
 if Env.autoInit:  # test
