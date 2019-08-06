@@ -659,8 +659,12 @@ if Env.autoInit:  # test
         from util.led import Led
         if pinout.BUILT_IN_LED is None:
             print("Warning: BUILD-IN LED not supported on this board")
+            led = Led(None)
         else:
             led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED
+    else:
+        from util.led import Led
+        led = Led(None)
 
     piezzo = None
     if io_conf.get('piezzo'):
