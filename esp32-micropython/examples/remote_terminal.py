@@ -18,9 +18,14 @@ print("IP Address: ")
 ip = iface.ifconfig()[0]
 print(ip)
 
-while True:
+loop = 0
+run = True
+
+while run:
     d7.show("1-{0}.{1}.".format(ip.split('.')[0], ip.split('.')[1]))
     sleep(2)
     d7.show("2-{0}.{1}".format(ip.split('.')[2], ip.split('.')[3]))
     sleep(2)
+    loop += 1
+    if loop == 3: run = False
 
