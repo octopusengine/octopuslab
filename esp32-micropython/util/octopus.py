@@ -11,8 +11,8 @@
 class Env: # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
-    ver = "0.78" # version - log: num = ver*100
-    verDat = "5.8.2019 #677"
+    ver = "0.79" # version - log: num = ver*100
+    verDat = "5.8.2019 #718"
     debug = True
     logDev = True
     autoInit = True
@@ -162,6 +162,20 @@ def f(file='config/device.json'):
             #print(os.size(f))
             f.close()
             print(d)
+
+def file_copy(fileSource, fileTarget = "main.py"):
+    printTitle("file_copy to " + fileTarget)
+    print("(Be careful)")
+    fs = open(fileSource)
+    data = fs.read()
+    fs.close()
+    for ii in range(12):
+        print(".",end="")
+        sleep_ms(300)
+    ft = open(fileTarget, 'w')
+    ft.write(data)
+    ft.close()
+    print(" ok")
 
 def beep(f=1000,l=50):
     piezzo.beep(f,l)
