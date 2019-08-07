@@ -1,4 +1,4 @@
-# octopusLAB simple xexample
+# octopusLAB simple example
 # HW: ESP32board + EDUshield1 + i2c OLED display
 
 octopus()            # include main library

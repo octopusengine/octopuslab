@@ -18,10 +18,11 @@ print("this is simple Micropython example | ESP32 & octopusLAB")
 print()
 
 while True:
-    print(select)
+    # print(select)
     if run:
         sec += 1
         d7.show(sec/10)
+        print(sec/10)
         sleep(0.1)
 
     if button(BB)[0] >= debounce:
