@@ -13,6 +13,10 @@ select = 0
 sec = 0
 run = False
 
+printTitle("stopwatch.py")
+print("this is simple Micropython example | ESP32 & octopusLAB")
+print()
+
 while True:
     print(select)
     if run:

@@ -3,15 +3,19 @@
 from util.octopus import *
 
 w()			# wifi connect
-d = disp7_init()	# 8 x 7segment display init   
+d7 = disp7_init()	# 8 x 7segment display init   
 
 def clock():
-	disp7(d,get_hhmm("-"))
+	d7.show(get_hhmm("-"))
 	sleep(0.5)
-	disp7(d,get_hhmm(" "))        
+	d7.show(get_hhmm(" "))        
 	sleep(0.5)
 
 time_init() 		# server > time setup
+
+printTitle("clock.py")
+print("this is simple Micropython example | ESP32 & octopusLAB")
+print()
 
 while True:
 	clock()

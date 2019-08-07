@@ -12,6 +12,10 @@ def bitcoin_usd():
     btcusd = res.json()[0]['price_usd']
     return float(btcusd)
 
+printTitle("get_bitcoin.py")
+print("this is simple Micropython example | ESP32 & octopusLAB")
+print()    
+
 while True:
     btc = bitcoin_usd()
     print(btc)

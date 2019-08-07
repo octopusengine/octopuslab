@@ -10,6 +10,10 @@ o.fill(0)            # clear
 x = 0
 y = 0
 
+printTitle("oled_random_lines.py")
+print("this is simple Micropython example | ESP32 & octopusLAB")
+print()
+
 while True:   
    old_x = x
    old_y = y
