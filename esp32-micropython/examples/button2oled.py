@@ -11,7 +11,6 @@ L, R = button_init()  # prepare buttons
 from assets.icons9x9 import ICON_clr, ICON_arrow 
 # draw_icon(o,ICON_heart,115,15)
 
-
 # default coordinates for icon
 x = 63
 y = 20
@@ -20,8 +19,13 @@ step = 5
 # debounce: read 10 samples, only tolerate one false reading
 debounce = 9
 
+o.fill(0)
+o.hline(0,51,128,1)
+o.text("octopusLAB 2019",3,64-7)
+o.show()
+
 # draw first position
-draw_icon(o, ICON_arrow, x, y)
+o.draw_icon(ICON_arrow, x, y)
 # init helper var
 old_x = x
 
@@ -37,8 +41,8 @@ while True:
    # only if changed
    if old_x != x:
       # clear current position
-      draw_icon(o, ICON_clr, old_x, y)
+      o.draw_icon(ICON_clr, old_x, y)
       # draw new icon
-      draw_icon(o, ICON_arrow, x, y)
+      o.draw_icon(ICON_arrow, x, y)
    # sleep
    sleep(0.05)
