@@ -1,6 +1,6 @@
 """
 This is octopusLab basic library for ESP32 board PCB and esp32 soc
-Edition: --- 16.7.2019 ---
+Edition: --- 10.8.2019 ---
 """
 from micropython import const
 from pinouts.olab_esp32_base import *
@@ -23,3 +23,5 @@ I35_PIN = const(35)
 # UART 1
 RXD1 = const(36)
 TXD1 = const(4)
+
+PIEZZO_PIN = const(27) # hack on DEV3
