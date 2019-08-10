@@ -11,8 +11,8 @@
 class Env: # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
-    ver = "0.79" # version - log: num = ver*100
-    verDat = "5.8.2019 #718"
+    ver = "0.80" # version - log: num = ver*100
+    verDat = "10.8.2019 #718"
     debug = True
     logDev = True
     autoInit = True
@@ -162,6 +162,14 @@ def f(file='config/device.json'):
             #print(os.size(f))
             f.close()
             print(d)
+
+def ls(directory = ""):
+    printTitle("list > " + directory)
+    from os import listdir
+    ls = listdir(directory)
+    ls.sort()
+    for f in ls:
+        print(f)
 
 def file_copy(fileSource, fileTarget = "main.py"):
     printTitle("file_copy to " + fileTarget)
