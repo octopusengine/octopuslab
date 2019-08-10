@@ -41,3 +41,11 @@ def threeDigits(d, dnum, point=False, deg=False):  #display number 0-999 / point
     if deg:
        oneDigit(d, sevenSeg[10],x0+(aa+int(aa/2))*3,y0,aa)  #test deg
     d.show()
+
+# default for 128x32 display:
+margin = 3
+
+def displayDigit(oled, number, position = 1, y = 0, size = 6):
+   # oneDigit(d, seg, x, y, a):
+   oneDigit(oled, sevenSeg[number], margin + position * (size + margin), y, size)
+   oled.show()
