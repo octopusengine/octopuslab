@@ -71,7 +71,8 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
 ## Prvotní nastavení
 
 * Příprava
-    * Po nabootovní za pomoci Putty (nebo podobného software), zadejte příkaz setup()
+      prepare.bat 
+      * Po nabootovní za pomoci Putty (nebo podobného software), zadejte příkaz setup()
         <pre>
         ==============================
                 S E T U P
@@ -91,6 +92,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
     * vyberte <b>sd</b> (system downloads) aby se stáhl zbytek souborů
     
 * Nasazení
+    deploy.bat
     * Po nabootovní za pomoci Putty (nebo podobného software), zadejte příkaz Octopus()
         <pre>
         
