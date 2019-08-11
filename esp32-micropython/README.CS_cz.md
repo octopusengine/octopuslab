@@ -35,9 +35,10 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
 
 ## Windows:
 * nainstalujte si Python3 - https://www.python.org/downloads/
-* stáhněte si MicroPython - https://micropython.org/download#esp32
-* nainstalujte si esptool - https://github.com/espressif/esptool
-* nainstalujte si ampy - https://github.com/adafruit/ampy
+* stáhněte si MicroPython - https://micropython.org/download#esp32 
+   nebo stabilní a odzkoušenou verzi z: https://octopusengine.org/download/micropython-octopus.bin
+* nainstalujte si esptool - https://github.com/espressif/esptool `pip install esptool`
+* nainstalujte si ampy - https://github.com/adafruit/ampy `pip install adafruit-ampy`
 * připojte ESP32 a zjistěte si na kterém COM portu je připojený
 * smažte FLASH - Pro tuto fázi je potřeba podržet tlačítko BOOT až do doby než se naváže spojení. (connected)
     <pre>esptool.py --chip esp32 -p /COM6 erase_flash</pre>
