@@ -59,7 +59,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
     * webrepl1
     * blockly and webrepl
 
-(1) Soubory potřebné k Přípravě jsou násleeující: (i s adresáři)
+(1) Soubory potřebné k Přípravě jsou následující: (i s adresáři)
 <pre> boot_prepare.py
  /config/device.json
  /util/setup.py
@@ -92,21 +92,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
 * Nasazení
     * Po nabootovní za pomoci Putty (nebo podobného software), zadejte příkaz Octopus()
         <pre>
-        ==============================
-          O C T O P U S    M E N U
-        ==============================
-         SYSTEM & SETTINGS
-         [i] - device & system info
-         [s] - setup machine and wifi
-         [w] - wifi test
-         [f] - file info/dir
-         [c] - clear terminal
-        ==============================</pre>
-    * vyberte <b>s</b> (setup machine and wifi) pro přístup k dalším nastavením (stejné menu jako u Přípravy)
-    * vyberte <b>ds</b> (device setting), poté vyberte které nastavení budete používat
-    * vyberte <b>sw</b> (set wifi) pro nastavení přístupových údajů na wifi
-    * vyberte <b>cw</b> (connect wifi) pro připojení k wifi
-    
+        
 
 ## Struktura souborů
 
