@@ -77,13 +77,12 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
         ==============================
                 S E T U P
         ==============================
-         [ds]  - device setting
-         [sw]  - set wifi
+         [w]   - wifi submenu
          [cw]  - connect wifi
-         [st]  - set time
-         [sd]  - system download >
-         (initial octopus modules)
-         [si]  - system info
+         [sdp] - system download > petrkr (update octopus modules from URL)
+         [sdo] - system download > octopus (update octopus modules from URL)
+         [ds]  - device setting
+         .....
          [e]   - exit setup
         ==============================</pre>
     * vyberte <b>ds</b> (device setting), poté vyberte které nastavení budete používat
