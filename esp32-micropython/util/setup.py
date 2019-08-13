@@ -180,7 +180,7 @@ def setup():
     # TODO improve this
     # prepare directory
     if 'config' not in uos.listdir():
-       uos.makedirs('config')
+       uos.mkdir('config')
 
     run= True
     while run:
