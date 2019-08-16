@@ -61,7 +61,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
     * blockly and webrepl
 
 
-## Linux:
+## Linux (for all distors based on Debian)
 
 Serial port is usually `/dev/ttyUSB0`, if not sure or does not work, you can read it in last line of `dmesg | tail` just after plugging USB
 
@@ -71,7 +71,23 @@ Exiting terminal is little tricky, you need to use screen control sequence: <kbd
 If you exit any other way, connection may stay open and block other interaction (uploading files, reattaching to the REPL), safe way to fix this is to unplug USB and plug again.
 
     
-## Linux (for all distors based on Debian)
+## Mac
+1. Install Drivers: https://www.pololu.com/docs/0J7/all
+Download newest driver for Mac, Unpack, Install and don´t forget to ALLOW in Security & Privacy settings
+
+2. Detect Device
+Go to About This Mac >> System Report and under Hardware/USB find your device in USB tree
+
+3. Find the name of the Device in Terminal:
+Terminal change directory: cd dev (press Enter) 
+Terminal list: ls 
+
+4. Find your device in list as tty.(something)
+
+5. In our case we used:
+screen /dev/tty.SLAB_USBtoUART 115200
+
+
 
 ### Things you need to have
 
