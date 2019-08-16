@@ -208,27 +208,6 @@ Press Ctrl+C to abort
 [22] -    motor [0] - DC motor (ROBOTboard)
 ...
 </pre>
-    
-    
-
-* Deploy
-    * Once booted in by Putty (or similar software), run Octopus()
-        <pre>
-        ==============================
-          O C T O P U S    M E N U
-        ==============================
-         SYSTEM & SETTINGS
-         [i] - device & system info
-         [s] - setup machine and wifi
-         [w] - wifi test
-         [f] - file info/dir
-         [c] - clear terminal
-        ==============================</pre>
-    * select <b>s</b> (setup machine and wifi) to open further options (same menu as in Prepare)
-    * select <b>ds</b> (device setting), then choose which board you're using
-    * select <b>sw</b> (set wifi) to assign wifi credentials
-    * select <b>cw</b> (connect wifi) to reach the internets!
-
 
 ## File structure
 
