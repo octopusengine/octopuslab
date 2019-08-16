@@ -72,8 +72,9 @@ If you exit any other way, connection may stay open and block other interaction 
 
     
 ## Mac
-1. Install Drivers: https://www.pololu.com/docs/0J7/all
-Download newest driver for Mac, Unpack, Install and don´t forget to ALLOW in Security & Privacy settings
+1. Install Drivers: 
+Download newest driver for Mac https://www.pololu.com/docs/0J7/all
+Unpack, Install and don´t forget to ALLOW in Security & Privacy settings
 
 2. Detect Device
 Go to About This Mac >> System Report and under Hardware/USB find your device in USB tree
@@ -86,7 +87,6 @@ Terminal list: ls
 
 5. In our case we used:
 screen /dev/tty.SLAB_USBtoUART 115200
-
 
 
 ### Things you need to have
