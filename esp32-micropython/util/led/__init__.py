@@ -1,5 +1,9 @@
 # basic library for class Led 
 # octopusLAB 2019
+""" 
+led = Led(2)
+led.value(1)
+"""
 
 from time import sleep_ms
 from machine import Pin
