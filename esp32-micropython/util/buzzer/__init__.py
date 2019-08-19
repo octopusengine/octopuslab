@@ -1,7 +1,7 @@
 # basic library for class Buzzer 
 # octopusLAB 2019
+
 """ 
-usage:
 piezzo = Buzzer(33)
 piezzo.beep()
 """
