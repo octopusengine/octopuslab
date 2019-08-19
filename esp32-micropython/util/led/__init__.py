@@ -1,3 +1,6 @@
+# basic library for class Led 
+# octopusLAB 2019
+
 from time import sleep_ms
 from machine import Pin
 
