@@ -12,7 +12,7 @@ class Env: # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
     ver = "0.81" # version - log: num = ver*100
-    verDat = "12.8.2019 #686"
+    verDat = "12.8.2019 #692"
     debug = True
     logDev = True
     autoInit = True
@@ -397,10 +397,15 @@ def wait_pin_change(pin):
         sleep_ms(1)
 
 #test for Shield1 or FirstBoard hack buttons
-def button_init(L = 34, R = 35):
+def buttons_init(L = 34, R = 35, C = 39): # Left, Right, Central
     b34 = Pin(L, Pin.IN) #SL
     b35 = Pin(R, Pin.IN) #SR
-    return b34, b35
+    b39 = Pin(C, Pin.IN)
+    return b34, b35, b39
+
+def button_init(pin = 34):
+    bpin = Pin(pin, Pin.IN)
+    return bpin
 
 def button(pin, num=10): #num for debounce
     value0 = value1 = 0
