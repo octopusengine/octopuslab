@@ -7,7 +7,7 @@ import time, uos
 import ujson
 import machine #datetime
 
-ver = "0.62 / 13.7.2019"
+ver = "0.63 / 20.8.2019"
 
 devices = [
 ["oLAB Default","esp32"],
@@ -87,7 +87,7 @@ def setupMenu():
     print("[w]   - wifi submenu")
     print("[cw]  - connect wifi")
     print("[cl]  - connect LAN")
-    print("[sd] - system download > stable
+    print("[sd]  - system download > stable
     print("[sdp] - system download > petrkr (update octopus modules from URL)")
     print("[sdo] - system download > octopus (update octopus modules from URL)")
     print("[ds]  - device setting")
