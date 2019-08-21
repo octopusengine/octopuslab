@@ -3,7 +3,7 @@
 
 octopus()            # include main library
 o = oled_init()      # init oled display
-L, R = button_init()  # prepare buttons
+L, R, C = buttons_init()  # prepare buttons
 # button(L)  
 # (0, 10)  ## loop 10x  > count on / off
 
