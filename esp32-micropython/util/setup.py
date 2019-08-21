@@ -87,7 +87,7 @@ def setupMenu():
     print("[w]   - wifi submenu")
     print("[cw]  - connect wifi")
     print("[cl]  - connect LAN")
-    print("[sd]  - system download > stable
+    print("[sd]  - system download > stable")
     print("[sdp] - system download > petrkr (update octopus modules from URL)")
     print("[sdo] - system download > octopus (update octopus modules from URL)")
     print("[ds]  - device setting")
