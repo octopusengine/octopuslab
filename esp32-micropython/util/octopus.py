@@ -11,8 +11,8 @@
 class Env: # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
-    ver = "0.80" # version - log: num = ver*100
-    verDat = "10.8.2019 #718"
+    ver = "0.81" # version - log: num = ver*100
+    verDat = "12.8.2019 #686"
     debug = True
     logDev = True
     autoInit = True
@@ -29,7 +29,7 @@ olab = Env() # for initialized equipment
 
 from os import urandom
 from time import sleep, sleep_ms, sleep_us, ticks_ms, ticks_diff
-from machine import Pin, I2C, PWM, SPI, Timer, ADC, RTC
+from machine import Pin, I2C, PWM, SPI, Timer, RTC
 
 from util.colors import *
 from util.pinout import set_pinout
@@ -42,27 +42,6 @@ io_conf = get_from_file()  # read configuration for peripherals
 # I2C address:
 LCD_ADDR=0x27
 OLED_ADDR=0x3c
-
-#adc1 - #ADC/ADL
-"""pin_analog = 36 #pinout.I36_PIN # analog or power management
-adc = ADC(Pin(pin_analog))
-pin_analog_1 = 39 #I34_PIN      # x
-adc1 = ADC(Pin(pin_analog_1))   # AC1 == "ACL"
-pin_analog_2 = 35 #I35_PIN      # y
-adc2 = ADC(Pin(pin_analog_2))
-
-ADC_SAMPLES=100
-ADC_HYSTERESIS=50
-ad_oldval=0
-ad1_oldval=0
-adc.atten(ADC.ATTN_11DB) # setup
-adc1.atten(ADC.ATTN_11DB)
-"""
-#adcpin = pinout.ANALOG_PIN
-adcpin = 39 #default
-pin_an = Pin(adcpin, Pin.IN)
-adc = ADC(pin_an)
-adc.atten(ADC.ATTN_11DB) # setup
 
 if Env.isTimer:
     from machine import Timer
@@ -106,8 +85,7 @@ def o_help():
    o.hline(*) |  d.vline(*)   | o.pixel(x, y, 1)
    (*) x, y, w/h, color       > o.show()
 >> sensors/communications/... ----------------------
-   get_adc(pin)               > return analog RAW
-   adc_test()                 > simple adc test
+   a1 = Analog(pin) a1.read() > return analog RAW
    t = temp_init()    > (*t)  > getTemp(t[0], t[1])
    i2c_scann()                = find I2C devices
    time_init()                > from URL(urlApi)
@@ -434,31 +412,6 @@ def button(pin, num=10): #num for debounce
         sleep_us(50)
     return value0, value1
 
-def adc_test():
-    print("analog input test: ")
-    #an = get_adc(adcpin)
-    an = adc.read()
-    print("RAW: " + str(an))
-    # TODO improve mapping formula, doc: https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/adc.html
-    #print("volts: {0:.2f} V".format(an/4096*10.74), 20, 50)
-
-def get_adc(adcpin = adcpin):
-    pin_an = Pin(adcpin, Pin.IN)
-    adc = ADC(pin_an)
-    adc.atten(ADC.ATTN_11DB) # setup
-    an = adc.read()
-    return an # single read, better average
-
-def get_adc_aver(adcpin = adcpin, num=10):
-    #pin_an = Pin(adcpin, Pin.IN)
-    #adc = ADC(pin_an)
-    suman = 0
-    for i in range(num):
-        an = adc.read()
-        suman = suman + an
-        sleep_us(10)
-    return int(suman/num) # single read, better average
-
 try: PIN_TEMP = pinout.ONE_WIRE_PIN
 except: PIN_TEMP = 17 # ROBOT
 def temp_init(pin = PIN_TEMP):
@@ -677,7 +630,7 @@ if Env.autoInit:  # test
             print("Err.i2c")
 
     if io_conf.get('led'):
-        print("led | ",end="")
+        print("Led | ",end="")
         from util.led import Led
         if pinout.BUILT_IN_LED is None:
             print("Warning: BUILD-IN LED not supported on this board")
@@ -709,7 +662,15 @@ if Env.autoInit:  # test
         print("OLED | ",end="")
         from assets.icons9x9 import ICON_clr, ICON_wifi
         from util.display_segment import oneDigit, threeDigits
-        from util.oled import Oled        
+        from util.oled import Oled
+
+    if io_conf.get('ad0') or io_conf.get('ad1') or io_conf.get('ad2'):
+        print("Analog | ",end="")
+        from util.analog import Analog
+        #adcpin = pinout.ANALOG_PIN
+        adcpin = 39 #default
+        an = Analog(adcpin)
+        #an0 = Analog(io_conf.get('ad0'))
 
     if io_conf.get('temp'):
         print("temp | ",end="")
