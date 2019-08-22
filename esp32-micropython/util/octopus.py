@@ -12,7 +12,7 @@ class Env: # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
     ver = "0.81" # version - log: num = ver*100
-    verDat = "12.8.2019 #692"
+    verDat = "15.8.2019 #693"
     debug = True
     logDev = True
     autoInit = True
@@ -250,7 +250,7 @@ def disp2(d,mess,r=0,s=0):
     d.move_to(s, r) # x/y
     d.putstr(str(mess))
 
-def oled_init(ox=128, oy=64):
+def oled_init(ox=128, oy=64, runTest = True):
     printTitle("oled_init()")
     i2c = i2c_scann()
 
@@ -260,8 +260,10 @@ def oled_init(ox=128, oy=64):
 
     oled = Oled(i2c, ox, oy)
     print("test oled display: OK")
-    oled.test()
-    threeDigits(oled,123)
+    if runTest:
+        oled.test()
+        threeDigits(oled,123)
+
     return oled
 
 try: PIN_SER = pinout.PWM1_PIN
@@ -686,7 +688,6 @@ if Env.autoInit:  # test
 
     if io_conf.get('stepper'):
         print("stepper | ",end="")
-        from lib.sm28byj48 import SM28BYJ48
-        #PCF address = 35 #33-0x21/35-0x23
+        from lib.sm28byj48 import SM28BYJ48   #PCF address = 35 #33-0x21/35-0x23
                   
     print()
