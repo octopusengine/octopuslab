@@ -5,6 +5,13 @@ import machine
 from util.octopus import *
 
 octopus()       # include main library
+if get_hhmm() == "00:00":
+    w()
+    time_init()
+
+printTitle("examples/deep_sleep1.py")
+
+print(get_hhmmss())
 
 def sendValue(val = 0,urlPOST = "http://www.octopusengine.org/iot17/add18.php"):
     from urequests import post
@@ -23,20 +30,18 @@ def sendValue(val = 0,urlPOST = "http://www.octopusengine.org/iot17/add18.php"):
 
 print('Im ready')
 led.blink()
-o = oled_init()
-sleep(3)
+#o = oled_init(128,64,False)
+o = oled_init(runTest=False)
+sleep(1)
 o.clear()
 o.text("octopusLAB 2019",10,10)
+o.text(get_hhmmss(), 10,20)
 o.show()
 
-led.value(1)
-w()
-led.value(0)
-
-sleep(5)
+sleep(3)
 o.poweroff()
 
 print('Im awake, but Im going to sleep')
 
 #sleep for 10 seconds (10000 milliseconds)
-machine.deepsleep(10000)
+machine.deepsleep(20000)
