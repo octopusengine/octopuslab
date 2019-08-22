@@ -4,7 +4,6 @@
 #import webrepl
 #webrepl.start()
 
-
 def setup():
     import util.setup
     util.setup.setup()
@@ -12,6 +11,9 @@ def setup():
 def octopus():
     from util.octopus import *
     octopus()
+
+import builtins
+builtins.octopus=octopus
 
 def octopus_demo():
     import util.octopus_demo
