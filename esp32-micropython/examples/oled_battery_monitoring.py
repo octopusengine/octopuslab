@@ -2,6 +2,8 @@
 # ESP32board + OLED display -> analog 36, 39, ...
 
 from util.analog import Analog
+from util.octopus import *
+
 octopus()       # include main library
 
 anIn = Analog(36) #analog input

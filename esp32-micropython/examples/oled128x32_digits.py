@@ -2,6 +2,7 @@
 # HW: ESP32 + i2c small OLED display 128x32
 
 from time import sleep
+from util.octopus import *
 
 octopus()            # include main library
 o = oled_init(128, 32)      # init oled display

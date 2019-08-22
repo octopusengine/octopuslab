@@ -1,11 +1,13 @@
 # octopusLAB simple xexample
 # HW: ESP32 + i2c OLED display
-# ampy -p /COM6 put examples/oled_random_lines.py main.py
+# import examples.oled_pong
+
 from time import sleep_ms
+from util.octopus import *
+from util.display_segment import displayDigit
 
 octopus()            # include main library
-
-from util.display_segment import displayDigit
+print("---examples/oled_pong.py---")
 
 def displayNum(num):
     num = str(num)

@@ -1,6 +1,7 @@
 # octopusLAB simple example
 # HW: ESP32board + EDUshield1 + i2c OLED display
 
+from util.octopus import *
 octopus()            # include main library
 o = oled_init()      # init oled display
 L, R, C = buttons_init()  # prepare buttons

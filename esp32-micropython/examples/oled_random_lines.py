@@ -1,6 +1,7 @@
 # octopusLAB simple xexample
 # HW: ESP32 + i2c OLED display
 # ampy -p /COM6 put examples/oled_random_lines.py main.py
+from util.octopus import *
 
 octopus()            # include main library
 o = oled_init()      # init oled display
