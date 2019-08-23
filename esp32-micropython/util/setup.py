@@ -5,9 +5,9 @@
 #TODO DRY for filename
 import time, uos
 import ujson
-import machine #datetime
+import machine # datetime
 
-ver = "0.63 / 20.8.2019"
+ver = "0.65 / 22.8.2019"
 
 devices = [
 ["oLAB Default","esp32"],
@@ -78,7 +78,6 @@ def deploy(url):
             with open(f.name, "wb") as fobj:
                 shutil.copyfileobj(extracted, fobj)
 
-
 def setupMenu():
     print()
     print('=' * 30)
@@ -87,9 +86,9 @@ def setupMenu():
     print("[w]   - wifi submenu")
     print("[cw]  - connect wifi")
     print("[cl]  - connect LAN")
-    print("[sd]  - system download > stable")
-    print("[sdp] - system download > petrkr (update octopus modules from URL)")
-    print("[sdo] - system download > octopus (update octopus modules from URL)")
+    print("[sd]  - system download > stable octopus modules from URL")
+    print("[sdp] - system download > petrkr (Beta octopus modules from URL)")
+    print("[sdo] - system download > octopus (Alfa octopus modules from URL)")
     print("[ds]  - device setting")
     print("[ios] - I/O setting submenu")
     print("[iot] - I/O test - run io_test()")
