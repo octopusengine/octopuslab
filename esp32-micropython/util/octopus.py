@@ -6,13 +6,13 @@
 # this module is main library - for other modules
 # or directly in terminal:
 # >>> octopus()
-# >>> h() help / i() info / w() wifi connect
+# >>> h() help /i() info /w() wifi connect
 
 class Env: # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
-    ver = "0.81" # version - log: num = ver*100
-    verDat = "15.8.2019 #693"
+    ver = "0.82" # version - log: num = ver*100
+    verDat = "19.8.2019 #661"
     debug = True
     logDev = True
     autoInit = True
@@ -64,38 +64,7 @@ def o_help():
     print("Welcome to MicroPython on the ESP32 octopusLAB board")
     print("("+getVer()+")")
     printTitle("basic commands - list, examples", 53)
-    help_text = """\
-   setup() > octopus()        | 
-   h() / o_help() HELP        | i() / o_info() INFO
-   c() / clt() clear terminal | r() = system reset
-   w() / w_connect()          = connect to WiFi
-   f(file)                    - file info / print
-   printOctopus()             = print ASCII logo
->> basic simple HW examples -------------------------
-   led.value(1)  / (1)        | led.blink()
-   ws = Rgb(p, n) > pin, num  | ws.simpleTest()
-   ws.color(BLUE)             | RGBi(5, RED)
-   beep(f, l) > freq, lenght  | tone(Notes.C5)
->> displays -----------------------------------------
-   d7 = disp7_init()          > d7.show(123.567)
-   d2 = lcd2_init()           > disp2(d2,text,[0/1])
-   d2.clear()
-   o = oled_init()            > 
-   o.fill(0/1)  |  o.show()   | o.text(text, x, y)
-   o.hline(*) |  d.vline(*)   | o.pixel(x, y, 1)
-   (*) x, y, w/h, color       > o.show()
->> sensors/communications/... ----------------------
-   a1 = Analog(pin) a1.read() > return analog RAW
-   t = temp_init()    > (*t)  > getTemp(t[0], t[1])
-   i2c_scann()                = find I2C devices
-   time_init()                > from URL(urlApi)
-   get_hhmm(separator)        > get_hhmmss("-")
->> standard lib. functions --------------------------
-   sleep(1)  / sleep_ms(1)    = 1 s/ms pause
-   urandom(1)[0]              = random num.
-   import webrepl_setup       = remote access
-"""
-    print(help_text)
+    f("util/octopus_help.txt", False)
 
 def h():
     o_help()
@@ -132,9 +101,9 @@ def o_info():
 def i():
     o_info()
 
-def f(file='config/device.json'):
+def f(file='config/device.json', title = True):
     """print data: f("filename") """
-    printTitle("file > " + file)
+    if title: printTitle("file > " + file)
     with open(file, 'r') as f:
             d = f.read()
             #print(os.size(f))
@@ -523,11 +492,11 @@ def logDevice(urlPOST = "http://www.octopusengine.org/iot17/add18.php"):
     except:
         print("E.logDevice")
 
-def w():
+def w(logD = True):
     printInfo()
     printTitle("WiFi connect > ")
     w_connect()
-    if Env.logDev: logDevice()
+    if logD and Env.logDev: logDevice()
 
 def time_init(urlApi ="http://www.octopusengine.org/api/hydrop"):
     from urequests import get
@@ -585,7 +554,6 @@ def octopus():
     collect()
     printInfo()
     print("This is basic library, type h() for help")
-
 
 def octopus_init():
     Env.start = ticks_ms()
