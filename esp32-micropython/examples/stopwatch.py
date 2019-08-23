@@ -3,7 +3,7 @@
 from time import sleep
 from util.octopus import *
 
-BB, XX = button_init(0, 0) # button boot = 0
+BB = button_init(0) # button boot = 0
 # debounce: read 10 samples, only tolerate one false reading
 debounce = 9
 
