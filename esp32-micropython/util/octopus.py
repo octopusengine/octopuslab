@@ -440,10 +440,13 @@ def get_temp_n(ds,ts):
 def ap_init(): #192.168.4.1
     printTitle("AP init > ")
     import network
+    import ubinascii
     ap = network.WLAN(network.AP_IF)
     ap.active(True)
-    ap.config(essid="ESP32")
+    mac = ubinascii.hexlify(ap.config('mac'),':').decode()
+    ap.config(essid="octopus_ESP32_" + mac)
     print(ap.ifconfig())
+    print("AP Running : " + ap.config("essid"))
     return ap
 
 def w_connect():
