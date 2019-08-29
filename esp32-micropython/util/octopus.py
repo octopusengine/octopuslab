@@ -12,7 +12,7 @@ class Env: # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
     ver = "0.83" # version - log: num = ver*100
-    verDat = "28.8.2019 #661"
+    verDat = "28.8.2019 #673"
     debug = True
     logDev = True
     autoInit = True
@@ -446,7 +446,7 @@ def ap_init(): #192.168.4.1
     mac = ubinascii.hexlify(ap.config('mac'),':').decode()
     ap.config(essid="octopus_ESP32_" + mac)
     print(ap.ifconfig())
-    print("AP Running : " + ap.config("essid"))
+    print("AP Running: " + ap.config("essid"))
     return ap
 
 def w_connect():
