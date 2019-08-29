@@ -11,8 +11,8 @@
 class Env: # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
-    ver = "0.82" # version - log: num = ver*100
-    verDat = "19.8.2019 #661"
+    ver = "0.83" # version - log: num = ver*100
+    verDat = "28.8.2019 #661"
     debug = True
     logDev = True
     autoInit = True
@@ -436,6 +436,15 @@ def get_temp_n(ds,ts):
         temp = ds.read_temp(t)
         tw.append(int(temp*10)/10)
     return tw
+
+def ap_init(): #192.168.4.1
+    printTitle("AP init > ")
+    import network
+    ap = network.WLAN(network.AP_IF)
+    ap.active(True)
+    ap.config(essid="ESP32")
+    print(ap.ifconfig())
+    return ap
 
 def w_connect():
     from network import WLAN, STA_IF
