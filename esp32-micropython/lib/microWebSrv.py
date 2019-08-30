@@ -3,7 +3,6 @@ The MIT License (MIT)
 Copyright © 2018 Jean-Christophe Bos & HC² (www.hc2.fr)
 """
 
-
 from    json        import loads, dumps
 from    os          import stat
 from    _thread     import start_new_thread
@@ -12,29 +11,28 @@ import  gc
 import  re
 
 try :
-    from lib.microWebTemplate import MicroWebTemplate
+    from microWebTemplate import MicroWebTemplate
 except :
     pass
 
 try :
-    from lib.microWebSocket import MicroWebSocket
+    from microWebSocket import MicroWebSocket
 except :
     pass
 
 class MicroWebSrvRoute :
     def __init__(self, route, method, func, routeArgNames, routeRegex) :
-        self.route         = route
-        self.method        = method
-        self.func          = func
+        self.route         = route        
+        self.method        = method       
+        self.func          = func         
         self.routeArgNames = routeArgNames
-        self.routeRegex    = routeRegex
-
+        self.routeRegex    = routeRegex   
 
 class MicroWebSrv :
 
-    # ============================================================================
+    # ======
     # ===( Constants )============================================================
-    # ============================================================================
+    # ======
 
     _indexPages = [
         "index.pyhtml",
@@ -50,8 +48,10 @@ class MicroWebSrv :
         ".htm"   : "text/html",
         ".html"  : "text/html",
         ".css"   : "text/css",
+        ".css.gz": "text/css",
         ".csv"   : "text/csv",
         ".js"    : "application/javascript",
+        ".js.gz" : "application/javascript",
         ".xml"   : "application/xml",
         ".xhtml" : "application/xhtml+xml",
         ".json"  : "application/json",
@@ -60,9 +60,11 @@ class MicroWebSrv :
         ".jpg"   : "image/jpeg",
         ".jpeg"  : "image/jpeg",
         ".png"   : "image/png",
+        ".png.gz": "image/png",
         ".gif"   : "image/gif",
         ".svg"   : "image/svg+xml",
-        ".ico"   : "image/x-icon"
+        ".ico"   : "image/x-icon",
+        ".svg"   : "image/svg+xml"
     }
 
     _html_escape_chars = {
@@ -75,15 +77,15 @@ class MicroWebSrv :
 
     _pyhtmlPagesExt = '.pyhtml'
 
-    # ============================================================================
+    # ======
     # ===( Class globals  )=======================================================
-    # ============================================================================
+    # ======
 
     _docoratedRouteHandlers = []
 
-    # ============================================================================
+    # ======
     # ===( Utils  )===============================================================
-    # ============================================================================
+    # ======
 
     @classmethod
     def route(cls, url, method='GET'):
@@ -94,88 +96,46 @@ class MicroWebSrv :
             return func
         return route_decorator
 
-    # ----------------------------------------------------------------------------
-
+    # ------------
     @staticmethod
     def HTMLEscape(s) :
         return ''.join(MicroWebSrv._html_escape_chars.get(c, c) for c in s)
 
-    # ----------------------------------------------------------------------------
-
+    # ------------
     @staticmethod
-    def _tryAllocByteArray(size) :
-        for x in range(10) :
+    def _startThread(func, args=()) :
+        try :
+            start_new_thread(func, args)
+        except :
+            global _mwsrv_thread_id
             try :
-                gc.collect()
-                return bytearray(size)
+                _mwsrv_thread_id += 1
             except :
-                pass
-        return None
-
-    # ----------------------------------------------------------------------------
-
-    @staticmethod
-    def _tryStartThread(func, args=()) :
-        for x in range(10) :
+                _mwsrv_thread_id = 0
             try :
-                gc.collect()
-                start_new_thread(func, args)
-                return True
+                start_new_thread('MWSRV_THREAD_%s' % _mwsrv_thread_id, func, args)
             except :
-                global _mwsrv_thread_id
-                try :
-                    _mwsrv_thread_id += 1
-                except :
-                    _mwsrv_thread_id = 0
-                try :
-                    start_new_thread('MWSRV_THREAD_%s' % _mwsrv_thread_id, func, args)
-                    return True
-                except :
-                    pass
-        return False
+                return False
+        return True
 
-    # ----------------------------------------------------------------------------
-
-    #@staticmethod
-    #def _unquote(s) :
-    #    r = s.split('%')
-    #    for i in range(1, len(r)) :
-    #        s = r[i]
-    #        try :
-    #            r[i] = chr(int(s[:2], 16)) + s[2:]
-    #        except :
-    #            r[i] = '%' + s
-    #    return ''.join(r)
-
-    # ------------------------------------------------------------------------------
-
-    #@staticmethod
-    #def _unquote_plus(s) :
-    #    return MicroWebSrv._unquote(s.replace('+', ' '))
-
-    # ------------------------------------------------------------------------------
-
+    # ------------
     @staticmethod
-    def _unquote_decode(data:str) :
-        i = 0
-        ret = bytearray()
-        while i<len(data):
-            c = ord(data[i])
-            if c == 0x25:   # '%'
-                try:
-                    c = int(data[i+1:i+3], 16)
-                    i += 2   #skip next 2 bytes
-                except:
-                    pass
-            elif c == 0x2B:   # '+'
-                c = 0x20   # ' '
-            ret.append(c)
-            i += 1
+    def _unquote(s) :
+        r = s.split('%')
+        for i in range(1, len(r)) :
+            s = r[i]
+            try :
+                r[i] = chr(int(s[:2], 16)) + s[2:]
+            except :
+                r[i] = '%' + s
+        return ''.join(r)
 
-        return str(ret, "utf-8")
+    # --------------
+    @staticmethod
+    def _unquote_plus(s) :
+        return MicroWebSrv._unquote(s.replace('+', ' '))
 
-    # ----------------------------------------------------------------------------
-
+    # --------------
     @staticmethod
     def _fileExists(path) :
         try :
@@ -184,21 +144,20 @@ class MicroWebSrv :
         except :
             return False
 
-    # ----------------------------------------------------------------------------
-
+    # ------------
     @staticmethod
     def _isPyHTMLFile(filename) :
         return filename.lower().endswith(MicroWebSrv._pyhtmlPagesExt)
 
-    # ============================================================================
+    # ======
     # ===( Constructor )==========================================================
-    # ============================================================================
+    # ======
 
     def __init__( self,
                   routeHandlers = [],
                   port          = 80,
                   bindIP        = '0.0.0.0',
-                  webPath       = "/flash/www" ) :
+                  webPath       = "/flash/wwwide" ) :
 
         self._srvAddr       = (bindIP, port)
         self._webPath       = webPath
@@ -229,9 +188,9 @@ class MicroWebSrv :
 
             self._routeHandlers.append(MicroWebSrvRoute(route, method, func, routeArgNames, routeRegex))
 
-    # ============================================================================
+    # ======
     # ===( Server Process )=======================================================
-    # ============================================================================
+    # ======
 
     def _serverProcess(self) :
         self._started = True
@@ -245,11 +204,11 @@ class MicroWebSrv :
             self._client(self, client, cliAddr)
         self._started = False
 
-    # ============================================================================
+    # ======
     # ===( Functions )============================================================
-    # ============================================================================
+    # ======
 
-    def Start(self, threaded=True) :
+    def Start(self, threaded=False) :
         if not self._started :
             self._server = socket.socket( socket.AF_INET,
                                           socket.SOCK_STREAM,
@@ -260,28 +219,25 @@ class MicroWebSrv :
             self._server.bind(self._srvAddr)
             self._server.listen(1)
             if threaded :
-                MicroWebSrv._tryStartThread(self._serverProcess)
+                MicroWebSrv._startThread(self._serverProcess)
             else :
                 self._serverProcess()
 
-    # ----------------------------------------------------------------------------
+    # ------------
 
     def Stop(self) :
         if self._started :
             self._server.close()
 
-    # ----------------------------------------------------------------------------
-
+    # ------------
     def IsStarted(self) :
         return self._started
 
-    # ----------------------------------------------------------------------------
-
+    # ------------
     def SetNotFoundPageUrl(self, url=None) :
         self._notFoundUrl = url
 
-    # ----------------------------------------------------------------------------
-
+    # ------------
     def GetMimeTypeFromFilename(self, filename) :
         filename = filename.lower()
         for ext in self._mimeTypes :
@@ -289,8 +245,7 @@ class MicroWebSrv :
                 return self._mimeTypes[ext]
         return None
 
-    # ----------------------------------------------------------------------------
-
+    # ------------
     def GetRouteHandler(self, resUrl, method) :
         if self._routeHandlers :
             #resUrl = resUrl.upper()
@@ -315,8 +270,7 @@ class MicroWebSrv :
                             return (rh.func, None)
         return (None, None)
 
-    # ----------------------------------------------------------------------------
-
+    # ------------
     def _physPathFromURLPath(self, urlPath) :
         if urlPath == '/' :
             for idxPage in self._indexPages :
@@ -329,14 +283,13 @@ class MicroWebSrv :
                 return physPath
         return None
 
-    # ============================================================================
+    # ======
     # ===( Class Client  )========================================================
-    # ============================================================================
+    # ======
 
     class _client :
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def __init__(self, microWebSrv, socket, addr) :
             socket.settimeout(2)
             self._microWebSrv   = microWebSrv
@@ -351,16 +304,15 @@ class MicroWebSrv :
             self._headers       = { }
             self._contentType   = None
             self._contentLength = 0
-
+            
             if hasattr(socket, 'readline'):   # MicroPython
                 self._socketfile = self._socket
             else:   # CPython
                 self._socketfile = self._socket.makefile('rwb')
-
+                        
             self._processRequest()
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def _processRequest(self) :
             try :
                 response = MicroWebSrv._response(self)
@@ -377,19 +329,29 @@ class MicroWebSrv :
                             elif self._method.upper() == "GET" :
                                 filepath = self._microWebSrv._physPathFromURLPath(self._resPath)
                                 if filepath :
+                                    compressed = 0
+                                    if filepath.endswith(".gz") :
+                                        compressed = 1
                                     if MicroWebSrv._isPyHTMLFile(filepath) :
                                         response.WriteResponsePyHTMLFile(filepath)
                                     else :
                                         contentType = self._microWebSrv.GetMimeTypeFromFilename(filepath)
-                                        if self._microWebSrv.LetCacheStaticContentLevel > 0 and contentType :
-                                            if self._microWebSrv.LetCacheStaticContentLevel > 1 and 'if-modified-since' in self._headers :
-                                                response.WriteResponseNotModified()
-                                            else:
-                                                header = {'Last-Modified':'Fri, 1 Jan 2018 23:42:00 GMT', \
-                                                          'Cache-Control':'max-age=315360000'}
-                                                response.WriteResponseFile(filepath, contentType, header)
-                                        elif contentType :
-                                            response.WriteResponseFile(filepath, contentType, header)
+                                        if contentType :
+                                            if self._microWebSrv.LetCacheStaticContentLevel > 0 :
+                                                if self._microWebSrv.LetCacheStaticContentLevel > 1 and \
+                                                   'if-modified-since' in self._headers :
+                                                    response.WriteResponseNotModified()
+                                                else:
+                                                    if compressed == 1 :
+                                                        headers = { 'Last-Modified' : 'Fri, 1 Jan 2018 23:42:00 GMT', \
+                                                                    'Cache-Control' : 'max-age=315360000', \
+                                                                    'Content-Encoding' : 'gzip'}
+                                                    else :
+                                                        headers = { 'Last-Modified' : 'Fri, 1 Jan 2018 23:42:00 GMT', \
+                                                                    'Cache-Control' : 'max-age=315360000' }
+                                                    response.WriteResponseFile(filepath, contentType, headers)
+                                            else :
+                                                response.WriteResponseFile(filepath, contentType)
                                         else :
                                             response.WriteResponseForbidden()
                                 else :
@@ -418,8 +380,7 @@ class MicroWebSrv :
             except :
                 pass
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def _parseFirstLine(self, response) :
             try :
                 elements = self._socketfile.readline().decode().strip().split()
@@ -429,22 +390,21 @@ class MicroWebSrv :
                     self._httpVer = elements[2].upper()
                     elements      = self._path.split('?', 1)
                     if len(elements) > 0 :
-                        self._resPath = MicroWebSrv._unquote_decode(elements[0])
+                        self._resPath = MicroWebSrv._unquote_plus(elements[0])
                         if len(elements) > 1 :
                             self._queryString = elements[1]
                             elements = self._queryString.split('&')
                             for s in elements :
                                 param = s.split('=', 1)
                                 if len(param) > 0 :
-                                    value = MicroWebSrv._unquote_decode(param[1]) if len(param) > 1 else ''
-                                    self._queryParams[MicroWebSrv._unquote_decode(param[0])] = value
+                                    value = MicroWebSrv._unquote(param[1]) if len(param) > 1 else ''
+                                    self._queryParams[MicroWebSrv._unquote(param[0])] = value
                     return True
             except :
                 pass
             return False
-
-        # ------------------------------------------------------------------------
-
+    
+        # ------------
         def _parseHeader(self, response) :
             while True :
                 elements = self._socketfile.readline().decode().strip().split(':', 1)
@@ -458,75 +418,61 @@ class MicroWebSrv :
                 else :
                     return False
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def _getConnUpgrade(self) :
             if 'upgrade' in self._headers.get('connection', '').lower() :
                 return self._headers.get('upgrade', '').lower()
             return None
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def GetServer(self) :
             return self._microWebSrv
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def GetAddr(self) :
             return self._addr
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def GetIPAddr(self) :
             return self._addr[0]
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def GetPort(self) :
             return self._addr[1]
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def GetRequestMethod(self) :
             return self._method
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def GetRequestTotalPath(self) :
             return self._path
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def GetRequestPath(self) :
             return self._resPath
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def GetRequestQueryString(self) :
             return self._queryString
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def GetRequestQueryParams(self) :
             return self._queryParams
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def GetRequestHeaders(self) :
             return self._headers
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def GetRequestContentType(self) :
             return self._contentType
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def GetRequestContentLength(self) :
             return self._contentLength
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def ReadRequestContent(self, size=None) :
             self._socket.setblocking(False)
             b = None
@@ -540,8 +486,7 @@ class MicroWebSrv :
             self._socket.setblocking(True)
             return b if b else b''
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def ReadRequestPostedFormData(self) :
             res  = { }
             data = self.ReadRequestContent()
@@ -550,31 +495,28 @@ class MicroWebSrv :
                 for s in elements :
                     param = s.split('=', 1)
                     if len(param) > 0 :
-                        value = MicroWebSrv._unquote_decode(param[1]) if len(param) > 1 else ''
-                        res[MicroWebSrv._unquote_decode(param[0])] = value
+                        value = MicroWebSrv._unquote(param[1]) if len(param) > 1 else ''
+                        res[MicroWebSrv._unquote(param[0])] = value
             return res
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def ReadRequestContentAsJSON(self) :
             try :
                 return loads(self.ReadRequestContent())
             except :
                 return None
-
-    # ============================================================================
+        
+    # ======
     # ===( Class Response  )======================================================
-    # ============================================================================
+    # ======
 
     class _response :
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def __init__(self, client) :
             self._client = client
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def _write(self, data) :
             if data :
                 if type(data) == str :
@@ -582,19 +524,16 @@ class MicroWebSrv :
                 return self._client._socketfile.write(data)
             return 0
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def _writeFirstLine(self, code) :
             reason = self._responseCodes.get(code, ('Unknown reason', ))[0]
             self._write("HTTP/1.1 %s %s\r\n" % (code, reason))
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def _writeHeader(self, name, value) :
             self._write("%s: %s\r\n" % (name, value))
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def _writeContentTypeHeader(self, contentType, charset=None) :
             if contentType :
                 ct = contentType \
@@ -603,18 +542,15 @@ class MicroWebSrv :
                 ct = "application/octet-stream"
             self._writeHeader("Content-Type", ct)
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def _writeServerHeader(self) :
             self._writeHeader("Server", "MicroWebSrv by JC`zic")
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def _writeEndHeader(self) :
             self._write("\r\n")
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def _writeBeforeContent(self, code, headers, contentType, contentCharset, contentLength) :
             self._writeFirstLine(code)
             if isinstance(headers, dict) :
@@ -627,8 +563,7 @@ class MicroWebSrv :
             self._writeHeader("Connection", "close")
             self._writeEndHeader()
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteSwitchProto(self, upgrade, headers=None) :
             self._writeFirstLine(101)
             self._writeHeader("Connection", "Upgrade")
@@ -641,8 +576,7 @@ class MicroWebSrv :
             if self._client._socketfile is not self._client._socket :
                 self._client._socketfile.flush()   # CPython needs flush to continue protocol
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteResponse(self, code, headers, contentType, contentCharset, content) :
             try :
                 if content :
@@ -658,8 +592,7 @@ class MicroWebSrv :
             except :
                 return False
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteResponsePyHTMLFile(self, filepath, headers=None, vars=None) :
             if 'MicroWebTemplate' in globals() :
                 with open(filepath, 'r') as file :
@@ -679,16 +612,15 @@ class MicroWebSrv :
     	                                       } )
             return self.WriteResponseNotImplemented()
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteResponseFile(self, filepath, contentType=None, headers=None) :
             try :
                 size = stat(filepath)[6]
                 if size > 0 :
                     with open(filepath, 'rb') as file :
                         self._writeBeforeContent(200, headers, contentType, None, size)
-                        buf = MicroWebSrv._tryAllocByteArray(1024)
-                        if buf :
+                        try :
+                            buf = bytearray(1024)
                             while size > 0 :
                                 x = file.readinto(buf)
                                 if x < len(buf) :
@@ -696,39 +628,35 @@ class MicroWebSrv :
                                 self._write(buf)
                                 size -= x
                             return True
-                        self.WriteResponseInternalServerError()
-                        return False
+                        except :
+                            self.WriteResponseInternalServerError()
+                            return False
             except :
                 pass
             self.WriteResponseNotFound()
             return False
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteResponseFileAttachment(self, filepath, attachmentName, headers=None) :
             if not isinstance(headers, dict) :
                 headers = { }
             headers["Content-Disposition"] = "attachment; filename=\"%s\"" % attachmentName
             return self.WriteResponseFile(filepath, None, headers)
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteResponseOk(self, headers=None, contentType=None, contentCharset=None, content=None) :
             return self.WriteResponse(200, headers, contentType, contentCharset, content)
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteResponseJSONOk(self, obj=None, headers=None) :
             return self.WriteResponse(200, headers, "application/json", "UTF-8", dumps(obj))
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteResponseRedirect(self, location) :
             headers = { "Location" : location }
             return self.WriteResponse(302, headers, None, None, None)
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteResponseError(self, code) :
             responseCode = self._responseCodes.get(code, ('Unknown reason', ''))
             return self.WriteResponse( code,
@@ -741,8 +669,7 @@ class MicroWebSrv :
                                             'message' : responseCode[1]
                                        } )
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteResponseJSONError(self, code, obj=None) :
             return self.WriteResponse( code,
                                        None,
@@ -750,53 +677,44 @@ class MicroWebSrv :
                                        "UTF-8",
                                        dumps(obj if obj else { }) )
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteResponseNotModified(self) :
             return self.WriteResponseError(304)
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteResponseBadRequest(self) :
             return self.WriteResponseError(400)
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteResponseForbidden(self) :
             return self.WriteResponseError(403)
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteResponseNotFound(self) :
             if self._client._microWebSrv._notFoundUrl :
                 self.WriteResponseRedirect(self._client._microWebSrv._notFoundUrl)
             else :
                 return self.WriteResponseError(404)
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteResponseMethodNotAllowed(self) :
             return self.WriteResponseError(405)
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteResponseInternalServerError(self) :
             return self.WriteResponseError(500)
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def WriteResponseNotImplemented(self) :
             return self.WriteResponseError(501)
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         def FlashMessage(self, messageText, messageStyle='') :
             if 'MicroWebTemplate' in globals() :
                 MicroWebTemplate.MESSAGE_TEXT = messageText
                 MicroWebTemplate.MESSAGE_STYLE = messageStyle
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         _errCtnTmpl = """\
         <html>
             <head>
@@ -809,8 +727,7 @@ class MicroWebSrv :
         </html>
         """
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         _execErrCtnTmpl = """\
         <html>
             <head>
@@ -823,8 +740,7 @@ class MicroWebSrv :
         </html>
         """
 
-        # ------------------------------------------------------------------------
-
+        # ------------
         _responseCodes = {
             100: ('Continue', 'Request received, please continue'),
             101: ('Switching Protocols',
@@ -891,6 +807,7 @@ class MicroWebSrv :
             505: ('HTTP Version Not Supported', 'Cannot fulfill request.'),
         }
 
-    # ============================================================================
-    # ============================================================================
-    # ============================================================================
+    # ======
+    # ======
+    # ======
+
