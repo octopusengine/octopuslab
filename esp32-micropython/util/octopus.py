@@ -8,10 +8,19 @@
 # >>> octopus()
 # >>> h() help /i() info /w() wifi connect
 
-class Env: # for temporary global variables and config setup
+from os import urandom
+from time import sleep, sleep_ms, sleep_us, ticks_ms, ticks_diff
+from machine import Pin, I2C, PWM, SPI, Timer, RTC
+
+from util.colors import *
+from util.pinout import set_pinout
+from util.io_config import get_from_file
+
+
+class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
-    ver = "0.83" # version - log: num = ver*100
+    ver = "0.83"  # version - log: num = ver*100
     verDat = "28.8.2019 #673"
     debug = True
     logDev = True
@@ -25,39 +34,35 @@ class Env: # for temporary global variables and config setup
     timerLed = True
     timerBeep = False
 
-olab = Env() # for initialized equipment
 
-from os import urandom
-from time import sleep, sleep_ms, sleep_us, ticks_ms, ticks_diff
-from machine import Pin, I2C, PWM, SPI, Timer, RTC
-
-from util.colors import *
-from util.pinout import set_pinout
-from util.io_config import get_from_file
+olab = Env()  # for initialized equipment
 
 pinout = set_pinout()  # set board pinout
 rtc = RTC()  # real time
 io_conf = get_from_file()  # read configuration for peripherals
 
 # I2C address:
-LCD_ADDR=0x27
-OLED_ADDR=0x3c
+LCD_ADDR = 0x27
+OLED_ADDR = 0x3c
 
 if Env.isTimer:
-    from machine import Timer
     tim1 = Timer(0)
+
 
 # -------------------------------- common terminal function ---------------
 def getVer():
     return "octopusLAB - lib.version: " + Env.ver + " > " + Env.verDat
 
+
 def get_eui():
-    return Env.uID #mac2eui(id)
+    return Env.uID  # mac2eui(id)
+
 
 def printInfo(w=Env.TW):
     print('-' * w)
-    print("| ESP UID: " + Env.uID + " | RAM free: "+ str(getFree()) + " | " + get_hhmm())
+    print("| ESP UID: " + Env.uID + " | RAM free: " + str(getFree()) + " | " + get_hhmm())
     print('-' * w)
+
 
 def o_help():
     printOctopus()
@@ -66,9 +71,11 @@ def o_help():
     printTitle("basic commands - list, examples", 53)
     f("util/octopus_help.txt", False)
 
+
 def h():
     o_help()
     printInfo()
+
 
 def o_info():
     from os import statvfs
@@ -98,19 +105,24 @@ def o_info():
     print(io_conf)
     printInfo()
 
+
 def i():
     o_info()
 
-def f(file='config/device.json', title = True):
+
+def f(file='config/device.json', title=True):
     """print data: f("filename") """
-    if title: printTitle("file > " + file)
+    if title:
+        printTitle("file > " + file)
+
     with open(file, 'r') as f:
             d = f.read()
             #print(os.size(f))
             f.close()
             print(d)
 
-def ls(directory = ""):
+
+def ls(directory=""):
     printTitle("list > " + directory)
     from os import listdir
     ls = listdir(directory)
@@ -118,7 +130,8 @@ def ls(directory = ""):
     for f in ls:
         print(f)
 
-def file_copy(fileSource, fileTarget = "main.py"):
+
+def file_copy(fileSource, fileTarget="main.py"):
     printTitle("file_copy to " + fileTarget)
     print("(Be careful)")
     fs = open(fileSource)
@@ -132,22 +145,26 @@ def file_copy(fileSource, fileTarget = "main.py"):
     ft.close()
     print(" ok")
 
-def beep(f=1000,l=50):
-    piezzo.beep(f,l)
 
-def tone(f, l=300):
-    piezzo.play_tone(f,l)
+def beep(f=1000, l=50):  # noqa: E741
+    piezzo.beep(f, l)
 
-def rgb_init(num_led=io_conf.get('ws'), pin=None): # default autoinit ws
+
+def tone(f, l=300):  # noqa: E741
+    piezzo.play_tone(f, l)
+
+
+def rgb_init(num_led=io_conf.get('ws'), pin=None):  # default autoinit ws
     if pinout.WS_LED_PIN is None:
         print("Warning: WS LED not supported on this board")
         return
     if num_led is None or num_led == 0:
         print("Warning: Number of WS LED is 0")
         return
-    from util.rgb import Rgb # setupNeopixel
+    from util.rgb import Rgb  # setupNeopixel
     ws = Rgb(pin, num_led)
     return ws
+
 
 def disp7_init():
     printTitle("disp7init()")
@@ -158,15 +175,16 @@ def disp7_init():
     d7.display()
     return d7
 
+
 def disp8_init():
     printTitle("disp8init()")
     from lib.max7219 import Matrix8x8
-    d8 = Matrix8x8(spi, ss, 1) #1/4
+    d8 = Matrix8x8(spi, ss, 1)  # 1/4
 
     count = 6
     for i in range(count):
         d8.fill(0)
-        d8.text(str(i),0,0,1)
+        d8.text(str(i), 0, 0, 1)
         d8.show()
         print(i)
         sleep_ms(500)
@@ -174,7 +192,7 @@ def disp8_init():
     d8.show()
     return d8
 
-def scroll(d8, text,num): # TODO speed, timer? / NO "sleep"
+def scroll(d8, text, num):  # TODO speed, timer? / NO "sleep"
     WIDTH = 8*4
     x = WIDTH + 2
     for _ in range(8*len(text)*num):
@@ -187,6 +205,7 @@ def scroll(d8, text,num): # TODO speed, timer? / NO "sleep"
         d8.show()
     d8.fill(0)
     d8.show()
+
 
 def i2c_scann(printInfo=True):
     if printInfo: print("i2c_scann() > devices:")
@@ -202,6 +221,7 @@ def i2c_scann(printInfo=True):
     tslLight = 0x39 in i2cdevs
     return i2c
 
+
 def lcd2_init():
     printTitle("lcd2init()")
     i2c = i2c_scann()
@@ -214,10 +234,12 @@ def lcd2_init():
     lcd.putstr("octopusLAB")
     return lcd
 
+
 def disp2(d,mess,r=0,s=0):
     #d.clear()
     d.move_to(s, r) # x/y
     d.putstr(str(mess))
+
 
 def oled_init(ox=128, oy=64, runTest = True):
     printTitle("oled_init()")
@@ -241,6 +263,7 @@ def servo_init(pin = PIN_SER):
     servo = Servo(PIN_SER)
     return servo
 
+
 def stepper_init(ADDRESS = 0x23, MOTOR_ID = 1): # ID 1 / 2
     motor = SM28BYJ48(i2c, ADDRESS, MOTOR_ID)
     # turn right 90 deg
@@ -249,16 +272,20 @@ def stepper_init(ADDRESS = 0x23, MOTOR_ID = 1): # ID 1 / 2
     motor.turn_degree(90, 1)
     return motor
 
+
 def clt():
     print(chr(27) + "[2J") # clear terminal
     print("\x1b[2J\x1b[H") # cursor up
 
+
 def c():
     clt()
+
 
 def r():
     import machine
     machine.reset()
+
 
 octopusASCII = [
 "      ,'''`.",
@@ -270,16 +297,19 @@ octopusASCII = [
 "   ) \ `)(' / ( ",
 ]
 
+
 def printOctopus():
     print()
     for ol in octopusASCII:
         print("     " + str(ol))
     print()
 
+
 def printHead(s):
     print()
     print('-' * Env.TW)
     print("[--- " + s + " ---] ")
+
 
 def printTitle(t,w=Env.TW):
     print()
@@ -289,26 +319,33 @@ def printTitle(t,w=Env.TW):
     print("|")
     print('=' * w)
 
+
 def printLog(i,s=""):
     print()
     print('-' * Env.TW)
     print("[--- " + str(i) + " ---] " + s)
 
+
 def getFree():
     from gc import mem_free
     return mem_free()
 
+
 def printFree():
     print("Free: "+str(getFree()))
 
+
 def bytearrayToHexString(ba):
     return ''.join('{:02X}'.format(x) for x in ba)
+
 
 def map(x, in_min, in_max, out_min, out_max):
     return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)
 
+
 def bytearrayToHexString(ba):
     return ''.join('{:02X}'.format(x) for x in ba)
+
 
 def add0(sn):
     ret_str=str(sn)
@@ -316,12 +353,14 @@ def add0(sn):
        ret_str = "0"+str(sn)
     return ret_str
 
+
 def get_hhmm(separator=":",rtc=rtc):
     """get_hhmm(separator) | separator = string: "-" / " " """
     #print(str(rtc.datetime()[4])+":"+str(rtc.datetime()[5]))
     hh=add0(rtc.datetime()[4])
     mm=add0(rtc.datetime()[5])
     return hh + separator + mm
+
 
 def get_hhmmss(separator=":",rtc=rtc):
     """get_hhmm(separator) | separator = string: "-" / " " """
@@ -348,13 +387,15 @@ def timer_init():
     tim1.init(period=10000, mode=Timer.PERIODIC, callback=lambda t:timerAction())
     Env.timerCounter = 0
 
+
 def timerAction():
     print("timerAction " + str(Env.timerCounter))
     Env.timerFlag = 1
     Env.timerCounter += 1
-    if Env.timerLed: led.blink(100,50)
+    if Env.timerLed: led.blink(100, 50)
     if Env.timerBeep: beep()
     Env.timerFlag = 0   
+
 
 def wait_pin_change(pin):
     # wait for pin to change value, it needs to be stable for a continuous 20ms
