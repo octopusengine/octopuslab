@@ -537,42 +537,43 @@
 		refresh_tabs();
 	}
 	
-	
-	function async_list_files()
+	function load_filename_changed(el)
+  {
+    if (el.oldvalue.endsWith('/')) {
+      el.value = el.oldvalue + el.value;
+    }
+    async_list_files(el.value);
+  }
+
+
+	function async_list_files(path)
 	{
+    path = path || '/'
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState === 4){
 				//console.log(xhr.responseText);
-				var data = xhr.responseText.split(";")
+				var data = xhr.responseText.trim().split(";")
 				var select = document.getElementById("file_list_input")
 				select.innerHTML = "";
-				
-				data.forEach(function(entry) {
 
-					    type = entry.split(":")[0];
-					    name = entry.split(":")[1];
-					    //console.log(entry);
+				data.forEach(function(name) {
+              if (path == '/') {
+                name = '/' + name
+              }
 					    opt = document.createElement("option");
 					    opt.value = name;
 					    opt.textContent = name;
-					    if (type == "d") {
-					      opt.color="red";
-					    } else {
-					      opt.color="green";
-					    }
 					    select.appendChild(opt);
-				});		
+				});
 			}
 		};
-		xhr.open('GET', origin + '/file_list');
+		xhr.open('GET', origin + '/file_list?path=' + path);
 		xhr.send();
 	}
 	
-	
-	
   </script>  
-  <title>Editor</title>
+  <title>Octopus Editor</title>
   <style type="text/css" media="screen">
     html,body {
 		height: 100%;
@@ -743,10 +744,10 @@
 	<div class="x" onclick="close_load();">x</div>
 		<form  class="form_style" action="">
 		  <p align="center" style="margin: 10px;">Load File</p>
-		  <input type="text" id="load_filename" name="load_filename" list="file_list_input" placeholder="file.py">
+		  <input type="text" id="load_filename" name="load_filename" list="file_list_input" placeholder="file.py" onfocus="this.oldvalue = this.value" onchange="load_filename_changed(this)">
 				<datalist id="file_list_input">
-					<option>boot.py</option>
-					<option>main.py</option>
+					<option>/boot.py</option>
+					<option>/main.py</option>
 				</datalist>
 		  <input type="submit" id="load_dialog_btn" value="Load" onclick="load_code_from_esp_repl(); return false;">
 		</form> 
