@@ -11,47 +11,47 @@
   <script src="ace.js.gz"></script>
   <script src="ext-language_tools.js.gz"></script>
   <script>
-	var origin = window.location.origin; 
+	var origin = window.location.origin;
 	//var origin = "http://192.168.4.1";
 	var repl_password = "octopus";
-	
+
 	var editor;
 	var term;
 	var ws;
 	var connected = false;
-	
+
 	var paste_mode_detected = 0;
 	var arrow_detected = 0;
-	
+
 	var binary_state = 0;
 	var put_file_name = null;
 	var put_file_data = null;
 	var get_file_name = null;
 	var get_file_data = null;
-	
+
 	var data_to_send = "";
 	var data_offset = 0;
 	var data_paste_mode = 0;
 	var myVar = setInterval(myTimer, 25);
-	
+
 	// array containing all the editors we will create
     var editors = [];
 	var tabs_names = [];
 	var tabs_num = 0;
 	var selected_tab = 0;
 	var selected_tab_id = "editor_0";
-	
-	
+
+
 	function select_tab(tab_idx)
 	{
 		selected_tab = tab_idx;
 		selected_tab_id = 'editor_' + tab_idx;
 		var i;
-		
+
 		editor = editors[selected_tab].instance;
 		editor.focus();
-		
-		for (i = 0; i < tabs_num; i++) { 
+
+		for (i = 0; i < tabs_num; i++) {
 			if (selected_tab == i)
 			{
 				document.getElementById('tab_' + i).className = "active";
@@ -62,16 +62,16 @@
 				document.getElementById('tab_' + i).className = "";
 				document.getElementById('editor_' + i).style.display = "none";
 			}
-		}	
+		}
 	}
-	
-	
+
+
 	function add_new_editor() {
 		var editor_container = document.getElementById("editor_div")
 		var edChild = document.createElement('pre');
 		edChild.id = 'editor_' + tabs_num;
 		editor_container.appendChild(edChild);
-		   
+
         // initialize the editor in the tab
         var editor = ace.edit('editor_' + tabs_num);
 			editor.setTheme("ace/theme/chrome");
@@ -84,43 +84,43 @@
 				fixedWidthGutter: true,
 				showPrintMargin: false
 			});
-        
+
         editors.push({ id: tabs_num, instance: editor });
 		tabs_names.push("untitled_" + tabs_num);
-	
+
 		select_tab(tabs_num);
 		editor.focus();
 		refresh_tabs();
-		tabs_num = tabs_num + 1;	
+		tabs_num = tabs_num + 1;
 	}
 
-	
+
 	function refresh_tabs() {
 		var tabs_container = document.getElementById("tabs_id")
 		var nav_bar = "";
 		var in_counter = 0;
-		
+
 		tabs_names.forEach(function(entry) {
 			nav_bar = nav_bar + '<li><a id="tab_' + in_counter + '" onclick="select_tab(' + in_counter + ');">{name}</a></li>'.replace("{name}", entry);
 			in_counter = in_counter + 1;
-		});	
+		});
 		nav_bar = nav_bar + '<li><a onclick="add_new_editor();">+</a></li>';
-		
+
 		tabs_container.innerHTML = nav_bar;
 		document.getElementById('tab_' + selected_tab).className = "active";
 	}
-	
-	
+
+
 	//Timer for async send and read websockets
 	function myTimer() {
 		if (data_to_send.length > 0)
-		{			
+		{
 			var lines = data_to_send.split("\r");
 			if (data_offset == 0 && data_paste_mode == 1)
 			{
 			ws.send("\x05");
 			}
-			
+
 			if (paste_mode_detected > 0 && data_paste_mode == 1 || arrow_detected > 0 && data_paste_mode == 0)
 			{
 				ws.send(lines[data_offset] + "\r");
@@ -128,7 +128,7 @@
 				arrow_detected = 0;
 				data_offset += 1;
 			}
-	
+
 			if (data_offset >= lines.length)
 			{
 				data_to_send = "";
@@ -136,21 +136,21 @@
 				if (data_paste_mode == 1)
 				{
 					ws.send("\x04");
-				}	
+				}
 			}
 		}
 	}
-	
-	
+
+
 	function runCode() {
 		var str_code = editor.getValue();
 		data_paste_mode = 1;
 		data_to_send = str_code.replace(/\r\n|\r|\n/g, "\r");
 		data_offset = 0;
 	}
-	
 
-	
+
+
 	function getWidth() {
 	  return Math.max(
 		document.body.scrollWidth,
@@ -170,32 +170,32 @@
 		document.documentElement.clientHeight
 	  );
 	}
-	
-	
-	
+
+
+
 	function calculate_size(win) {
 		var cols = (getWidth() / 6.2) | 0;
 		//var rows = ((getHeight() / 6) / 15) | 0;
 		var rows = (document.getElementById("terminal_div").offsetHeight / 13.5) | 0;
 		return [cols, rows];
 	}
-	
-	
+
+
 	(function() {
 		window.onload = function() {
-		  
+
 			add_new_editor();
-			
+
 			// On Web
 			ace.config.set('basePath', '/');
 			ace.config.set('modePath', '/');
 			ace.config.set('themePath', '/');
-			
+
 			// Local Filesystem
 			//ace.config.set('basePath', '');
 			//ace.config.set('modePath', '');
 			//ace.config.set('themePath', '');
-			
+
 		    Split(['#editor_div', '#terminal_div'], {
 				direction: 'vertical',
 				sizes: [85, 15],
@@ -207,8 +207,8 @@
 					term.resize(size[0], size[1]);
 					editor.resize();
 				},
-			})	
-			
+			})
+
 			var size = calculate_size(self);
 			term = new Terminal({
 				cols: size[0],
@@ -217,9 +217,9 @@
 				screenKeys: true,
 				cursorBlink: false
 			});
-			
+
 			refresh_tabs();
-		
+
 		  term.open(document.getElementById("term"));
 		  connect(origin.replace("http","ws") + ":8266");
 		};
@@ -228,19 +228,19 @@
 			term.resize(size[0], size[1]);
 		});
 	}).call(this);
-	
+
 
 	function update_file_status(s) {
 		//document.getElementById('file-status').innerHTML = s;
 		console.log(s);
 		term.write(s);
 	}
-	
-	
+
+
 	function prepare_for_connect() {
 		connect(origin.replace("http","ws") + ":8266");
 	}
-	
+
 
 	function connect(url) {
 		//window.location.hash = url.substring(5);
@@ -336,26 +336,26 @@
 							break;
 					}
 				}
-				
-				try 
+
+				try
 				{
 					if (event.data.includes("\r") == true)
 					{
 						paste_mode_detected += 1;
 						//console.log("nl")
 					}
-				
+
 					if (event.data.includes(">>>") == true)
 					{
 						arrow_detected += 1;
 						//console.log(">>>")
 					}
 				}
-				catch(err) 
+				catch(err)
 				{
 					console.log("socket receive binary data");
 				}
-								
+
 				term.write(event.data);
 			};
 			ws.send(repl_password + "\n");
@@ -370,10 +370,10 @@
 			prepare_for_connect();
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 	function decode_resp(data) {
 		if (data[0] == 'W'.charCodeAt(0) && data[1] == 'B'.charCodeAt(0)) {
 			var code = data[2] | (data[3] << 8);
@@ -413,7 +413,7 @@
 	function get_file(filename) {
 		//var src_fname = document.getElementById('get_filename').value;
 		var src_fname = filename;
-		
+
 		// WEBREPL_FILE = "<2sBBQLH64s"
 		var rec = new Uint8Array(2 + 1 + 1 + 8 + 4 + 2 + 64);
 		rec[0] = 'W'.charCodeAt(0);
@@ -469,36 +469,36 @@
 		reader.readAsArrayBuffer(f);
 	}
 
-	
+
 	function stringToArray(bufferString) {
 		let uint8Array = new TextEncoder("utf-8").encode(bufferString);
 		return uint8Array;
 	}
-	
-	
+
+
 	function save_code_to_esp_repl()
 	{
 		console.log("save");
 		document.getElementById("save_dialog_btn").value = "Saving";
 		document.getElementById("save_dialog_btn").disabled = true;
-		
+
 		var save_code = editor.getValue().replace(/\r\n|\r|\n/g, "\r");
 		var save_filename = document.getElementById("save_filename").value;
-		
+
 		put_file_name = save_filename;
 		put_file_data = new Uint8Array(stringToArray(save_code));
 		console.log(escape(put_file_name) + ' - ' + put_file_data.length + ' bytes');
-		put_file();	
+		put_file();
 
 		tabs_names[selected_tab] = document.getElementById("save_filename").value;
 		refresh_tabs();
 	}
-	
+
 	function close_save()
 	{
 		document.getElementById("save_dialog").style.display = "none";
 	}
-	
+
 	function save_file_dialog()
 	{
 		document.getElementById("save_filename").value = tabs_names[selected_tab];
@@ -506,15 +506,15 @@
 		document.getElementById("save_dialog_btn").value = "Save";
 		document.getElementById("save_dialog").style.display = "block";
 	}
-	
 
-	
-	
+
+
+
 	function close_load()
 	{
 		document.getElementById("load_dialog").style.display = "none";
 	}
-	
+
 	function open_file_dialog()
 	{
 		document.getElementById("load_filename").value = "";
@@ -523,26 +523,30 @@
 		document.getElementById("load_dialog_btn").value = "Load";
 		document.getElementById("load_dialog").style.display = "block";
 	}
-	
+
 	function load_code_from_esp_repl()
 	{
 		console.log("load");
 		document.getElementById("load_dialog_btn").value = "Loading";
 		document.getElementById("load_dialog_btn").disabled = true;
-		
+
 		var load_filename = document.getElementById("load_filename").value;
 		get_file(load_filename);
-		
+
 		tabs_names[selected_tab] = document.getElementById("load_filename").value;
 		refresh_tabs();
 	}
-	
-	function load_filename_changed(el)
+
+  function load_filename_changed(el)
   {
     if (el.oldvalue.endsWith('/')) {
       el.value = el.oldvalue + el.value;
     }
+    if (el.value.endsWith('/..')) {
+      el.value = el.value.split("/").slice(0, -2).join("/") + "/";
+    }
     async_list_files(el.value);
+    document.getElementById("load_dialog").style.display = "block";
   }
 
 
@@ -557,28 +561,28 @@
 				var select = document.getElementById("file_list_input")
 				select.innerHTML = "";
 
+        if (path != '/') {
+          data.unshift("..");
+        }
 				data.forEach(function(name) {
-              if (path == '/') {
-                name = '/' + name
-              }
-					    opt = document.createElement("option");
-					    opt.value = name;
-					    opt.textContent = name;
-					    select.appendChild(opt);
+  		    opt = document.createElement("option");
+  		    opt.value = path + name;
+  		    opt.textContent = path + name;
+  		    select.appendChild(opt);
 				});
 			}
 		};
 		xhr.open('GET', origin + '/file_list?path=' + path);
 		xhr.send();
 	}
-	
-  </script>  
+
+  </script>
   <title>Octopus Editor</title>
   <style type="text/css" media="screen">
     html,body {
 		height: 100%;
 	}
-	
+
 	body {
         overflow: hidden;
 		margin:0;
@@ -597,7 +601,7 @@
 		height: 100%;
 		width:100%;
     }
-	
+
 	#term {
         margin: 0;
         position: relative;
@@ -609,12 +613,12 @@
 		height: 100%;
 		width:100%;
     }
-	
+
 	.terminal {
 		border: #000 solid 2px;
 		background: #000;
 	}
-	
+
 	.x, #save_dialog_btn, #load_dialog_btn {
 		cursor:pointer;
 	}
@@ -626,24 +630,24 @@
 		 overflow-y: auto;
 		 overflow-x: hidden;
 	}
-	 
+
 	.content {
 		 border: 0px solid #C0C0C0;
 	}
-	 
+
 	.gutter {
 		 background-color: transparent;
 	}
-	 
+
 	.gutter.gutter-vertical {
 		 cursor: row-resize;
 	}
-	 
+
 	#editor_div {
 		padding-top: 64px;
 	}
-	
-	
+
+
 	#save_dialog, #load_dialog  {
         position: absolute;
         top: 70px;
@@ -654,7 +658,7 @@
 		border-radius: 6px;
 		border: 2px solid #a8a8a8;
 		display: none;
-	} 
+	}
 
 	input{
 		display: block;
@@ -662,14 +666,14 @@
 		border-radius: 5px;
 		font-size: 16px;
 		background: #fAfAfA;
-		width: 90%; 
+		width: 90%;
 		padding: 10px;
 		margin: 10px 10px;
 		-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
         -moz-box-sizing: border-box;    /* Firefox, other Gecko */
 		box-sizing: border-box;         /* Opera/IE 8+ */
 	}
-	
+
 	.x {
 		display: block;
 		position: absolute;
@@ -680,8 +684,8 @@
 		text-align: center;
 		font-family: Arial, sans-serif;
 	}
-	
-	
+
+
 	ul {
 	  list-style-type: none;
 	  margin: 0;
@@ -711,8 +715,8 @@
 	li a:hover, .active {
 	  background-color: #B0B0B0;
 	}
-	
-	
+
+
   </style>
 </head>
 <body>
@@ -724,22 +728,22 @@
 		<area alt="Undo" title="Undo" shape="rect" coords="122,1,150,31" onclick="editor.undo();"/>
 		<area alt="Redo" title="Redo" shape="rect" coords="162,1,190,31" onclick="editor.redo();"/>
 	</map>
-	
+
 	<ul id="tabs_id">
 	</ul>
-	
+
 	<div id="editor_div" class="split content"></div>
 	<div id="terminal_div" class="split content"><div id="term"></div></div>
-	
+
 	<div id="save_dialog" style="z-index: 2;">
 	<div class="x" onclick="close_save();">x</div>
 		<form  class="form_style" action="">
 		  <p align="center" style="margin: 10px;">Save File</p>
 		  <input type="text" id="save_filename" name="save_filename" value="test.py" placeholder="file.py">
 		  <input type="submit" id="save_dialog_btn" value="Save" onclick="save_code_to_esp_repl(); return false;">
-		</form> 
+		</form>
 	</div>
-	
+
 	<div id="load_dialog" style="z-index: 2;">
 	<div class="x" onclick="close_load();">x</div>
 		<form  class="form_style" action="">
@@ -750,7 +754,7 @@
 					<option>/main.py</option>
 				</datalist>
 		  <input type="submit" id="load_dialog_btn" value="Load" onclick="load_code_from_esp_repl(); return false;">
-		</form> 
+		</form>
 	</div>
 </body>
 </html>
