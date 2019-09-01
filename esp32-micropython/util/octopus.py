@@ -712,3 +712,35 @@ if Env.autoInit:  # test
         from lib.sm28byj48 import SM28BYJ48   #PCF address = 35 #33-0x21/35-0x23
                   
     print()
+
+def web_editor():
+    from lib.microWebSrv import MicroWebSrv
+    import os
+    import webrepl
+
+    @MicroWebSrv.route('/file_list')
+    def _httpHandlerTestGet(httpClient, httpResponse):
+        path = "/"
+
+        if "path" in httpClient._queryParams:
+            path = httpClient._queryParams["path"]
+
+        if len(path) > 1 and path[-1] == '/':
+            path = path[:-1]
+
+        files = [
+                "{0}/".format(name)
+                if os.stat(path+"/"+name)[0] & 0o170000 == 0o040000 else
+                name
+                for name in os.listdir(path)
+                ]
+        files.sort()
+        content = ";".join(files)
+
+        httpResponse.WriteResponseOk( headers = None, contentType = "text/html", contentCharset = "UTF-8", content = content )
+
+    mws = MicroWebSrv(webPath='wwwide/')      # TCP port 80 and files in /flash/www
+    mws.Start(threaded=True) # Starts server in a new thread
+    print("Web editor started")
+    webrepl.start()
+
