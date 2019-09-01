@@ -545,7 +545,9 @@
     if (el.value.endsWith('/..')) {
       el.value = el.value.split("/").slice(0, -2).join("/") + "/";
     }
-    async_list_files(el.value);
+    if (el.value.endsWith('/')) {
+      async_list_files(el.value);
+    }
     document.getElementById("load_dialog").style.display = "block";
   }
 
