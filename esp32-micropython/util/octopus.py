@@ -21,7 +21,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
     ver = "0.85"  # version - log: num = ver*100
-    verDat = "1.9.2019 #759"
+    verDat = "1.9.2019 #758"
     debug = True
     logDev = True
     autoInit = True
@@ -719,12 +719,12 @@ if Env.autoInit:  # test
                   
     print()
 
-def web_server(webPath='wwwesp/'):
+def web_server(wPath='wwwesp/'):
     from lib.microWebSrv import MicroWebSrv
-    # ? webPath
-    mws = MicroWebSrv(webPath='wwwesp/')      # TCP port 80 and files in /flash/www
+    # ? webPath as parameter
+    mws = MicroWebSrv(webPath=wPath)      # TCP port 80 and files in /flash/www
     mws.Start(threaded=True) # Starts server in a new thread
-    print("Web server started")
+    print("Web server started > " + wPath)
 
 def web_editor():
     from lib.microWebSrv import MicroWebSrv
@@ -756,4 +756,3 @@ def web_editor():
     mws.Start(threaded=True) # Starts server in a new thread
     print("Web editor started")
     webrepl.start()
-
