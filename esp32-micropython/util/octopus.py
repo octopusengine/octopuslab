@@ -20,8 +20,8 @@ from util.io_config import get_from_file
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
-    ver = "0.83"  # version - log: num = ver*100
-    verDat = "28.8.2019 #673"
+    ver = "0.85"  # version - log: num = ver*100
+    verDat = "1.9.2019 #758"
     debug = True
     logDev = True
     autoInit = True
@@ -121,6 +121,12 @@ def f(file='config/device.json', title=True):
             f.close()
             print(d)
 
+def u(tar="https://octopusengine.org/download/micropython/stable.tar"):
+    w()
+    printTitle("update from > ")
+    print(tar)
+    from util.setup import deploy 
+    deploy(tar)
 
 def ls(directory=""):
     printTitle("list > " + directory)
@@ -712,6 +718,13 @@ if Env.autoInit:  # test
         from lib.sm28byj48 import SM28BYJ48   #PCF address = 35 #33-0x21/35-0x23
                   
     print()
+
+def web_server():
+    from lib.microWebSrv import MicroWebSrv
+    # ? webPath as parameter
+    mws = MicroWebSrv(webPath='wwwesp/')      # TCP port 80 and files in /flash/www
+    mws.Start(threaded=True) # Starts server in a new thread
+    print("Web server started")
 
 def web_editor():
     from lib.microWebSrv import MicroWebSrv
