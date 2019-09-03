@@ -47,11 +47,10 @@ class MicroWebSrv :
         ".txt"   : "text/plain",
         ".htm"   : "text/html",
         ".html"  : "text/html",
+        ".gz"    : "application/gzip",
         ".css"   : "text/css",
-        ".css.gz": "text/css",
         ".csv"   : "text/csv",
         ".js"    : "application/javascript",
-        ".js.gz" : "application/javascript",
         ".xml"   : "application/xml",
         ".xhtml" : "application/xhtml+xml",
         ".json"  : "application/json",
@@ -60,11 +59,13 @@ class MicroWebSrv :
         ".jpg"   : "image/jpeg",
         ".jpeg"  : "image/jpeg",
         ".png"   : "image/png",
-        ".png.gz": "image/png",
         ".gif"   : "image/gif",
         ".svg"   : "image/svg+xml",
+        ".tar"   : "application/tar",
+        ".tar.gz": "application/tar+gzip",
         ".ico"   : "image/x-icon",
-        ".svg"   : "image/svg+xml"
+        ".svg"   : "image/svg+xml",
+        ".zip"   : "application/zip"
     }
 
     _html_escape_chars = {
