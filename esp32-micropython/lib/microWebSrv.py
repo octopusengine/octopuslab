@@ -339,9 +339,9 @@ class MicroWebSrv :
                                 if filepath:
                                     if MicroWebSrv._isPyHTMLFile(filepath) :
                                         response.WriteResponsePyHTMLFile(filepath)
-                                    else :
-                                        contentType = self._microWebSrv.GetMimeTypeFromFilename(filepath)
-                                        if contentType :
+                                    else:
+                                        contentType = self._microWebSrv.GetMimeTypeFromFilename(filepath if not compressed else filepath[:-3])
+                                        if contentType:
                                             if self._microWebSrv.LetCacheStaticContentLevel > 0 :
                                                 if self._microWebSrv.LetCacheStaticContentLevel > 1 and \
                                                    'if-modified-since' in self._headers :
