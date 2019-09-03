@@ -1,13 +1,13 @@
-   setup() [w,a > cw,sd > ds,ios -------------------
+   setup()  > w, a > cw, sd   > ds, ios ------------
    h() / o_help() HELP        | i() / o_info() INFO
    c() / clt() clear terminal | r() = system reset
    w() / w_connect()  WIFI    | f(file) FILE print
 >> basic simple HW examples --|---------------------
-   led.value(1)  / (1)        | led.blink()
+   led.value(1)  / (0)        | led.blink()
    ws = Rgb(p, n) > pin, num  | ws.simpleTest()
    ws.color(BLUE) /((128,0,0))| RGBi(5, RED)
    beep(f, l) > freq, lenght  | tone(Notes.C5)
-   import examples.blink      > run example
+   import examples.blink      = run example
 >> displays ------------------|---------------------
    d7 = disp7_init()          > d7.show(123.567)
    d2 = lcd2_init()           > disp2(d2,text,[0/1])
