@@ -327,11 +327,16 @@ class MicroWebSrv :
                                 else:
                                     routeHandler(self, response)
                             elif self._method.upper() == "GET" :
-                                filepath = self._microWebSrv._physPathFromURLPath(self._resPath)
-                                if filepath :
-                                    compressed = 0
-                                    if filepath.endswith(".gz") :
-                                        compressed = 1
+                                compressed = 0
+                                filepath   = self._microWebSrv._physPathFromURLPath(self._resPath)
+                                filepathgz = self._microWebSrv._physPathFromURLPath("{0}.gz".format(self._resPath))
+
+                                # Replace by GZ file only if does not exists uncompressed version
+                                if filepathgz and not filepath:
+                                    filepath = filepathgz
+                                    compressed = 1
+
+                                if filepath:
                                     if MicroWebSrv._isPyHTMLFile(filepath) :
                                         response.WriteResponsePyHTMLFile(filepath)
                                     else :
