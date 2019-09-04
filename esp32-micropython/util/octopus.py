@@ -752,7 +752,7 @@ def web_editor():
 
         httpResponse.WriteResponseOk( headers = None, contentType = "text/html", contentCharset = "UTF-8", content = content )
 
-    mws = MicroWebSrv(webPath='wwwide/')      # TCP port 80 and files in /flash/www
+    mws = MicroWebSrv(webPath='www/')      # TCP port 80 and files in /flash/www
     mws.Start(threaded=True) # Starts server in a new thread
     print("Web editor started")
     webrepl.start()
