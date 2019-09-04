@@ -11,17 +11,17 @@ import  gc
 import  re
 
 try :
-    from microWebTemplate import MicroWebTemplate
+    from lib.microWebTemplate import MicroWebTemplate
 except :
     pass
 
 try :
-    from microWebSocket import MicroWebSocket
+    from lib.microWebSocket import MicroWebSocket
 except :
     pass
 
 class MicroWebSrvRoute :
-    def __init__(self, route, method, func, routeArgNames, routeRegex) :
+    def __init__(self, route, method, func, routeArgNames, routeRegex):
         self.route         = route        
         self.method        = method       
         self.func          = func         
