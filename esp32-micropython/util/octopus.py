@@ -21,7 +21,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
     ver = "0.85"  # version - log: num = ver*100
-    verDat = "1.9.2019 #758"
+    verDat = "5.9.2019 #771"
     debug = True
     logDev = True
     autoInit = True
@@ -110,16 +110,28 @@ def i():
     o_info()
 
 
-def f(file='config/device.json', title=True):
+def f(file='main.py', title=True):
     """print data: f("filename") """
+    fi = open(file, 'r')
     if title:
         printTitle("file > " + file)
+        # file statistic
+        lines = 0
+        words = 0
+        characters = 0
+        for line in fi:
+            wordslist = line.split()
+            lines = lines + 1
+            words = words + len(wordslist)
+            characters = characters + len(line)
 
-    with open(file, 'r') as f:
-            d = f.read()
-            #print(os.size(f))
-            f.close()
-            print(d)
+        print("Statistic > lines: " + str(lines) + " | words: " + str(words) + " | chars: " + str(characters))
+        print('-' * Env.TW)
+        fi = open(file, 'r')
+
+    for line in fi:
+        print(line, end="")
+
 
 def u(tar="https://octopusengine.org/download/micropython/stable.tar"):
     w()
@@ -127,6 +139,7 @@ def u(tar="https://octopusengine.org/download/micropython/stable.tar"):
     print(tar)
     from util.setup import deploy 
     deploy(tar)
+
 
 def ls(directory=""):
     printTitle("list > " + directory)
@@ -719,12 +732,12 @@ if Env.autoInit:  # test
                   
     print()
 
-def web_server():
+def web_server(wPath='wwwesp/'):
     from lib.microWebSrv import MicroWebSrv
     # ? webPath as parameter
-    mws = MicroWebSrv(webPath='wwwesp/')      # TCP port 80 and files in /flash/www
+    mws = MicroWebSrv(webPath=wPath)      # TCP port 80 and files in /flash/www
     mws.Start(threaded=True) # Starts server in a new thread
-    print("Web server started")
+    print("Web server started > " + wPath)
 
 def web_editor():
     from lib.microWebSrv import MicroWebSrv
@@ -752,8 +765,7 @@ def web_editor():
 
         httpResponse.WriteResponseOk( headers = None, contentType = "text/html", contentCharset = "UTF-8", content = content )
 
-    mws = MicroWebSrv(webPath='wwwide/')      # TCP port 80 and files in /flash/www
+    mws = MicroWebSrv(webPath='www/')      # TCP port 80 and files in /flash/www
     mws.Start(threaded=True) # Starts server in a new thread
     print("Web editor started")
     webrepl.start()
-
