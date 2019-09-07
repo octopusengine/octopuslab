@@ -6,6 +6,7 @@ db.addOne("one","1")
 db.listAll()
 """
 import btree
+from util.octopus import printTitle
 
 
 class Db():
@@ -21,12 +22,15 @@ class Db():
         self.data = btree.open(f) 
         #super().open(f)
     
-    def addOne(self, key, val):
+    def addOne(self, key, val): # edit is the same > last value
         self.data[key] = val
         self.data.flush()
+
+    def delKey(self, key):
+        del self.data[key]
     
     def listAll(self):
-        print("test list")
+        printTitle("listAll > ")
         for key in self.data:
             print(key, end=" | ")
             print(self.data[key])
