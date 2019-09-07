@@ -20,8 +20,8 @@ from util.io_config import get_from_file
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
-    ver = "0.85"  # version - log: num = ver*100
-    verDat = "5.9.2019 #771"
+    ver = "0.86"  # version - log: num = ver*100
+    verDat = "7.9.2019 #776"
     debug = True
     logDev = True
     autoInit = True
@@ -569,6 +569,11 @@ def w(logD = True):
     printTitle("WiFi connect > ")
     w_connect()
     if logD and Env.logDev: logDevice()
+
+def database_init(name):
+    from util.database import Db
+    db = Db(name)
+    return db
 
 def time_init(urlApi ="http://www.octopusengine.org/api/hydrop"):
     from urequests import get
