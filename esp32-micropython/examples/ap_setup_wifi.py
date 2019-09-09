@@ -6,11 +6,10 @@
 #s = webserver_init() 
 #webserver_run(s) 
 
-ver = "8.9.2019 - 0.11"
+ver = "9.9.2019 - 0.12"
 
 from time import sleep
 from util.octopus import printLog, printFree, get_eui, temp_init, get_temp, w, ap_init
-
 from util.pinout import set_pinout
 pinout = set_pinout()
 from util.led import Led #?VCh
@@ -19,6 +18,7 @@ wnum = 0
 web_wifi = ""
 ssidTemp = ""
 passTemp = ""
+winfo = ""
 
 def webserver_init():
     
@@ -52,29 +52,28 @@ wcss = """<style>html{font-family: Helvetica; display:inline-block; margin: 0px 
   border-radius: 4px; color: white; padding: 16px 40px; text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}
   .button2{background-color: Navy;}</style>"""
 
-wbott = "<br /><hr />octopusLAB - wifi setup - uID: <br />" + get_eui()
-wform = """
+web_bott = "<br /><hr />octopusLAB - wifi setup - uID: <br />" + get_eui()
+web_form = """
   <form>
-  ssid: <br><input type="text" name="ssid"><br>
+  ssid: <br><input id="fssid" type="text" name="ssid"><br>
   password: <br><input type="text" name="pass"><br><br>
   <input type="submit" value="Submit">
   </form>"""
 
 def web_page():
-  web_info = "web-info"
-  # web_wifi = "test-wifi"
-
-  html = """<html><head> <title>octopusLAB - ESP Web Server</title> <meta name="viewport" content="width=device-width, initial-scale=1">
+  html = """<html><head> <title>octopus ESP setup</title> <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="data:,"> """ + wcss + """
-  </head><body> <h1>octopus LAB - ESP WiFi setup</h1>
-  """ + wform + """
+  <script>function autoFill(ssid){document.getElementById('fssid').value = ssid;}</script>
+  </head><body> <h1>octopusLAB - ESP WiFi setup</h1>
+  """ + web_info + web_form + """
   <p>""" + web_wifi + """</p>
-  <p><br />""" + wbott + """</p></body></html>"""
+  <p><br />""" + web_bott + """</p></body></html>"""
   return html
 
-
 def webconn(s):
-  global wnum, wform, ssidTemp, passTemp, web_wifi
+  printLog("> webconn ")
+  led.blink(50)
+  global wnum, web_info, ssidTemp, passTemp, web_wifi
   
   conn, addr = s.accept()
   print('Got a connection from %s' % str(addr))
@@ -91,7 +90,7 @@ def webconn(s):
       ssidTemp = ssidTemp[1]
       print("ssid.ok")
       if len(ssidTemp) > 1:
-        wform = "ssid: " + ssidTemp + "<hr />" + wform
+        web_info = "<i>last ssid from form: " + ssidTemp + "</i><hr />"
 
     if passTemp[0] == "pass": 
       passTemp = passTemp[1]
@@ -102,8 +101,7 @@ def webconn(s):
     
   print()
   print('Content = ' + str(rs))
-  print("ssid: " + str(ssidTemp) + " | pass: " + str(passTemp))
-
+  
   # led_on = request.find('/?led=on')
   print()
   print("wifi_config: ")
@@ -114,7 +112,17 @@ def webconn(s):
   for k, v in wc.config['networks'].items():
       webWc += k + "<br />"
 
-  # w.add_network(ssidTemp, passTemp)
+  try:
+    print("try save new netw.")
+    print("ssid: " + str(ssidTemp) + " | pass: " + str(passTemp))
+
+    if len(passTemp) > 0 and len(ssidTemp) > 1:
+        wc.add_network(str(ssidTemp), str(passTemp))
+        print("ok")
+        led.blink(1000)
+        led.blink(1000)
+  except:
+      print("err")  
 
   wnum += 1
   web_wifi = webnets + webWc + "<br /> refresh (" + str(wnum) + ")"
@@ -129,22 +137,24 @@ def webconn(s):
 trySetup = True
 
 def webserver_run(s):
-    printLog("> run:")
+    printLog("> web server run:")
     while trySetup:
         webconn(s)
 
 # w()
 ap = ap_init()
-sleep(3)
+sleep(2)
 
 print("ap_scan")
 sta_if = network.WLAN(network.STA_IF)
 sta_if.active(True)
 nets = sta_if.scan()
 webnets = "<hr /><b>Scan networks: </b><br />"
-for n in nets:
-    ssid = n[0].decode()
-    webnets += ssid + "<br />"
+for net in nets:
+    ssidList = net[0].decode()
+    # <u onclick='autoFill("IoT-link1")'>link1</u>
+    # webnets += ssidList + "<br />"
+    webnets += "<u onclick='autoFill(\"" + ssidList + "\")'>" + ssidList + "</u><br />"
 
 """
 try:
