@@ -66,11 +66,10 @@ def web_page():
 
   html = """<html><head> <title>octopusLAB - ESP Web Server</title> <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="data:,"> """ + wcss + """
-  </head><body> <h1>octopus LAB - ESP Web Server</h1>
+  </head><body> <h1>octopus LAB - ESP WiFi setup</h1>
   """ + wform + """
   <p>""" + web_wifi + """</p>
   <p><br />""" + wbott + """</p></body></html>"""
-
   return html
 
 
@@ -118,7 +117,7 @@ def webconn(s):
   # w.add_network(ssidTemp, passTemp)
 
   wnum += 1
-  web_wifi = webWc + "<br /> refresh (" + str(wnum) + ")"
+  web_wifi = webnets + webWc + "<br /> refresh (" + str(wnum) + ")"
 
   response = web_page()
   conn.send('HTTP/1.1 200 OK\n')
@@ -134,12 +133,20 @@ def webserver_run(s):
     while trySetup:
         webconn(s)
 
-
-w()
-# ap = ap_init()
+# w()
+ap = ap_init()
 sleep(3)
 
-print("ap_scann")
+print("ap_scan")
+sta_if = network.WLAN(network.STA_IF)
+sta_if.active(True)
+nets = sta_if.scan()
+webnets = "<hr /><b>Scan networks: </b><br />"
+for n in nets:
+    ssid = n[0].decode()
+    webnets += ssid + "<br />"
+
+"""
 try:
   sc = ap.scan()
   print(len(sc))
@@ -148,7 +155,7 @@ try:
   # sc[0][0]
 except:
   print("err")
-
+"""
 
 s = webserver_init()
 webserver_run(s)
