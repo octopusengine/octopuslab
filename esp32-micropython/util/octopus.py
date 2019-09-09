@@ -731,6 +731,40 @@ def web_editor():
     import os
     import webrepl
 
+    @MicroWebSrv.route('/test123')          # GET
+    @MicroWebSrv.route('/test123', "POST")  # POST
+    def _httpHandlerTestGet(httpClient, httpResponse):
+        method = httpClient.GetRequestMethod()
+        formData  = httpClient.ReadRequestPostedFormData()
+        queryparams = httpClient.GetRequestQueryParams()
+        reqCont = httpClient.ReadRequestContent()
+        print ("Method {0}".format(method))
+        print ("Req content")
+        print(reqCont)
+        print ("Form data")
+        print(formData)
+        print ("Query params")
+        print(queryparams)
+
+        content = "<html><body>"
+        content += "<form method=\"POST\">"
+        content += "Enter your name: <input type=\"text\" name=\"name\"/>"
+        content += "<input type=\"submit\" />"
+        content += "</form>"
+        if "name" in formData:
+            content += "Your name is: <b>{0}</b><br/><br/>".format(MicroWebSrv.HTMLEscape(formData['name']))
+
+        content += "Method: {0}<br/>".format(method)
+        content += "Request content: <br/><p>"
+        content += reqCont.decode()
+        content += "</p>Request Form data: <br/><p>"
+        content += ",".join([ "{0}={1}".format(pair, formData[pair]) for pair in formData ])
+        content += "</p>Request query params: <br/><p>"
+        content += ",".join([ "{0}={1}".format(pair, queryparams[pair]) for pair in queryparams ])
+        content += "</p></body></html>"
+
+        httpResponse.WriteResponseOk( headers = None, contentType = "text/html", contentCharset = "UTF-8", content = content)
+
     @MicroWebSrv.route('/file_list')
     def _httpHandlerTestGet(httpClient, httpResponse):
         path = "/"
