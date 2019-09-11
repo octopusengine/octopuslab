@@ -422,9 +422,8 @@ class MicroWebSrv :
                 if len(elements) == 2 :
                     self._headers[elements[0].strip().lower()] = elements[1].strip()
                 elif len(elements) == 1 and len(elements[0]) == 0 :
-                    if self._method == 'POST' or self._method == 'PUT' :
-                        self._contentType   = self._headers.get("content-type", None)
-                        self._contentLength = int(self._headers.get("content-length", 0))
+                    self._contentType   = self._headers.get("content-type", None)
+                    self._contentLength = int(self._headers.get("content-length", 0))
                     return True
                 else :
                     return False
