@@ -768,17 +768,26 @@ def web_server():
     <input type="submit" value="Submit">
     </form>"""
 
-    @MicroWebSrv.route('/wifi/networks.json') # GET
+    @MicroWebSrv.route('/setup/wifi/networks.json') # GET
     def _httpHandlerWiFiNetworks(httpClient, httpResponse):
         nets = wc.sta_if.scan()
         httpResponse.WriteResponseJSONOk(nets)
 
-    @MicroWebSrv.route('/wifi/savednetworks.json') # GET
+    @MicroWebSrv.route('/setup/wifi/savednetworks.json') # GET
     def _httpHandlerWiFiNetworks(httpClient, httpResponse):
         nets = wc.config['networks']
         httpResponse.WriteResponseJSONOk(nets)
 
-    @MicroWebSrv.route('/wifi/addnetwork', "POST") # GET
+    @MicroWebSrv.route('/setup/wifi/network', "DELETE")
+    @MicroWebSrv.route('/setup/wifi/network', "PUT")
+    def _httpHandlerWiFiAddNetwork(httpClient, httpResponse):
+        formData  = httpClient.ReadRequestPostedFormData()
+        content = "Test123"
+        print(httpClient.GetRequestMethod())
+        print(formData)
+        httpResponse.WriteResponseOk( headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = content)
+
+    @MicroWebSrv.route('/setup/wifi/addnetwork', "POST") # GET
     def _httpHandlerWiFiAddNetwork(httpClient, httpResponse):
         formData  = httpClient.ReadRequestPostedFormData()
         validData = True
