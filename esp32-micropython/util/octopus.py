@@ -20,8 +20,8 @@ from util.io_config import get_from_file
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
-    ver = "0.85"  # version - log: num = ver*100
-    verDat = "1.9.2019 #758"
+    ver = "0.87"  # version - log: num = ver*100
+    verDat = "7.9.2019 #776"
     debug = True
     logDev = True
     autoInit = True
@@ -110,16 +110,28 @@ def i():
     o_info()
 
 
-def f(file='config/device.json', title=True):
+def f(file='main.py', title=True):
     """print data: f("filename") """
+    fi = open(file, 'r')
     if title:
         printTitle("file > " + file)
+        # file statistic
+        lines = 0
+        words = 0
+        characters = 0
+        for line in fi:
+            wordslist = line.split()
+            lines = lines + 1
+            words = words + len(wordslist)
+            characters = characters + len(line)
 
-    with open(file, 'r') as f:
-            d = f.read()
-            #print(os.size(f))
-            f.close()
-            print(d)
+        print("Statistic > lines: " + str(lines) + " | words: " + str(words) + " | chars: " + str(characters))
+        print('-' * Env.TW)
+        fi = open(file, 'r')
+
+    for line in fi:
+        print(line, end="")
+
 
 def u(tar="https://octopusengine.org/download/micropython/stable.tar"):
     w()
@@ -127,6 +139,7 @@ def u(tar="https://octopusengine.org/download/micropython/stable.tar"):
     print(tar)
     from util.setup import deploy 
     deploy(tar)
+
 
 def ls(directory=""):
     printTitle("list > " + directory)
@@ -557,6 +570,11 @@ def w(logD = True):
     w_connect()
     if logD and Env.logDev: logDevice()
 
+def database_init(name):
+    from util.database import Db
+    db = Db(name)
+    return db
+
 def time_init(urlApi ="http://www.octopusengine.org/api/hydrop"):
     from urequests import get
     printTitle("time setup from url")
@@ -719,6 +737,7 @@ if Env.autoInit:  # test
                   
     print()
 
+"""
 def web_server(wPath='wwwesp/'):
     from lib.microWebSrv import MicroWebSrv
     # ? webPath as parameter
@@ -726,13 +745,66 @@ def web_server(wPath='wwwesp/'):
     mws.Start(threaded=True) # Starts server in a new thread
     print("Web server started > " + wPath)
 
+
 def web_editor():
     from lib.microWebSrv import MicroWebSrv
     import os
     import webrepl
 
-    @MicroWebSrv.route('/test123')          # GET
-    @MicroWebSrv.route('/test123', "POST")  # POST
+    @MicroWebSrv.route('/file_list')
+    def _httpHandlerTestGet(httpClient, httpResponse):
+        path = "/"
+
+        if "path" in httpClient._queryParams:
+            path = httpClient._queryParams["path"]
+
+        if len(path) > 1 and path[-1] == '/':
+            path = path[:-1]
+
+        files = [
+                "{0}/".format(name)
+                if os.stat(path+"/"+name)[0] & 0o170000 == 0o040000 else
+                name
+                for name in os.listdir(path)
+                ]
+        files.sort()
+        content = ";".join(files)
+
+        httpResponse.WriteResponseOk( headers = None, contentType = "text/html", contentCharset = "UTF-8", content = content )
+
+    mws = MicroWebSrv(webPath='www/')      # TCP port 80 and files in /flash/www
+    mws.Start(threaded=True) # Starts server in a new thread
+    print("Web editor started")
+    webrepl.start()
+"""
+
+def web_server():
+    print("Web setup test > ")
+    from lib.microWebSrv import MicroWebSrv
+    import os
+    import webrepl
+
+    from util.wifi_connect import WiFiConnect
+    wc = WiFiConnect()
+
+    wcss = """<style>html{font-family: Helvetica; display:inline-block; margin: 0px auto; text-align: center;}
+    h1{color: Silver; padding: 2vh;}p{font-size: 1.5rem;}.button{display: inline-block; background-color: Orange; border: none; 
+    border-radius: 4px; color: white; padding: 16px 40px; text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}
+    .button2{background-color: Navy;}</style>"""
+    html = """<html><head> <title>octopus ESP setup</title> <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:,"> """ + wcss + """
+    <script>function autoFill(ssid){document.getElementById('fssid').value = ssid;}</script>
+    </head><body> <h1>octopusLAB - ESP WiFi setup</h1>
+    """
+    web_form = """
+    <form method="POST">
+    ssid: <br><input id="fssid" type="text" name="ssid"><br>
+    password: <br><input type="text" name="pass"><br><br>
+    <input type="submit" value="Submit">
+    </form>"""
+
+    @MicroWebSrv.route('/setup_wifi')          # GET
+    @MicroWebSrv.route('/setup_wifi', "POST")  # POST
     def _httpHandlerTestGet(httpClient, httpResponse):
         method = httpClient.GetRequestMethod()
         formData  = httpClient.ReadRequestPostedFormData()
@@ -746,14 +818,18 @@ def web_editor():
         print ("Query params")
         print(queryparams)
 
-        content = "<html><body>"
-        content += "<form method=\"POST\">"
-        content += "Enter your name: <input type=\"text\" name=\"name\"/>"
-        content += "<input type=\"submit\" />"
-        content += "</form>"
-        if "name" in formData:
-            content += "Your name is: <b>{0}</b><br/><br/>".format(MicroWebSrv.HTMLEscape(formData['name']))
+        content = html
+        content += web_form
+        if "ssid" in formData:
+            content += "ssid: <b>{0}</b><br/><br/>".format(MicroWebSrv.HTMLEscape(formData['ssid']))
+        if "pass" in formData:
+            content += "pass: <b>{0}</b><br/><br/>".format(MicroWebSrv.HTMLEscape(formData['pass']))
 
+        webWc = "<hr /><b>Saved networks: </b><br />"
+        for k, v in wc.config['networks'].items():
+            webWc += k + "<br />"
+
+        content += webWc
         content += "Method: {0}<br/>".format(method)
         content += "Request content: <br/><p>"
         content += reqCont.decode()
