@@ -20,8 +20,8 @@ from util.io_config import get_from_file
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
-    ver = "0.86"  # version - log: num = ver*100
-    verDat = "7.9.2019 #776"
+    ver = "0.87"  # version - log: num = ver*100
+    verDat = "10.9.2019 #836"
     debug = True
     logDev = True
     autoInit = True
@@ -510,10 +510,9 @@ def ap_init(): #192.168.4.1
     return ap
 
 def w_connect():
-    from network import WLAN, STA_IF
     led.value(1)
 
-    from util.wifi_connect import  WiFiConnect
+    from util.wifi_connect import WiFiConnect
     sleep(1)
     w = WiFiConnect()
     if w.connect():
@@ -522,9 +521,8 @@ def w_connect():
         print("WiFi: Connect error, check configuration")
 
     led.value(0)
-    wlan = WLAN(STA_IF)
-    print('network config:', wlan.ifconfig())
-    return wlan
+    print('Network config:', w.sta_if.ifconfig())
+    return w
 
 def lan_connect():
     from network import LAN, ETH_CLOCK_GPIO17_OUT, PHY_LAN8720
@@ -737,17 +735,114 @@ if Env.autoInit:  # test
                   
     print()
 
-def web_server(wPath='wwwesp/'):
+def small_web_server(wPath='www/'):
     from lib.microWebSrv import MicroWebSrv
     # ? webPath as parameter
     mws = MicroWebSrv(webPath=wPath)      # TCP port 80 and files in /flash/www
     mws.Start(threaded=True) # Starts server in a new thread
     print("Web server started > " + wPath)
 
-def web_editor():
+def web_server():
+    print("Web setup test > ")
     from lib.microWebSrv import MicroWebSrv
     import os
     import webrepl
+    from json import dumps as json_dumps
+
+    from util.wifi_connect import WiFiConnect
+    wc = WiFiConnect()
+
+    wcss = """<style>html{font-family: Helvetica; display:inline-block; margin: 0px auto; text-align: center;}
+    h1{color: Silver; padding: 2vh;}p{font-size: 1.5rem;}.button{display: inline-block; background-color: Orange; border: none; 
+    border-radius: 4px; color: white; padding: 16px 40px; text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}
+    .button2{background-color: Navy;}</style>"""
+    html = """<html><head> <title>octopus ESP setup</title> <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:,"> """ + wcss + """
+    <script>function autoFill(ssid){document.getElementById('fssid').value = ssid;}</script>
+    </head><body> <h1>octopusLAB - ESP WiFi setup</h1>
+    """
+    web_form = """
+    <form method="POST">
+    ssid: <br><input id="fssid" type="text" name="ssid"><br>
+    password: <br><input type="text" name="pass"><br><br>
+    <input type="submit" value="Submit">
+    </form>"""
+
+    @MicroWebSrv.route('/wifi/networks.json') # GET
+    def _httpHandlerWiFiNetworks(httpClient, httpResponse):
+        nets = wc.sta_if.scan()
+        httpResponse.WriteResponseJSONOk(nets)
+
+    @MicroWebSrv.route('/wifi/savednetworks.json') # GET
+    def _httpHandlerWiFiNetworks(httpClient, httpResponse):
+        nets = wc.config['networks']
+        httpResponse.WriteResponseJSONOk(nets)
+
+    @MicroWebSrv.route('/wifi/addnetwork', "POST") # GET
+    def _httpHandlerWiFiAddNetwork(httpClient, httpResponse):
+        formData  = httpClient.ReadRequestPostedFormData()
+        validData = True
+        ssid = None
+        psk = None
+        content = ""
+
+        if not "ssid" in formData:
+            content += "Error: Missing SSID in request"
+            validData = False
+        else:
+            ssid = formData['ssid']
+
+        if not "psk" in formData:
+            validData = False
+            content += "<br/>Error: Missing network key in request"
+        else:
+            psk = formData['psk']
+
+        if validData:
+            #wc.add_network()
+            content = "Saved network"
+            httpResponse.WriteResponseOk( headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = content)
+        else:
+            httpResponse.WriteResponse( code=400, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = content)
+
+
+    @MicroWebSrv.route('/setup_wifi')          # GET
+    @MicroWebSrv.route('/setup_wifi', "POST")  # POST
+    def _httpHandlerTestGet(httpClient, httpResponse):
+        method = httpClient.GetRequestMethod()
+        formData  = httpClient.ReadRequestPostedFormData()
+        queryparams = httpClient.GetRequestQueryParams()
+        reqCont = httpClient.ReadRequestContent()
+        print ("Method {0}".format(method))
+        print ("Req content")
+        print(reqCont)
+        print ("Form data")
+        print(formData)
+        print ("Query params")
+        print(queryparams)
+
+        content = html
+        content += web_form
+        if "ssid" in formData:
+            content += "ssid: <b>{0}</b><br/><br/>".format(MicroWebSrv.HTMLEscape(formData['ssid']))
+        if "pass" in formData:
+            content += "pass: <b>{0}</b><br/><br/>".format(MicroWebSrv.HTMLEscape(formData['pass']))
+
+        webWc = "<hr /><b>Saved networks: </b><br />"
+        for k, v in wc.config['networks'].items():
+            webWc += k + "<br />"
+
+        content += webWc
+        content += "Method: {0}<br/>".format(method)
+        content += "Request content: <br/><p>"
+        content += reqCont.decode()
+        content += "</p>Request Form data: <br/><p>"
+        content += ",".join([ "{0}={1}".format(pair, formData[pair]) for pair in formData ])
+        content += "</p>Request query params: <br/><p>"
+        content += ",".join([ "{0}={1}".format(pair, queryparams[pair]) for pair in queryparams ])
+        content += "</p></body></html>"
+
+        httpResponse.WriteResponseOk( headers = None, contentType = "text/html", contentCharset = "UTF-8", content = content)
 
     @MicroWebSrv.route('/file_list')
     def _httpHandlerTestGet(httpClient, httpResponse):

@@ -11,17 +11,17 @@ import  gc
 import  re
 
 try :
-    from microWebTemplate import MicroWebTemplate
+    from lib.microWebTemplate import MicroWebTemplate
 except :
     pass
 
 try :
-    from microWebSocket import MicroWebSocket
+    from lib.microWebSocket import MicroWebSocket
 except :
     pass
 
 class MicroWebSrvRoute :
-    def __init__(self, route, method, func, routeArgNames, routeRegex) :
+    def __init__(self, route, method, func, routeArgNames, routeRegex):
         self.route         = route        
         self.method        = method       
         self.func          = func         
@@ -47,11 +47,10 @@ class MicroWebSrv :
         ".txt"   : "text/plain",
         ".htm"   : "text/html",
         ".html"  : "text/html",
+        ".gz"    : "application/gzip",
         ".css"   : "text/css",
-        ".css.gz": "text/css",
         ".csv"   : "text/csv",
         ".js"    : "application/javascript",
-        ".js.gz" : "application/javascript",
         ".xml"   : "application/xml",
         ".xhtml" : "application/xhtml+xml",
         ".json"  : "application/json",
@@ -60,11 +59,13 @@ class MicroWebSrv :
         ".jpg"   : "image/jpeg",
         ".jpeg"  : "image/jpeg",
         ".png"   : "image/png",
-        ".png.gz": "image/png",
         ".gif"   : "image/gif",
         ".svg"   : "image/svg+xml",
+        ".tar"   : "application/tar",
+        ".tar.gz": "application/tar+gzip",
         ".ico"   : "image/x-icon",
-        ".svg"   : "image/svg+xml"
+        ".svg"   : "image/svg+xml",
+        ".zip"   : "application/zip"
     }
 
     _html_escape_chars = {
@@ -274,9 +275,14 @@ class MicroWebSrv :
     def _physPathFromURLPath(self, urlPath) :
         if urlPath == '/' :
             for idxPage in self._indexPages :
-            	physPath = self._webPath + '/' + idxPage
-            	if MicroWebSrv._fileExists(physPath) :
-            		return physPath
+                physPath = self._webPath + '/' + idxPage
+                if MicroWebSrv._fileExists(physPath) :
+                    return physPath
+        elif urlPath == '/.gz' :
+            for idxPage in self._indexPages :
+                physPath = self._webPath + '/' + idxPage + ".gz"
+                if MicroWebSrv._fileExists(physPath) :
+                    return physPath
         else :
             physPath = self._webPath + urlPath
             if MicroWebSrv._fileExists(physPath) :
@@ -327,16 +333,21 @@ class MicroWebSrv :
                                 else:
                                     routeHandler(self, response)
                             elif self._method.upper() == "GET" :
-                                filepath = self._microWebSrv._physPathFromURLPath(self._resPath)
-                                if filepath :
-                                    compressed = 0
-                                    if filepath.endswith(".gz") :
-                                        compressed = 1
+                                compressed = 0
+                                filepath   = self._microWebSrv._physPathFromURLPath(self._resPath)
+                                filepathgz = self._microWebSrv._physPathFromURLPath("{0}.gz".format(self._resPath))
+
+                                # Replace by GZ file only if does not exists uncompressed version
+                                if filepathgz and not filepath:
+                                    filepath = filepathgz
+                                    compressed = 1
+
+                                if filepath:
                                     if MicroWebSrv._isPyHTMLFile(filepath) :
                                         response.WriteResponsePyHTMLFile(filepath)
-                                    else :
-                                        contentType = self._microWebSrv.GetMimeTypeFromFilename(filepath)
-                                        if contentType :
+                                    else:
+                                        contentType = self._microWebSrv.GetMimeTypeFromFilename(filepath if not compressed else filepath[:-3])
+                                        if contentType:
                                             if self._microWebSrv.LetCacheStaticContentLevel > 0 :
                                                 if self._microWebSrv.LetCacheStaticContentLevel > 1 and \
                                                    'if-modified-since' in self._headers :
