@@ -4,7 +4,6 @@
 </head>
 
 <script>
-
    function networkEnc(type) {
        switch (type) {
             case 0:
@@ -21,38 +20,38 @@
                 return "Unknown type " + type
        }
    }
-	function loadNetworks()
-	{
-	    var nets = document.getElementById("nets");
-	    var netstable = document.getElementById("netstable");
-	    nets.innerHTML = "Scanning...";
-	    netstable.innerHTML = "<tr><th>SSID</th><th>RSSI</th><th>Encryption</th></tr>";
 
-		var xhr = new XMLHttpRequest();
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState === 4){
-			    var json = JSON.parse(xhr.responseText);
-			    console.log(json);
-    		    console.log(xhr.responseText);
-    		    nets.innerHTML = "";
-			    json.forEach(function(item) {
-			        console.log(item);
+    function loadNetworks()
+    {
+        var nets = document.getElementById("nets");
+        var netstable = document.getElementById("netstable");
+        nets.innerHTML = "Scanning...";
+        netstable.innerHTML = "<tr><th>SSID</th><th>Channel</th><th>RSSI</th><th>Encryption</th></tr>";
 
-                    # opt = document.createElement("div");
-                    # opt.innerHTML = item[0] + "("+ item[3] +")";
-                    # nets.appendChild(opt);
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4){
+                var json = JSON.parse(xhr.responseText);
+                console.log(json);
+                console.log(xhr.responseText);
+                nets.innerHTML = "";
+                json.forEach(function(item) {
+                    console.log(item);
+
+                    // opt = document.createElement("div");
+                    // opt.innerHTML = item[0] + "("+ item[3] +")";
+                    // nets.appendChild(opt);
 
                     row = document.createElement("tr");
-                    row.innerHTML = "<td>" + item[0] + "</td><td>"+ item[3] +"</td><td>" + networkEnc(item[4]) + "</td>";
+                    row.innerHTML = "<td>" + item[0] + "</td><td>" + item[2] + "</td><td>"+ item[3] +"</td><td>" + networkEnc(item[4]) + "</td>";
                     netstable.appendChild(row);
+                });
+            }
+        };
 
-				    });
-			}
-		};
-
-		xhr.open('GET', '/setup/wifi/networks.json');
-		xhr.send();
-	}
+        xhr.open('GET', '/setup/wifi/networks.json');
+        xhr.send();
+    }
 
 </script>
 
@@ -63,7 +62,7 @@
   <h2>Networks</h2>
   <div id="nets"></div>
   <table id="netstable">
-  <tr><th>SSID</th><th>RSSI</th><th>Encryption</th></tr>
+  <tr><th>SSID</th><th>Channel</th><th>RSSI</th><th>Encryption</th></tr>
   </table>
 
 </body>
