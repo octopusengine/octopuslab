@@ -1,0 +1,42 @@
+<html>
+<head>
+<title>Sample WiFi SCAN result</title>
+</head>
+
+<script>
+	function loadNetworks()
+	{
+	    var nets = document.getElementById("nets");
+	    nets.innerHTML = "Scanning...";
+
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function() {
+			if (xhr.readyState === 4){
+			    var json = JSON.parse(xhr.responseText);
+			    console.log(json);
+    		    console.log(xhr.responseText);
+    		    nets.innerHTML = "";
+			    json.forEach(function(item) {
+			        console.log(item);
+  		            opt = document.createElement("div");
+  		            opt.innerHTML = item[0];
+  		            nets.appendChild(opt);
+				    });
+			}
+		};
+
+		xhr.open('GET', origin + '/setup/wifi/networks.json');
+		xhr.send();
+	}
+
+</script>
+
+<body>
+  <h1>WiFi network scanner</h1>
+  <input type="button" onClick="loadNetworks()" value="Scan" />
+
+  <h2>Networks</h2>
+  <div id=nets></div>
+
+</body>
+</html>
