@@ -749,6 +749,7 @@ def web_server():
     from lib.microWebSrv import MicroWebSrv
     import os
     import webrepl
+    from json import dumps as json_dumps
 
     from util.wifi_connect import WiFiConnect
     wc = WiFiConnect()
@@ -768,6 +769,44 @@ def web_server():
     password: <br><input type="text" name="pass"><br><br>
     <input type="submit" value="Submit">
     </form>"""
+
+    @MicroWebSrv.route('/wifi/networks.json') # GET
+    def _httpHandlerWiFiNetworks(httpClient, httpResponse):
+        nets = wc.sta_if.scan()
+        httpResponse.WriteResponseJSONOk(nets)
+
+    @MicroWebSrv.route('/wifi/savednetworks.json') # GET
+    def _httpHandlerWiFiNetworks(httpClient, httpResponse):
+        nets = wc.config['networks']
+        httpResponse.WriteResponseJSONOk(nets)
+
+    @MicroWebSrv.route('/wifi/addnetwork', "POST") # GET
+    def _httpHandlerWiFiAddNetwork(httpClient, httpResponse):
+        formData  = httpClient.ReadRequestPostedFormData()
+        validData = True
+        ssid = None
+        psk = None
+        content = ""
+
+        if not "ssid" in formData:
+            content += "Error: Missing SSID in request"
+            validData = False
+        else:
+            ssid = formData['ssid']
+
+        if not "psk" in formData:
+            validData = False
+            content += "<br/>Error: Missing network key in request"
+        else:
+            psk = formData['psk']
+
+        if validData:
+            #wc.add_network()
+            content = "Saved network"
+            httpResponse.WriteResponseOk( headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = content)
+        else:
+            httpResponse.WriteResponse( code=400, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = content)
+
 
     @MicroWebSrv.route('/setup_wifi')          # GET
     @MicroWebSrv.route('/setup_wifi', "POST")  # POST
