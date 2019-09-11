@@ -1,6 +1,6 @@
 # octopusLAB simple xexample
 # HW: ESP32 + i2c OLED display
-# import examples.oled_pong
+# import examples.oled_brickbreaker
 
 # imports
 from time import sleep_ms
