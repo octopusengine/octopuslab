@@ -4,10 +4,29 @@
 </head>
 
 <script>
+
+   function networkEnc(type) {
+       switch (type) {
+            case 0:
+                return "Open"
+            case 1:
+                return "WEP"
+            case 2:
+                return "WPA-PSK"
+            case 3:
+                return "WPA2-PSK"
+            case 4:
+                return "WPA/WPA2-PSK"
+            default:
+                return "Unknown type " + type
+       }
+   }
 	function loadNetworks()
 	{
 	    var nets = document.getElementById("nets");
+	    var netstable = document.getElementById("netstable");
 	    nets.innerHTML = "Scanning...";
+	    netstable.innerHTML = "<tr><th>SSID</th><th>RSSI</th><th>Encryption</th></tr>";
 
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function() {
@@ -18,14 +37,20 @@
     		    nets.innerHTML = "";
 			    json.forEach(function(item) {
 			        console.log(item);
-  		            opt = document.createElement("div");
-  		            opt.innerHTML = item[0];
-  		            nets.appendChild(opt);
+
+                    # opt = document.createElement("div");
+                    # opt.innerHTML = item[0] + "("+ item[3] +")";
+                    # nets.appendChild(opt);
+
+                    row = document.createElement("tr");
+                    row.innerHTML = "<td>" + item[0] + "</td><td>"+ item[3] +"</td><td>" + networkEnc(item[4]) + "</td>";
+                    netstable.appendChild(row);
+
 				    });
 			}
 		};
 
-		xhr.open('GET', origin + '/setup/wifi/networks.json');
+		xhr.open('GET', '/setup/wifi/networks.json');
 		xhr.send();
 	}
 
@@ -36,7 +61,10 @@
   <input type="button" onClick="loadNetworks()" value="Scan" />
 
   <h2>Networks</h2>
-  <div id=nets></div>
+  <div id="nets"></div>
+  <table id="netstable">
+  <tr><th>SSID</th><th>RSSI</th><th>Encryption</th></tr>
+  </table>
 
 </body>
 </html>
