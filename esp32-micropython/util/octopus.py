@@ -21,7 +21,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
     ver = "0.87"  # version - log: num = ver*100
-    verDat = "7.9.2019 #776"
+    verDat = "10.9.2019 #836"
     debug = True
     logDev = True
     autoInit = True
@@ -737,46 +737,14 @@ if Env.autoInit:  # test
                   
     print()
 
-"""
-def web_server(wPath='wwwesp/'):
+
+def small_web_server(wPath='www/'):
     from lib.microWebSrv import MicroWebSrv
     # ? webPath as parameter
     mws = MicroWebSrv(webPath=wPath)      # TCP port 80 and files in /flash/www
     mws.Start(threaded=True) # Starts server in a new thread
     print("Web server started > " + wPath)
 
-
-def web_editor():
-    from lib.microWebSrv import MicroWebSrv
-    import os
-    import webrepl
-
-    @MicroWebSrv.route('/file_list')
-    def _httpHandlerTestGet(httpClient, httpResponse):
-        path = "/"
-
-        if "path" in httpClient._queryParams:
-            path = httpClient._queryParams["path"]
-
-        if len(path) > 1 and path[-1] == '/':
-            path = path[:-1]
-
-        files = [
-                "{0}/".format(name)
-                if os.stat(path+"/"+name)[0] & 0o170000 == 0o040000 else
-                name
-                for name in os.listdir(path)
-                ]
-        files.sort()
-        content = ";".join(files)
-
-        httpResponse.WriteResponseOk( headers = None, contentType = "text/html", contentCharset = "UTF-8", content = content )
-
-    mws = MicroWebSrv(webPath='www/')      # TCP port 80 and files in /flash/www
-    mws.Start(threaded=True) # Starts server in a new thread
-    print("Web editor started")
-    webrepl.start()
-"""
 
 def web_server():
     print("Web setup test > ")
