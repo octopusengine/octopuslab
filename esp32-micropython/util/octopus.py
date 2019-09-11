@@ -770,7 +770,9 @@ def web_server():
 
     @MicroWebSrv.route('/setup/wifi/networks.json') # GET
     def _httpHandlerWiFiNetworks(httpClient, httpResponse):
-        nets = wc.sta_if.scan()
+        from ubinascii import hexlify
+        # nets = wc.sta_if.scan()
+        nets = [[item[0], hexlify(item[1]), item[2], item[3], item[4], item[5]] for item in wc.sta_if.scan()]
         httpResponse.WriteResponseJSONOk(nets)
 
     @MicroWebSrv.route('/setup/wifi/savednetworks.json') # GET
