@@ -1,0 +1,28 @@
+<html><head>
+<title>octopusLAB-ESP32-index</title>
+<script type="text/javascript" src="octopusengine-num.js"></script> 
+<script>
+function test(p1)
+{
+txt = "Test innerHTML" + " dynamic input";
+document.getElementById("display").innerHTML = txt;
+}
+</script> 
+<link href="../main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<h1>test_page</h1>
+
+<form> 
+<input type="button" value="Test" onclick="test()"/>  
+<input type="button" value="Fibonaci" onclick="fibonaci(21)"/>  
+<input type="button" value="Primes" onclick="findPrimes(99)"/>
+</form>  
+
+<hr /><div id="display">.:.</div>
+
+<hr />
+Back to main <a href="../index.html">index</a>
+
+</body></html>
