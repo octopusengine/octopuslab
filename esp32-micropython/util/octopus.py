@@ -510,10 +510,9 @@ def ap_init(): #192.168.4.1
     return ap
 
 def w_connect():
-    from network import WLAN, STA_IF
     led.value(1)
 
-    from util.wifi_connect import  WiFiConnect
+    from util.wifi_connect import WiFiConnect
     sleep(1)
     w = WiFiConnect()
     if w.connect():
@@ -522,9 +521,8 @@ def w_connect():
         print("WiFi: Connect error, check configuration")
 
     led.value(0)
-    wlan = WLAN(STA_IF)
-    print('network config:', wlan.ifconfig())
-    return wlan
+    print('Network config:', w.sta_if.ifconfig())
+    return w
 
 def lan_connect():
     from network import LAN, ETH_CLOCK_GPIO17_OUT, PHY_LAN8720
