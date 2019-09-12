@@ -748,6 +748,7 @@ def web_server():
     from lib.microWebSrv import MicroWebSrv
     import os
     import webrepl
+    from ubinascii import hexlify
 
     from util.wifi_connect import WiFiConnect
     wc = WiFiConnect()
@@ -770,7 +771,6 @@ def web_server():
 
     @MicroWebSrv.route('/setup/wifi/networks.json') # GET
     def _httpHandlerWiFiNetworks(httpClient, httpResponse):
-        from ubinascii import hexlify
         nets = [[item[0], hexlify(item[1], ":"), item[2], item[3], item[4]] for item in wc.sta_if.scan()]
         httpResponse.WriteResponseJSONOk(nets)
 
@@ -786,11 +786,16 @@ def web_server():
         data = dict()
         sta_ssid = wc.sta_if.config("essid")
         sta_rssi = wc.sta_if.status("rssi") if wc.sta_if.isconnected() else 0
+        sta_connected = wc.sta_if.isconnected()
 
         ap_ssid = wc.ap_if.config("essid")
+        ap_connected = wc.ap_if.isconnected()
+        print("before")
+        ap_stations = [ hexlify(sta[0], ":") for sta in wc.ap_if.status("stations") ] if wc.ap_if.active() else []
+        print(ap_stations)
 
-        data["sta_if"] = { "ssid": sta_ssid, "rssi": sta_rssi}
-        data["ap_if"] = { "ssid": ap_ssid }
+        data["sta_if"] = { "connected": sta_connected, "ssid": sta_ssid, "rssi": sta_rssi}
+        data["ap_if"] = { "connected": ap_connected, "ssid": ap_ssid, "stations": ap_stations }
 
         httpResponse.WriteResponseJSONOk(data)
 
