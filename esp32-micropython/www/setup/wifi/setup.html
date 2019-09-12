@@ -1,0 +1,144 @@
+<html>
+<head>
+<title>WiFi Setup</title>
+</head>
+
+ <script>
+    function autoFill(ssid){
+        document.getElementById('ssid').value = ssid;
+        document.getElementById('psk').select();
+    }
+
+    function networkEnc(type) {
+       switch (type) {
+            case 0:
+                return "Open"
+            case 1:
+                return "WEP"
+            case 2:
+                return "WPA-PSK"
+            case 3:
+                return "WPA2-PSK"
+            case 4:
+                return "WPA/WPA2-PSK"
+            default:
+                return "Unknown type " + type
+       }
+   }
+   function savedNetworks()
+    {
+        var buttonLoad = document.getElementById("buttonSaved");
+        var net = document.getElementById("tableSaved");
+        buttonLoad.value = "Loading...";
+        buttonLoad.disabled = true;
+
+        var xhr = new XMLHttpRequest();
+        xhr.timeout = 10000;
+
+        xhr.onerror = function () {
+            console.log("Error");
+            buttonLoad.value = "Load";
+            buttonLoad.disabled = false;
+        }
+
+        xhr.ontimeout = function () {
+            console.log("Request timeout");
+            buttonLoad.value = "Load";
+            buttonLoad.disabled = false;
+        }
+
+        xhr.onload = function () {
+            buttonLoad.value = "Load";
+            buttonLoad.disabled = false;
+
+            var json = JSON.parse(xhr.responseText);
+                console.log(json);
+                console.log(xhr.responseText);
+                net.innerHTML = "";
+                json.forEach(function(item) {
+                    console.log(item);
+                    row = document.createElement("tr");
+                    row.innerHTML = "<td onClick='autoFill(this.innerText)'>" + item + "</td>";
+                    net.appendChild(row);
+                });
+        }
+
+        xhr.open('GET', '/setup/wifi/savednetworks.json');
+        xhr.send();
+    }
+
+    function scanNetworks()
+    {
+        var buttonScan = document.getElementById("buttonScan");
+        var netstable = document.getElementById("tableScan");
+        buttonScan.value = "Scanning...";
+        buttonScan.disabled = true;
+
+        var xhr = new XMLHttpRequest();
+        xhr.timeout = 10000;
+
+        xhr.onerror = function () {
+            console.log("Error");
+            buttonScan.value = "Scan";
+            buttonScan.disabled = false;
+        }
+
+        xhr.ontimeout = function () {
+            console.log("Request timeout");
+            buttonScan.value = "Scan";
+            buttonScan.disabled = false;
+        }
+
+        xhr.onload = function () {
+            buttonScan.value = "Scan";
+            buttonScan.disabled = false;
+
+            var json = JSON.parse(xhr.responseText);
+                console.log(json);
+                console.log(xhr.responseText);
+                netstable.innerHTML = "";
+                json.forEach(function(item) {
+                    console.log(item);
+
+                    row = document.createElement("tr");
+                    row.innerHTML = "<td onClick='autoFill(this.innerText)'>" + item[0] + "</td><td>" + item[1].replace(/..\B/g, '$&:') + "</td><td>" + item[2] + "</td><td>"+ item[3] +"</td><td>" + networkEnc(item[4]) + "</td>";
+                    netstable.appendChild(row);
+                });
+        }
+
+        xhr.open('GET', '/setup/wifi/networks.json');
+        xhr.send();
+    }
+
+</script>
+
+<body>
+  <h1>WiFi network</h1>
+
+  <form method="PUT" action="setup/wifi/network">
+    ssid: <br><input id="ssid" type="text" name="ssid" /><br/>
+    password: <br><input id="psk" type="password" name="psk" /><br/><br/>
+    <input type="submit" value="Save" />
+  </form>
+
+  <h2>Saved networks</h2>
+  <input type="button" onClick="savedNetworks()" id="buttonSaved" value="Load" />
+  <table>
+  <thead>
+  <tr><th>SSID</th></tr>
+  </thead>
+  <tbody id="tableSaved"></tbody>
+  </table>
+
+  <h2>Scan networks</h2>
+  <input type="button" onClick="scanNetworks()" id="buttonScan" value="Scan" />
+  <table>
+  <thead>
+  <tr><th>SSID</th><th>BSSID</th><th>Channel</th><th>RSSI</th><th>Encryption</th></tr>
+  </thead>
+  <tbody id="tableScan"></tbody>
+  </table>
+
+
+</body>
+</html>

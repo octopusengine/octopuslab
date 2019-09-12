@@ -747,7 +747,6 @@ def web_server():
     from lib.microWebSrv import MicroWebSrv
     import os
     import webrepl
-    from json import dumps as json_dumps
 
     from util.wifi_connect import WiFiConnect
     wc = WiFiConnect()
@@ -771,23 +770,21 @@ def web_server():
     @MicroWebSrv.route('/setup/wifi/networks.json') # GET
     def _httpHandlerWiFiNetworks(httpClient, httpResponse):
         from ubinascii import hexlify
-        # nets = wc.sta_if.scan()
-        nets = [[item[0], hexlify(item[1]), item[2], item[3], item[4], item[5]] for item in wc.sta_if.scan()]
+        nets = [[item[0], hexlify(item[1]), item[2], item[3], item[4]] for item in wc.sta_if.scan()]
         httpResponse.WriteResponseJSONOk(nets)
 
     @MicroWebSrv.route('/setup/wifi/savednetworks.json') # GET
     def _httpHandlerWiFiNetworks(httpClient, httpResponse):
-        nets = wc.config['networks']
+        nets = [k for k,v in wc.config['networks'].items()]
         httpResponse.WriteResponseJSONOk(nets)
 
     @MicroWebSrv.route('/setup/wifi/network', "DELETE")
     @MicroWebSrv.route('/setup/wifi/network', "PUT")
     def _httpHandlerWiFiAddNetwork(httpClient, httpResponse):
         formData  = httpClient.ReadRequestPostedFormData()
-        content = "Test123"
         print(httpClient.GetRequestMethod())
         print(formData)
-        httpResponse.WriteResponseOk( headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = content)
+        httpResponse.WriteResponse(code=201, headers = None, contentType = "text/plain")
 
     @MicroWebSrv.route('/setup/wifi/addnetwork', "POST") # GET
     def _httpHandlerWiFiAddNetwork(httpClient, httpResponse):
