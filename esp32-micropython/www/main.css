@@ -12,7 +12,8 @@ body {
 .radius {
     border-radius: 16px;
     border: 1px solid Silver;
-    padding: 20px; 
+    padding: 20px;
+    padding-top: 0px;
     width: 520px;
   }
 
