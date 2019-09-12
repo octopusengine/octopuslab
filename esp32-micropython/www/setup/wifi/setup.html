@@ -69,6 +69,37 @@ function addNetwork()
         xhr.send(json);
     }
 
+function deleteNetwork(ssid)
+    {
+        var result = confirm("Really want to delete "+ssid+" network?");
+        if (!result) {
+            return;
+        }
+
+        var json = JSON.stringify([ssid])
+
+
+        var xhr = new XMLHttpRequest();
+        xhr.timeout = 10000;
+
+        xhr.onerror = function () {
+            console.log("Error");
+        }
+
+        xhr.ontimeout = function () {
+            console.log("Request timeout");
+        }
+
+        xhr.onload = function () {
+            console.log(xhr.responseText);
+            console.log(xhr.status);
+            savedNetworks();
+        }
+
+        xhr.open('DELETE', '/setup/wifi/network');
+        xhr.send(json);
+    }
+
    function savedNetworks()
     {
         var buttonLoad = document.getElementById("buttonSaved");
