@@ -1,6 +1,6 @@
 # octopusLAB simple xexample
 # HW: ESP32 + i2c OLED display
-# import examples.oled_brickbreaker
+# import examples.oled_pong
 
 # imports
 from time import sleep_ms
@@ -17,7 +17,10 @@ PADDLE_WIDTH = 16
 PADDLE_HEIGHT = 3
 PADDLE_Y = 54
 BALL_SIZE = 5
-
+BRICK_WIDTH = 12
+BRICK_HEIGHT = 4
+BRICK_HOR_OFFSET = 8
+BRICK_VER_OFFSET = 8
 
 OLED = oled_init(SCREEN_WIDTH, SCREEN_HEIGHT)      # init oled display
 OLED.clear()            # clear
@@ -35,67 +38,115 @@ printTitle("oled_pong.py")
 print("this is simple Micropython example | ESP32 & octopusLAB")
 print()
 
+# superObject class with isTouching function to ameliorate collision check chaos
+class Ball:
+   def __init__(self):
+      self.x = int(SCREEN_WIDTH/2)
+      self.y = 50
+      self.xold = self.x
+      self.yold = self.y
+      self.vx = 3
+      self.vy = 3
+
+   def draw(self):
+      OLED.fill_rect(self.xold, self.yold, BALL_SIZE, BALL_SIZE, 0)
+      OLED.fill_rect(self.x, self.y, BALL_SIZE, BALL_SIZE, 1)
+      OLED.show()
+
+class Brick:
+   def __init__(self, x, y):
+      self.x = x
+      self.y = y
+
+   def draw(self):
+      OLED.fill_rect(self.x, self.y, BRICK_WIDTH, BRICK_HEIGHT, 1)
+      OLED.show()
+
+   def undraw(self):
+      OLED.fill_rect(self.x, self.y, BRICK_WIDTH, BRICK_HEIGHT, 0)
+      OLED.show()
+      self.x = 2048     # write a delete function
+      self.y = 1024
+
+class Paddle:
+   def __init__(self):
+      self.x = int((SCREEN_WIDTH-PADDLE_WIDTH)/2)
+      self.xold = self.x
+
+   def draw(self):
+      OLED.fill_rect(self.xold, PADDLE_Y, PADDLE_WIDTH, PADDLE_HEIGHT, 0)
+      OLED.fill_rect(self.x, PADDLE_Y, PADDLE_WIDTH, PADDLE_HEIGHT, 1)
+      OLED.show()
+   
 class oled_pong:
 
    def __init__(self):
-      #print("__init__")
+      print("__init__")
       self.start_game(self)
 
    def start_game(self, start_lives = 3):
-      x = int(SCREEN_WIDTH/2)
-      y = 50
-      paddle_x = x-int(PADDLE_WIDTH/2)
+      print("start_game")
+      paddle = Paddle()
+      ball = Ball()
+      self.createBricks()
+      
       self.score = 0
+      paddle.draw()
+      ball.draw()
+      
+      self.run(ball, paddle)
 
-      self.vx = 3
-      self.vy = 3
-      self.drawBall(x,y,x,y)
-      self.drawPaddle(paddle_x, paddle_x)
-      self.run(x, y, paddle_x)
-
-   def drawBall(self, xold, yold, x, y):
-      OLED.fill_rect(xold, yold, BALL_SIZE, BALL_SIZE, 0)
-      OLED.fill_rect(x, y, BALL_SIZE, BALL_SIZE, 1)
-      OLED.show()
-
-   def drawPaddle(self, xold, x):
-      OLED.fill_rect(xold, PADDLE_Y, PADDLE_WIDTH, PADDLE_HEIGHT, 0)
-      OLED.fill_rect(x, PADDLE_Y, PADDLE_WIDTH, PADDLE_HEIGHT, 1)
-      OLED.show()
+   def createBricks(self):
+      brick_y = 20
+      brickCount = 8
+      brick_x = 6
+      self.bricks = []
+      for ind in range (brickCount):         
+         self.bricks.append(Brick(brick_x, brick_y))
+         self.bricks[ind].draw()
+         brick_x += BRICK_WIDTH + BRICK_VER_OFFSET
 
    def getInput(self, step = 4):
       if button(L)[0] > 8: return -step
       if button(R)[0] > 8: return step
       return 0
 
-   def dtctCollision(self, x, y, paddle_x):
-      if x > SCREEN_WIDTH - BALL_SIZE: self.vx = -self.vx
-      if x < 0: self.vx = -self.vx
-      if y > SCREEN_HEIGHT - BALL_SIZE: self.vy = -self.vy
-      if y < 0:
-         self.vy = -self.vy
+   def dtctCollision(self, ball, paddle):
+      if ball.x > SCREEN_WIDTH - BALL_SIZE: ball.vx = -ball.vx
+      if ball.x < 0: ball.vx = -ball.vx
+      if ball.y > SCREEN_HEIGHT - BALL_SIZE: ball.vy = -ball.vy
+      if ball.y < 0:
+         ball.vy = -ball.vy
          self.score += 1
          #displayNum(score)
 
-      if x + BALL_SIZE > paddle_x and x < paddle_x + PADDLE_WIDTH and y + BALL_SIZE >= PADDLE_Y and y + BALL_SIZE <= PADDLE_Y + PADDLE_HEIGHT:
-         self.vy = -self.vy
+      if ball.x + BALL_SIZE > paddle.x and ball.x < paddle.x + PADDLE_WIDTH and ball.y + BALL_SIZE >= PADDLE_Y and ball.y + BALL_SIZE <= PADDLE_Y + PADDLE_HEIGHT:
+         ball.vy = -ball.vy
 
-   def run(self, x, y, paddle_x):
+      for brick in self.bricks:
+         if ball.x + BALL_SIZE > brick.x and ball.x < brick.x + BRICK_WIDTH and brick.y + BALL_SIZE >= brick.y and ball.y + BALL_SIZE <= brick.y + BRICK_HEIGHT:
+            brick.undraw()
+            ball.vy = -ball.vy
+
+
+   def run(self, ball, paddle):
       while True:
-         xold = x
-         yold = y
-         x += self.vx
-         y += self.vy
+         ball.xold = ball.x
+         ball.yold = ball.y
+         ball.x += ball.vx
+         ball.y += ball.vy
+         paddle.xold = paddle.x
+         paddle.x = (paddle.xold + self.getInput()) % SCREEN_WIDTH
          
-         self.dtctCollision(x, y, paddle_x)
-         self.drawBall(xold,yold,x,y)
-         step = self.getInput()
+         
+         self.dtctCollision(ball, paddle)
+         ball.draw()
+         paddle.draw()
+         
          #if paddle_x > 0 and paddle_x + PADDLE_WIDTH < SCREEN_WIDTH: 
-         paddle_x += step
-         paddle_x %= SCREEN_WIDTH
          #print(step)
-         self.drawPaddle(paddle_x-step, paddle_x)
+         #self.draw(paddle_x-step, paddle_x)
          sleep_ms(3)
 
 if __name__ == "__main__":
-	oled_pong().run(64, 50, 56)
+	oled_pong().start_game()
