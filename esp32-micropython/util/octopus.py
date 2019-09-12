@@ -781,15 +781,12 @@ def web_server():
 
     @MicroWebSrv.route('/setup/wifi/network')   # Get acutal network
     def _httpHandlerWiFiCreateNetwork(httpClient, httpResponse):
-        import network
-        ap_if = network.WLAN(network.AP_IF)
-
         content = None
         data = dict()
         sta_ssid = wc.sta_if.config("essid")
-        sta_rssi = wc.sta_if.status("rssi")
+        sta_rssi = wc.sta_if.status("rssi") if wc.sta_if.isconnected() else 0
 
-        ap_ssid = ap_if.config("essid")
+        ap_ssid = wc.ap_if.config("essid")
 
         data["sta_if"] = { "ssid": sta_ssid, "rssi": sta_rssi}
         data["ap_if"] = { "ssid": ap_ssid }
