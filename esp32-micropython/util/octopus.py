@@ -778,13 +778,36 @@ def web_server():
         nets = [k for k,v in wc.config['networks'].items()]
         httpResponse.WriteResponseJSONOk(nets)
 
-    @MicroWebSrv.route('/setup/wifi/network', "DELETE")
-    @MicroWebSrv.route('/setup/wifi/network', "PUT")
+    @MicroWebSrv.route('/setup/wifi/network', "POST")   # Create new network
+    @MicroWebSrv.route('/setup/wifi/network', "PUT")    # Update existing network
+    @MicroWebSrv.route('/setup/wifi/network', "DELETE") # Delete existing network
     def _httpHandlerWiFiAddNetwork(httpClient, httpResponse):
-        formData  = httpClient.ReadRequestPostedFormData()
-        print(httpClient.GetRequestMethod())
-        print(formData)
-        httpResponse.WriteResponse(code=201, headers = None, contentType = "text/plain")
+        data  = httpClient.ReadRequestContentAsJSON()
+        method = httpClient.GetRequestMethod()
+        responseCode = 500
+        content = None
+
+        print(method)
+        print(data)
+
+        if len(data) < 1:
+            responseCode = 400
+            content = "Missing ssid in request"
+            httpResponse.WriteResponse( code=400, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = content)
+            return
+
+        if method == "POST":
+            ssid = data[0]
+            psk = data[1] if len(data) > 1 else ""
+            print("Creating network {0}".format(data[0]))
+            state = wc.add_network(ssid, psk)
+            if state:
+                responseCode = 201
+            else:
+                responseCode = 400
+                content = "Error while add network"
+
+        httpResponse.WriteResponse( code=responseCode, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = content)
 
     @MicroWebSrv.route('/setup/wifi/addnetwork', "POST") # GET
     def _httpHandlerWiFiAddNetwork(httpClient, httpResponse):
