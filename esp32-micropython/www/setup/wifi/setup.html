@@ -189,8 +189,10 @@ function deleteNetwork(ssid)
     function netInfo()
     {
         var currentSTASSID = document.getElementById("currentSTASSID");
+        var currentSTAState = document.getElementById("currentSTAState");
         var currentSTARSSI = document.getElementById("currentSTARSSI");
         var currentAPSSID = document.getElementById("currentAPSSID");
+        var currentAPState = document.getElementById("currentAPState");
 
         var xhr = new XMLHttpRequest();
         xhr.timeout = 10000;
@@ -216,7 +218,9 @@ function deleteNetwork(ssid)
             console.log(xhr.responseText);
             currentSTASSID.innerText = json['sta_if']['ssid']
             currentSTARSSI.innerText = json['sta_if']['rssi']
+            currentSTAState.innerText = json['sta_if']['connected'] ? "Connected" : "Disconnected"
             currentAPSSID.innerText = json['ap_if']['ssid']
+            currentAPState.innerText = json['ap_if']['connected'] ? "Connected" : "Disconnected"
         }
 
         xhr.open('GET', '/setup/wifi/network');
@@ -230,13 +234,15 @@ function deleteNetwork(ssid)
 
   <div class="radius">
   <h2>Current network AP info</h2>
-  SSID (AP Interface): <span id="currentAPSSID"></span><br/>
+  State: <span id="currentAPState"></span><br/>
+  SSID: <span id="currentAPSSID"></span><br/>
   </div>
   <br/>
 
   <div class="radius">
   <h2>Current network STA info</h2>
-  SSID (STA Interface): <span id="currentSTASSID"></span><br/>
+  State: <span id="currentSTAState"></span><br/>
+  SSID: <span id="currentSTASSID"></span><br/>
   Signal: <span id="currentSTARSSI"></span><br/>
   </div>
   <br/>
