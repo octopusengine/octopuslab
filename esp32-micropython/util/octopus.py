@@ -778,13 +778,11 @@ def web_server():
         nets = [k for k,v in wc.config['networks'].items()]
         httpResponse.WriteResponseJSONOk(nets)
 
-    @MicroWebSrv.route('/setup/wifi/network', "POST")   # Create new network=
+    @MicroWebSrv.route('/setup/wifi/network', "POST")   # Create new network
     def _httpHandlerWiFiCreateNetwork(httpClient, httpResponse):
         data  = httpClient.ReadRequestContentAsJSON()
         responseCode = 500
         content = None
-
-        print(data)
 
         if len(data) < 1:
             responseCode = 400
@@ -794,7 +792,6 @@ def web_server():
 
         ssid = data[0]
         psk = data[1] if len(data) > 1 else ""
-        print("Creating network {0}".format(data[0]))
         state = wc.add_network(ssid, psk)
         responseCode = 201
 
@@ -829,8 +826,6 @@ def web_server():
         responseCode = 500
         content = None
 
-        print(data)
-
         if len(data) < 1:
             responseCode = 400
             content = "Missing ssid in request"
@@ -838,7 +833,6 @@ def web_server():
             return
 
         ssid = data[0]
-        print("Deleting network {0}".format(data[0]))
         wc.remove_network(ssid)
         responseCode = 201
 
