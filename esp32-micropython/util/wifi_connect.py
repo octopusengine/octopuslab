@@ -113,10 +113,12 @@ class WiFiConnect:
             json.dump(self.config, cfg_file)
 
     def add_network(self, ssid, password):
+        self.load_config()
         self.config['networks'][ssid] = password
         self.save_config()
 
     def remove_network(self, ssid):
+        self.load_config()
         if ssid in self.config['networks']:
             del self.config['networks'][ssid]
             self.save_config()
