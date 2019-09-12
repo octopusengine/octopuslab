@@ -775,6 +775,7 @@ def web_server():
 
     @MicroWebSrv.route('/setup/wifi/savednetworks.json') # GET
     def _httpHandlerWiFiNetworks(httpClient, httpResponse):
+        wc.load_config()
         nets = [k for k,v in wc.config['networks'].items()]
         httpResponse.WriteResponseJSONOk(nets)
 
