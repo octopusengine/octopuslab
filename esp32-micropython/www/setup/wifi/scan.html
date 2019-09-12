@@ -26,7 +26,7 @@
         var nets = document.getElementById("nets");
         var netstable = document.getElementById("netstable");
         nets.innerHTML = "Scanning...";
-        netstable.innerHTML = "<tr><th>SSID</th><th>BSSID</th><th>Channel</th><th>RSSI</th><th>Encryption</th></tr>";
+        netstable.innerHTML = "";
 
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
@@ -61,8 +61,11 @@
 
   <h2>Networks</h2>
   <div id="nets"></div>
-  <table id="netstable">
+  <table>
+  <thead>
   <tr><th>SSID</th><th>BSSID</th><th>Channel</th><th>RSSI</th><th>Encryption</th></tr>
+  </thead>
+  <tbody id="netstable"></tbody>
   </table>
 
 </body>
