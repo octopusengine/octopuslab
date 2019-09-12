@@ -779,6 +779,23 @@ def web_server():
         nets = [k for k,v in wc.config['networks'].items()]
         httpResponse.WriteResponseJSONOk(nets)
 
+    @MicroWebSrv.route('/setup/wifi/network')   # Get acutal network
+    def _httpHandlerWiFiCreateNetwork(httpClient, httpResponse):
+        import network
+        ap_if = network.WLAN(network.AP_IF)
+
+        content = None
+        data = dict()
+        sta_ssid = wc.sta_if.config("essid")
+        sta_rssi = wc.sta_if.status("rssi")
+
+        ap_ssid = ap_if.config("essid")
+
+        data["sta_if"] = { "ssid": sta_ssid, "rssi": sta_rssi}
+        data["ap_if"] = { "ssid": ap_ssid }
+
+        httpResponse.WriteResponseJSONOk(data)
+
     @MicroWebSrv.route('/setup/wifi/network', "POST")   # Create new network
     def _httpHandlerWiFiCreateNetwork(httpClient, httpResponse):
         data  = httpClient.ReadRequestContentAsJSON()

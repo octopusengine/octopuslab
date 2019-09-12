@@ -186,10 +186,55 @@ function deleteNetwork(ssid)
         xhr.send();
     }
 
+    function netInfo()
+    {
+        var currentSTASSID = document.getElementById("currentSTASSID");
+        var currentSTARSSI = document.getElementById("currentSTARSSI");
+        var currentAPSSID = document.getElementById("currentAPSSID");
+
+        var xhr = new XMLHttpRequest();
+        xhr.timeout = 10000;
+
+        xhr.onerror = function () {
+            console.log("Error");
+            buttonScan.value = "Scan";
+            buttonScan.disabled = false;
+        }
+
+        xhr.ontimeout = function () {
+            console.log("Request timeout");
+            buttonScan.value = "Scan";
+            buttonScan.disabled = false;
+        }
+
+        xhr.onload = function () {
+            buttonScan.value = "Scan";
+            buttonScan.disabled = false;
+
+            var json = JSON.parse(xhr.responseText);
+            console.log(json);
+            console.log(xhr.responseText);
+            currentSTASSID.innerText = json['sta_if']['ssid']
+            currentSTARSSI.innerText = json['sta_if']['rssi']
+            currentAPSSID.innerText = json['ap_if']['ssid']
+        }
+
+        xhr.open('GET', '/setup/wifi/network');
+        xhr.send();
+    }
+
 </script>
 
-<body>
+<body onload="netInfo()">
   <h1>WiFi Setup</h1>
+
+  <div class="radius">
+  <h2>Current network info</h2>
+  SSID (STA Interface): <span id="currentSTASSID"></span><br/>
+  SSID (AP Interface): <span id="currentAPSSID"></span><br/>
+  Signal: <span id="currentSTARSSI"></span><br/>
+  </div>
+  <br/>
 
   <div class="radius">
   <h2>Add network</h2>
