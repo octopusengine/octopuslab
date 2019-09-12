@@ -134,7 +134,7 @@ function deleteNetwork(ssid)
                 json.forEach(function(item) {
                     console.log(item);
                     row = document.createElement("tr");
-                    row.innerHTML = "<td onClick='autoFill(this.innerText)'>" + item + "</td>";
+                    row.innerHTML = "<td onClick='autoFill(this.innerText)'>" + item + "</td><td><span onClick='deleteNetwork(\"" + item + "\")'>🗑</span></td>";
                     net.appendChild(row);
                 });
         }
