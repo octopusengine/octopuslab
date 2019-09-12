@@ -21,6 +21,7 @@ from time import sleep, sleep_ms
 class WiFiConnect:
     def __init__(self, retries = 0):
         self.sta_if = network.WLAN(network.STA_IF)
+        self.ap_if = network.WLAN(network.AP_IF)
         self.events_connecting = []
         self.events_connected = []
         self.events_disconnected = []
