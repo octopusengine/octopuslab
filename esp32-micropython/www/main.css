@@ -9,3 +9,10 @@ body {
     padding:10;
 }
 
+.radius {
+    border-radius: 16px;
+    border: 1px solid Silver;
+    padding: 20px; 
+    width: 520px;
+  }
+
