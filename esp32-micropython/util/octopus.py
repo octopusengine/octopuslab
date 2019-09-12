@@ -793,7 +793,7 @@ def web_server():
 
         ssid = data[0]
         psk = data[1] if len(data) > 1 else ""
-        state = wc.add_network(ssid, psk)
+        wc.add_network(ssid, psk)
         responseCode = 201
 
         httpResponse.WriteResponse( code=responseCode, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = content)
@@ -823,7 +823,7 @@ def web_server():
 
     @MicroWebSrv.route('/setup/wifi/network', "DELETE") # Delete existing network
     def _httpHandlerWiFiDeleteNetwork(httpClient, httpResponse):
-        data  = httpClient.ReadRequestContentAsJSON()
+        data = httpClient.ReadRequestContentAsJSON()
         responseCode = 500
         content = None
 
