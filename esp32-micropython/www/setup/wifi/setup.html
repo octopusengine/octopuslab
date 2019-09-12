@@ -191,28 +191,36 @@ function deleteNetwork(ssid)
 <body>
   <h1>WiFi Setup</h1>
 
+  <div class="radius">
+  <h2>Add network</h2>
   ssid: <br><input id="ssid" type="text" name="ssid" /><br/>
   password: <br><input id="psk" type="password" name="psk" /><br/><br/>
   <input type="button" onClick="addNetwork()" id="buttonSave" value="Save" />
+  </div>
+  <br/>
 
+  <div class="radius">
   <h2>Saved networks</h2>
-  <input type="button" onClick="savedNetworks()" id="buttonSaved" value="Load" />
+  <input type="button" onClick="savedNetworks()" id="buttonSaved" value="Load" /><br/><br/>
   <table>
   <thead>
-  <tr><th>SSID</th></tr>
+  <tr><th>SSID</th><th>Delete</th></tr>
   </thead>
   <tbody id="tableSaved"></tbody>
   </table>
+  </div>
 
+  <br/>
+  <div class="radius">
   <h2>Scan networks</h2>
-  <input type="button" onClick="scanNetworks()" id="buttonScan" value="Scan" />
+  <input type="button" onClick="scanNetworks()" id="buttonScan" value="Scan" /><br/><br/>
   <table>
   <thead>
   <tr><th>SSID</th><th>BSSID</th><th>Channel</th><th>RSSI</th><th>Encryption</th></tr>
   </thead>
   <tbody id="tableScan"></tbody>
   </table>
-
+  </div>
 
 </body>
 </html>
