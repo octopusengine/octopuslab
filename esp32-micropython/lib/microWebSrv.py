@@ -348,21 +348,21 @@ class MicroWebSrv :
                                     else:
                                         contentType = self._microWebSrv.GetMimeTypeFromFilename(filepath if not compressed else filepath[:-3])
                                         if contentType:
+                                            headers = dict()
+
+                                            if compressed:
+                                                headers['Content-Encoding'] = "gzip"
+
                                             if self._microWebSrv.LetCacheStaticContentLevel > 0 :
                                                 if self._microWebSrv.LetCacheStaticContentLevel > 1 and \
                                                    'if-modified-since' in self._headers :
                                                     response.WriteResponseNotModified()
                                                 else:
-                                                    if compressed == 1 :
-                                                        headers = { 'Last-Modified' : 'Fri, 1 Jan 2018 23:42:00 GMT', \
-                                                                    'Cache-Control' : 'max-age=315360000', \
-                                                                    'Content-Encoding' : 'gzip'}
-                                                    else :
-                                                        headers = { 'Last-Modified' : 'Fri, 1 Jan 2018 23:42:00 GMT', \
-                                                                    'Cache-Control' : 'max-age=315360000' }
+                                                    headers['Last-Modified'] = 'Fri, 1 Jan 2018 23:42:00 GMT'
+                                                    headers['Cache-Control'] = 'max-age=315360000'
                                                     response.WriteResponseFile(filepath, contentType, headers)
                                             else :
-                                                response.WriteResponseFile(filepath, contentType)
+                                                response.WriteResponseFile(filepath, contentType, headers)
                                         else :
                                             response.WriteResponseForbidden()
                                 else :
