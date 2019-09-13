@@ -846,6 +846,34 @@ def web_server():
 
         httpResponse.WriteResponse( code=responseCode, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = content)
 
+    @MicroWebSrv.route('/setup/devices.json') # GET boards
+    def _httpHandlerWiFiDeleteNetwork(httpClient, httpResponse):
+        from util.setup import devices
+
+        httpResponse.WriteResponseJSONOk(devices)
+
+    @MicroWebSrv.route('/setup/device') # Get actual device
+    def _httpHandlerWiFiDeleteNetwork(httpClient, httpResponse):
+        dev = "null"
+
+        try:
+            os.stat('config/device.json')
+            with open('config/device.json', 'r') as f:
+                dev = f.read()
+        except:
+            pass
+
+        httpResponse.WriteResponseOk(contentType = "application/json", content = dev)
+
+    @MicroWebSrv.route('/setup/device', "POST") # Set device
+    def _httpHandlerWiFiDeleteNetwork(httpClient, httpResponse):
+        data = httpClient.ReadRequestContentAsJSON()
+
+        with open('config/device.json', 'w') as f:
+                f.write(data)
+
+        httpResponse.WriteResponseOk(None)
+
 
     @MicroWebSrv.route('/file_list')
     def _httpHandlerTestGet(httpClient, httpResponse):
@@ -873,3 +901,4 @@ def web_server():
     mws.Start(threaded=True) # Starts server in a new thread
     getFree(True)
     webrepl.start()
+    return mws
