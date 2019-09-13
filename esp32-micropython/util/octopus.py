@@ -21,7 +21,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
     ver = "0.87"  # version - log: num = ver*100
-    verDat = "10.9.2019 #836"
+    verDat = "12.9.2019 #875"
     debug = True
     logDev = True
     autoInit = True
@@ -49,7 +49,7 @@ if Env.isTimer:
     tim1 = Timer(0)
 
 
-# -------------------------------- common terminal function ---------------
+# ------------------ common terminal function ---------------
 def getVer():
     return "octopusLAB - lib.version: " + Env.ver + " > " + Env.verDat
 
@@ -345,13 +345,11 @@ def printLog(i,s=""):
     print("[--- " + str(i) + " ---] " + s)
 
 
-def getFree():
+def getFree(echo = False):
     from gc import mem_free
+    if echo: 
+        print("--- RAM free ---> " + str(getFree()))
     return mem_free()
-
-
-def printFree():
-    print("Free: "+str(getFree()))
 
 
 def bytearrayToHexString(ba):
@@ -399,6 +397,8 @@ def get_hhmmss(separator=":",rtc=rtc):
 def connecting_callback():
     blink(led, 50, 100)
 """
+
+
 def timer_init():
     printLog("timer_init")
     print("timer tim1 is ready - periodic - 10s")
@@ -566,8 +566,10 @@ def logDevice(urlPOST = "http://www.octopusengine.org/iot17/add18.php"):
 def w(logD = True):
     printInfo()
     printTitle("WiFi connect > ")
-    w_connect()
+    w = w_connect()
     if logD and Env.logDev: logDevice()
+    getFree(True)
+    return w
 
 def database_init(name):
     from util.database import Db
@@ -742,9 +744,10 @@ def small_web_server(wPath='www/'):
     mws = MicroWebSrv(webPath=wPath)      # TCP port 80 and files in /flash/www
     mws.Start(threaded=True) # Starts server in a new thread
     print("Web server started > " + wPath)
+    getFree(True)
 
 def web_server():
-    print("Web setup test > ")
+    printTitle("web_server start > ")
     from lib.microWebSrv import MicroWebSrv
     import os
     import webrepl
@@ -752,22 +755,6 @@ def web_server():
 
     from util.wifi_connect import WiFiConnect
     wc = WiFiConnect()
-
-    wcss = """<style>html{font-family: Helvetica; display:inline-block; margin: 0px auto; text-align: center;}
-    h1{color: Silver; padding: 2vh;}p{font-size: 1.5rem;}.button{display: inline-block; background-color: Orange; border: none; 
-    border-radius: 4px; color: white; padding: 16px 40px; text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}
-    .button2{background-color: Navy;}</style>"""
-    html = """<html><head> <title>octopus ESP setup</title> <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="data:,"> """ + wcss + """
-    <script>function autoFill(ssid){document.getElementById('fssid').value = ssid;}</script>
-    </head><body> <h1>octopusLAB - ESP WiFi setup</h1>
-    """
-    web_form = """
-    <form method="POST">
-    ssid: <br><input id="fssid" type="text" name="ssid"><br>
-    password: <br><input type="text" name="pass"><br><br>
-    <input type="submit" value="Submit">
-    </form>"""
 
     @MicroWebSrv.route('/setup/wifi/networks.json') # GET
     def _httpHandlerWiFiNetworks(httpClient, httpResponse):
@@ -884,5 +871,5 @@ def web_server():
     mws = MicroWebSrv(webPath='www/')      # TCP port 80 and files in /flash/www
     mws.LetCacheStaticContentLevel = 0
     mws.Start(threaded=True) # Starts server in a new thread
-    print("Web editor started")
+    getFree(True)
     webrepl.start()
