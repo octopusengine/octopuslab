@@ -12,7 +12,7 @@
 
  <script>
     //setTimeout(function() {location.reload();},5000);
-    setTimeout(function() {netInfo();},3500);
+    setInterval(function() {netInfo();},3500);
 
     function autoFill(ssid){
         document.getElementById('ssid').value = ssid;
@@ -193,9 +193,11 @@ function deleteNetwork(ssid)
     {
         var currentSTASSID = document.getElementById("currentSTASSID");
         var currentSTAState = document.getElementById("currentSTAState");
+        var currentSTAActive = document.getElementById("currentSTAActive");
         var currentSTARSSI = document.getElementById("currentSTARSSI");
         var currentAPSSID = document.getElementById("currentAPSSID");
         var currentAPState = document.getElementById("currentAPState");
+        var currentAPActive = document.getElementById("currentAPActive");
 
         var xhr = new XMLHttpRequest();
         xhr.timeout = 10000;
@@ -222,8 +224,10 @@ function deleteNetwork(ssid)
             currentSTASSID.innerText = json['sta_if']['ssid']
             currentSTARSSI.innerText = json['sta_if']['rssi']
             currentSTAState.innerText = json['sta_if']['connected'] ? "Connected" : "Disconnected"
+            currentSTAActive.innerText = json['sta_if']['active'] ? "Yes" : "No"
             currentAPSSID.innerText = json['ap_if']['ssid']
             currentAPState.innerText = json['ap_if']['connected'] ? "Connected" : "Disconnected"
+            currentAPActive.innerText = json['ap_if']['active'] ? "Yes" : "No"
         }
 
         xhr.open('GET', '/setup/wifi/network');
@@ -237,6 +241,7 @@ function deleteNetwork(ssid)
 
   <div class="radius">
   <h2>Current network AP info</h2>
+  Active: <span id="currentAPActive"></span><br/>
   State: <span id="currentAPState"></span><br/>
   SSID: <span id="currentAPSSID"></span><br/>
   </div>
@@ -244,6 +249,7 @@ function deleteNetwork(ssid)
 
   <div class="radius">
   <h2>Current network STA info</h2>
+  Active: <span id="currentSTAActive"></span><br/>
   State: <span id="currentSTAState"></span><br/>
   SSID: <span id="currentSTASSID"></span><br/>
   Signal: <span id="currentSTARSSI"></span><br/>
