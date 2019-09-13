@@ -16,14 +16,24 @@
         document.getElementById('psk').select();
     }
 
-function setBoard(board, soc)
+    function setValue(attr) {
+    var value = prompt("Enter new value for " + attr)
+
+    if (value == null) {
+        return;
+    }
+
+    saveValue(attr, value)
+    }
+
+    function saveValue(attr, value)
     {
-        var result = confirm("Really want set board to " + board + " and SoC " + soc + "?");
+        var result = confirm("Really want set " + attr + " to " + value + "?");
         if (!result) {
             return;
         }
 
-        var json = JSON.stringify({ board_type: board, soc_type: soc})
+        var json = JSON.stringify({ attr: attr, value: parseInt(value)})
 
         var xhr = new XMLHttpRequest();
         xhr.timeout = 10000;
@@ -39,54 +49,11 @@ function setBoard(board, soc)
         xhr.onload = function () {
             console.log(xhr.responseText);
             console.log(xhr.status);
-            boardInfo();
+            ioConfig();
         }
 
-        xhr.open('POST', '/setup/device');
+        xhr.open('POST', '/setup/io');
         xhr.send(json);
-    }
-
-function loadBoards()
-    {
-        var buttonBoard = document.getElementById("buttonBoard");
-        var table = document.getElementById("tableBoards");
-        buttonBoard.value = "Loading...";
-        buttonBoard.disabled = true;
-
-        var xhr = new XMLHttpRequest();
-        xhr.timeout = 10000;
-
-        xhr.onerror = function () {
-            console.log("Error");
-            buttonBoard.value = "Load";
-            buttonBoard.disabled = false;
-        }
-
-        xhr.ontimeout = function () {
-            console.log("Request timeout");
-            buttonBoard.value = "Load";
-            buttonBoard.disabled = false;
-        }
-
-        xhr.onload = function () {
-            buttonBoard.value = "Load";
-            buttonBoard.disabled = false;
-
-            var json = JSON.parse(xhr.responseText);
-                console.log(json);
-                console.log(xhr.responseText);
-                table.innerHTML = "";
-                json.forEach(function(item) {
-                    console.log(item);
-
-                    row = document.createElement("tr");
-                    row.innerHTML = "<td>" + item[0] + "</td><td>" + item[1] + "</td><td><span onClick='setBoard(\""+item[0]+"\",\""+item[1]+"\")'>➜</span></td>";
-                    table.appendChild(row);
-                });
-        }
-
-        xhr.open('GET', '/setup/devices.json');
-        xhr.send();
     }
 
     function ioConfig()
@@ -116,7 +83,7 @@ function loadBoards()
 
                     row = document.createElement("tr");
                     var value = item['value'] == null ? "Not set" : item['value'];
-                    row.innerHTML = "<td>" + item['attr'] + "</td><td>" + item['descr'] + "</td><td>" + value + "</td>";
+                    row.innerHTML = "<td>" + item['attr'] + "</td><td>" + item['descr'] + "</td><td onClick='setValue(\""+item['attr']+"\")'>" + value + "</td>";
                     table.appendChild(row);
                 });
         }
