@@ -774,13 +774,15 @@ def web_server():
         sta_ssid = wc.sta_if.config("essid")
         sta_rssi = wc.sta_if.status("rssi") if wc.sta_if.isconnected() else 0
         sta_connected = wc.sta_if.isconnected()
+        sta_active = wc.sta_if.active()
 
         ap_ssid = wc.ap_if.config("essid")
         ap_connected = wc.ap_if.isconnected()
+        ap_active = wc.ap_if.active()
         ap_stations = [ hexlify(sta[0], ":") for sta in wc.ap_if.status("stations") ] if wc.ap_if.active() else []
 
-        data["sta_if"] = { "connected": sta_connected, "ssid": sta_ssid, "rssi": sta_rssi}
-        data["ap_if"] = { "connected": ap_connected, "ssid": ap_ssid, "stations": ap_stations }
+        data["sta_if"] = { "active": sta_active, "connected": sta_connected, "ssid": sta_ssid, "rssi": sta_rssi}
+        data["ap_if"] = { "active": ap_active, "connected": ap_connected, "ssid": ap_ssid, "stations": ap_stations }
 
         httpResponse.WriteResponseJSONOk(data)
 
