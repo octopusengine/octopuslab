@@ -11,6 +11,9 @@
 </head>
 
  <script>
+    //setTimeout(function() {location.reload();},5000);
+    setTimeout(function() {netInfo();},3500);
+
     function autoFill(ssid){
         document.getElementById('ssid').value = ssid;
         document.getElementById('psk').select();
@@ -251,13 +254,13 @@ function deleteNetwork(ssid)
   <h2>Add network</h2>
   ssid: <br><input id="ssid" type="text" name="ssid" /><br/>
   password: <br><input id="psk" type="password" name="psk" /><br/><br/>
-  <input type="button" onClick="addNetwork()" id="buttonSave" value="Save" />
+  <input class="button" type="button" onClick="addNetwork()" id="buttonSave" value="Save" />
   </div>
   <br/>
 
   <div class="radius">
   <h2>Saved networks</h2>
-  <input type="button" onClick="savedNetworks()" id="buttonSaved" value="Load" /><br/><br/>
+  <input class="button" class="button" type="button" onClick="savedNetworks()" id="buttonSaved" value="Load" /><br/><br/>
   <table>
   <thead>
   <tr><th>SSID</th><th>Delete</th></tr>
@@ -276,7 +279,7 @@ function deleteNetwork(ssid)
   <tbody id="tableScan"></tbody>
   </table>
   <br/><br/>
-  <center><input type="button" onClick="scanNetworks()" id="buttonScan" value="Scan" /></center>
+  <input class="button" type="button" onClick="scanNetworks()" id="buttonScan" value="Scan" />
   </div>
 
 </body>
