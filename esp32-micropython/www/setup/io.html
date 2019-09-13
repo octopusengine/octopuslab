@@ -115,7 +115,8 @@ function loadBoards()
                     console.log(item);
 
                     row = document.createElement("tr");
-                    row.innerHTML = "<td>" + item['attr'] + "</td><td>" + item['descr'] + "</td><td>" + item['value'] + "</td>";
+                    var value = item['value'] == null ? "Not set" : item['value'];
+                    row.innerHTML = "<td>" + item['attr'] + "</td><td>" + item['descr'] + "</td><td>" + value + "</td>";
                     table.appendChild(row);
                 });
         }
