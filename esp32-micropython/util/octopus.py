@@ -847,13 +847,13 @@ def web_server():
         httpResponse.WriteResponse( code=responseCode, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = content)
 
     @MicroWebSrv.route('/setup/devices.json') # GET boards
-    def _httpHandlerWiFiDeleteNetwork(httpClient, httpResponse):
+    def _httpHandlerDevices(httpClient, httpResponse):
         from util.setup import devices
 
         httpResponse.WriteResponseJSONOk(devices)
 
     @MicroWebSrv.route('/setup/device') # Get actual device
-    def _httpHandlerWiFiDeleteNetwork(httpClient, httpResponse):
+    def _httpHandlerGetDevice(httpClient, httpResponse):
         dev = "null"
 
         try:
@@ -866,7 +866,7 @@ def web_server():
         httpResponse.WriteResponseOk(contentType = "application/json", content = dev)
 
     @MicroWebSrv.route('/setup/device', "POST") # Set device
-    def _httpHandlerWiFiDeleteNetwork(httpClient, httpResponse):
+    def _httpHandlerSetDevice(httpClient, httpResponse):
         data = httpClient.ReadRequestContent()
 
         with open('config/device.json', 'w') as f:
