@@ -777,9 +777,7 @@ def web_server():
 
         ap_ssid = wc.ap_if.config("essid")
         ap_connected = wc.ap_if.isconnected()
-        print("before")
         ap_stations = [ hexlify(sta[0], ":") for sta in wc.ap_if.status("stations") ] if wc.ap_if.active() else []
-        print(ap_stations)
 
         data["sta_if"] = { "connected": sta_connected, "ssid": sta_ssid, "rssi": sta_rssi}
         data["ap_if"] = { "connected": ap_connected, "ssid": ap_ssid, "stations": ap_stations }
