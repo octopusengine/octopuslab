@@ -1,0 +1,147 @@
+<html>
+<head>
+<title>Octopus setup</title>
+<meta charset="utf-8" />
+<link href="../../main.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="cache-control" content="max-age=0" />
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="expires" content="0" />
+<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+<meta http-equiv="pragma" content="no-cache" />
+</head>
+
+ <script>
+    function autoFill(ssid){
+        document.getElementById('ssid').value = ssid;
+        document.getElementById('psk').select();
+    }
+
+function setBoard(board, soc)
+    {
+        var result = confirm("Really want set board to " + board + " and SoC " + soc + "?");
+        if (!result) {
+            return;
+        }
+
+        var json = JSON.stringify({ board_type: board, soc_type: soc})
+
+        var xhr = new XMLHttpRequest();
+        xhr.timeout = 10000;
+
+        xhr.onerror = function () {
+            console.log("Error");
+        }
+
+        xhr.ontimeout = function () {
+            console.log("Request timeout");
+        }
+
+        xhr.onload = function () {
+            console.log(xhr.responseText);
+            console.log(xhr.status);
+            boardInfo();
+        }
+
+        xhr.open('POST', '/setup/device');
+        xhr.send(json);
+    }
+
+function loadBoards()
+    {
+        var buttonBoard = document.getElementById("buttonBoard");
+        var table = document.getElementById("tableBoards");
+        buttonBoard.value = "Loading...";
+        buttonBoard.disabled = true;
+
+        var xhr = new XMLHttpRequest();
+        xhr.timeout = 10000;
+
+        xhr.onerror = function () {
+            console.log("Error");
+            buttonBoard.value = "Load";
+            buttonBoard.disabled = false;
+        }
+
+        xhr.ontimeout = function () {
+            console.log("Request timeout");
+            buttonBoard.value = "Load";
+            buttonBoard.disabled = false;
+        }
+
+        xhr.onload = function () {
+            buttonBoard.value = "Load";
+            buttonBoard.disabled = false;
+
+            var json = JSON.parse(xhr.responseText);
+                console.log(json);
+                console.log(xhr.responseText);
+                table.innerHTML = "";
+                json.forEach(function(item) {
+                    console.log(item);
+
+                    row = document.createElement("tr");
+                    row.innerHTML = "<td>" + item[0] + "</td><td>" + item[1] + "</td><td><span onClick='setBoard(\""+item[0]+"\",\""+item[1]+"\")'>➜</span></td>";
+                    table.appendChild(row);
+                });
+        }
+
+        xhr.open('GET', '/setup/devices.json');
+        xhr.send();
+    }
+
+    function ioConfig()
+    {
+        var table = document.getElementById("tableIO");
+
+        var xhr = new XMLHttpRequest();
+        xhr.timeout = 10000;
+
+        xhr.onerror = function () {
+            console.log("Error");
+
+        }
+
+        xhr.ontimeout = function () {
+            console.log("Request timeout");
+
+        }
+
+        xhr.onload = function () {
+            var json = JSON.parse(xhr.responseText);
+                console.log(json);
+                console.log(xhr.responseText);
+                table.innerHTML = "";
+                json.forEach(function(item) {
+                    console.log(item);
+
+                    row = document.createElement("tr");
+                    row.innerHTML = "<td>" + item['attr'] + "</td><td>" + item['descr'] + "</td><td>" + item['value'] + "</td>";
+                    table.appendChild(row);
+                });
+        }
+
+        xhr.open('GET', '/setup/io');
+        xhr.send();
+    }
+
+</script>
+
+<body onload="ioConfig()">
+  <h1>Octopus I/O setup</h1>
+  <div class="radiusgroup">
+  <center><h2>Interfaces</h2></center>
+  <div class="radius">
+  <h3>Current setting</h3>
+  <table>
+  <thead>
+  <tr><th>Atributte</th><th>Description</th><th>Value</th></tr>
+  </thead>
+  <tbody id="tableIO"></tbody>
+  </table>
+  </div>
+  </div>
+  <br/>
+
+
+</body>
+</html>
