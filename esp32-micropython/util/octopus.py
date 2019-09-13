@@ -883,6 +883,24 @@ def web_server():
 
         httpResponse.WriteResponseJSONOk(config)
 
+    @MicroWebSrv.route('/setup/io', "POST") # Set IO configuration
+    def _httpHandlerIOConfigSet(httpClient, httpResponse):
+        from ujson import dump as json_dump
+        data = httpClient.ReadRequestContentAsJSON()
+        if type(data['value']) is not int:
+            httpResponse.WriteResponse(code=400, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = "Value is not integer")
+            return
+
+        from util.io_config import io_conf_file, io_menu_layout, get_from_file as get_io_config_from_file
+        io_conf = get_io_config_from_file()
+
+        io_conf[data['attr']] = data['value']
+
+        with open(io_conf_file, 'w') as f:
+            json_dump(io_conf, f)
+
+        httpResponse.WriteResponseOk(None)
+
 
     @MicroWebSrv.route('/file_list')
     def _httpHandlerTestGet(httpClient, httpResponse):
