@@ -867,7 +867,7 @@ def web_server():
 
     @MicroWebSrv.route('/setup/device', "POST") # Set device
     def _httpHandlerWiFiDeleteNetwork(httpClient, httpResponse):
-        data = httpClient.ReadRequestContentAsJSON()
+        data = httpClient.ReadRequestContent()
 
         with open('config/device.json', 'w') as f:
                 f.write(data)
