@@ -240,9 +240,10 @@ function deleteNetwork(ssid)
 
 <body onload="netInfo()">
   <h1>WiFi Setup</h1>
-
+  <div class="radiusgroup">
+  <center><h2>Status</h2></center>
   <div class="radius">
-  <h2>Current network AP info</h2>
+  <h3>AP info</h3>
   Active: <span id="currentAPActive"></span><br/>
   State: <span id="currentAPState"></span><br/>
   SSID: <span id="currentAPSSID"></span><br/>
@@ -250,16 +251,19 @@ function deleteNetwork(ssid)
   <br/>
 
   <div class="radius">
-  <h2>Current network STA info</h2>
+  <h3>STA info</h3>
   Active: <span id="currentSTAActive"></span><br/>
   State: <span id="currentSTAState"></span><br/>
   SSID: <span id="currentSTASSID"></span><br/>
   Signal: <span id="currentSTARSSI"></span><br/>
   </div>
+  </div>
   <br/>
 
+  <div class="radiusgroup">
+  <center><h2>STA interface</h2></center>
   <div class="radius">
-  <h2>Add network</h2>
+  <h3>Add network</h3>
   ssid: <br><input id="ssid" type="text" name="ssid" /><br/>
   password: <br><input id="psk" type="password" name="psk" /><br/><br/>
   <input class="button" type="button" onClick="addNetwork()" id="buttonSave" value="Save" />
@@ -267,7 +271,7 @@ function deleteNetwork(ssid)
   <br/>
 
   <div class="radius">
-  <h2>Saved networks</h2>
+  <h3>Saved networks</h3>
   <input class="button" class="button" type="button" onClick="savedNetworks()" id="buttonSaved" value="Load" /><br/><br/>
   <table>
   <thead>
@@ -279,7 +283,7 @@ function deleteNetwork(ssid)
 
   <br/>
   <div class="radius">
-  <h2>Networks in range</h2>
+  <h3>Networks in range</h3>
   <table>
   <thead>
   <tr><th>SSID</th><th>BSSID</th><th>Channel</th><th>RSSI</th><th>Encryption</th></tr>
@@ -288,6 +292,7 @@ function deleteNetwork(ssid)
   </table>
   <br/><br/>
   <input class="button" type="button" onClick="scanNetworks()" id="buttonScan" value="Scan" />
+  </div>
   </div>
 
 </body>
