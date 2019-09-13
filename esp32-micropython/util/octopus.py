@@ -874,6 +874,15 @@ def web_server():
 
         httpResponse.WriteResponseOk(None)
 
+    @MicroWebSrv.route('/setup/io') # Get IO configuration
+    def _httpHandlerIOConfigGet(httpClient, httpResponse):
+        from util.io_config import io_conf_file, io_menu_layout, get_from_file as get_io_config_from_file
+        io_conf = get_io_config_from_file()
+
+        config = [ {'attr': item['attr'], 'descr': item['descr'], 'value': io_conf.get(item['attr'], None) } for item in io_menu_layout ]
+
+        httpResponse.WriteResponseJSONOk(config)
+
 
     @MicroWebSrv.route('/file_list')
     def _httpHandlerTestGet(httpClient, httpResponse):
