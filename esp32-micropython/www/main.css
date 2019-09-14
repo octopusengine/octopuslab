@@ -9,6 +9,10 @@ body {
     padding:10;
 }
 
+h1 {
+    color: black;
+}
+
 h3 {
     color: darkorange;
 }
@@ -21,17 +25,55 @@ h3 {
     width: 520px;
   }
 
+.radius_100 {
+    border-radius: 12px;
+    border: 1px solid Silver;
+    padding: 20px;
+    width: 399px;
+  }
+
 .radiusgroup {
     background-color: #fff8f2;
     border-radius: 12px;
     border: 1px solid dimgray;
     padding: 20px;
     padding-top: 0px;
-    width: 560px;    
+    width: 560px;
   }
 
-  .button {
+.button {
     display: inline-block; background-color: darkorange; border: none; 
     border-radius: 5px; color: white; padding: 8px 32px; text-decoration: none; 
     font-size: 20px; margin: 2px; cursor: pointer;
+}
+
+.button:hover {
+    color: maroon;
+    background-color: orange;
+    border-color: black;
+    transition: 0.35s;
+}
+
+.button1 {
+    display: inline-block; background-color: darkorange; border: none; 
+    border-radius: 5px; color: white; padding: 8px 32px; text-decoration: none; 
+    font-size: 20px; margin: 2px; cursor: pointer; width: 339px;
+}
+
+.button1 a:hover {
+    text-decoration: none;
+    color: maroon;
+}
+
+.button1:hover {
+    color: maroon;
+    background-color: orange;
+    border-color: black;
+    transition: 0.35s;
+}
+
+.button2 {
+    display: inline-block; background-color: silver; border: none; 
+    border-radius: 5px; color: black; padding: 8px 32px; text-decoration: none; 
+    font-size: 20px; margin: 2px; cursor: pointer; width: 339px;
 }
