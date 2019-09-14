@@ -10,6 +10,16 @@ body {
 }
 
 h1 {
+  color: black;
+  height: 35px;
+  /*background: url("octopus-72.png ") top left no-repeat;
+  right: 100px;
+  position: relative; left: 50px;
+  padding: 0 0 70px 0;
+  margin: 0 0 0 -2000px;*/
+}
+
+h2 {
     color: black;
 }
 
@@ -17,8 +27,12 @@ h3 {
     color: darkorange;
 }
 
+.right_line {
+    border-right-style: 1px solid Silver;
+}
+
 .radius {
-    border-radius: 12px;
+    border-radius: 8px;
     border: 1px solid Silver;
     padding: 20px;
     padding-top: 0px;
@@ -26,7 +40,7 @@ h3 {
   }
 
 .radius_100 {
-    border-radius: 12px;
+    border-radius: 8px;
     border: 1px solid Silver;
     padding: 20px;
     width: 399px;
@@ -34,7 +48,7 @@ h3 {
 
 .radiusgroup {
     background-color: #fff8f2;
-    border-radius: 12px;
+    border-radius: 8px;
     border: 1px solid dimgray;
     padding: 20px;
     padding-top: 0px;
