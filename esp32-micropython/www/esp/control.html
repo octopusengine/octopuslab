@@ -49,6 +49,33 @@ function loadInfo()
         xhr.open('GET', '/esp/control_info.json');
         xhr.send();
     }
+
+    function ledOn(value)
+    {
+        var infoLed = document.getElementById("led");
+        var xhr = new XMLHttpRequest();
+        infoLed.innerText = value;
+        xhr.timeout = 10000;
+
+        xhr.onerror = function () {
+            console.log("Error");
+        }
+
+        xhr.ontimeout = function () {
+            console.log("Request timeout");
+        }
+
+        xhr.onload = function () {
+            console.log(xhr.responseText);
+            console.log(xhr.status);
+            boardInfo();
+        }
+
+        xhr.open('POST', '/esp/control_led');
+        xhr.send(value);
+    }
+
+
 </script>
 <body>
 <h1><img src="../octopus-72.png" ALIGN="BOTTOM"> octopusLAB - ESP32 control</h1>
@@ -77,10 +104,11 @@ Flash:<br />
 
 <div class="radius">
 <h3>Esp32 simple control</h3>
-Default / BUILT_IN LED control:<br />
+Default / BUILT_IN LED control: <span id="led"></span><br />
 <form>
-<input class="button1 back_gre" type="button" onClick="ledOn()"  value="On" /></input>
-<input class="button1 back_red" type="button" onClick="ledOff()" value="Off" /></input>
+<input class="button1 back_gre" type="button" onClick="ledOn(1)"  value="On" /></input>
+<input class="button1 back_red" type="button" onClick="ledOn(0)" value="Off" /></input>
+
 </form>
 </div>
 
