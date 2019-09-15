@@ -1,15 +1,49 @@
-<html><head>
+﻿<html><head>
 <title>octopusLAB-ESP32-index</title>
+<meta charset="utf-8" />
 <link href="../main.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
-<h1>Octopus LAB help</h1>
+<h1><img src="../octopus-72.png" ALIGN="BOTTOM">octopusLAB help</h1>
+<div class="radius">
 <i>under reconstruction</i><br />
 
-<hr /><div id="display">.:.</div>
+<pre>
+   setup()  > w, a > cw, sd   > ds, ios ------------
+   h() / o_help() HELP        | i() / o_info() INFO
+   c() / clt() clear terminal | r() = system reset
+   w() / w_connect()  WIFI    | f(file) FILE print
+>> basic simple HW examples --|---------------------
+   led.value(1)  / (0)        | led.blink()
+   ws = Rgb(p, n) > pin, num  | ws.simpleTest()
+   ws.color(BLUE) /((128,0,0))| RGBi(5, RED)
+   beep(f, l) > freq, lenght  | tone(Notes.C5)
+   import examples.blink      = run example
+>> displays ------------------|---------------------
+   d7 = disp7_init()          > d7.show(123.567)
+   d2 = lcd2_init()           > disp2(d2,text,[0/1])
+   d2.clear()                 |
+   o = oled_init()            | o.fill(0/1)
+   o.text(text, x, y)         > o.show()
+   o.hline(*) |  d.vline(*)   | o.pixel(x, y, 1)
+>> sensors/communications/... |---------------------
+   a1 = Analog(pin) a1.read() > return analog RAW
+   t = temp_init() > (*t)     > getTemp(t[0], t[1])
+   i2c_scann()                = find I2C devices
+   time_init() > from URL_API | timer_init() ON
+   get_hhmm(separator)        | get_hhmmss("-")
+>> standard lib. functions ---|---------------------
+   sleep(1)  / sleep_ms(1)    = 1 s/ms pause
+   urandom(1)[0]              = random num.
+   import webrepl_setup       = remote access
 
-<hr />
-Back to main <a href="../index.html">index</a>
+</pre>
+</div>
+<br />
+<div class="radius">
+<br />
+◄ Back to main <a href="../index.html">MENU</a>
+</div>
 
 </body></html>

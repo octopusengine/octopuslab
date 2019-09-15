@@ -1,0 +1,93 @@
+﻿<html><head>
+<title>octopusLAB-ESP32-control</title>
+<meta charset="utf-8" />
+<link href="../main.css" rel="stylesheet" type="text/css" />
+</head>
+<script>
+function loadInfo()
+    {
+        var buttonBoard = document.getElementById("buttonInfo");
+        var table = document.getElementById("tableInfo");
+        var infoTest = document.getElementById("test");
+        var infoUID = document.getElementById("infoUID");
+        var infoMAC = document.getElementById("infoMAC");
+        buttonBoard.value = "Loading...";
+        buttonBoard.disabled = true;
+
+        var xhr = new XMLHttpRequest();
+        xhr.timeout = 10000;
+
+        xhr.onerror = function () {
+            console.log("Error");
+            buttonBoard.value = "Load";
+            buttonBoard.disabled = false;
+        }
+
+        xhr.ontimeout = function () {
+            console.log("Request timeout");
+            buttonBoard.value = "Load";
+            buttonBoard.disabled = false;
+        }
+
+        xhr.onload = function () {
+            buttonBoard.value = "Load";
+            buttonBoard.disabled = false;
+            infoTest.innerText = "test load";
+
+            var json = JSON.parse(xhr.responseText);
+                console.log(json);
+                console.log(xhr.responseText);
+                table.innerHTML = "";
+                json.forEach(function(item) {
+                    console.log(item);
+                    row = document.createElement("tr");
+                    row.innerHTML = "<td>" + item[0] + "</td><td>" + item[1] + "</td>";
+                    table.appendChild(row);
+                });
+        }
+
+        xhr.open('GET', '/esp/control_info.json');
+        xhr.send();
+    }
+</script>
+<body>
+<h1><img src="../octopus-72.png" ALIGN="BOTTOM"> octopusLAB - ESP32 control</h1>
+
+<br />
+<div class="radius">
+<h3>Esp32 system info</h3>
+UID: <span id="infoUID">...</span><br />
+MAC: <span id="infoMAC">...</span><br />
+free RAM:<br />
+Flash:<br />
+... <span id="test"></span><br />
+<br />
+<input class="button" type="button" onClick="loadInfo()" id="buttonInfo" value="Load" />
+
+<table>
+<thead>
+<tr><th>Test</th><th>Data</th></tr>
+</thead>
+<tbody id="tableInfo"></tbody>
+</table>
+
+
+</div>
+<br />
+
+<div class="radius">
+<h3>Esp32 simple control</h3>
+Default / BUILT_IN LED control:<br />
+<form>
+<input class="button1 back_gre" type="button" onClick="ledOn()"  value="On" /></input>
+<input class="button1 back_red" type="button" onClick="ledOff()" value="Off" /></input>
+</form>
+</div>
+
+<br />
+<div class="radius">
+<br />
+◄ Back to main <a href="../index.html">MENU</a>
+</div>
+
+</body></html>
