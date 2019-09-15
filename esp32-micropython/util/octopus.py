@@ -21,7 +21,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
     ver = "0.87"  # version - log: num = ver*100
-    verDat = "15.9.2019 #939"
+    verDat = "15.9.2019 #951"
     debug = True
     logDev = True
     autoInit = True
@@ -741,6 +741,7 @@ if Env.autoInit:  # test
                   
     print()
 
+
 def small_web_server(wPath='www/'):
     from lib.microWebSrv import MicroWebSrv
     # ? webPath as parameter
@@ -748,6 +749,7 @@ def small_web_server(wPath='www/'):
     mws.Start(threaded=True) # Starts server in a new thread
     print("Web server started > " + wPath)
     getFree(True)
+
 
 def web_server():
     printTitle("web_server start > ")
@@ -861,6 +863,16 @@ def web_server():
         infoDict["deviceMAC"] = Env.MAC        
         # infoJ = ujson.dumps(infoDict)
         httpResponse.WriteResponseJSONOk(infoDict)
+
+    @MicroWebSrv.route('/esp/control_led', "POST") # Set device
+    def _httpHandlerSetDevice(httpClient, httpResponse):
+        data = httpClient.ReadRequestContent()
+        val = int(data)
+        # val = data['value']
+        print("control_led: " + str(val))
+        led.value(val)
+
+        httpResponse.WriteResponseOk(None)
 
     @MicroWebSrv.route('/setup/device') # Get actual device
     def _httpHandlerGetDevice(httpClient, httpResponse):
