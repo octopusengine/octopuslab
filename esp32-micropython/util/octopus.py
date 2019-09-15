@@ -21,7 +21,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id
     ver = "0.87"  # version - log: num = ver*100
-    verDat = "15.9.2019 #926"
+    verDat = "15.9.2019 #939"
     debug = True
     logDev = True
     autoInit = True
@@ -755,7 +755,6 @@ def web_server():
     import os
     import webrepl
     from ubinascii import hexlify
-
     from util.wifi_connect import WiFiConnect
     wc = WiFiConnect()
 
@@ -859,10 +858,8 @@ def web_server():
     def _httpHandlerInfo(httpClient, httpResponse):
         infoDict = {}
         infoDict["deviceUID"] = Env.uID
-        infoDict["deviceMAC"] = Env.MAC
-
-        
-           # infoJ = ujson.dumps(infoDict)
+        infoDict["deviceMAC"] = Env.MAC        
+        # infoJ = ujson.dumps(infoDict)
         httpResponse.WriteResponseJSONOk(infoDict)
 
     @MicroWebSrv.route('/setup/device') # Get actual device
@@ -891,10 +888,26 @@ def web_server():
     def _httpHandlerIOConfigGet(httpClient, httpResponse):
         from util.io_config import io_conf_file, io_menu_layout, get_from_file as get_io_config_from_file
         io_conf = get_io_config_from_file()
-
         config = [ {'attr': item['attr'], 'descr': item['descr'], 'value': io_conf.get(item['attr'], None) } for item in io_menu_layout ]
 
         httpResponse.WriteResponseJSONOk(config)
+
+    @MicroWebSrv.route('/setup/io', "POST") # Set IO configuration
+    def _httpHandlerIOConfigSet(httpClient, httpResponse):
+        from ujson import dump as json_dump
+        data = httpClient.ReadRequestContentAsJSON()
+        if type(data['value']) is not int:
+            httpResponse.WriteResponse(code=400, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = "Value is not integer")
+            return
+
+        from util.io_config import io_conf_file, io_menu_layout, get_from_file as get_io_config_from_file
+        io_conf = get_io_config_from_file()
+        io_conf[data['attr']] = data['value']
+
+        with open(io_conf_file, 'w') as f:
+            json_dump(io_conf, f)
+
+        httpResponse.WriteResponseOk(None)    
 
 
     @MicroWebSrv.route('/file_list')
