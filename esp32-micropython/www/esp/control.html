@@ -6,33 +6,32 @@
 <script>
 function loadInfo()
     {
-        var buttonBoard = document.getElementById("buttonInfo");
+        var button = document.getElementById("buttonInfo");
         var table = document.getElementById("tableInfo");
         var infoTest = document.getElementById("test");
         var infoUID = document.getElementById("infoUID");
         var infoMAC = document.getElementById("infoMAC");
-        buttonBoard.value = "Loading...";
-        buttonBoard.disabled = true;
+        button.value = "Loading...";
+        button.disabled = true;
 
         var xhr = new XMLHttpRequest();
         xhr.timeout = 10000;
 
         xhr.onerror = function () {
             console.log("Error");
-            buttonBoard.value = "Load";
-            buttonBoard.disabled = false;
+            button.value = "Load";
+            button.disabled = false;
         }
 
         xhr.ontimeout = function () {
             console.log("Request timeout");
-            buttonBoard.value = "Load";
-            buttonBoard.disabled = false;
+            button.value = "Load";
+            button.disabled = false;
         }
 
         xhr.onload = function () {
-            buttonBoard.value = "Load";
-            buttonBoard.disabled = false;
-            infoTest.innerText = "test load";
+            button.value = "Load";
+            button.disabled = false;
 
             var json = JSON.parse(xhr.responseText);
                 console.log(json);
