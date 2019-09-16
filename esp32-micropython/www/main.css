@@ -4,11 +4,13 @@ body {
     font:14px/1.3 Arial,sans-serif;
 }
 
-.back_red { background-color: red;}
-.back_gre { background-color: green;}
-.back_blu { background-color: blue;}
-.back_whi { background-color: white;}
-.back_sil { background-color: dimgray;}
+.back_red { background-color: red; }
+.back_gre { background-color: green; }
+.back_blu { background-color: blue; }
+.back_ora { background-color: orange; }
+.back_vio { background-color: violet; }
+.back_whi { background-color: white; }
+.back_sil { background-color: dimgray; }
 
 .main {
     margin:10;
@@ -25,7 +27,7 @@ h1 img {
 }
 
 h2 {
-    color: black;
+    color: maroon;
 }
 
 h3 {
@@ -58,9 +60,9 @@ h3 {
     width: 560px;
 }
 
-.button {
-    display: inline-block; background-color: darkorange; border: none; 
-    border-radius: 5px; color: white; padding: 8px 32px; text-decoration: none; 
+.button0 {
+    display: inline-block; border: none; width: 150px;
+    border-radius: 5px; padding: 8px 32px; text-decoration: none; 
     font-size: 20px; margin: 2px; cursor: pointer;
 }
 
@@ -95,4 +97,10 @@ h3 {
 
 .button2 {
     background-color: silver; color: black; width: 339px;
+}
+
+.button_big {
+    padding: 8px 32px; text-decoration: none; border-radius: 5px;
+    font-size: 20px; margin: 2px; cursor: pointer;
+    background-color: silver; color: black; width: 230px; height: 100px;
 }
