@@ -34,15 +34,11 @@ function loadInfo()
             button.disabled = false;
 
             var json = JSON.parse(xhr.responseText);
-                console.log(json);
-                console.log(xhr.responseText);
-                table.innerHTML = "";
-                json.forEach(function(item) {
-                    console.log(item);
-                    row = document.createElement("tr");
-                    row.innerHTML = "<td>" + item[0] + "</td><td>" + item[1] + "</td>";
-                    table.appendChild(row);
-                });
+            console.log(json);
+            console.log(xhr.responseText);
+            infoMAC.innerText = json['deviceMAC'];
+            infoUID.innerText = json['deviceUID'];
+
         }
 
         xhr.open('GET', '/esp/control_info.json');
