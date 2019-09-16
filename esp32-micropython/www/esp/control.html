@@ -106,11 +106,23 @@ Flash:<br />
 <h3>Esp32 simple control</h3>
 Default / BUILT_IN LED control: <span id="led"></span><br />
 <form>
-<input class="button1 back_gre" type="button" onClick="ledOn(1)"  value="On" /></input>
-<input class="button1 back_red" type="button" onClick="ledOn(0)" value="Off" /></input>
+<input class="button_big back_gre" type="button" onClick="ledOn(1)"  value="On" /></input>
+<input class="button_big back_red" type="button" onClick="ledOn(0)" value="Off" /></input>
+
+</form>
+<br />
+WS RGB LED control: <span id="rgb"></span><br />
+<form>
+<input class="back_red button0" type="button" onClick="ledOn(2)"  value="Red" /></input>
+<input class="back_gre button0" type="button" onClick="ledOn(3)" value="Green" /></input>
+<input class="back_blu button0" type="button" onClick="ledOn(4)" value="Blue" /></input><br>
+<input class="back_ora button0" type="button" onClick="ledOn(5)"  value="Orange" /></input>
+<input class="back_vio button0" type="button" onClick="ledOn(6)" value="Violet" /></input>
+<input class="back_sil button0" type="button" onClick="ledOn(7)" value="Black" /></input><br>
 
 </form>
 </div>
+
 
 <br />
 <div class="radius">
