@@ -19,15 +19,16 @@ from util.io_config import get_from_file
 
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
-    from machine import unique_id
+    from machine import unique_id, freq
     ver = "0.87"  # version - log: num = ver*100
-    verDat = "15.9.2019 #951"
+    verDat = "17.9.2019 #963"
     debug = True
     logDev = True
     autoInit = True
     autoTest = False
     uID = hexlify(unique_id()).decode()
     MAC = "..."
+    freq = freq()
     TW = 50  # terminal width
     isTimer = True
     timerFlag = 0
@@ -82,8 +83,8 @@ def o_info():
     from gc import mem_free
     printTitle("basic info > ")
     print("This is basic info about system and setup")
-    from machine import freq
-    print("> machine.freq: "+str(freq()) + " [Hz]")
+   
+    print("> machine.freq: "+str(Env.freq) + " [Hz]")
     printLog("memory")
     print("> ram free: "+str(mem_free()) + " [B]")
     #print("> flash: "+str(os.statvfs("/")))
@@ -858,10 +859,15 @@ def web_server():
 
     @MicroWebSrv.route('/esp/control_info.json') # GET info
     def _httpHandlerInfo(httpClient, httpResponse):
+
         infoDict = {}
         infoDict["deviceUID"] = Env.uID
-        infoDict["deviceMAC"] = Env.MAC        
-        # infoJ = ujson.dumps(infoDict)
+        infoDict["deviceMAC"] = Env.MAC
+        infoDict["freq"] = Env.freq
+        infoDict["freeRAM"] = getFree()
+        infoDict["freeFLASH"] = str(int(os.statvfs("/")[0])*int(os.statvfs("/")[3]))
+        ## infoJ = ujson.dumps(infoDict)
+
         httpResponse.WriteResponseJSONOk(infoDict)
 
     @MicroWebSrv.route('/esp/control_led', "POST") # Set device
@@ -871,6 +877,12 @@ def web_server():
         # val = data['value']
         print("control_led: " + str(val))
         led.value(val)
+        if val == 2: ws.color(RED)
+        if val == 3: ws.color(GREEN)
+        if val == 4: ws.color(BLUE)
+        if val == 5: ws.color(ORANGE)
+        if val == 6: ws.color((128,0,128))
+        if val == 0: ws.color(BLACK)
 
         httpResponse.WriteResponseOk(None)
 
