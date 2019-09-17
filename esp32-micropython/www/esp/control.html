@@ -8,9 +8,11 @@ function loadInfo()
     {
         var button = document.getElementById("buttonInfo");
         var table = document.getElementById("tableInfo");
-        var infoTest = document.getElementById("test");
+        //var infoTest = document.getElementById("testInfo");
         var infoUID = document.getElementById("infoUID");
         var infoMAC = document.getElementById("infoMAC");
+        var infoRAM = document.getElementById("infoRAM");
+        var infoFLASH = document.getElementById("infoFLASH");
         button.value = "Loading...";
         button.disabled = true;
 
@@ -38,7 +40,8 @@ function loadInfo()
             console.log(xhr.responseText);
             infoMAC.innerText = json['deviceMAC'];
             infoUID.innerText = json['deviceUID'];
-
+            infoRAM.innerText = json['freeRAM'];
+            infoFLASH.innerText = json['freeFLASH'];
         }
 
         xhr.open('GET', '/esp/control_info.json');
@@ -70,6 +73,11 @@ function loadInfo()
         xhr.send(value);
     }
 
+function sendByte()
+{
+    var byteTest = document.getElementById("byteTest");
+    byteTest.innerText = "digital value";
+}
 
 </script>
 <body>
@@ -78,11 +86,12 @@ function loadInfo()
 <br />
 <div class="radius">
 <h3>Esp32 system info</h3>
-UID: <span id="infoUID">...</span><br />
-MAC: <span id="infoMAC">...</span><br />
-free RAM:<br />
-Flash:<br />
-... <span id="test"></span><br />
+<b>UID: </b><span id="infoUID">...</span><br />
+<b>MAC: </b><span id="infoMAC">...</span> (AP/WiFi/LAN) <br />
+<b>Machine FREQ: </b><br />
+<b>free RAM: </b><span id="infoRAM">...</span><br />
+<b>Flash: </b><span id="infoFLASH">...</span><br /><br />
+... <span id="testInfo"></span><br />
 <br />
 <input class="button" type="button" onClick="loadInfo()" id="buttonInfo" value="Load" />
 
@@ -105,16 +114,45 @@ Default / BUILT_IN LED control: <span id="led"></span><br />
 <input class="button_big back_red" type="button" onClick="ledOn(0)" value="Off" /></input>
 
 </form>
+<hr />
 <br />
 WS RGB LED control: <span id="rgb"></span><br />
 <form>
+<input class="back_whi button0" type="button" onClick="ledOn(1)"  value="White" /></input>
 <input class="back_red button0" type="button" onClick="ledOn(2)"  value="Red" /></input>
 <input class="back_gre button0" type="button" onClick="ledOn(3)" value="Green" /></input>
-<input class="back_blu button0" type="button" onClick="ledOn(4)" value="Blue" /></input><br>
+<input class="back_blu button0" type="button" onClick="ledOn(4)" value="Blue" /></input>
 <input class="back_ora button0" type="button" onClick="ledOn(5)"  value="Orange" /></input>
 <input class="back_vio button0" type="button" onClick="ledOn(6)" value="Violet" /></input>
-<input class="back_sil button0" type="button" onClick="ledOn(7)" value="Black" /></input><br>
+<input class="back_sil button0" type="button" onClick="ledOn(7)" value="..." /></input>
+<input class="back_sil button0" type="button" onClick="ledOn(8)" value="..." /></input>
+<input class="back_sil button0" type="button" onClick="ledOn(9)" value="..." /></input>
+<input class="back_sil button0" type="button" onClick="ledOn(0)" value="Black" /></input><br><br>
+ADDRESS: <input class = "inp_txt" id="addr" type="text" name="addr" size="5" value ="0x21"/><br>
+</form>
+</div>
+<br />
 
+<div class="radius">
+<h3>Esp32 testing and prepare</h3>
+PWM test: <span id="pwm"></span><br />
+PORT: <input class = "inp_txt" id="pwm_port" type="text" name="pwm_port" size="5"/><br>
+DUTY: <input class = "inp_txt" id="pwm_duty" type="text" name="pwm_duty" size="5"/><br>
+FREQ: <input class = "inp_txt" id="pwm_freq" type="text" name="pwm_freq" size="5"/><br>
+
+<hr />
+<br />
+8bit - I2C expander test: <span id="byteTest"></span><br />
+<form>
+<input type="checkbox" name="b0" value="0"> 0 |
+<input type="checkbox" name="b1" value="1"> 1 |
+<input type="checkbox" name="b2" value="2"> 2 |
+<input type="checkbox" name="b3" value="3"> 3 |
+<input type="checkbox" name="b4" value="4"> 4 |
+<input type="checkbox" name="b5" value="6"> 5 |
+<input type="checkbox" name="b6" value="6"> 6 |
+<input type="checkbox" name="b7" value="7"> 7 <br />
+<input class="button" type="button" onClick="sendByte()" id="buttonInfo" value="Submit" />
 </form>
 </div>
 
