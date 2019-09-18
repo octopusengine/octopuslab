@@ -1,7 +1,7 @@
 # basic library for 8bit expander
 # octopusLAB 2019 / FIRSTboard with PCF8574
-# from util.expander8 import Exp8
-# e8 = Exp8(addr) addr default 000 > 0x20
+# from util.expander8 import Expander8
+# e8 = Expander8(addr) addr default 000 > 0x20
 # e8.test()
 
 from time import sleep_ms
@@ -16,6 +16,8 @@ ADDRESS = 0x20 #0x20(000) 0x23(100)
 i2c_sda = Pin(pinout.I2C_SDA_PIN, Pin.IN,  Pin.PULL_UP)
 i2c_scl = Pin(pinout.I2C_SCL_PIN, Pin.OUT, Pin.PULL_UP)
 # 100kHz as Expander is slow
+
+tempByte = bytearray(1)
 
 bar = (
 const(0b00000000), #0
@@ -35,13 +37,18 @@ all1 = const(0b11111111)
 def neg(bb):
     return(bb ^ 0xff)
 
-class Exp8:
+class Expander8:
     def __init__(self, addr = ADDRESS):
         self.addr = addr
         self.i2c = I2C(scl=i2c_scl, sda=i2c_sda, freq=100000) 
 
-    def write(self, dataByte):
-        self.i2c.writeto(self.addr, bytearray(dataByte))
+    def write(self, dataInt):
+        # ...write(struct.pack('<B', 255)) # alternative
+        tempByte[0] = dataInt
+        self.i2c.writeto(self.addr, tempByte)
+
+    def write_bar(self, dataInt): # 1-8
+        self.i2c.writeto(self.addr, bytearray([bar[dataInt]]))
 
     def set_all(self, all_0):
         if all_0:
@@ -61,3 +68,8 @@ class Exp8:
         for dd in range(9):
             self.i2c.writeto(self.addr, bytearray([neg(bar[dd])]))
             sleep_ms(200)
+
+    def counter(self, delay = 100):
+        for i in range(255):
+            self.write(255-i)
+            sleep_ms(delay)
