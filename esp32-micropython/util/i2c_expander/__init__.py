@@ -39,11 +39,30 @@ def neg(bb, bit8 = True):
         return(~ bb)
 
 
+def reverse(num):
+    num = ((num & 0xf0) >> 4) | ((num & 0x0f) << 4) # abcdefgh -> efghabcd
+    num = ((num & 0xcc) >> 2) | ((num & 0x33) << 2) # efghabcd -> ghefcdab
+    num = ((num & 0xaa) >> 1) | ((num & 0x55) << 1) # ghefcdab -> hgfedcba
+    return num
+
+
 def int2bin(num, string = False):
     if string:
         return(bin(num))
     else:
         return(bin(num)[2:]) # .zfill(8)
+
+
+def get_bit(byte, index):
+    mask = 1 << index
+    if(byte & mask): return 1
+    else: return 0
+
+
+def set_bit(byte, index, bit):
+    mask = 1 << index
+    if bit: return byte | mask
+    else:   return byte & (~ mask)
 
 
 class Expander8:
