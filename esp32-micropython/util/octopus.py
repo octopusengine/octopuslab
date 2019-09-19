@@ -20,8 +20,8 @@ from util.io_config import get_from_file
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "0.87"  # version - log: num = ver*100
-    verDat = "17.9.2019 #963"
+    ver = "0.89"  # version - log: num = ver*100
+    verDat = "19.9.2019 #975"
     debug = True
     logDev = True
     autoInit = True
@@ -211,6 +211,15 @@ def disp8_init():
     d8.fill(0)
     d8.show()
     return d8
+
+def i2c_expander_init(addr = 0):
+    printTitle("i2c_expander_init()")
+    from util.i2c_expander import Expander8 # from util.i2c_expander import neg, int2bin
+    if addr == 0:
+        e8 = Expander8()
+    else:
+        e8 = Expander8(addr)
+    return e8
 
 def scroll(d8, text, num):  # TODO speed, timer? / NO "sleep"
     WIDTH = 8*4
@@ -571,7 +580,10 @@ def w(logD = True):
     if logD and Env.logDev: logDevice()
     
     from ubinascii import hexlify
-    Env.MAC = hexlify(w.ap_if.config('mac'),':').decode()
+    try:
+        Env.MAC = hexlify(w.ap_if.config('mac'),':').decode()
+    except:
+        Env.MAC = "Err: w.ap_if"
     getFree(True)
     return w
 
