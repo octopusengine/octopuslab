@@ -771,8 +771,10 @@ def web_server():
     import webrepl
     from ubinascii import hexlify
     from util.wifi_connect import WiFiConnect
+    from util.i2c_expander import Expander8
+
     wc = WiFiConnect()
-    expander = None
+    expander = Expander8()
 
     @MicroWebSrv.route('/setup/wifi/networks.json') # GET
     def _httpHandlerWiFiNetworks(httpClient, httpResponse):
@@ -903,13 +905,13 @@ def web_server():
     @MicroWebSrv.route('/esp/control/i2cexpander', "POST") # Set device
     def _httpHandlerSetI2CExpander(httpClient, httpResponse):
         data = httpClient.ReadRequestContent()
-        print(data)
-        if expander is None:
-            from util.i2c_expander import Expander8
-            expander = Expander8()
-
-        expander.write(data)
-        httpResponse.WriteResponseOk(None)
+        try:
+            expander.write_8bit(int(data))
+        except Exception as e:
+            print("Exception: {0}".format(e))
+            raise
+        finally:
+            httpResponse.WriteResponseOk(None)
 
 
     @MicroWebSrv.route('/setup/device') # Get actual device
