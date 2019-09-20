@@ -46,27 +46,20 @@ def reverse(num):
     return num
 
 
-def int2bin(num, string = False):
-    if string:
-        return(bin(num))
-    else:
-        return(bin(num)[2:]) # .zfill(8)
+def int2bin(num, string=False):
+    return (bin(num)) if string else (bin(num)[2:])
 
 
 def get_bit(byte, index):
-    mask = 1 << index
-    if(byte & mask): return 1
-    else: return 0
+    return 1 if (byte & (1 << index)) else 0
 
 
 def set_bit(byte, index, bit):
-    mask = 1 << index
-    if bit: return byte | mask
-    else:   return byte & (~ mask)
+    return byte | (1 << index) if bit else byte & (~ (1 << index))
 
 
 class Expander8:
-    def __init__(self, addr = ADDRESS):
+    def __init__(self, addr=ADDRESS):
         self.addr = addr
         self.i2c = I2C(scl=i2c_scl, sda=i2c_sda, freq=100000) 
 
