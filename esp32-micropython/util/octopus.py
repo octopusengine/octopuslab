@@ -21,7 +21,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.89"  # version - log: num = ver*100
-    verDat = "19.9.2019 #975"
+    verDat = "20.9.2019 #997"
     debug = True
     logDev = True
     autoInit = True
@@ -748,6 +748,10 @@ if Env.autoInit:  # test
         print("servo | ",end="")
         from util.servo import Servo
 
+    if io_conf.get('exp8'):
+        print("exp8 | ",end="")
+        from util.i2c_expander import Expander8
+
     if io_conf.get('stepper'):
         print("stepper | ",end="")
         from lib.sm28byj48 import SM28BYJ48   #PCF address = 35 #33-0x21/35-0x23
@@ -904,9 +908,11 @@ def web_server():
 
     @MicroWebSrv.route('/esp/control/i2cexpander', "POST") # Set device
     def _httpHandlerSetI2CExpander(httpClient, httpResponse):
+        from util.i2c_expander import neg
         data = httpClient.ReadRequestContent()
+        print("i2cexpander.data: " + str(data) + str(bin(int(data))))
         try:
-            expander.write_8bit(int(data))
+            expander.write_8bit(neg(int(data)))
         except Exception as e:
             print("Exception: {0}".format(e))
             raise
