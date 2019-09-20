@@ -18,6 +18,7 @@ io_menu_layout = [
     {'attr': 'ad0', 'descr': 'A/D input voltage'},
     {'attr': 'ad1', 'descr': 'A/D x / photoresistor'},
     {'attr': 'ad2', 'descr': 'A/D y / thermistor'},
+    {'attr': 'exp8', 'descr': 'I2C+expander PCF8574'},
     {'attr': 'keypad', 'descr': 'Robot I2C+expander 4x4 keypad'},
     {'attr': 'button', 'descr': 'DEV2 Button'},
     {'attr': 'ir', 'descr': 'DEV2 ir remote'},
