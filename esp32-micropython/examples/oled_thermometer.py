@@ -1,9 +1,9 @@
 # octopusLAB example - 2019
 # simple dallas thermometer and oled test
 
+from time import sleep
 from util.octopus import temp_init, get_temp, oled_init
 from util.display_segment import threeDigits
-from time import sleep
 
 print("init > ")
 t = temp_init()
