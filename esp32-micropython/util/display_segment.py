@@ -42,10 +42,28 @@ def threeDigits(d, dnum, point=False, deg=False):  #display number 0-999 / point
        oneDigit(d, sevenSeg[10],x0+(aa+int(aa/2))*3,y0,aa)  #test deg
     d.show()
 
+# from util.display_segment import fourDigits
+def fourDigits(d, dhh, dmm, colon=True):  #display number 0-999 / point 99.9 / degrees
+   x0 = 12
+   dh10=int(dhh/10)
+   dh1= dhh-dh10*10
+   oneDigit(d,sevenSeg[dh10],x0,y0,aa)
+   oneDigit(d,sevenSeg[dh1],x0+aa+int(aa/2+3),y0,aa)
+   if colon: col = 1
+   else: col = 0
+   d.fill_rect(x0+(aa+int(aa/2+3))*2-6,y0+aa+int(aa/2),3,3,col)
+   d.fill_rect(x0+(aa+int(aa/2+3))*2-6,y0+aa-int(aa/2),3,3,col)
+   
+   dm10=int(dmm/10)
+   dm1= dmm-dm10*10
+   oneDigit(d,sevenSeg[dm10],x0+(aa+int(aa/2+3))*2,y0,aa)
+   oneDigit(d,sevenSeg[dm1],x0+(aa+int(aa/2+3))*3,y0,aa)
+   d.show()
+
 # default for 128x32 display:
 margin = 3
 
-def displayDigit(oled, number, position = 1, y = 0, size = 6):
+def displayDigit(d, number, position = 1, y = 0, size = 6):
    # oneDigit(d, seg, x, y, a):
    oneDigit(oled, sevenSeg[number], margin + position * (size + margin), y, size)
-   oled.show()
+   d.show()
