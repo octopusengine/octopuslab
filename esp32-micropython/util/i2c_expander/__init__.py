@@ -7,6 +7,7 @@
 from time import sleep_ms
 from micropython import const
 from util.pinout import set_pinout
+from util.bits import neg, reverse, set_bit, get_bit
 from machine import Pin, I2C
 
 pinout = set_pinout() 
@@ -30,32 +31,6 @@ const(0b11111100), #6
 const(0b11111110), #7
 const(0b11111111)  #8
 )
-
-
-def neg(bb, bit8 = True):
-    if bit8:
-        return(bb ^ 0xff)
-    else:
-        return(~ bb)
-
-
-def reverse(num):
-    num = ((num & 0xf0) >> 4) | ((num & 0x0f) << 4) # abcdefgh -> efghabcd
-    num = ((num & 0xcc) >> 2) | ((num & 0x33) << 2) # efghabcd -> ghefcdab
-    num = ((num & 0xaa) >> 1) | ((num & 0x55) << 1) # ghefcdab -> hgfedcba
-    return num
-
-
-def int2bin(num, string=False):
-    return (bin(num)) if string else (bin(num)[2:])
-
-
-def get_bit(byte, index):
-    return 1 if (byte & (1 << index)) else 0
-
-
-def set_bit(byte, index, bit):
-    return byte | (1 << index) if bit else byte & (~ (1 << index))
 
 
 class Expander8:
@@ -82,7 +57,7 @@ class Expander8:
 
     def read(self):
         bR = self.i2c.readfrom(self.address, 1)[0]
-        return(bR)
+        return(bR)        
 
     def pin_read(self, pinNum):
         mask = 0x1 << pinNum
@@ -93,7 +68,6 @@ class Expander8:
             return 1
         else:
             return 0
-
 
     def test(self):
         for dd in range(9):
@@ -108,8 +82,8 @@ class Expander8:
         for i in range(255):
             self.write(255-i)
             sleep_ms(delay)
+            
 
-"""
 class Expander16:
     def __init__(self, addr = ADDRESS):
         self.addr = addr
@@ -117,5 +91,3 @@ class Expander16:
 
     def write(self, data):
         self.i2c.writeto(self.addr, data)
-
-"""
