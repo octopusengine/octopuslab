@@ -10,9 +10,8 @@
 
 from os import urandom
 from time import sleep, sleep_ms, sleep_us, ticks_ms, ticks_diff
-from machine import Pin, I2C, PWM, SPI, Timer, RTC
+from machine import Pin, I2C, PWM, Timer, RTC
 
-from util.colors import *
 from util.pinout import set_pinout
 from util.io_config import get_from_file
 
@@ -20,8 +19,8 @@ from util.io_config import get_from_file
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "0.89"  # version - log: num = ver*100
-    verDat = "20.9.2019 #997"
+    ver = "0.90"  # version - log: num = ver*100
+    verDat = "27.9.2019 #997"
     debug = True
     logDev = True
     autoInit = True
@@ -36,19 +35,14 @@ class Env:  # for temporary global variables and config setup
     timerLed = True
     timerBeep = False
 
-olab = Env()  # for initialized equipment
+# olab = Env()  # for initialized equipment
 
 pinout = set_pinout()  # set board pinout
 rtc = RTC()  # real time
 io_conf = get_from_file()  # read configuration for peripherals
 
-# I2C address:
-LCD_ADDR = 0x27
-OLED_ADDR = 0x3c
-
 if Env.isTimer:
     tim1 = Timer(0)
-
 
 # ------------------ common terminal function ---------------
 def getVer():
@@ -166,76 +160,7 @@ def file_copy(fileSource, fileTarget="main.py"):
     print(" ok")
 
 
-def beep(f=1000, l=50):  # noqa: E741
-    piezzo.beep(f, l)
-
-
-def tone(f, l=300):  # noqa: E741
-    piezzo.play_tone(f, l)
-
-
-def rgb_init(num_led=io_conf.get('ws'), pin=None):  # default autoinit ws
-    if pinout.WS_LED_PIN is None:
-        print("Warning: WS LED not supported on this board")
-        return
-    if num_led is None or num_led == 0:
-        print("Warning: Number of WS LED is 0")
-        return
-    from util.rgb import Rgb  # setupNeopixel
-    ws = Rgb(pin, num_led)
-    return ws
-
-
-def disp7_init():
-    printTitle("disp7init()")
-    from util.display7 import Display7
-    print("display test: octopus")
-    d7 = Display7(spi, ss)
-    d7.write_to_buffer('octopus')
-    d7.display()
-    return d7
-
-
-def disp8_init():
-    printTitle("disp8init()")
-    from lib.max7219 import Matrix8x8
-    d8 = Matrix8x8(spi, ss, 1)  # 1/4
-
-    count = 6
-    for i in range(count):
-        d8.fill(0)
-        d8.text(str(i), 0, 0, 1)
-        d8.show()
-        print(i)
-        sleep_ms(500)
-    d8.fill(0)
-    d8.show()
-    return d8
-
-def i2c_expander_init(addr = 0):
-    printTitle("i2c_expander_init()")
-    from util.i2c_expander import Expander8 # from util.i2c_expander import neg, int2bin
-    if addr == 0:
-        e8 = Expander8()
-    else:
-        e8 = Expander8(addr)
-    return e8
-
-def scroll(d8, text, num):  # TODO speed, timer? / NO "sleep"
-    WIDTH = 8*4
-    x = WIDTH + 2
-    for _ in range(8*len(text)*num):
-        sleep(0.03)
-        d8.fill(0)
-        x -= 1
-        if x < - (8*len(text)):
-            x = WIDTH + 2
-        d8.text(text, x, 0, 1)
-        d8.show()
-    d8.fill(0)
-    d8.show()
-
-
+# ----------------------
 def i2c_scann(printInfo=True):
     if printInfo: print("i2c_scann() > devices:")
     i2c = I2C(-1, Pin(pinout.I2C_SCL_PIN), Pin(pinout.I2C_SDA_PIN))
@@ -249,57 +174,6 @@ def i2c_scann(printInfo=True):
     bh2Light = 0x5c in i2cdevs
     tslLight = 0x39 in i2cdevs
     return i2c
-
-
-def lcd2_init():
-    printTitle("lcd2init()")
-    i2c = i2c_scann()
-    LCD_ROWS=2
-    LCD_COLS=16
-    from lib.esp8266_i2c_lcd import I2cLcd
-    lcd = I2cLcd(i2c, LCD_ADDR, LCD_ROWS, LCD_COLS)
-    print("display test: octopusLAB")
-    lcd.clear()
-    lcd.putstr("octopusLAB")
-    return lcd
-
-
-def disp2(d,mess,r=0,s=0):
-    #d.clear()
-    d.move_to(s, r) # x/y
-    d.putstr(str(mess))
-
-
-def oled_init(ox=128, oy=64, runTest = True):
-    printTitle("oled_init()")
-    i2c = i2c_scann()
-
-    from util.oled import Oled
-    from util.display_segment import threeDigits
-    sleep_ms(1000) 
-
-    oled = Oled(i2c, ox, oy)
-    print("test oled display: OK")
-    if runTest:
-        oled.test()
-        threeDigits(oled,123)
-
-    return oled
-
-try: PIN_SER = pinout.PWM1_PIN
-except: PIN_SER = 17 # ROBOT
-def servo_init(pin = PIN_SER):
-    servo = Servo(PIN_SER)
-    return servo
-
-
-def stepper_init(ADDRESS = 0x23, MOTOR_ID = 1): # ID 1 / 2
-    motor = SM28BYJ48(i2c, ADDRESS, MOTOR_ID)
-    # turn right 90 deg
-    motor.turn_degree(90, 0)
-    # turn left 90 deg
-    motor.turn_degree(90, 1)
-    return motor
 
 
 def clt():
@@ -408,7 +282,6 @@ def connecting_callback():
     blink(led, 50, 100)
 """
 
-
 def timer_init():
     printLog("timer_init")
     print("timer tim1 is ready - periodic - 10s")
@@ -437,75 +310,6 @@ def wait_pin_change(pin):
             active = 0
         sleep_ms(1)
 
-#test for Shield1 or FirstBoard hack buttons
-def buttons_init(L = 34, R = 35, C = 39): # Left, Right, Central
-    b34 = Pin(L, Pin.IN) #SL
-    b35 = Pin(R, Pin.IN) #SR
-    b39 = Pin(C, Pin.IN)
-    return b34, b35, b39
-
-def button_init(pin = 34):
-    bpin = Pin(pin, Pin.IN)
-    return bpin
-
-def button(pin, num=10): #num for debounce
-    value0 = value1 = 0
-    for i in range(num):
-        if pin.value() == 0:
-            value0 += 1
-        else:
-            value1 += 1
-        sleep_us(50)
-    return value0, value1
-
-try: PIN_TEMP = pinout.ONE_WIRE_PIN
-except: PIN_TEMP = 17 # ROBOT
-def temp_init(pin = PIN_TEMP):
-    printHead("temp")
-    print("dallas temp init >")
-    from onewire import OneWire
-    from ds18x20 import DS18X20
-    dspin = Pin(pin)
-    # from util.octopus_lib import bytearrayToHexString
-    try:
-        ds = DS18X20(OneWire(dspin))
-        ts = ds.scan()
-
-        if len(ts) <= 0:
-            io_conf['temp'] = False
-
-        for t in ts:
-            print(" --{0}".format(bytearrayToHexString(t)))
-    except:
-        io_conf['temp'] = False
-        print("Err.temp")
-
-    print("Found {0} dallas sensors, temp active: {1}".format(len(ts), io_conf.get('temp')))
-
-    if len(ts)>1:
-        print(get_temp_n(ds,ts))
-    else:
-        print(get_temp(ds,ts))
-
-    return ds,ts
-
-def get_temp(ds,ts): # return single/first value
-    """get_temp(t[0],t[1]) or get_temp(*t)"""
-    tw=0
-    ds.convert_temp()
-    sleep_ms(750)
-    temp = ds.read_temp(ts[0])
-    tw = int(temp*10)/10
-    return tw
-
-def get_temp_n(ds,ts):
-    tw=[]
-    ds.convert_temp()
-    sleep_ms(750)
-    for t in ts:
-        temp = ds.read_temp(t)
-        tw.append(int(temp*10)/10)
-    return tw
 
 def ap_init(): #192.168.4.1
     printTitle("AP init > ")
@@ -677,10 +481,11 @@ def octopus_init():
     delta = ticks_diff(ticks_ms(), Env.start)
     print("delta_time: " + str(delta))   
 
-# --------------- init --------------
+# --------------- init env. def():--------------
 if Env.autoInit:  # test
-    print("--> autoInit: ",end="")
+    print("octopus() --> autoInit: ",end="")
     if io_conf.get('led7') or io_conf.get('led8'):
+        from machine import SPI
         print("SPI | ",end="")
         spi = None
         ss  = None
@@ -691,12 +496,80 @@ if Env.autoInit:  # test
         except:
             print("Err.spi")
 
+    if io_conf.get('led7'):
+        print("disp7 | ",end="")
+        def disp7_init():
+            printTitle("disp7init()")
+            from util.display7 import Display7
+            print("display test: octopus")
+            d7 = Display7(spi, ss)
+            d7.write_to_buffer('octopus')
+            d7.display()
+            return d7
+
+    if io_conf.get('led8'):
+        print("disp8 | ",end="")
+        def disp8_init():
+            printTitle("disp8init()")
+            from lib.max7219 import Matrix8x8
+            d8 = Matrix8x8(spi, ss, 1)  # 1/4
+
+            count = 6
+            for i in range(count):
+                d8.fill(0)
+                d8.text(str(i), 0, 0, 1)
+                d8.show()
+                print(i)
+                sleep_ms(500)
+            d8.fill(0)
+            d8.show()
+            return d8
+
+        def scroll(d8, text, num):  # TODO speed, timer? / NO "sleep"
+            WIDTH = 8*4
+            x = WIDTH + 2
+            for _ in range(8*len(text)*num):
+                sleep(0.03)
+                d8.fill(0)
+                x -= 1
+                if x < - (8*len(text)):
+                    x = WIDTH + 2
+                d8.text(text, x, 0, 1)
+                d8.show()
+            d8.fill(0)
+            d8.show()
+
     if io_conf.get('oled') or io_conf.get('lcd'):
+        # I2C address:
+        OLED_ADDR = 0x3c
+        LCD_ADDR = 0x27
         print("I2C | ",end="")
         try:
             i2c = i2c_scann(False)
         except:
             print("Err.i2c")
+
+    if io_conf.get('oled'):
+        print("OLED | ",end="")
+        from assets.icons9x9 import ICON_clr, ICON_wifi
+        from util.display_segment import oneDigit, threeDigits
+        from util.oled import Oled
+
+        def oled_init(ox=128, oy=64, runTest = True):
+            printTitle("oled_init()")
+            i2c = i2c_scann()
+
+            from util.oled import Oled
+            from util.display_segment import threeDigits
+            sleep_ms(1000) 
+
+            oled = Oled(i2c, ox, oy)
+            print("test oled display: OK")
+            if runTest:
+                oled.test()
+                threeDigits(oled,123)
+
+            return oled
 
     if io_conf.get('led'):
         print("Led | ",end="")
@@ -717,21 +590,53 @@ if Env.autoInit:  # test
         piezzo = Buzzer(pinout.PIEZZO_PIN)
         piezzo.beep(1000,50)
         from util.buzzer import Notes
+        def beep(f=1000, l=50):  # noqa: E741
+            piezzo.beep(f, l)
+
+        def tone(f, l=300):  # noqa: E741
+            piezzo.play_tone(f, l)
     # else:   #    piezzo =Buzzer(None)
 
     if io_conf.get('ws'): 
         print("ws | ",end="")
         from util.rgb import Rgb
+        from util.colors import *
         if pinout.WS_LED_PIN is None:
             print("Warning: WS LED not supported on this board")
         else:
             ws = Rgb(pinout.WS_LED_PIN,io_conf.get('ws')) # default rgb init
 
-    if io_conf.get('oled'):
-        print("OLED | ",end="")
-        from assets.icons9x9 import ICON_clr, ICON_wifi
-        from util.display_segment import oneDigit, threeDigits
-        from util.oled import Oled
+        def rgb_init(num_led=io_conf.get('ws'), pin=None):  # default autoinit ws
+            if pinout.WS_LED_PIN is None:
+                print("Warning: WS LED not supported on this board")
+                return
+            if num_led is None or num_led == 0:
+                print("Warning: Number of WS LED is 0")
+                return
+            from util.rgb import Rgb  # setupNeopixel
+            ws = Rgb(pin, num_led)
+            return ws
+
+    if io_conf.get('lcd'):
+        print("lcd | ",end="")
+        def lcd2_init():
+            printTitle("lcd2init()")
+            i2c = i2c_scann()
+            LCD_ROWS=2
+            LCD_COLS=16
+            from lib.esp8266_i2c_lcd import I2cLcd
+            lcd = I2cLcd(i2c, LCD_ADDR, LCD_ROWS, LCD_COLS)
+            print("display test: octopusLAB")
+            lcd.clear()
+            lcd.putstr("octopusLAB")
+            return lcd
+
+
+        def disp2(d,mess,r=0,s=0):
+            #d.clear()
+            d.move_to(s, r) # x/y
+            d.putstr(str(mess))
+
 
     if io_conf.get('ad0') or io_conf.get('ad1') or io_conf.get('ad2'):
         print("Analog | ",end="")
@@ -741,21 +646,118 @@ if Env.autoInit:  # test
         an = Analog(adcpin)
         #an0 = Analog(io_conf.get('ad0'))
 
+
     if io_conf.get('temp'):
         print("temp | ",end="")
+        try: PIN_TEMP = pinout.ONE_WIRE_PIN
+        except: PIN_TEMP = 17 # ROBOT
+        def temp_init(pin = PIN_TEMP):
+            printHead("temp")
+            print("dallas temp init >")
+            from onewire import OneWire
+            from ds18x20 import DS18X20
+            dspin = Pin(pin)
+            # from util.octopus_lib import bytearrayToHexString
+            try:
+                ds = DS18X20(OneWire(dspin))
+                ts = ds.scan()
+
+                if len(ts) <= 0:
+                    io_conf['temp'] = False
+
+                for t in ts:
+                    print(" --{0}".format(bytearrayToHexString(t)))
+            except:
+                io_conf['temp'] = False
+                print("Err.temp")
+
+            print("Found {0} dallas sensors, temp active: {1}".format(len(ts), io_conf.get('temp')))
+
+            if len(ts)>1:
+                print(get_temp_n(ds,ts))
+            else:
+                print(get_temp(ds,ts))
+            return ds,ts
+
+
+        def get_temp(ds,ts): # return single/first value
+            """get_temp(t[0],t[1]) or get_temp(*t)"""
+            tw=0
+            ds.convert_temp()
+            sleep_ms(750)
+            temp = ds.read_temp(ts[0])
+            tw = int(temp*10)/10
+            return tw
+
+
+        def get_temp_n(ds,ts):
+            tw=[]
+            ds.convert_temp()
+            sleep_ms(750)
+            for t in ts:
+                temp = ds.read_temp(t)
+                tw.append(int(temp*10)/10)
+            return tw
+
 
     if io_conf.get('servo'):
         print("servo | ",end="")
         from util.servo import Servo
+        try: PIN_SER = pinout.PWM1_PIN
+        except: PIN_SER = 17 # ROBOT
+        def servo_init(pin = PIN_SER):
+            servo = Servo(PIN_SER)
+            return servo
+
 
     if io_conf.get('exp8'):
         print("exp8 | ",end="")
         from util.i2c_expander import Expander8
+        def i2c_expander_init(addr = 0):
+            printTitle("i2c_expander_init()")
+            from util.i2c_expander import Expander8 # from util.i2c_expander import neg, int2bin
+            if addr == 0:
+                e8 = Expander8()
+            else:
+                e8 = Expander8(addr)
+            return e8
+
+
+    if io_conf.get('button'):
+        print("button | ",end="")
+        #test for Shield1 or FirstBoard hack buttons
+        def buttons_init(L = 34, R = 35, C = 39): # Left, Right, Central
+            b34 = Pin(L, Pin.IN) #SL
+            b35 = Pin(R, Pin.IN) #SR
+            b39 = Pin(C, Pin.IN)
+            return b34, b35, b39
+
+        def button_init(pin = 34):
+            bpin = Pin(pin, Pin.IN)
+            return bpin
+
+        def button(pin, num=10): #num for debounce
+            value0 = value1 = 0
+            for i in range(num):
+                if pin.value() == 0:
+                    value0 += 1
+                else:
+                    value1 += 1
+                sleep_us(50)
+            return value0, value1
+
 
     if io_conf.get('stepper'):
         print("stepper | ",end="")
         from lib.sm28byj48 import SM28BYJ48   #PCF address = 35 #33-0x21/35-0x23
-                  
+        def stepper_init(ADDRESS = 0x23, MOTOR_ID = 1): # ID 1 / 2
+            motor = SM28BYJ48(i2c, ADDRESS, MOTOR_ID)
+            # turn right 90 deg
+            motor.turn_degree(90, 0)
+            # turn left 90 deg
+            motor.turn_degree(90, 1)
+            return motor
+
     print()
 
 
@@ -771,8 +773,7 @@ def small_web_server(wPath='www/'):
 def web_server():
     printTitle("web_server start > ")
     from lib.microWebSrv import MicroWebSrv
-    import os
-    import webrepl
+    import os, webrepl
     from ubinascii import hexlify
     from util.wifi_connect import WiFiConnect
     from util.i2c_expander import Expander8
@@ -965,8 +966,7 @@ def web_server():
         with open(io_conf_file, 'w') as f:
             json_dump(io_conf, f)
 
-        httpResponse.WriteResponseOk(None)    
-
+        httpResponse.WriteResponseOk(None)
 
     @MicroWebSrv.route('/file_list')
     def _httpHandlerTestGet(httpClient, httpResponse):
