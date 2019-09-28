@@ -2,5 +2,10 @@
 
 print("--- empty.py ---> main.py --- test")
 print("This is simple Micropython example | ESP32 & octopusLAB")
+from gc import mem_free
+print("--- RAM before octopus(): " + str(mem_free()))
+
+from util.octopus import getFree
+getFree(True)
 print()
 
