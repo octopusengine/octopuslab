@@ -1,17 +1,15 @@
-"""
- * This file is part of the octopusLAB project
- * The MIT License (MIT)
- * Copyright (c) 2016-2019 Jan Copak, Petr Kracik, Vasek Chalupnicek
-"""
+# This file is part of the octopusLAB project
+# The MIT License (MIT)
+# Copyright (c) 2016-2019 Jan Copak, Petr Kracik, Vasek Chalupnicek
+
 # this module is main library - for other modules
 # or directly in terminal:
 # >>> octopus()
 # >>> h() help /i() info /w() wifi connect
 
-from os import urandom
-from time import sleep, sleep_ms, sleep_us, ticks_ms, ticks_diff
+from time import sleep, sleep_ms, ticks_ms, ticks_diff
 from machine import Pin, I2C, PWM, Timer, RTC
-
+#from os import urandom
 from util.pinout import set_pinout
 from util.io_config import get_from_file
 
@@ -20,7 +18,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.90"  # version - log: num = ver*100
-    verDat = "27.9.2019 #997"
+    verDat = "28.9.2019 #993"
     debug = True
     logDev = True
     autoInit = True
@@ -36,7 +34,6 @@ class Env:  # for temporary global variables and config setup
     timerBeep = False
 
 # olab = Env()  # for initialized equipment
-
 pinout = set_pinout()  # set board pinout
 rtc = RTC()  # real time
 io_conf = get_from_file()  # read configuration for peripherals
@@ -44,7 +41,7 @@ io_conf = get_from_file()  # read configuration for peripherals
 if Env.isTimer:
     tim1 = Timer(0)
 
-# ------------------ common terminal function ---------------
+# --------------- common terminal function ---------------
 def getVer():
     return "octopusLAB - lib.version: " + Env.ver + " > " + Env.verDat
 
@@ -160,7 +157,6 @@ def file_copy(fileSource, fileTarget="main.py"):
     print(" ok")
 
 
-# ----------------------
 def i2c_scann(printInfo=True):
     if printInfo: print("i2c_scann() > devices:")
     i2c = I2C(-1, Pin(pinout.I2C_SCL_PIN), Pin(pinout.I2C_SDA_PIN))
@@ -256,16 +252,14 @@ def add0(sn):
 
 
 def get_hhmm(separator=":",rtc=rtc):
-    """get_hhmm(separator) | separator = string: "-" / " " """
-    #print(str(rtc.datetime()[4])+":"+str(rtc.datetime()[5]))
+    #get_hhmm(separator) | separator = string: "-" / " " 
     hh=add0(rtc.datetime()[4])
     mm=add0(rtc.datetime()[5])
     return hh + separator + mm
 
 
 def get_hhmmss(separator=":",rtc=rtc):
-    """get_hhmm(separator) | separator = string: "-" / " " """
-    #print(str(rtc.datetime()[4])+":"+str(rtc.datetime()[5]))
+    #get_hhmm(separator) | separator = string: "-" / " "
     hh=add0(rtc.datetime()[4])
     mm=add0(rtc.datetime()[5])
     ss=add0(rtc.datetime()[6])
@@ -277,7 +271,6 @@ def get_hhmmss(separator=":",rtc=rtc):
     blink(led, 50, 100)
     print(sta.ifconfig())
     WSBindIP = sta.ifconfig()[0]
-
 def connecting_callback():
     blink(led, 50, 100)
 """
@@ -299,22 +292,9 @@ def timerAction():
     Env.timerFlag = 0   
 
 
-def wait_pin_change(pin):
-    # wait for pin to change value, it needs to be stable for a continuous 20ms
-    cur_value = pin.value()
-    active = 0
-    while active < 20:
-        if pin.value() != cur_value:
-            active += 1
-        else:
-            active = 0
-        sleep_ms(1)
-
-
 def ap_init(): #192.168.4.1
     printTitle("AP init > ")
     from util.wifi_connect import WiFiConnect
-
     import ubinascii
     w = WiFiConnect()
     w.ap_if.active(True)
@@ -323,6 +303,7 @@ def ap_init(): #192.168.4.1
     print(w.ap_if.ifconfig())
     print("AP Running: " + w.ap_if.config("essid"))
     return w
+
 
 def w_connect():
     led.value(1)
@@ -339,6 +320,7 @@ def w_connect():
     print('Network config:', w.sta_if.ifconfig())
     return w
 
+
 def lan_connect():
     from network import LAN, ETH_CLOCK_GPIO17_OUT, PHY_LAN8720
     led.value(1)
@@ -351,7 +333,7 @@ def lan_connect():
         sleep_ms(500)
 
         if retry > 20:
-            break;
+            break
 
     if not lan.isconnected():
         print("LAN: Connect error, check cable or DHCP server")
@@ -361,6 +343,7 @@ def lan_connect():
     led.value(0)
     print('network config:', lan.ifconfig())
     return lan
+
 
 def logDevice(urlPOST = "http://www.octopusengine.org/iot17/add18.php"):
     from urequests import post
@@ -377,6 +360,7 @@ def logDevice(urlPOST = "http://www.octopusengine.org/iot17/add18.php"):
     except:
         print("E.logDevice")
 
+
 def w(logD = True):
     printInfo()
     printTitle("WiFi connect > ")
@@ -391,10 +375,12 @@ def w(logD = True):
     getFree(True)
     return w
 
+
 def database_init(name):
     from util.database import Db
     db = Db(name)
     return db
+
 
 def time_init(urlApi ="http://www.octopusengine.org/api/hydrop"):
     from urequests import get
@@ -412,6 +398,7 @@ def time_init(urlApi ="http://www.octopusengine.org/api/hydrop"):
     except:
         print("Err. Setup time from URL")
 
+
 def getApiJson(urlApi ="http://www.octopusengine.org/api"):
     from urequests import get
     from json import loads
@@ -428,11 +415,13 @@ def getApiJson(urlApi ="http://www.octopusengine.org/api"):
         print("Err. read json from URL")
     return aj
 
+
 def getApiTest():
     printTitle("data from url")
     #print("https://urlApi/"+urljson)
     print("htts://public_unsecure_web/data.json")
     print(getApiJson())
+
 
 def getApiText(urlApi ="http://www.octopusengine.org/api"):
     from urequests import get
@@ -444,14 +433,15 @@ def getApiText(urlApi ="http://www.octopusengine.org/api"):
         print("Err. read txt from URL")
     return dt_str
 
+
 def octopus():
     from gc import collect
-
     printOctopus()
     print("("+getVer()+")")
     collect()
     printInfo()
     print("This is basic library, type h() for help")
+
 
 def octopus_init():
     Env.start = ticks_ms()
@@ -466,22 +456,23 @@ def octopus_init():
     if io_conf.get('ws'):
         printLog("ws.test()")
         print("testing ws - RGB led")
-        ws.test()    
+        ws.test()
 
     if io_conf.get('led7'):
         Env.d7 = disp7_init()
 
     if io_conf.get('oled'):
-        Env.o = oled_init()    
+        Env.o = oled_init()
 
     if io_conf.get('temp'):
         Env.t = temp_init()
 
     printLog("ticks_diff(ticks_ms(), Env.start)")
     delta = ticks_diff(ticks_ms(), Env.start)
-    print("delta_time: " + str(delta))   
+    print("delta_time: " + str(delta))
 
-# --------------- init env. def():--------------
+
+# ---------- init env. def():--------------
 if Env.autoInit:  # test
     print("octopus() --> autoInit: ",end="")
     if io_conf.get('led7') or io_conf.get('led8'):
@@ -637,7 +628,6 @@ if Env.autoInit:  # test
             d.move_to(s, r) # x/y
             d.putstr(str(mess))
 
-
     if io_conf.get('ad0') or io_conf.get('ad1') or io_conf.get('ad2'):
         print("Analog | ",end="")
         from util.analog import Analog
@@ -645,7 +635,6 @@ if Env.autoInit:  # test
         adcpin = 39 #default
         an = Analog(adcpin)
         #an0 = Analog(io_conf.get('ad0'))
-
 
     if io_conf.get('temp'):
         print("temp | ",end="")
@@ -699,7 +688,6 @@ if Env.autoInit:  # test
                 tw.append(int(temp*10)/10)
             return tw
 
-
     if io_conf.get('servo'):
         print("servo | ",end="")
         from util.servo import Servo
@@ -708,7 +696,6 @@ if Env.autoInit:  # test
         def servo_init(pin = PIN_SER):
             servo = Servo(PIN_SER)
             return servo
-
 
     if io_conf.get('exp8'):
         print("exp8 | ",end="")
@@ -721,7 +708,6 @@ if Env.autoInit:  # test
             else:
                 e8 = Expander8(addr)
             return e8
-
 
     if io_conf.get('button'):
         print("button | ",end="")
@@ -743,9 +729,19 @@ if Env.autoInit:  # test
                     value0 += 1
                 else:
                     value1 += 1
-                sleep_us(50)
+                sleep_ms(0.3)
             return value0, value1
 
+        def wait_pin_change(pin):
+            # wait for pin to change value, it needs to be stable for a continuous 20ms
+            cur_value = pin.value()
+            active = 0
+            while active < 20:
+                if pin.value() != cur_value:
+                    active += 1
+                else:
+                    active = 0
+                sleep_ms(1)
 
     if io_conf.get('stepper'):
         print("stepper | ",end="")
