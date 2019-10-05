@@ -990,4 +990,5 @@ def web_server():
     mws.Start(threaded=True) # Starts server in a new thread
     getFree(True)
     webrepl.start()
+    print("Web server started on http://{0}".format(wc.sta_if.ifconfig()[0]))
     return mws
