@@ -13,7 +13,7 @@
             var infoMAC = document.getElementById("infoMAC");
             var infoRAM = document.getElementById("infoRAM");
             var infoFLASH = document.getElementById("infoFLASH");
-            button.value = "Loading...";
+            button.value = "Refreshing...";
             button.disabled = true;
     
             var xhr = new XMLHttpRequest();
@@ -21,18 +21,18 @@
     
             xhr.onerror = function () {
                 console.log("Error");
-                button.value = "Load";
+                button.value = "Refresh";
                 button.disabled = false;
             }
     
             xhr.ontimeout = function () {
                 console.log("Request timeout");
-                button.value = "Load";
+                button.value = "Refresh";
                 button.disabled = false;
             }
     
             xhr.onload = function () {
-                button.value = "Load";
+                button.value = "Refresh";
                 button.disabled = false;
     
                 var json = JSON.parse(xhr.responseText);
@@ -127,8 +127,33 @@
             xhr.send(outbyte);
     }
     
+     function ledPwmValue(value) {
+        var slider_led = document.getElementById("pwm_duty");
+        slider_led.value = value
+
+        var xhr = new XMLHttpRequest();
+        xhr.timeout = 10000;
+
+        xhr.onerror = function () {
+            console.log("Error");
+        }
+
+        xhr.ontimeout = function () {
+            console.log("Request timeout");
+        }
+
+        xhr.onload = function () {
+            console.log(xhr.responseText);
+            console.log(xhr.status);
+            boardInfo();
+        }
+
+        xhr.open('POST', '/led/pwm');
+        xhr.send(value);
+    }
     </script>
-    <body>
+    
+    <body onload="loadInfo()">
     <h1><img src="../octopus-72.png" ALIGN="BOTTOM"> octopusLAB - ESP32 control</h1>
     
     <br />
@@ -141,7 +166,7 @@
     <b>Flash: </b><span id="infoFLASH">...</span><br /><br />
     ... <span id="testInfo"></span><br />
     <br />
-    <input class="button" type="button" onClick="loadInfo()" id="buttonInfo" value="Load" />
+    <input class="button" type="button" onClick="loadInfo()" id="buttonInfo" value="Refresh" />
     
     <table>
     <thead>
@@ -175,7 +200,6 @@
     <input class="back_sil button0" type="button" onClick="ledOn(8)" value="..." /></input>
     <input class="back_sil button0" type="button" onClick="ledOn(9)" value="..." /></input>
     <input class="back_sil button0" type="button" onClick="ledOn(0)" value="Black" /></input><br><br>
-    ADDRESS: <input class = "inp_txt" id="addr" type="text" name="addr" size="5" value ="0x21"/><br>
     </form>
     </div>
     <br />
@@ -186,11 +210,14 @@
     PORT: <input class = "inp_txt" id="pwm_port" type="text" name="pwm_port" size="5"/> | 
     DUTY: <input class = "inp_txt" id="pwm_duty" type="text" name="pwm_duty" size="5"/> | 
     FREQ: <input class = "inp_txt" id="pwm_freq" type="text" name="pwm_freq" size="5"/> 
+    <br />
+    <h3>LED light intensity</h3>
+    <input class="slider" id="pwm_duty" type="range" min=0 max=1023 value=0 onchange="ledPwmValue(this.value);" />
     
     <hr />
     <br />
-    8bit - I2C expander: <span id="i2cByteValue"></span><br />
     <form>
+    8bit - I2C expander: <span id="i2cByteValue"></span> ADDRESS: <input class = "inp_txt" id="addr" type="text" name="addr" size="5" value ="0x21"/><br /><br />
     <input type="checkbox" name="i2c_b0" id="i2c_b0" value="1"> 0 |
     <input type="checkbox" name="i2c_b1" id="i2c_b1" value="2"> 1 |
     <input type="checkbox" name="i2c_b2" id="i2c_b2" value="4"> 2 |
@@ -198,11 +225,11 @@
     <input type="checkbox" name="i2c_b4" id="i2c_b4" value="16"> 4 |
     <input type="checkbox" name="i2c_b5" id="i2c_b5" value="32"> 5 |
     <input type="checkbox" name="i2c_b6" id="i2c_b6" value="64"> 6 |
-    <input type="checkbox" name="i2c_b7" id="i2c_b7" value="128"> 7 <br />
+    <input type="checkbox" name="i2c_b7" id="i2c_b7" value="128"> 7 <br /><br />
     <input class="button" type="button" onClick="i2cReadByte()" id="buttonI2CRead" value="Read" />
     <input class="button" type="button" onClick="i2cSetByte()"  id="buttonI2CSend" value="Set" />
     </form>
-    </div>    
+    </div>
     
     <br />
     <div class="radius">
@@ -210,4 +237,4 @@
     ◄ Back to main <a href="../index.html">MENU</a>
     </div>
     
-    </body></html>    
+    </body></html>
