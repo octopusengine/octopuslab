@@ -18,7 +18,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.91"  # version - log: num = ver*100
-    verDat = "3.10.2019 #1057"
+    verDat = "3.10.2019 #1055"
     debug = True
     logDev = True
     autoInit = True
@@ -32,7 +32,7 @@ class Env:  # for temporary global variables and config setup
     timerCounter = 0
     timerLed = True
     timerBeep = False
-    testGarden = False
+    testIoT = False
 
 # olab = Env()  # for initialized equipment
 pinout = set_pinout()  # set board pinout
@@ -476,7 +476,7 @@ def octopus_init():
     delta = ticks_diff(ticks_ms(), Env.start)
     print("delta_time: " + str(delta))
 
-if Env.testGarden:
+if Env.testIoT:
     FET = PWM(Pin(14), freq=500)
     FET.duty(0) # Robot(MOTO_3A), ESP(JTAG-MTMS)
     RELAY = Pin(33) # Robot(DEV2)
@@ -1009,10 +1009,10 @@ def web_server():
     mws.Start(threaded=True) # Starts server in a new thread
     getFree(True)
     webrepl.start()
+    print("Web server started on http://{0}".format(wc.sta_if.ifconfig()[0]))
     return mws
 
-
-    @MicroWebSrv.route('/led/pwm', "POST")
+    @MicroWebSrv.route('/led/pwm', "POST") # IOT/ Hydroponics LED
     def _httpLedPwmSet(httpClient, httpResponse):
         print("LED PWM Call")
 
@@ -1022,7 +1022,6 @@ def web_server():
         if FET is None:
             httpResponse.WriteResponse(code=500, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = "MFET is not defined, check setup()")
             return
-        
         try:
             value = int(data)
             FET.duty(value)
@@ -1044,7 +1043,6 @@ def web_server():
         if RELAY is None:
             httpResponse.WriteResponse(code=500, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = "RELAY is not defined, check setup()")
             return
-        
         try:
             value = int(data)
             RELAY.value(value)
