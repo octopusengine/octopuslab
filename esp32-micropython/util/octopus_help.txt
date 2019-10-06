@@ -1,7 +1,7 @@
    setup()  > w, a > cw, sd   > ds, ios ------------
    h() / o_help() HELP        | i() / o_info() INFO
-   c() / clt() clear terminal | r() = system reset
-   w() / w_connect()  WIFI    | f(file) FILE print
+   c() / clt() clear terminal | r() = reset() system
+   w() / w_connect()  WIFI    | f(file) = cat() print
 >> basic simple HW examples --|---------------------
    led.value(1)  / (0)        | led.blink()
    ws = Rgb(p, n) > pin, num  | ws.simpleTest()
@@ -18,11 +18,9 @@
 >> sensors/communications/... |---------------------
    a1 = Analog(pin) a1.read() > return analog RAW
    t = temp_init() > (*t)     > getTemp(t[0], t[1])
-   i2c_scann()                = find I2C devices
+   i2c_scan()                 = find I2C devices
    time_init() > from URL_API | timer_init() ON
    get_hhmm(separator)        | get_hhmmss("-")
->> standard lib. functions ---|---------------------
-   sleep(1)  / sleep_ms(1)    = 1 s/ms pause
-   urandom(1)[0]              = random num.
-   import webrepl_setup       = remote access
+>> web_server()  -------------|---------------------
+  
 
