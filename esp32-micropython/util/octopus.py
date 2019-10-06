@@ -17,8 +17,8 @@ from util.io_config import get_from_file
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "0.90"  # version - log: num = ver*100
-    verDat = "28.9.2019 #993"
+    ver = "0.91"  # version - log: num = ver*100
+    verDat = "3.10.2019 #1057"
     debug = True
     logDev = True
     autoInit = True
@@ -32,6 +32,7 @@ class Env:  # for temporary global variables and config setup
     timerCounter = 0
     timerLed = True
     timerBeep = False
+    testGarden = False
 
 # olab = Env()  # for initialized equipment
 pinout = set_pinout()  # set board pinout
@@ -102,7 +103,7 @@ def i():
     o_info()
 
 
-def f(file='main.py', title=True):
+def cat(file='main.py', title = False): # concatenate - prepare
     """print data: f("filename") """
     fi = open(file, 'r')
     if title:
@@ -123,6 +124,10 @@ def f(file='main.py', title=True):
 
     for line in fi:
         print(line, end="")
+
+
+def f(file='main.py', title = True):
+    cat(file, title)
 
 
 def u(tar="https://octopusengine.org/download/micropython/stable.tar"):
@@ -471,6 +476,20 @@ def octopus_init():
     delta = ticks_diff(ticks_ms(), Env.start)
     print("delta_time: " + str(delta))
 
+if Env.testGarden:
+    FET = PWM(Pin(14), freq=500)
+    FET.duty(0) # Robot(MOTO_3A), ESP(JTAG-MTMS)
+    RELAY = Pin(33) # Robot(DEV2)
+"""
+FET = None
+if pinout.MFET_PIN is not None:
+    FET = PWM(Pin(pinout.MFET_PIN), freq=500)
+    FET.duty(0)
+
+RELAY = None
+if pinout.RELAY_PIN is not None:
+    RELAY = Pin(pinout.RELAY_PIN)
+"""
 
 # ---------- init env. def():--------------
 if Env.autoInit:  # test
@@ -990,5 +1009,49 @@ def web_server():
     mws.Start(threaded=True) # Starts server in a new thread
     getFree(True)
     webrepl.start()
-    print("Web server started on http://{0}".format(wc.sta_if.ifconfig()[0]))
     return mws
+
+
+    @MicroWebSrv.route('/led/pwm', "POST")
+    def _httpLedPwmSet(httpClient, httpResponse):
+        print("LED PWM Call")
+
+        data = httpClient.ReadRequestContent()
+        print(data)
+
+        if FET is None:
+            httpResponse.WriteResponse(code=500, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = "MFET is not defined, check setup()")
+            return
+        
+        try:
+            value = int(data)
+            FET.duty(value)
+        except Exception as e:
+            print("Exception: {0}".format(e))
+            raise
+        finally:
+            httpResponse.WriteResponseOk(None)
+
+        httpResponse.WriteResponse(code=204, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = None)
+
+    @MicroWebSrv.route('/relay', "POST")
+    def _httpRelaySet(httpClient, httpResponse):
+        print("Relay Call")
+
+        data = httpClient.ReadRequestContent()
+        print(data)
+
+        if RELAY is None:
+            httpResponse.WriteResponse(code=500, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = "RELAY is not defined, check setup()")
+            return
+        
+        try:
+            value = int(data)
+            RELAY.value(value)
+        except Exception as e:
+            print("Exception: {0}".format(e))
+            raise
+        finally:
+            httpResponse.WriteResponseOk(None)
+
+        httpResponse.WriteResponse(code=204, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = None)
