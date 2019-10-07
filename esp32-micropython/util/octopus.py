@@ -13,12 +13,16 @@ from machine import Pin, I2C, PWM, Timer, RTC
 from util.pinout import set_pinout
 from util.io_config import get_from_file
 
+# olab = Env()  # for initialized equipment
+pinout = set_pinout()  # set board pinout
+rtc = RTC()  # real time
+io_conf = get_from_file()  # read configuration for peripherals
 
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "0.91"  # version - log: num = ver*100
-    verDat = "3.10.2019 #1055"
+    ver = "0.92"  # version - log: num = ver*100
+    verDat = "6.10.2019 #1062"
     debug = True
     logDev = True
     autoInit = True
@@ -32,12 +36,11 @@ class Env:  # for temporary global variables and config setup
     timerCounter = 0
     timerLed = True
     timerBeep = False
-    testIoT = False
-
-# olab = Env()  # for initialized equipment
-pinout = set_pinout()  # set board pinout
-rtc = RTC()  # real time
-io_conf = get_from_file()  # read configuration for peripherals
+    # wsc = web_server control - deafaul False:
+    wscWS = False  # WS RGB LED
+    wscPWM = False # PWM LED - IoT board / hydroponics
+    wscRelay = False
+    wscLed = True  # only this simple test is defa 1
 
 if Env.isTimer:
     tim1 = Timer(0)
@@ -476,22 +479,15 @@ def octopus_init():
     delta = ticks_diff(ticks_ms(), Env.start)
     print("delta_time: " + str(delta))
 
-if Env.testIoT:
-    FET = PWM(Pin(14), freq=500)
-    FET.duty(0) # Robot(MOTO_3A), ESP(JTAG-MTMS)
-    RELAY = Pin(33) # Robot(DEV2)
-"""
-FET = None
-if pinout.MFET_PIN is not None:
+
+# ---------- init env. def(): --------------
+if io_conf.get('fet'):
     FET = PWM(Pin(pinout.MFET_PIN), freq=500)
+    FET.duty(500) # pin(14) Robot(MOTO_3A), ESP(JTAG-MTMS)
+    sleep(0.5)
     FET.duty(0)
 
-RELAY = None
-if pinout.RELAY_PIN is not None:
-    RELAY = Pin(pinout.RELAY_PIN)
-"""
 
-# ---------- init env. def():--------------
 if Env.autoInit:  # test
     print("octopus() --> autoInit: ",end="")
     if io_conf.get('led7') or io_conf.get('led8'):
@@ -615,7 +611,7 @@ if Env.autoInit:  # test
             print("Warning: WS LED not supported on this board")
         else:
             ws = Rgb(pinout.WS_LED_PIN,io_conf.get('ws')) # default rgb init
-
+ 
         def rgb_init(num_led=io_conf.get('ws'), pin=None):  # default autoinit ws
             if pinout.WS_LED_PIN is None:
                 print("Warning: WS LED not supported on this board")
@@ -626,6 +622,15 @@ if Env.autoInit:  # test
             from util.rgb import Rgb  # setupNeopixel
             ws = Rgb(pin, num_led)
             return ws
+    
+    #if io_conf.get('fet'): 
+    #    print("fet | ",end="")
+    #    FET = PWM(Pin(pinout.MFET_PIN), freq=500)
+    #    FET.duty(0) # pin(14) Robot(MOTO_3A), ESP(JTAG-MTMS)
+
+    if io_conf.get('relay'): 
+        print("rel | ",end="")
+        RELAY = Pin(pinout.RELAY_PIN) # pin(33) Robot(DEV2)
 
     if io_conf.get('lcd'):
         print("lcd | ",end="")
@@ -796,16 +801,19 @@ def web_server():
     wc = WiFiConnect()
     expander = Expander8()
 
+
     @MicroWebSrv.route('/setup/wifi/networks.json') # GET
     def _httpHandlerWiFiNetworks(httpClient, httpResponse):
         nets = [[item[0], hexlify(item[1], ":"), item[2], item[3], item[4]] for item in wc.sta_if.scan()]
         httpResponse.WriteResponseJSONOk(nets)
+
 
     @MicroWebSrv.route('/setup/wifi/savednetworks.json') # GET
     def _httpHandlerWiFiNetworks(httpClient, httpResponse):
         wc.load_config()
         nets = [k for k,v in wc.config['networks'].items()]
         httpResponse.WriteResponseJSONOk(nets)
+
 
     @MicroWebSrv.route('/setup/wifi/network')   # Get acutal network
     def _httpHandlerWiFiCreateNetwork(httpClient, httpResponse):
@@ -826,6 +834,7 @@ def web_server():
 
         httpResponse.WriteResponseJSONOk(data)
 
+
     @MicroWebSrv.route('/setup/wifi/network', "POST")   # Create new network
     def _httpHandlerWiFiCreateNetwork(httpClient, httpResponse):
         data  = httpClient.ReadRequestContentAsJSON()
@@ -844,6 +853,7 @@ def web_server():
         responseCode = 201
 
         httpResponse.WriteResponse( code=responseCode, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = content)
+
 
     @MicroWebSrv.route('/setup/wifi/network', "PUT")    # Update existing network
     def _httpHandlerWiFiUpdateNetwork(httpClient, httpResponse):
@@ -868,6 +878,7 @@ def web_server():
 
         httpResponse.WriteResponse( code=responseCode, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = content)
 
+
     @MicroWebSrv.route('/setup/wifi/network', "DELETE") # Delete existing network
     def _httpHandlerWiFiDeleteNetwork(httpClient, httpResponse):
         data = httpClient.ReadRequestContentAsJSON()
@@ -886,11 +897,13 @@ def web_server():
 
         httpResponse.WriteResponse( code=responseCode, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = content)
 
+
     @MicroWebSrv.route('/setup/devices.json') # GET boards
     def _httpHandlerDevices(httpClient, httpResponse):
         from util.setup import devices
 
         httpResponse.WriteResponseJSONOk(devices)
+
 
     @MicroWebSrv.route('/esp/control_info.json') # GET info
     def _httpHandlerInfo(httpClient, httpResponse):
@@ -905,21 +918,44 @@ def web_server():
 
         httpResponse.WriteResponseJSONOk(infoDict)
 
-    @MicroWebSrv.route('/esp/control_led', "POST") # Set device
+
+    @MicroWebSrv.route('/esp/control/led', "POST") # Set LED
     def _httpHandlerSetDevice(httpClient, httpResponse):
         data = httpClient.ReadRequestContent()
         val = int(data)
-        # val = data['value']
-        print("control_led: " + str(val))
+        print("control/led call: " + str(val))
         led.value(val)
-        if val == 2: ws.color(RED)
-        if val == 3: ws.color(GREEN)
-        if val == 4: ws.color(BLUE)
-        if val == 5: ws.color(ORANGE)
-        if val == 6: ws.color((128,0,128))
-        if val == 0: ws.color(BLACK)
+        if Env.wscWS:
+            if val == 2: ws.color(RED)
+            if val == 3: ws.color(GREEN)
+            if val == 4: ws.color(BLUE)
+            if val == 5: ws.color(ORANGE)
+            if val == 6: ws.color((128,0,128))
+            if val == 0: ws.color(BLACK)
 
         httpResponse.WriteResponseOk(None)
+
+
+    @MicroWebSrv.route('/esp/control/pwm', "POST") # PWM - IOT/ Hydroponics LED
+    def _httpLedPwmSet(httpClient, httpResponse):
+        data = httpClient.ReadRequestContent()
+        print("LED PWM Call: " + str(int(data)))
+
+        if FET is None:
+            httpResponse.WriteResponse(code=500, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = "MFET is not defined, check setup()")
+            return
+        try:
+            value = int(data)
+            if value > 390: FET.freq(2000)
+            else: FET.freq(300)
+            FET.duty(value)
+        except Exception as e:
+            print("Exception: {0}".format(e))
+            raise
+        finally:
+            httpResponse.WriteResponseOk(None)
+
+        httpResponse.WriteResponse(code=204, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = None)
 
 
     @MicroWebSrv.route('/esp/control/i2cexpander', "POST") # Set device
@@ -1012,28 +1048,7 @@ def web_server():
     print("Web server started on http://{0}".format(wc.sta_if.ifconfig()[0]))
     return mws
 
-    @MicroWebSrv.route('/led/pwm', "POST") # IOT/ Hydroponics LED
-    def _httpLedPwmSet(httpClient, httpResponse):
-        print("LED PWM Call")
-
-        data = httpClient.ReadRequestContent()
-        print(data)
-
-        if FET is None:
-            httpResponse.WriteResponse(code=500, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = "MFET is not defined, check setup()")
-            return
-        try:
-            value = int(data)
-            FET.duty(value)
-        except Exception as e:
-            print("Exception: {0}".format(e))
-            raise
-        finally:
-            httpResponse.WriteResponseOk(None)
-
-        httpResponse.WriteResponse(code=204, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = None)
-
-    @MicroWebSrv.route('/relay', "POST")
+    @MicroWebSrv.route('/esp/control/relay', "POST")
     def _httpRelaySet(httpClient, httpResponse):
         print("Relay Call")
 
