@@ -69,7 +69,7 @@
                 boardInfo();
             }
     
-            xhr.open('POST', '/esp/control_led');
+            xhr.open('POST', '/esp/control/led');
             xhr.send(value);
         }
     
@@ -148,7 +148,7 @@
             boardInfo();
         }
 
-        xhr.open('POST', '/led/pwm');
+        xhr.open('POST', '/esp/control/pwm');
         xhr.send(value);
     }
     </script>
