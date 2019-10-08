@@ -9,15 +9,9 @@ def setup():
     util.setup.setup()
 
 def octopus():
-    from util.octopus import *
-    octopus()
-
-import builtins
-builtins.octopus=octopus
-
-def octopus_demo():
-    import util.octopus_demo
-    util.octopus_demo.octopus_demo()
+    import util.octopus
+    util.octopus.octopus()
+    return util.octopus
 
 def reset():
     import machine
