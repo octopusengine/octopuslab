@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=0.95, maximum-scale=3.0, minimum-scale=0.90">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <script src="term.js"></script>
@@ -18,6 +18,7 @@
 	var editor;
 	var term;
 	var ws;
+	var split_lib;
 	var connected = false;
 
 	var paste_mode_detected = 0;
@@ -32,7 +33,8 @@
 	var data_to_send = "";
 	var data_offset = 0;
 	var data_paste_mode = 0;
-	var myVar = setInterval(myTimer, 25);
+	var myVar = setInterval(myTimer, 10);
+
 
 	// array containing all the editors we will create
     var editors = [];
@@ -196,9 +198,13 @@
 			//ace.config.set('modePath', '');
 			//ace.config.set('themePath', '');
 
-		    Split(['#editor_div', '#terminal_div'], {
+			var size_layout = [85,15];
+			if (getHeight() < 700) {size_layout = [75,25];}
+
+		    split_lib = Split(['#editor_div', '#terminal_div'], {
 				direction: 'vertical',
-				sizes: [85, 15],
+				sizes: size_layout,
+				minSize: [32, 90],
 				gutterSize: 5,
 				cursor: 'row-resize',
 				onDragEnd: function(sizes) {
@@ -232,7 +238,7 @@
 
 	function update_file_status(s) {
 		//document.getElementById('file-status').innerHTML = s;
-		console.log(s);
+		//console.log(s);
 		term.write(s);
 	}
 
@@ -729,6 +735,7 @@
 		<area alt="Save file" title="Save file" shape="rect" coords="82,1,111,31" onclick="save_file_dialog();"/>
 		<area alt="Undo" title="Undo" shape="rect" coords="122,1,150,31" onclick="editor.undo();"/>
 		<area alt="Redo" title="Redo" shape="rect" coords="162,1,190,31" onclick="editor.redo();"/>
+		<area alt="Interrupt" title="Interrupt current program" shape="rect" coords="202,1,230,31" onclick="ws.send('\x03');"/>
 	</map>
 
 	<ul id="tabs_id">
@@ -750,7 +757,7 @@
 	<div class="x" onclick="close_load();">x</div>
 		<form  class="form_style" action="">
 		  <p align="center" style="margin: 10px;">Load File</p>
-		  <input type="text" id="load_filename" name="load_filename" list="file_list_input" placeholder="file.py" onfocus="this.oldvalue = this.value" onchange="load_filename_changed(this)">
+		  <input type="text" id="load_filename" name="load_filename" list="file_list_input" placeholder="file.py" onfocus="this.oldvalue = this.value" oninput="load_filename_changed(this)">
 				<datalist id="file_list_input">
 					<option>/boot.py</option>
 					<option>/main.py</option>
