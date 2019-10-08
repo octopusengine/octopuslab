@@ -128,7 +128,7 @@ class LcdApi:
         if cursor_y & 1:
             addr += 0x40    # Lines 1 & 3 add 0x40
         if cursor_y & 2:
-            addr += 0x10 if self.num_columns == 16 else 0x14    # Lines 2 & 3 add 0x10 for 16 cols and 0x14 for other
+            addr += self.num_columns
         self.hal_write_command(self.LCD_DDRAM | addr)
 
     def putchar(self, char):
