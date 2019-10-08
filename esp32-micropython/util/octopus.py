@@ -22,7 +22,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.92"  # version - log: num = ver*100
-    verDat = "6.10.2019 #1062"
+    verDat = "8.10.2019 #1062"
     debug = True
     logDev = True
     autoInit = True
@@ -482,7 +482,8 @@ def octopus_init():
 
 # ---------- init env. def(): --------------
 if io_conf.get('fet'):
-    FET = PWM(Pin(pinout.MFET_PIN), freq=500)
+    mfet_pin = int(io_conf.get('fet')) # pinout.MFET_PIN
+    FET = PWM(Pin(mfet_pin), freq=500)
     FET.duty(500) # pin(14) Robot(MOTO_3A), ESP(JTAG-MTMS)
     sleep(0.5)
     FET.duty(0)
