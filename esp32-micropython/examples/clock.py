@@ -1,6 +1,6 @@
 # simple basic example - ESP32 + 7segment display
 
-from util.octopus import *
+from util.octopus import w, disp7_init, get_hhmm, time_init, h
 
 w()			# wifi connect
 d7 = disp7_init()	# 8 x 7segment display init   
