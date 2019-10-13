@@ -1,6 +1,8 @@
 # simple basic example - ESP32 + 7segment display
+# cp("examples/clock.py") > main.py
 
-from util.octopus import w, disp7_init, get_hhmm, time_init, h
+from time import sleep
+from util.octopus import w, disp7_init, get_hhmm, time_init, printTitle
 
 w()			# wifi connect
 d7 = disp7_init()	# 8 x 7segment display init   
@@ -13,7 +15,7 @@ def clock():
 
 time_init() 		# server > time setup
 
-printTitle("clock.py")
+printTitle("examples/clock.py")
 print("this is simple Micropython example | ESP32 & octopusLAB")
 print()
 
