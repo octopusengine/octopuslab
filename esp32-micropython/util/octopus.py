@@ -13,6 +13,7 @@ from machine import Pin, I2C, PWM, Timer, RTC
 from util.pinout import set_pinout
 from util.io_config import get_from_file
 
+
 # olab = Env()  # for initialized equipment
 pinout = set_pinout()  # set board pinout
 rtc = RTC()  # real time
@@ -21,8 +22,8 @@ io_conf = get_from_file()  # read configuration for peripherals
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "0.92"  # version - log: num = ver*100
-    verDat = "8.10.2019 #1062"
+    ver = "0.93"  # version - log: num = ver*100
+    verDat = "13.10.2019 #1092"
     debug = True
     logDev = True
     autoInit = True
@@ -36,8 +37,8 @@ class Env:  # for temporary global variables and config setup
     timerCounter = 0
     timerLed = True
     timerBeep = False
-    # wsc = web_server control - deafaul False:
-    wscWS = False  # WS RGB LED
+    # wsc = web_server control
+    wscWS = True  # WS RGB LED
     wscPWM = False # PWM LED - IoT board / hydroponics
     wscRelay = False
     wscLed = True  # only this simple test is defa 1
@@ -60,18 +61,18 @@ def printInfo(w=Env.TW):
     print('-' * w)
 
 
-def o_help():
+def h():
     printOctopus()
     print("Welcome to MicroPython on the ESP32 octopusLAB board")
     print("("+getVer()+")")
     printTitle("basic commands - list, examples", 53)
-    f("util/octopus_help.txt", False)
-
-
-def h():
-    o_help()
+    cat("util/octopus_help.txt", False)
     printInfo()
 
+
+def o_help():
+    h()
+    
 
 def o_info():
     from os import statvfs
@@ -124,9 +125,9 @@ def cat(file='main.py', title = False): # concatenate - prepare
         print("Statistic > lines: " + str(lines) + " | words: " + str(words) + " | chars: " + str(characters))
         print('-' * Env.TW)
         fi = open(file, 'r')
-
     for line in fi:
         print(line, end="")
+    globals()["cat"]=cat
 
 
 def f(file='main.py', title = True):
@@ -148,6 +149,7 @@ def ls(directory=""):
     ls.sort()
     for f in ls:
         print(f)
+    #globals()["ls"]=ls
 
 
 def file_copy(fileSource, fileTarget="main.py"):
@@ -163,6 +165,10 @@ def file_copy(fileSource, fileTarget="main.py"):
     ft.write(data)
     ft.close()
     print(" ok")
+
+
+def cp(fileSource, fileTarget="main.py"):
+    file_copy(fileSource, fileTarget)
 
 
 def i2c_scann(printInfo=True):
@@ -443,6 +449,9 @@ def getApiText(urlApi ="http://www.octopusengine.org/api"):
 
 
 def octopus():
+    #from util.octopus import ls, cat
+    #globals()["ls"]=ls
+
     from gc import collect
     printOctopus()
     print("("+getVer()+")")
@@ -1069,3 +1078,15 @@ def web_server():
             httpResponse.WriteResponseOk(None)
 
         httpResponse.WriteResponse(code=204, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = None)
+
+# ********** prepare / test **************
+# todo: Env.set/get
+
+class Octopus:
+    def __init__(self, test):
+       self.test = test
+
+    def hello(self,name = "octopus"):
+        print("hello " + name)
+
+# ****************************************
