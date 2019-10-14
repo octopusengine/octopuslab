@@ -2,6 +2,7 @@
    h() / o_help() HELP        | i() / o_info() INFO
    c() / clt() clear terminal | r() = reset() system
    w() / w_connect()  WIFI    | f(file) = cat() print
+   from util.octopus import ..| o = Octopus() ...
 >> basic simple HW examples --|---------------------
    led.value(1)  / (0)        | led.blink()
    ws = Rgb(p, n) > pin, num  | ws.simpleTest()
