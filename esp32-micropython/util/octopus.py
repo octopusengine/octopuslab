@@ -23,7 +23,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.93"  # version - log: num = ver*100
-    verDat = "13.10.2019 #1092"
+    verDat = "17.10.2019 #1096"
     debug = True
     logDev = True
     autoInit = True
@@ -37,11 +37,13 @@ class Env:  # for temporary global variables and config setup
     timerCounter = 0
     timerLed = True
     timerBeep = False
+
     # wsc = web_server control
     wscWS = True  # WS RGB LED
     wscPWM = False # PWM LED - IoT board / hydroponics
     wscRelay = False
     wscLed = True  # only this simple test is defa 1
+    wscExp8 = False
 
 if Env.isTimer:
     tim1 = Timer(0)
@@ -461,6 +463,7 @@ def octopus():
 
 
 def octopus_init():
+    # from util.octopus import * 
     Env.start = ticks_ms()
     print("auto Init: " + str(Env.autoInit))
     #if Env.autoInit:
@@ -806,10 +809,11 @@ def web_server():
     import os, webrepl
     from ubinascii import hexlify
     from util.wifi_connect import WiFiConnect
-    from util.i2c_expander import Expander8
+    if Env.wscExp8:
+        from util.i2c_expander import Expander8
+        expander = Expander8()
 
     wc = WiFiConnect()
-    expander = Expander8()
 
 
     @MicroWebSrv.route('/setup/wifi/networks.json') # GET
