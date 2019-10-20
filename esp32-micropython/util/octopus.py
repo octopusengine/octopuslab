@@ -8,7 +8,7 @@
 # >>> h() help /i() info /w() wifi connect
 
 from time import sleep, sleep_ms, ticks_ms, ticks_diff
-from machine import Pin, I2C, PWM, Timer, RTC
+from machine import Pin, I2C, Timer, RTC
 #from os import urandom
 from util.pinout import set_pinout
 from util.io_config import get_from_file
@@ -23,7 +23,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.93"  # version - log: num = ver*100
-    verDat = "17.10.2019 #1096"
+    verDat = "20.10.2019 #1097"
     debug = True
     logDev = True
     autoInit = True
@@ -493,7 +493,8 @@ def octopus_init():
 
 
 # ---------- init env. def(): --------------
-if io_conf.get('fet'):
+if io_conf.get('fet') > 1: # 1 defaul for IoT, >1 user pin
+    from machine import PWM
     mfet_pin = int(io_conf.get('fet')) # pinout.MFET_PIN
     FET = PWM(Pin(mfet_pin), freq=500)
     FET.duty(500) # pin(14) Robot(MOTO_3A), ESP(JTAG-MTMS)
