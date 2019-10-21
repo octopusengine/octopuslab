@@ -15,4 +15,4 @@ class OlabESP32Default(OlabESP32Base):
         return "esp32"
 
     def __str__(self):
-        return "olab_esp32_default"
+        return "oLAB Default"

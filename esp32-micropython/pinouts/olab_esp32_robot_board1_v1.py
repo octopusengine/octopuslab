@@ -1,14 +1,9 @@
-"""
-This is octopusLab basic library for robotBoard PCB
-I2C / SPI / MOTORs / SERVO / PWM...
-Edition: --- 31.10.2018 ---
-Installation:
-ampy -p /dev/ttyUSB0 put ./octopus_robot_board.py
-"""
+from pinouts import const
+from pinouts.olab_esp32_robot_board1 import OlabESP32RobotBoard1
 
-from micropython import const
-# inherit from robot board1
-from pinouts.olab_esp32_robot_board1 import *
+class OlabESP32RobotBoard1v1(OlabESP32RobotBoard1):
+    WS_LED_PIN = const(13)   # Robot Board v1 - WS RGB ledi diode
+    MOTOR_34EN = const(15)   # Robot Board v1
 
-WS_LED_PIN = const(13)   # Robot Board v1 - WS RGB ledi diode
-MOTOR_34EN = const(15)   # Robot Board v1
+    def __str__(self):
+        return "oLAB RobotBoard1 v1"

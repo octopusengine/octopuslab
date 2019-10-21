@@ -17,3 +17,6 @@ class OlabESP32Base(Base):
     SPI_MISO_PIN = const(19)
     SPI_MOSI_PIN = const(23)
     SPI_CS0_PIN  = const(5)
+
+    RXD0 = const(3) # Used for REPL
+    TXD0 = const(1) # Used for REPL
