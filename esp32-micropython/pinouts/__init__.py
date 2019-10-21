@@ -31,8 +31,9 @@ class Pinout:
             raise AttributeError("Error: Unknown pinouts for Platform: {0} and board {1}".format(platform, board))
 
         try:
-            module = __import__('pinouts.{0}'.format(boarddef["module"]), fromlist=[boarddef["class"]])
-            cl = getattr(module, boarddef["class"])()
+            module = __import__('pinouts.{0}'.format(boarddef["module"]))
+            m = getattr(module, boarddef["module"])
+            cl = getattr(m, boarddef["class"])()
             return cl
         except Exception as e:
             print(e)
