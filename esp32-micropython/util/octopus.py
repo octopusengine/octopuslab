@@ -386,9 +386,9 @@ def w(logD = True):
     
     from ubinascii import hexlify
     try:
-        Env.MAC = hexlify(w.ap_if.config('mac'),':').decode()
+        Env.MAC = hexlify(w.sta_if.config('mac'),':').decode()
     except:
-        Env.MAC = "Err: w.ap_if"
+        Env.MAC = "Err: w.sta_if"
     getFree(True)
     return w
 
