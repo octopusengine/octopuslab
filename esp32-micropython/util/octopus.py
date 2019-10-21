@@ -16,6 +16,7 @@ from util.io_config import get_from_file
 
 def set_pinout():
     try:
+        import json
         with open('config/device.json', 'r') as f:
             d = f.read()
             f.close()
