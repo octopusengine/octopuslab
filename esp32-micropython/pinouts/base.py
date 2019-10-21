@@ -1,10 +1,7 @@
 # Base abstract pinouts without any, this base can be replaced by any board specific settings
 # Here should be definiton of every pins used in Octopus library
 
-from pinouts import Pinout
-
-
-class Base(Pinout):
+class Base():
     BUILT_IN_LED = None
     HALL_SENSOR  = None
 
@@ -66,3 +63,6 @@ class Base(Pinout):
     TXD0 = None # Used for REPL
     RXD1 = None
     TXD1 = None
+
+    def platform(self):
+        raise NotImplementedError("Not specified platform")
