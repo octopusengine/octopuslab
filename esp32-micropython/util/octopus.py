@@ -64,7 +64,7 @@ def printInfo(w=Env.TW):
     print('-' * w)
 
 
-def h():
+def o_help():
     printOctopus()
     print("Welcome to MicroPython on the ESP32 octopusLAB board")
     print("("+getVer()+")")
@@ -73,9 +73,9 @@ def h():
     printInfo()
 
 
-def o_help():
-    h()
-    
+def h():
+    o_help()
+
 
 def o_info():
     from os import statvfs
