@@ -3,6 +3,7 @@ from pinouts import Pinout
 import json
 
 def set_pinout():
+    print("Deprecated warning: This method will be removed soon. Use pinouts.Pinout.getPinout instead.")
     try:
         import json
         with open('config/device.json', 'r') as f:
