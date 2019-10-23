@@ -9,7 +9,7 @@
 
 from sys import modules
 from time import sleep, sleep_ms, ticks_ms, ticks_diff
-from machine import Pin, I2C, Timer, RTC
+from machine import Pin, Timer, RTC
 #from os import urandom
 from util.pinout import set_pinout
 from util.io_config import get_from_file
@@ -24,7 +24,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.94"  # version - log: num = ver*100
-    verDat = "20.10.2019 #1098"
+    verDat = "20.10.2019 #1109"
     debug = True
     logDev = True
     autoInit = True
@@ -174,18 +174,30 @@ def cp(fileSource, fileTarget="main.py"):
     file_copy(fileSource, fileTarget)
 
 
+def i2c_init():
+    i2c = i2c_scann()
+    return i2c
+
+
 def i2c_scann(printInfo=True):
+    from machine import I2C
     if printInfo: print("i2c_scann() > devices:")
     i2c = I2C(-1, Pin(pinout.I2C_SCL_PIN), Pin(pinout.I2C_SDA_PIN))
-    i2cdevs = i2c.scan()
-    if printInfo: print(i2cdevs)
-    if (OLED_ADDR in i2cdevs): 
-        if printInfo: print("ok > OLED: "+str(OLED_ADDR))
-    if (LCD_ADDR in i2cdevs): 
-        if printInfo: print("ok > LCD: "+str(LCD_ADDR))
-    bhLight = 0x23 in i2cdevs
-    bh2Light = 0x5c in i2cdevs
-    tslLight = 0x39 in i2cdevs
+    # I2C address:
+    OLED_ADDR = 0x3c
+    LCD_ADDR = 0x27
+    try:
+        i2cdevs = i2c.scan()
+        if printInfo: print(i2cdevs)
+        if (OLED_ADDR in i2cdevs): 
+            if printInfo: print("ok > OLED: "+str(OLED_ADDR))
+        if (LCD_ADDR in i2cdevs): 
+            if printInfo: print("ok > LCD: "+str(LCD_ADDR))
+        bhLight = 0x23 in i2cdevs
+        bh2Light = 0x5c in i2cdevs
+        tslLight = 0x39 in i2cdevs
+    except Exception as e:
+            print("Exception: {0}".format(e))
     return i2c
 
 
@@ -563,9 +575,6 @@ if Env.autoInit:  # test
             d8.show()
 
     if io_conf.get('oled') or io_conf.get('lcd'):
-        # I2C address:
-        OLED_ADDR = 0x3c
-        LCD_ADDR = 0x27
         print("I2C | ",end="")
         try:
             i2c = i2c_scann(False)
