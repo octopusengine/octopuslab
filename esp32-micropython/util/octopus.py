@@ -24,7 +24,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.94"  # version - log: num = ver*100
-    verDat = "20.10.2019 #1109"
+    verDat = "23.10.2019 #1062"
     debug = True
     logDev = True
     autoInit = True
@@ -174,30 +174,26 @@ def cp(fileSource, fileTarget="main.py"):
     file_copy(fileSource, fileTarget)
 
 
-def i2c_init():
-    i2c = i2c_scann()
-    return i2c
-
-
-def i2c_scann(printInfo=True):
+def i2c_init(scan = False, printInfo = True):
     from machine import I2C
-    if printInfo: print("i2c_scann() > devices:")
     i2c = I2C(-1, Pin(pinout.I2C_SCL_PIN), Pin(pinout.I2C_SDA_PIN))
-    # I2C address:
-    OLED_ADDR = 0x3c
-    LCD_ADDR = 0x27
-    try:
-        i2cdevs = i2c.scan()
-        if printInfo: print(i2cdevs)
-        if (OLED_ADDR in i2cdevs): 
-            if printInfo: print("ok > OLED: "+str(OLED_ADDR))
-        if (LCD_ADDR in i2cdevs): 
-            if printInfo: print("ok > LCD: "+str(LCD_ADDR))
-        bhLight = 0x23 in i2cdevs
-        bh2Light = 0x5c in i2cdevs
-        tslLight = 0x39 in i2cdevs
-    except Exception as e:
-            print("Exception: {0}".format(e))
+    if scan:
+        if printInfo: print("i2c.scan() > devices:")
+        # I2C address:
+        OLED_ADDR = 0x3c
+        LCD_ADDR = 0x27
+        try:
+            i2cdevs = i2c.scan()
+            if printInfo: print(i2cdevs)
+            if (OLED_ADDR in i2cdevs): 
+                if printInfo: print("ok > OLED: "+str(OLED_ADDR))
+            if (LCD_ADDR in i2cdevs): 
+                if printInfo: print("ok > LCD: "+str(LCD_ADDR))
+            bhLight = 0x23 in i2cdevs
+            bh2Light = 0x5c in i2cdevs
+            tslLight = 0x39 in i2cdevs
+        except Exception as e:
+                print("Exception: {0}".format(e))
     return i2c
 
 
@@ -519,6 +515,58 @@ if io_conf.get('fet'): # 1 defaul for IoT, >1 user pin
 
 if Env.autoInit:  # test
     print("octopus() --> autoInit: ",end="")
+    
+    if io_conf.get('led'):
+        print("Led | ",end="")
+        from util.led import Led
+        if pinout.BUILT_IN_LED is None:
+            print("Warning: BUILD-IN LED not supported on this board")
+            led = Led(None)
+        else:
+            led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED
+    else:
+        from util.led import Led
+        led = Led(None)
+
+    piezzo = None
+    if io_conf.get('piezzo'):
+        print("piezzo | ",end="")
+        from util.buzzer import Buzzer
+        piezzo = Buzzer(pinout.PIEZZO_PIN)
+        piezzo.beep(1000,50)
+        from util.buzzer import Notes
+        def beep(f=1000, l=50):  # noqa: E741
+            piezzo.beep(f, l)
+
+        def tone(f, l=300):  # noqa: E741
+            piezzo.play_tone(f, l)
+    # else:   #    piezzo =Buzzer(None)
+
+    if io_conf.get('ws'): 
+        print("ws | ",end="")
+        from util.rgb import Rgb
+        from util.colors import *
+        if pinout.WS_LED_PIN is None:
+            print("Warning: WS LED not supported on this board")
+        else:
+            ws = Rgb(pinout.WS_LED_PIN,io_conf.get('ws')) # default rgb init
+ 
+        def rgb_init(num_led=io_conf.get('ws'), pin=None):  # default autoinit ws
+            if pinout.WS_LED_PIN is None:
+                print("Warning: WS LED not supported on this board")
+                return
+            if num_led is None or num_led == 0:
+                print("Warning: Number of WS LED is 0")
+                return
+            from util.rgb import Rgb  # setupNeopixel
+            ws = Rgb(pin, num_led)
+            return ws
+    
+    #if io_conf.get('fet'): 
+    #    print("fet | ",end="")
+    #    FET = PWM(Pin(pinout.MFET_PIN), freq=500)
+    #    FET.duty(0) # pin(14) Robot(MOTO_3A), ESP(JTAG-MTMS)
+
     if io_conf.get('led7') or io_conf.get('led8'):
         from machine import SPI
         print("SPI | ",end="")
@@ -577,9 +625,9 @@ if Env.autoInit:  # test
     if io_conf.get('oled') or io_conf.get('lcd'):
         print("I2C | ",end="")
         try:
-            i2c = i2c_scann(False)
+            i2c = i2c_init(False)
         except:
-            print("Err.i2c")
+            print("Err.i2c_init")
 
     if io_conf.get('oled'):
         print("OLED | ",end="")
@@ -589,7 +637,6 @@ if Env.autoInit:  # test
 
         def oled_init(ox=128, oy=64, runTest = True):
             printTitle("oled_init()")
-            i2c = i2c_scann()
 
             from util.oled import Oled
             from util.display_segment import threeDigits
@@ -603,66 +650,10 @@ if Env.autoInit:  # test
 
             return oled
 
-    if io_conf.get('led'):
-        print("Led | ",end="")
-        from util.led import Led
-        if pinout.BUILT_IN_LED is None:
-            print("Warning: BUILD-IN LED not supported on this board")
-            led = Led(None)
-        else:
-            led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED
-    else:
-        from util.led import Led
-        led = Led(None)
-
-    piezzo = None
-    if io_conf.get('piezzo'):
-        print("piezzo | ",end="")
-        from util.buzzer import Buzzer
-        piezzo = Buzzer(pinout.PIEZZO_PIN)
-        piezzo.beep(1000,50)
-        from util.buzzer import Notes
-        def beep(f=1000, l=50):  # noqa: E741
-            piezzo.beep(f, l)
-
-        def tone(f, l=300):  # noqa: E741
-            piezzo.play_tone(f, l)
-    # else:   #    piezzo =Buzzer(None)
-
-    if io_conf.get('ws'): 
-        print("ws | ",end="")
-        from util.rgb import Rgb
-        from util.colors import *
-        if pinout.WS_LED_PIN is None:
-            print("Warning: WS LED not supported on this board")
-        else:
-            ws = Rgb(pinout.WS_LED_PIN,io_conf.get('ws')) # default rgb init
- 
-        def rgb_init(num_led=io_conf.get('ws'), pin=None):  # default autoinit ws
-            if pinout.WS_LED_PIN is None:
-                print("Warning: WS LED not supported on this board")
-                return
-            if num_led is None or num_led == 0:
-                print("Warning: Number of WS LED is 0")
-                return
-            from util.rgb import Rgb  # setupNeopixel
-            ws = Rgb(pin, num_led)
-            return ws
-    
-    #if io_conf.get('fet'): 
-    #    print("fet | ",end="")
-    #    FET = PWM(Pin(pinout.MFET_PIN), freq=500)
-    #    FET.duty(0) # pin(14) Robot(MOTO_3A), ESP(JTAG-MTMS)
-
-    if io_conf.get('relay'): 
-        print("rel | ",end="")
-        RELAY = Pin(pinout.RELAY_PIN) # pin(33) Robot(DEV2)
-
     if io_conf.get('lcd'):
         print("lcd | ",end="")
         def lcd2_init():
             printTitle("lcd2init()")
-            i2c = i2c_scann()
             LCD_ROWS=2
             LCD_COLS=16
             from lib.esp8266_i2c_lcd import I2cLcd
@@ -672,6 +663,9 @@ if Env.autoInit:  # test
             lcd.putstr("octopusLAB")
             return lcd
 
+    if io_conf.get('relay'): 
+        print("rel | ",end="")
+        RELAY = Pin(pinout.RELAY_PIN) # pin(33) Robot(DEV2)
 
         def disp2(d,mess,r=0,s=0):
             #d.clear()
@@ -691,52 +685,11 @@ if Env.autoInit:  # test
         try: PIN_TEMP = pinout.ONE_WIRE_PIN
         except: PIN_TEMP = 17 # ROBOT
         def temp_init(pin = PIN_TEMP):
-            printHead("temp")
-            print("dallas temp init >")
-            from onewire import OneWire
-            from ds18x20 import DS18X20
-            dspin = Pin(pin)
-            # from util.octopus_lib import bytearrayToHexString
-            try:
-                ds = DS18X20(OneWire(dspin))
-                ts = ds.scan()
-
-                if len(ts) <= 0:
-                    io_conf['temp'] = False
-
-                for t in ts:
-                    print(" --{0}".format(bytearrayToHexString(t)))
-            except:
-                io_conf['temp'] = False
-                print("Err.temp")
-
-            print("Found {0} dallas sensors, temp active: {1}".format(len(ts), io_conf.get('temp')))
-
-            if len(ts)>1:
-                print(get_temp_n(ds,ts))
-            else:
-                print(get_temp(ds,ts))
-            return ds,ts
-
-
-        def get_temp(ds,ts): # return single/first value
-            """get_temp(t[0],t[1]) or get_temp(*t)"""
-            tw=0
-            ds.convert_temp()
-            sleep_ms(750)
-            temp = ds.read_temp(ts[0])
-            tw = int(temp*10)/10
-            return tw
-
-
-        def get_temp_n(ds,ts):
-            tw=[]
-            ds.convert_temp()
-            sleep_ms(750)
-            for t in ts:
-                temp = ds.read_temp(t)
-                tw.append(int(temp*10)/10)
-            return tw
+            from util.iot import Thermometer
+            ts = Thermometer(pin)
+            # tx = tt.ds.scan()
+            # ts.read_temp(tx[0])
+            return ts
 
     if io_conf.get('servo'):
         print("servo | ",end="")
