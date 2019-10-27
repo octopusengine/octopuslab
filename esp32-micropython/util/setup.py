@@ -87,16 +87,16 @@ def setupMenu():
     print("[cw]  - connect wifi")
     print("[cl]  - connect LAN")
     print("[sd]  - system download > stable octopus modules from URL")
+    print("[sde] - system download > examples (from URL) /[sdh] hydroponics")
     print("[sdp] - system download > petrkr (Beta octopus modules from URL)")
     print("[sdo] - system download > octopus (Alfa octopus modules from URL)")
     print("[ds]  - device setting")
     print("[ios] - I/O setting submenu")
-    print("[iot] - I/O test - run io_test()")
+    # print("[iot] - I/O test - run io_test()")
     print("[mq]  - mqtt() and sending data setup")
-    print("[st]  - set time")
+    # print("[st]  - set time")
     print("[si]  - system info")
     print("[wr]  - run web repl")
-    print("[od]  - run octopus() demo")
     print("[x]   - exit setup")
 
     print('=' * 30)
@@ -299,7 +299,12 @@ def setup():
         if sele == "sd":
             shutil()
             deplUrl = "http://octopusengine.org/download/micropython/stable.tar"
-            deploy(deplUrl)  
+            deploy(deplUrl)
+
+        if sele == "sde":
+            shutil()
+            deplUrl = "http://octopusengine.org/download/micropython/examples.tar"
+            deploy(deplUrl) 
 
         if sele == "sdp":
             shutil()
@@ -311,9 +316,10 @@ def setup():
             deplUrl = "http://octopusengine.org/download/latest.tar"
             deploy(deplUrl)
 
-        if sele == "od":
-            from util.octopus_demo import octopus_demo
-            octopus_demo()
+        if sele == "sdh":
+            shutil()
+            deplUrl = "http://octopusengine.org/download/hydroponics.tar"
+            deploy(deplUrl)
 
         if sele == "wr":
             print("under reconstruction <")
