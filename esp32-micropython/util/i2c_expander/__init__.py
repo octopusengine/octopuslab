@@ -11,7 +11,7 @@ from util.bits import neg, reverse, set_bit, get_bit
 from machine import Pin, I2C
 
 pinout = set_pinout() 
-#PCF address = 35 #33-0x21/35-0x23
+#PCF addr = 35 #33-0x21/35-0x23
 ADDRESS = 0x20 #0x20(000) 0x23(100)
 
 i2c_sda = Pin(pinout.I2C_SDA_PIN, Pin.IN,  Pin.PULL_UP)
@@ -56,12 +56,12 @@ class Expander8:
             self.i2c.writeto(self.addr, bytearray([bar[8]]))
 
     def read(self):
-        bR = self.i2c.readfrom(self.address, 1)[0]
+        bR = self.i2c.readfrom(self.addr, 1)[0]
         return(bR)        
 
     def pin_read(self, pinNum):
         mask = 0x1 << pinNum
-        pinVal = self.i2c.readfrom(self.address, 1)[0]
+        pinVal = self.i2c.readfrom(self.addr, 1)[0]
 
         pinVal &= mask
         if (pinVal == mask):
