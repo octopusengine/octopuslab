@@ -12,6 +12,10 @@ from machine import Pin, PWM
 # from util.buzzer.melody import alert1
 # piezzo.speed = 100 # BPM
 # piezzo.play_melody(alert1)
+
+# piezzo.speed = 30
+# piezzo.play_melody(canon_d,32)
+
 # old beep and play_tone functions? > Use Buzzer class instead!
 
 
@@ -55,7 +59,7 @@ class Buzzer():
         self.nosound()
 
 
-    def play_tones(self, melody, volume=50):
+    def play_tones(self, melody, autoPause = False, volume=50):
         for note in melody:
             if note == 0:
                 self.play_tone(0, 8, 0)
@@ -66,12 +70,20 @@ class Buzzer():
         self.nosound()
 
 
-    def play_melody(self, melody, volume=50):
+    def play_melody(self, melody, speed = 60, autoPause = 0, volume=50):
+        self.speed = speed
         for note in melody:
             if note[0] == 0:
                 self.play_tone(0, note[1], 0)
             else:
                 self.play_tone(note[0], note[1], volume)
+            if autoPause:
+                self.nosound()
+                self.play_tone(0, autoPause, 0)
+
 
         # Stop play in case in melody will not be zero on end
         self.nosound()
+        if autoPause:
+            self.play_tone(0, autoPause, 0)
+
