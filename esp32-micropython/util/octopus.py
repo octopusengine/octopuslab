@@ -23,8 +23,8 @@ io_conf = get_from_file()  # read configuration for peripherals
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "0.94"  # version - log: num = ver*100
-    verDat = "23.10.2019 #1062"
+    ver = "0.95"  # version - log: num = ver*100
+    verDat = "28.10.2019 #1063"
     debug = True
     logDev = True
     autoInit = True
@@ -174,9 +174,10 @@ def cp(fileSource, fileTarget="main.py"):
     file_copy(fileSource, fileTarget)
 
 
-def i2c_init(scan = False, printInfo = True):
+def i2c_init(scan = False, freq=100000, printInfo = True):
     from machine import I2C
-    i2c = I2C(-1, Pin(pinout.I2C_SCL_PIN), Pin(pinout.I2C_SDA_PIN))
+    # i2c = I2C(-1, Pin(pinout.I2C_SCL_PIN), Pin(pinout.I2C_SDA_PIN)) # SW
+    i2c = I2C(0, scl=Pin(pinout.I2C_SCL_PIN), sda=Pin(pinout.I2C_SDA_PIN), freq=freq)
     if scan:
         if printInfo: print("i2c.scan() > devices:")
         # I2C address:
