@@ -11,8 +11,21 @@ from util.bits import neg, reverse, set_bit, get_bit
 from machine import Pin, I2C
 
 pinout = set_pinout() 
-#PCF addr = 35 #33-0x21/35-0x23
-ADDRESS = 0x20 #0x20(000) 0x23(100)
+ADDRESS = 0x20
+
+# PCF8574           PCF8574A
+# AAA - hex (dec)
+# 210
+# 000 - 0x20 (32)   0x38 (56)
+# 001 - 0x21 (33) * 0x39 (57)
+# 010 - 0x22 (34)   0x3A (58)
+# 011 - 0x23 (35) * 0x3B (59)
+# 100 - 0x24 (36)   0x3C (60)
+# 101 - 0x25 (37)   0x3D (61)
+# 110 - 0x26 (38)   0x3E (62)
+# 111 - 0x27 (39)   0x3F (63)
+# * ROBOTboard
+
 
 i2c_sda = Pin(pinout.I2C_SDA_PIN, Pin.IN,  Pin.PULL_UP)
 i2c_scl = Pin(pinout.I2C_SCL_PIN, Pin.OUT, Pin.PULL_UP)
