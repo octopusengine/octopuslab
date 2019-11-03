@@ -3,10 +3,14 @@
 
 import machine
 from time import sleep
-from util.octopus import printTitle, w, time_init, get_hhmm, get_hhmmss
+from util.octopus import Env, printTitle, w, time_init, get_hhmm, get_hhmmss
 isOled = False
+isDisp7 = True
 
 printTitle("examples/deep_sleep1.py")
+from util.led import Led
+led = Led(2)
+
 
 if get_hhmm() == "00:00":
     print("first time setup > ")
@@ -16,7 +20,7 @@ if get_hhmm() == "00:00":
 print(get_hhmmss())
 
 
-def sendValue(val = 0,urlPOST = "http://youtserver/add-item-to-db.php"):
+def sendValue(val = 0,urlPOST = "http://your_server/add_item_to_database.php"):
     from urequests import post
     header = {}
     header["Content-Type"] = "application/x-www-form-urlencoded"
@@ -34,17 +38,31 @@ def sendValue(val = 0,urlPOST = "http://youtserver/add-item-to-db.php"):
 
 print('Im ready')
 led.blink()
-if isOled:
-    from util.octopus import oled_init
-    o = oled_init(runTest=False)
-    sleep(1)
-    o.clear()
-    o.text("octopusLAB 2019",10,10)
-    o.text(get_hhmmss(), 10,20)
-    o.show()
 
-    sleep(3)
-    o.poweroff()
+if isDisp7:
+    try:
+        from util.octopus import disp7_init
+        disp7 = disp7_init()
+        disp7.show(get_hhmm("-"))
+        sleep(3)
+        disp7.show("        ")
+    except Exception as e:
+        print("Exception: {0}".format(e))
+
+if isOled:
+    try:
+        from util.octopus import oled_init
+        oled = oled_init(runTest=False)
+        sleep(1)
+        oled.clear()
+        oled.text("octopusLAB 2019",10,10)
+        oled.text(get_hhmmss(), 10,20)
+        oled.show()
+
+        sleep(3)
+        oled.poweroff()
+    except Exception as e:
+        print("Exception: {0}".format(e))
 
 
 print('Im awake, but Im going to sleep')
