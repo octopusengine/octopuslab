@@ -41,7 +41,7 @@ class Config():
                 c += 1
                 # print("[%2d] - %8s [%s] - %s" % (c, i['attr'], io_conf.get(i['attr'], 0), i['descr']))
                 try:
-                    print("[%2d] - %12s - %s" % (c, i, self.config[i]))
+                    print("[%2d] - %16s - %s" % (c, i, self.config[i]))
                 except:
                     this_key_in_json = False
             print("[ x] - Exit from json setup")
