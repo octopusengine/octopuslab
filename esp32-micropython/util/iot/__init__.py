@@ -1,16 +1,21 @@
 # basic library for IoT board
 # octopusLAB 2019
+# Relay, Pwm, Thermometer
+
+# last update: 3.11.2019
 """ 
-re1  = Relay()
+from util.iot import Relay
+re1 = Relay() # default IoTboard pin 
 re1.value(1)
+re2 = Relay(26)
 
 pwm_led = Pwm()
 pwm_led.duty(300)
 
-from util.iot import TemperatureSensor
-tt = TemperatureSensor(32)
+from util.iot import Thermometer
+tt = Thermometer(32)
 tx = tt.ds.scan()
-tt.read_temp(tx[0])
+tt.read_temp() # default index 0 > first sensor
 tt.read_temp(tx[0])
 """
 
@@ -20,11 +25,11 @@ from util.pinout import set_pinout
 from onewire import OneWire
 from ds18x20 import DS18X20
 
-
 pinout = set_pinout()
 default_relay_pin = pinout.RELAY_PIN
 default_pwm_pin = pinout.MFET_PIN
 # default_temp_pin = pinout.MFET_PIN
+
 
 class Relay:
     def __init__(self, pin=default_relay_pin, value=False):
@@ -103,7 +108,7 @@ class Thermometer:
     def get_pin(self):
         return self.pin
 
-    def get_temp(self, index):
+    def get_temp(self, index=0):
         self.ds.convert_temp()
         sleep_ms(750)
         temp = self.ds.read_temp(self.ts[index])
@@ -118,28 +123,3 @@ class Thermometer:
             temp = self.ds.read_temp(t)
             tw.append(int(temp * 10) / 10)
         return tw
-
-"""
-class TemperatureSensor:
-    # Represents a Temperature sensor (Dallas DS18X20)
-    def __init__(self, pin):
-        # Finds address of single DS18B20 on bus specified by `pin`
-        self.ds = DS18X20(OneWire(Pin(pin)))
-        addrs = self.ds.scan()
-        if not addrs:
-            raise Exception('no DS18B20 found at bus on pin %d' % pin)
-        # save what should be the only address found
-        self.addr = addrs.pop()
-
-    def read_temp(self, addr, fahrenheit=False):
-        self.ds.convert_temp()
-        sleep_ms(750)
-        temp = self.ds.read_temp(addr)
-        if fahrenheit:
-            return self.c_to_f(temp)
-        return temp
-
-    @staticmethod
-    def c_to_f(c):
-        return (c * 1.8) + 32
-"""
