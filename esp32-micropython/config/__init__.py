@@ -1,8 +1,13 @@
 """
 octopusLAB - config class
+last update: 3.11.2019
+
 from config import Config
-conf = Config("your_file") > config/your_file.json
+keys = ["tempMax","tempMin"]
+conf = Config("your_file", keys) > config/your_file.json
 conf.setup()
+
+ampy -p /COM6 put ./config/__init__.py config/__init__.py
 """
 
 from util.octopus import printTitle
@@ -10,8 +15,9 @@ import ujson
 
 
 class Config():
-    def __init__(self, name="test"):
+    def __init__(self, name="test", keys = ["version","default_null_test"]):
         self.file = "config/" + name + ".json"
+        self.keys = keys
 
         try:
             with open(self.file, 'r') as f:
@@ -31,12 +37,14 @@ class Config():
             print('=' * 50)
             # show options with current values
             c = 0
-            for i in self.config:
+            for i in self.keys:
                 c += 1
                 # print("[%2d] - %8s [%s] - %s" % (c, i['attr'], io_conf.get(i['attr'], 0), i['descr']))
-                # print("[%2d] - %8s - %s" % (c, i[0], i[1]))
-                print(c, i)
-            print("[x]  - Exit from json setup")
+                try:
+                    print("[%2d] - %12s - %s" % (c, i, self.config[i]))
+                except:
+                    this_key_in_json = False
+            print("[ x] - Exit from json setup")
 
             print('=' * 50)
             sele = input("select: ")
@@ -56,16 +64,23 @@ class Config():
                 print()
                 # print current value
                 try:
-                    #new_val = int(input("New Value [%s]: " % io_conf.get(io_menu_layout[sele - 1]['attr'], 0)))
-                    new_val = int(input("New Value: "))
+                    # new_val = int(input("New Value: "))
+                    new_val = input("New Value: ")
+                    try:
+                        new_val = int(new_val)
+                    except:
+                        new_val_it_int = False
                 except ValueError:
                     # if invalid input, 0 is inserted
                     new_val = 0
+
                 # update config object
-                print(new_val)
+                print(self.keys[sele-1] + "->" + str(new_val))
+                self.config[self.keys[sele-1]] = new_val
+
                 # dump updated setting into json
-                ## print("Writing new config to file %s" % io_conf_file)
-                ## with open(io_conf_file, 'w') as f:
-                ##    ujson.dump(io_conf, f)
+                print("Writing new config item to file %s" % self.file)
+                with open(self.file, 'w') as f:
+                    ujson.dump(self.config, f)
             else:
                 print("Invalid input, try again.")
