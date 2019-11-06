@@ -24,7 +24,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.95"  # version - log: num = ver*100
-    verDat = "28.10.2019 #1063"
+    verDat = "1.11.2019 #1066"
     debug = True
     logDev = True
     autoInit = True
@@ -278,7 +278,7 @@ def add0(sn):
 
 
 def get_hhmm(separator=":",rtc=rtc):
-    #get_hhmm(separator) | separator = string: "-" / " " 
+    #get_hhmm(separator) | separator = string: "-" / " "
     hh=add0(rtc.datetime()[4])
     mm=add0(rtc.datetime()[5])
     return hh + separator + mm
@@ -653,13 +653,16 @@ if Env.autoInit:  # test
 
     if io_conf.get('lcd'):
         print("lcd | ",end="")
-        def lcd2_init():
+        LCD_ADDR = 0x3F # 0x27
+        def lcd2_init(addr = LCD_ADDR):
+            
             printTitle("lcd2init()")
             LCD_ROWS=2
             LCD_COLS=16
             from lib.esp8266_i2c_lcd import I2cLcd
-            lcd = I2cLcd(i2c, LCD_ADDR, LCD_ROWS, LCD_COLS)
+            lcd = I2cLcd(i2c, addr, LCD_ROWS, LCD_COLS)
             print("display test: octopusLAB")
+            # lcd.move_to(0,5) # row 1 (0) / col 6 (5)
             lcd.clear()
             lcd.putstr("octopusLAB")
             return lcd
