@@ -662,7 +662,9 @@ if Env.autoInit:  # test
             from lib.esp8266_i2c_lcd import I2cLcd
             lcd = I2cLcd(i2c, addr, LCD_ROWS, LCD_COLS)
             print("display test: octopusLAB")
-            # lcd.move_to(0,5) # row 1 (0) / col 6 (5)
+            happy_face = bytearray([0x00,0x0A,0x00,0x04,0x00,0x11,0x0E,0x00])
+            lcd.custom_char(0, happy_face)
+            # lcd.move_to(0,1) # col 1 (0) / row 2 (012)
             lcd.clear()
             lcd.putstr("octopusLAB")
             return lcd
@@ -725,8 +727,11 @@ if Env.autoInit:  # test
             b39 = Pin(C, Pin.IN)
             return b34, b35, b39
 
-        def button_init(pin = 34):
-            bpin = Pin(pin, Pin.IN)
+        def button_init(pin = 34, pull_up = True): # defaul pull_up
+            if pull_up:
+                bpin = Pin(pin, Pin.IN, Pin.PULL_UP)
+            else:
+                bpin = Pin(pin, Pin.IN)
             return bpin
 
         def button(pin, num=10): #num for debounce
@@ -736,7 +741,7 @@ if Env.autoInit:  # test
                     value0 += 1
                 else:
                     value1 += 1
-                sleep_ms(0.3)
+                sleep_ms(1)
             return value0, value1
 
         def wait_pin_change(pin):
