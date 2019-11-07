@@ -8,7 +8,7 @@
 # >>> h() help /i() info /w() wifi connect
 
 from sys import modules
-from time import sleep, sleep_ms, ticks_ms, ticks_diff
+from time import sleep, sleep_ms, sleep_us, ticks_ms, ticks_diff
 from machine import Pin, Timer, RTC
 #from os import urandom
 from util.pinout import set_pinout
@@ -24,7 +24,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.95"  # version - log: num = ver*100
-    verDat = "1.11.2019 #1066"
+    verDat = "2.11.2019 #1075"
     debug = True
     logDev = True
     autoInit = True
@@ -460,7 +460,11 @@ def getApiText(urlApi ="http://www.octopusengine.org/api"):
     return dt_str
 
 
-def octopus():
+def octopus(auto = True):
+    if auto:
+        # print("auto")
+        auto_init = True # todo
+
     #from util.octopus import ls, cat
     #globals()["ls"]=ls
 
@@ -727,7 +731,7 @@ if Env.autoInit:  # test
             b39 = Pin(C, Pin.IN)
             return b34, b35, b39
 
-        def button_init(pin = 34, pull_up = True): # defaul pull_up
+        def button_init(pin = 34, pull_up = False): #  B0 = button_init(False)
             if pull_up:
                 bpin = Pin(pin, Pin.IN, Pin.PULL_UP)
             else:
@@ -741,7 +745,7 @@ if Env.autoInit:  # test
                     value0 += 1
                 else:
                     value1 += 1
-                sleep_ms(1)
+                sleep_us(20)
             return value0, value1
 
         def wait_pin_change(pin):
