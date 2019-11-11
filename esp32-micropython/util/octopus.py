@@ -24,7 +24,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.95"  # version - log: num = ver*100
-    verDat = "2.11.2019 #1075"
+    verDat = "10.11.2019 #1075"
     debug = True
     logDev = True
     autoInit = True
@@ -645,8 +645,8 @@ if Env.autoInit:  # test
 
             from util.oled import Oled
             from util.display_segment import threeDigits
-            sleep_ms(1000) 
-
+            sleep_ms(1000)
+            
             oled = Oled(i2c, ox, oy)
             print("test oled display: OK")
             if runTest:
