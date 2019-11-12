@@ -23,8 +23,8 @@ io_conf = get_from_file()  # read configuration for peripherals
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "0.95"  # version - log: num = ver*100
-    verDat = "10.11.2019 #1075"
+    ver = "0.96"  # version - log: num = ver*100
+    verDat = "11.11.2019 #1085"
     debug = True
     logDev = True
     autoInit = True
@@ -174,10 +174,24 @@ def cp(fileSource, fileTarget="main.py"):
     file_copy(fileSource, fileTarget)
 
 
-def i2c_init(scan = False, freq=100000, printInfo = True):
+def led_init(noDefaultPin = 0):
+    from util.led import Led
+    if noDefaultPin > 0:
+        led = Led(noDefaultPin)
+    else:
+        if pinout.BUILT_IN_LED is None:
+            print("Warning: BUILD-IN LED not supported on this board")
+            led = Led(None)
+        else:
+            led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED# defaultPin
+
+    return led
+
+
+def i2c_init(scan = False, freq=100000, HWorSW = 0, printInfo = True):
     from machine import I2C
-    # i2c = I2C(-1, Pin(pinout.I2C_SCL_PIN), Pin(pinout.I2C_SDA_PIN)) # SW
-    i2c = I2C(0, scl=Pin(pinout.I2C_SCL_PIN), sda=Pin(pinout.I2C_SDA_PIN), freq=freq)
+    # HWorSW: HW 0 - | SW -1
+    i2c = I2C(HWorSW, scl=Pin(pinout.I2C_SCL_PIN), sda=Pin(pinout.I2C_SDA_PIN), freq=freq)
     if scan:
         if printInfo: print("i2c.scan() > devices:")
         # I2C address:
@@ -524,13 +538,8 @@ if Env.autoInit:  # test
     if io_conf.get('led'):
         print("Led | ",end="")
         from util.led import Led
-        if pinout.BUILT_IN_LED is None:
-            print("Warning: BUILD-IN LED not supported on this board")
-            led = Led(None)
-        else:
-            led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED
+        led = led_init(pinout.BUILT_IN_LED)
     else:
-        from util.led import Led
         led = Led(None)
 
     piezzo = None
@@ -1062,7 +1071,8 @@ def web_server():
 
         httpResponse.WriteResponse(code=204, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = None)
 
-# ********** prepare / test **************
+
+# ******** prepare / test **********
 # todo: Env.set/get
 
 class Octopus:
@@ -1072,4 +1082,4 @@ class Octopus:
     def hello(self,name = "octopus"):
         print("hello " + name)
 
-# ****************************************
+# **********************************
