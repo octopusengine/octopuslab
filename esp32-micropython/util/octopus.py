@@ -24,7 +24,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.96"  # version - log: num = ver*100
-    verDat = "11.11.2019 #1095"
+    verDat = "11.11.2019 #1093"
     debug = True
     logDev = True
     autoInit = True
@@ -536,10 +536,9 @@ if io_conf.get('fet'): # 1 defaul for IoT, >1 user pin
 
 if Env.autoInit:  # test
     print("octopus() --> autoInit: ",end="")
-    
+    from util.led import Led
     if io_conf.get('led'):
         print("Led | ",end="")
-        from util.led import Led
         led = led_init(pinout.BUILT_IN_LED)
     else:
         led = Led(None)
@@ -1091,5 +1090,4 @@ class Octopus:
 
     def hello(self,name = "octopus"):
         print("hello " + name)
-
 # **********************************
