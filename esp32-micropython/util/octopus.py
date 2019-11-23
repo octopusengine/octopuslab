@@ -17,14 +17,14 @@ from util.io_config import get_from_file
 
 # olab = Env()  # for initialized equipment
 pinout = set_pinout()  # set board pinout
-rtc = RTC()  # real time
 io_conf = get_from_file()  # read configuration for peripherals
+rtc = RTC()  # real time
 
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.96"  # version - log: num = ver*100
-    verDat = "11.11.2019 #1085"
+    verDat = "11.11.2019 #1095"
     debug = True
     logDev = True
     autoInit = True
@@ -49,7 +49,8 @@ class Env:  # for temporary global variables and config setup
 if Env.isTimer:
     tim1 = Timer(0)
 
-# --------------- common terminal function ---------------
+
+# ------------- common terminal function ------------
 def getVer():
     return "octopusLAB - lib.version: " + Env.ver + " > " + Env.verDat
 
@@ -304,6 +305,7 @@ def get_hhmmss(separator=":",rtc=rtc):
     mm=add0(rtc.datetime()[5])
     ss=add0(rtc.datetime()[6])
     return hh + separator + mm + separator + ss
+
 
 # Define function callback for connecting event
 """def connected_callback(sta):
@@ -802,6 +804,14 @@ def web_server():
         expander = Expander8()
 
     wc = WiFiConnect()
+
+    try:
+        if io_conf.get('led') > 1: # HACK:
+            led = led_init(io_conf.get('led')) # remaping led.pin for control "relay" etc.
+        #else:
+        #    led = led_init(pinout.BUILT_IN_LED)
+    except:
+        print("Err. led setup")
 
 
     @MicroWebSrv.route('/setup/wifi/networks.json') # GET
