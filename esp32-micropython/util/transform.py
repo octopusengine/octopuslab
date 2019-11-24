@@ -76,11 +76,9 @@ def distance3(x1, y1, z1, x2, y2, z2):
     return dx*dx + dy*dy + dz*dz
 
 
-# test
-
-print(math.radians(180 / math.pi)) # def 1 rad: 360 / 2pi
-# math.degrees(math.pi) > 180.0
-
-print(cart2polar(polar2chart(1,90)[0],polar2cart(1,90)[1]))
+# test >>>
+# print(math.radians(180 / math.pi)) # def 1 rad: 360 / 2pi
+# math.degrees(math.pi) # > 180.0
+# print(cart2polar(polar2chart(1,90)[0],polar2cart(1,90)[1]))
 
 
