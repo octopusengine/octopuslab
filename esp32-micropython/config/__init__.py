@@ -15,9 +15,10 @@ import ujson
 
 
 class Config():
-    def __init__(self, name="test", keys = ["version","default_null_test"]):
+    def __init__(self, name="test", keys = ["version","default_null_test"], conf_data = [["config version", "version"], ["NULL Test", "default_null_test"]]):
         self.file = "config/" + name + ".json"
         self.keys = keys
+        self.conf_data = conf_data
 
         try:
             with open(self.file, 'r') as f:
@@ -28,6 +29,17 @@ class Config():
             # FileNotFound
             self.config = {}
 
+    def get(self, key):
+        return self.config.get(key)
+
+    def set(setlf, key, value):
+        self.config[key] = value
+
+    def save(self):
+        # dump updated setting into json
+        print("Writing new config item to file %s" % self.file)
+        with open(self.file, 'w') as f:
+            ujson.dump(self.config, f)
 
     def setup(self):
         while True:
@@ -77,10 +89,18 @@ class Config():
                 # update config object
                 print(self.keys[sele-1] + "->" + str(new_val))
                 self.config[self.keys[sele-1]] = new_val
-
-                # dump updated setting into json
-                print("Writing new config item to file %s" % self.file)
-                with open(self.file, 'w') as f:
-                    ujson.dump(self.config, f)
+                self.save()
             else:
                 print("Invalid input, try again.")
+
+
+    def print(self):
+        print()
+        print('=' * 39)
+        for ix in self.conf_data:
+            try:
+                # print(ix, cc[ix]) # dict{}
+                print(" %25s - %s " % (ix[0], self.config[ix[1]] ))
+            except:
+                Err_print_config = True
+        print('=' * 39)
