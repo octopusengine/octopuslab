@@ -119,8 +119,11 @@ class Thermometer:
             retry+=1
             try:
                 temp = self.ds.read_temp(self.ts[index])
-            except:
+            except Exception as e:
+                print("Exception while read temperature, retry {0}".format(retry))
+                print(e)
                 if retry > retries:
+                    print("No more retries. Raise exception")
                     raise
 
         temp = int(temp * 10) / 10
