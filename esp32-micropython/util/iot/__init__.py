@@ -108,10 +108,21 @@ class Thermometer:
     def get_pin(self):
         return self.pin
 
-    def get_temp(self, index=0):
+    def get_temp(self, index=0, retries=3):
         self.ds.convert_temp()
         sleep_ms(750)
-        temp = self.ds.read_temp(self.ts[index])
+        temp = None
+
+        # Sometimes CRC read error occures, so try read more times
+        retry = 0
+        while temp is None:
+            retry+=1
+            try:
+                temp = self.ds.read_temp(self.ts[index])
+            except:
+                if retry > retries:
+                    raise
+
         temp = int(temp * 10) / 10
         return temp
 
