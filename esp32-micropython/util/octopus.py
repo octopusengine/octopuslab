@@ -24,7 +24,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.96"  # version - log: num = ver*100
-    verDat = "30.11.2019 #1093"
+    verDat = "30.11.2019 #1095"
     debug = True
     logDev = True
     autoInit = True
@@ -177,7 +177,7 @@ def cp(fileSource, fileTarget="main.py"):
 
 def led_init(noDefaultPin = 0):
     from util.led import Led
-    if noDefaultPin > 2:
+    if noDefaultPin > 1:
         led = Led(noDefaultPin)
     else:
         if pinout.BUILT_IN_LED is None:
@@ -539,7 +539,7 @@ if Env.autoInit:  # test
     from util.led import Led
     if io_conf.get('led'):
         print("Led | ",end="")
-        led = led_init(pinout.BUILT_IN_LED)
+        led = led_init(io_conf.get('led'))
     else:
         led = Led(None)
 
@@ -793,6 +793,7 @@ def small_web_server(wPath='www/'):
 
 
 def web_server():
+    # from util.octopus import w, web_server
     printTitle("web_server start > ")
     from lib.microWebSrv import MicroWebSrv
     import os, webrepl
@@ -804,11 +805,12 @@ def web_server():
 
     wc = WiFiConnect()
 
+    led = led_init(io_conf.get('led'))
     try:
         if io_conf.get('led') > 1: # HACK:
             led = led_init(io_conf.get('led')) # remaping led.pin for control "relay" etc.
-        #else:
-        #    led = led_init(pinout.BUILT_IN_LED)
+            print("led.pin hack > " + str(led.pin))
+            led.blink()
     except:
         print("Err. led setup")
 
