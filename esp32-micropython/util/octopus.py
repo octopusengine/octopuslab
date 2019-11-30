@@ -24,7 +24,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.96"  # version - log: num = ver*100
-    verDat = "11.11.2019 #1093"
+    verDat = "30.11.2019 #1093"
     debug = True
     logDev = True
     autoInit = True
