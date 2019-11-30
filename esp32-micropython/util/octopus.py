@@ -177,7 +177,7 @@ def cp(fileSource, fileTarget="main.py"):
 
 def led_init(noDefaultPin = 0):
     from util.led import Led
-    if noDefaultPin > 0:
+    if noDefaultPin > 2:
         led = Led(noDefaultPin)
     else:
         if pinout.BUILT_IN_LED is None:
