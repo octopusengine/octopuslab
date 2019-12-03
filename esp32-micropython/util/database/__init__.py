@@ -9,17 +9,25 @@ import btree
 from util.octopus import printTitle
 
 
-class Db():
+class Database():
+    def __init__(self):
+        pass
+
+    def write(self, table,  **kargs):
+        raise NotImplementedError("Using abstract class")
+
+
+class BTreeDB(Database):
     def __init__(self, name="octopus"):
         self.file = name + ".db"
         # simple test: root > todo sub directory
-        
+
         try:
             f = open(self.file, "r+b")
         except OSError:
             f = open(self.file, "w+b")
 
-        self.data = btree.open(f) 
+        self.data = btree.open(f)
         #super().open(f)
     
     def addOne(self, key, val): # edit is the same > last value
