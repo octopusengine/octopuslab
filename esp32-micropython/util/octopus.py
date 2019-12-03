@@ -797,14 +797,13 @@ def web_server():
 
     wc = WiFiConnect()
 
-    led = led_init(io_conf.get('led'))
-    try:
-        if io_conf.get('led') > 1: # HACK:
-            led = led_init(io_conf.get('led')) # remaping led.pin for control "relay" etc.
-            print("led.pin hack > " + str(led.pin))
-            led.blink()
-    except:
-        print("Err. led setup")
+    led = None
+    if io_conf.get('led') is not None and io_conf.get('led') > 1:
+        led = led_init(io_conf.get('led'))
+    else:
+        led = led_init()
+
+    led.blink()
 
 
     @MicroWebSrv.route('/setup/wifi/networks.json') # GET
