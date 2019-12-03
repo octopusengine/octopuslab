@@ -23,8 +23,8 @@ rtc = RTC()  # real time
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "0.96"  # version - log: num = ver*100
-    verDat = "30.11.2019 #1095"
+    ver = "0.97"  # version - log: num = ver*100
+    verDat = "3.12.2019 #1096"
     debug = True
     logDev = True
     autoInit = True
