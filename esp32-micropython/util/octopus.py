@@ -175,17 +175,9 @@ def cp(fileSource, fileTarget="main.py"):
     file_copy(fileSource, fileTarget)
 
 
-def led_init(noDefaultPin = 0):
+def led_init(pin = pinout.BUILT_IN_LED):
     from util.led import Led
-    if noDefaultPin > 1:
-        led = Led(noDefaultPin)
-    else:
-        if pinout.BUILT_IN_LED is None:
-            print("Warning: BUILD-IN LED not supported on this board")
-            led = Led(None)
-        else:
-            led = Led(pinout.BUILT_IN_LED) # BUILT_IN_LED# defaultPin
-
+    led = Led(pin)
     return led
 
 
