@@ -177,7 +177,10 @@ def cp(fileSource, fileTarget="main.py"):
 
 def led_init(pin = pinout.BUILT_IN_LED):
     from util.led import Led
-    led = Led(pin)
+    if pin is not None and pinout is not None and (pin == pinout.RXD0 or pin == pinout.TXD0):
+        print("WARNING: PIN {0} is used for UART0. REPL Over serial will be unusable")
+
+    led = Led(pin if pin is not None and pin > 0 else None)
     return led
 
 
@@ -528,12 +531,14 @@ if io_conf.get('fet'): # 1 defaul for IoT, >1 user pin
 
 if Env.autoInit:  # test
     print("octopus() --> autoInit: ",end="")
-    from util.led import Led
-    if io_conf.get('led'):
+    if io_conf.get('led') is None:
+        led = led_init(None)
+    elif io_conf.get('led') == 1:
+        print("Led | ",end="")
+        led = led_init()
+    else:
         print("Led | ",end="")
         led = led_init(io_conf.get('led'))
-    else:
-        led = Led(None)
 
     piezzo = None
     if io_conf.get('piezzo'):
@@ -798,10 +803,15 @@ def web_server():
     wc = WiFiConnect()
 
     led = None
-    if io_conf.get('led') is not None and io_conf.get('led') > 1:
-        led = led_init(io_conf.get('led'))
-    else:
+
+    if io_conf.get('led') is None:
+        led = led_init(None)
+    elif io_conf.get('led') == 1:
+        print("Led | ",end="")
         led = led_init()
+    else:
+        print("Led | ",end="")
+        led = led_init(io_conf.get('led'))
 
     led.blink()
 
