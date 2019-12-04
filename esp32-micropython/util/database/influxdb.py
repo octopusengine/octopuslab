@@ -1,6 +1,5 @@
 from util.database import Database
 import urequests
-import gc
 
 
 class InfluxDB(Database):
