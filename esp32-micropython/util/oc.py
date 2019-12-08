@@ -8,7 +8,7 @@ cat / ls / cp
 ---
 clt / printHead / printTitle / printLog
 """
-
+from time import sleep_ms
 
 class Conf:  # for temporary global variables and config setup
       TW = 50  # terminal width
@@ -86,3 +86,16 @@ def printLog(i,s=""):
     print()
     print('-' * Conf.TW)
     print("[--- " + str(i) + " ---] " + s)
+
+
+def printInfo():
+    import os, ubinascii
+    import gc #mem_free
+    print("> mem_free: "+str(gc.mem_free()))
+    print("> flash: "+str(os.statvfs("/")))
+    print("> flash free: "+str(int(os.statvfs("/")[0])*int(os.statvfs("/")[3])))
+
+
+def printMachineInfo():
+    import machine
+    print("> machine.freq: "+str(machine.freq()))
