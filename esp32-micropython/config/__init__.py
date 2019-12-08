@@ -1,17 +1,32 @@
 """
 octopusLAB - config class
-last update: 3.11.2019
+last update: 8.12.2019
+
+config (all) and config_data (for selected keys)
+set / get / 
 
 from config import Config
 keys = ["tempMax","tempMin"]
 conf = Config("your_file", keys) > config/your_file.json
 conf.setup()
 
+conf.create_from_query("a=1&b=2")
+conf.set("c",3)
+conf.save()
+
 ampy -p /COM6 put ./config/__init__.py config/__init__.py
 """
 
-from util.octopus import printTitle
+from util.oc import Conf, printTitle
 import ujson
+from ucollections import OrderedDict
+
+# convert query "a=1&b=2" to dict {'a': '1', 'b': '2'}
+# test: q = ("a=1&b=2&x3=3&y5=5&z7=7")
+def query2dict(q):
+    d = dict([v.split("=", 1) for v in q.split("&") if "=" in v])
+    # d = OrderedDict(d)
+    return d
 
 
 class Config():
@@ -32,21 +47,32 @@ class Config():
     def get(self, key):
         return self.config.get(key)
 
-    def set(setlf, key, value):
+
+    def set(self, key, value):
         self.config[key] = value
 
-    def save(self):
+
+    def save(self, ordered = False):
         # dump updated setting into json
         print("Writing new config item to file %s" % self.file)
         with open(self.file, 'w') as f:
-            ujson.dump(self.config, f)
+            if ordered:
+                ujson.dump(self.config, f)
+            else:
+                ujson.dump(OrderedDict(self.config), f)
+
+
+    def create_from_query(self,q):
+        self.config = query2dict(q)
+        print(self.config)
+
 
     def setup(self):
         while True:
             print()
-            print('=' * 50)
+            print('=' * Conf.TW)
             print('        S E T U P - ' + self.file)
-            print('=' * 50)
+            print('=' * Conf.TW)
             # show options with current values
             c = 0
             for i in self.keys:
@@ -58,7 +84,7 @@ class Config():
                     this_key_in_json = False
             print("[ x] - Exit from json setup")
 
-            print('=' * 50)
+            print('=' * Conf.TW)
             sele = input("select: ")
 
             if sele == "x":
@@ -94,13 +120,35 @@ class Config():
                 print("Invalid input, try again.")
 
 
-    def print(self):
+    def list_all(self):
         print()
-        print('=' * 39)
-        for ix in self.conf_data:
+        print('-' * Conf.TW)
+        for ix in self.config:
             try:
                 # print(ix, cc[ix]) # dict{}
+                print(" %25s - %s " % (ix, self.config[ix]))
+            except:
+                Err_print_config = True
+        print('-' * Conf.TW)
+
+
+    def list_for_keys(self):
+        print()
+        print('=' * Conf.TW)
+        for ix in self.conf_data:
+            try:
                 print(" %25s - %s " % (ix[0], self.config[ix[1]] ))
             except:
                 Err_print_config = True
-        print('=' * 39)
+        print('=' * Conf.TW)
+
+    def __str__(self):
+        printTitle(self.file)
+        print(self.config)
+        print("Keys: ")
+        self.keys
+        self.list_all()
+        print(".create_from_query(q) | .save()")
+        print(".get(k) | .set(k,v) | .setup()")
+        print(".list_all() | .list_for_keys()")
+
