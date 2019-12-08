@@ -1,7 +1,8 @@
 # stopwatch
 
 from time import sleep
-from util.octopus import *
+from util.octopus import button_init, disp7_init
+from util.oc import printTitle
 
 BB = button_init(0) # button boot = 0
 # debounce: read 10 samples, only tolerate one false reading

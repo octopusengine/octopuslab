@@ -3,7 +3,8 @@
 
 import machine
 from time import sleep
-from util.octopus import Env, printTitle, w, time_init, get_hhmm, get_hhmmss
+from util.octopus import Env, w, time_init, get_hhmm, get_hhmmss
+from util.oc import printTitle
 isOled = False
 isDisp7 = True
 

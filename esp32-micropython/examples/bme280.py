@@ -3,7 +3,8 @@
 
 
 from time import sleep
-from util.octopus import w, i2c_init, lcd2_init, get_hhmm, time_init, printTitle
+from util.octopus import w, i2c_init, lcd2_init, get_hhmm, time_init
+from util.oc import printTitle
 from bme280 import BME280
 
 i2c = i2c_init(1)
