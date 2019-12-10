@@ -13,7 +13,7 @@ class Database():
     def __init__(self):
         pass
 
-    def write(self, table,  **kargs):
+    def write(self, *args, **kwargs):
         raise NotImplementedError("Using abstract class")
 
 
