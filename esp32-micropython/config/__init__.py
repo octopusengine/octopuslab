@@ -120,7 +120,18 @@ class Config():
                 print("Invalid input, try again.")
 
 
-    def list_all(self):
+    def print(self): # list_for_keys
+        print()
+        print('=' * Conf.TW)
+        for ix in self.conf_data:
+            try:
+                print(" %25s - %s " % (ix[0], self.config[ix[1]] ))
+            except:
+                Err_print_config = True
+        print('=' * Conf.TW)
+
+
+    def print_all(self):
         print()
         print('-' * Conf.TW)
         for ix in self.config:
@@ -132,16 +143,6 @@ class Config():
         print('-' * Conf.TW)
 
 
-    def list_for_keys(self):
-        print()
-        print('=' * Conf.TW)
-        for ix in self.conf_data:
-            try:
-                print(" %25s - %s " % (ix[0], self.config[ix[1]] ))
-            except:
-                Err_print_config = True
-        print('=' * Conf.TW)
-
     def __str__(self):
         printTitle(self.file)
         print(self.config)
@@ -151,4 +152,3 @@ class Config():
         print(".create_from_query(q) | .save()")
         print(".get(k) | .set(k,v) | .setup()")
         print(".list_all() | .list_for_keys()")
-
