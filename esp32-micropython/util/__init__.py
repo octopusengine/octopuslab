@@ -73,8 +73,8 @@ def rm(file = None):
             print("(Always be careful)")
             remove(file)
             runningEffect()
-        except:
-            print("Err. delete file")
+        except Exception as e:
+            print("Exception: {0}".format(e))
     else:
         print("Input param: path + file name")
 
@@ -83,7 +83,16 @@ def df():
     from os import statvfs
     print("> flash info: "+str(statvfs("/")))
     print("> flash free: "+str(int(statvfs("/")[0])*int(statvfs("/")[3])))
-    
+
+
+def upgrade(tar="https://octopusengine.org/download/micropython/stable.tar"):
+    printTitle("update from > ")
+    print(tar)
+    from util.setup import deploy
+    try:
+        deploy(tar)
+    except Exception as e:
+        print("Exception: {0}".format(e))
 
 def clt():
     print(chr(27) + "[2J") # clear terminal
