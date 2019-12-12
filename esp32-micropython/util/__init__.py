@@ -11,10 +11,13 @@ clt / printHead / printTitle / printLog
 class Conf:  # for temporary global variables and config setup
       TW = 50  # terminal width
 
+
 def runningEffect(num = 16):
+    from time import sleep_ms
     for ii in range(num):
         print(".",end="")
         sleep_ms(200)
+
 
 def cat(file='main.py', title = False): # concatenate - prepare
     """print data: f("filename") """
@@ -50,7 +53,6 @@ def ls(directory=""):
 
 
 def cp(fileSource, fileTarget="main.py"):
-    from time import sleep_ms
 
     printTitle("file_copy to " + fileTarget)
     print("(Always be careful)")
@@ -83,6 +85,13 @@ def df():
     from os import statvfs
     print("> flash info: "+str(statvfs("/")))
     print("> flash free: "+str(int(statvfs("/")[0])*int(statvfs("/")[3])))
+
+
+def free(echo = True):
+    from gc import mem_free
+    if echo: 
+        print("--- RAM free ---> " + str(mem_free()))
+    return mem_free()
 
 
 def upgrade(tar="https://octopusengine.org/download/micropython/stable.tar"):

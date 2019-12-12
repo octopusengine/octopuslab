@@ -24,7 +24,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.97"  # version - log: num = ver*100
-    verDat = "12.12.2019 #1035"
+    verDat = "12.12.2019 #1045"
     debug = True
     logDev = True
     autoInit = True
@@ -98,7 +98,7 @@ def o_info():
             f.close()
             print(" > config/device: " + d)
             # device_config = json.loads(d)
-    except:
+    except Exception as e:
         print("Device config 'config/device.json' does not exist, please run setup()")
 
     printLog("pinout")
@@ -123,7 +123,7 @@ def led_init(pin = pinout.BUILT_IN_LED):
 
 def i2c_init(scan = False, freq=100000, HWorSW = 0, printInfo = True):
     from machine import I2C
-    # HWorSW: HW 0 - | SW -1
+    # HW or SW: HW 0 - | SW -1
     i2c = I2C(HWorSW, scl=Pin(pinout.I2C_SCL_PIN), sda=Pin(pinout.I2C_SDA_PIN), freq=freq)
     if scan:
         if printInfo: print("i2c.scan() > devices:")
@@ -141,7 +141,7 @@ def i2c_init(scan = False, freq=100000, HWorSW = 0, printInfo = True):
             bh2Light = 0x5c in i2cdevs
             tslLight = 0x39 in i2cdevs
         except Exception as e:
-                print("Exception: {0}".format(e))
+            print("Exception: {0}".format(e))
     return i2c
 
 
@@ -201,7 +201,7 @@ def printLog(i,s=""):
 def getFree(echo = False):
     from gc import mem_free
     if echo: 
-        print("--- RAM free ---> " + str(getFree()))
+        print("--- RAM free ---> " + str(mem_free()))
     return mem_free()
 
 
@@ -331,9 +331,8 @@ def logDevice(urlPOST = "http://www.octopusengine.org/iot17/add18.php"):
         res = post(urlPOST, data=postdata_v, headers=header)
         sleep_ms(100)
         print("logDevice.ok")
-    except:
-        print("E.logDevice")
-
+    except Exception as e:
+        print("Err.logDevice: {0}".format(e))
 
 def w(logD = True):
     printInfo()
@@ -356,6 +355,17 @@ def database_init(name):
     return db
 
 
+def bme280_init():
+    from bme280 import BME280
+    try:
+        i2c = i2c_init(1)
+        bme = BME280(i2c=i2c)
+        print(bme.values)
+        return bme
+    except Exception as e:
+        print("bme280_init() Exception: {0}".format(e))
+
+
 def time_init(urlApi ="http://www.octopusengine.org/api/hydrop"):
     from urequests import get
     printTitle("time setup from url")
@@ -369,7 +379,7 @@ def time_init(urlApi ="http://www.octopusengine.org/api/hydrop"):
         rtc.init(dt_int)
         #print(str(rtc.datetime()))
         print("time: " + get_hhmm())
-    except:
+    except Exception as e:
         print("Err. Setup time from URL")
 
 
@@ -385,7 +395,7 @@ def getApiJson(urlApi ="http://www.octopusengine.org/api"):
         j = loads(dt_str)
         #print(str(j))
         aj = j['light']
-    except:
+    except Exception as e:
         print("Err. read json from URL")
     return aj
 
@@ -403,7 +413,7 @@ def getApiText(urlApi ="http://www.octopusengine.org/api"):
     try:
         response = get(urltxt)
         dt_str = response.text
-    except:
+    except Exception as e:
         print("Err. read txt from URL")
     return dt_str
 
@@ -525,7 +535,7 @@ if Env.autoInit:  # test
             #spi.deinit() #print("spi > close")
             spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
             ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
-        except:
+        except Exception as e:
             print("Err.spi")
 
     if io_conf.get('led7'):
@@ -575,7 +585,7 @@ if Env.autoInit:  # test
         print("I2C | ",end="")
         try:
             i2c = i2c_init(False)
-        except:
+        except Exception as e:
             print("Err.i2c_init")
 
     if io_conf.get('oled'):
