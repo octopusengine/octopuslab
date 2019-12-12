@@ -5,7 +5,7 @@
 # imports
 from time import sleep_ms
 from util.octopus import *
-from util.oc import printTitle
+from util import printTitle
 from util.display_segment import displayDigit
 
 octopus()            # include main library
