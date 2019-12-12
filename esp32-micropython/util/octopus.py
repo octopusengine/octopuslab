@@ -24,7 +24,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.97"  # version - log: num = ver*100
-    verDat = "3.12.2019 #1096"
+    verDat = "12.12.2019 #1032"
     debug = True
     logDev = True
     autoInit = True
@@ -109,70 +109,6 @@ def o_info():
 
 def i():
     o_info()
-
-
-def cat(file='main.py', title = False): # concatenate - prepare
-    """print data: f("filename") """
-    fi = open(file, 'r')
-    if title:
-        printTitle("file > " + file)
-        # file statistic
-        lines = 0
-        words = 0
-        characters = 0
-        for line in fi:
-            wordslist = line.split()
-            lines = lines + 1
-            words = words + len(wordslist)
-            characters = characters + len(line)
-
-        print("Statistic > lines: " + str(lines) + " | words: " + str(words) + " | chars: " + str(characters))
-        print('-' * Env.TW)
-        fi = open(file, 'r')
-    for line in fi:
-        print(line, end="")
-    globals()["cat"]=cat
-
-
-def f(file='main.py', title = True):
-    cat(file, title)
-
-
-def u(tar="https://octopusengine.org/download/micropython/stable.tar"):
-    w()
-    printTitle("update from > ")
-    print(tar)
-    from util.setup import deploy 
-    deploy(tar)
-
-
-def ls(directory=""):
-    printTitle("list > " + directory)
-    from os import listdir
-    ls = listdir(directory)
-    ls.sort()
-    for f in ls:
-        print(f)
-    #globals()["ls"]=ls
-
-
-def file_copy(fileSource, fileTarget="main.py"):
-    printTitle("file_copy to " + fileTarget)
-    print("(Be careful)")
-    fs = open(fileSource)
-    data = fs.read()
-    fs.close()
-    for ii in range(12):
-        print(".",end="")
-        sleep_ms(300)
-    ft = open(fileTarget, 'w')
-    ft.write(data)
-    ft.close()
-    print(" ok")
-
-
-def cp(fileSource, fileTarget="main.py"):
-    file_copy(fileSource, fileTarget)
 
 
 def led_init(pin = pinout.BUILT_IN_LED):
