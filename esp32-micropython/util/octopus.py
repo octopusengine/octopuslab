@@ -24,7 +24,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.97"  # version - log: num = ver*100
-    verDat = "12.12.2019 #1032"
+    verDat = "12.12.2019 #1035"
     debug = True
     logDev = True
     autoInit = True
@@ -66,6 +66,7 @@ def printInfo(w=Env.TW):
 
 
 def o_help():
+    from util import cat
     printOctopus()
     print("Welcome to MicroPython on the ESP32 octopusLAB board")
     print("("+getVer()+")")
@@ -1018,6 +1019,7 @@ def web_server():
             httpResponse.WriteResponseOk(None)
 
         httpResponse.WriteResponse(code=204, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = None)
+
 
 
 # ******** prepare / test **********
