@@ -3,9 +3,10 @@
 # Copyright (c) 2016-2019 Jan Copak, Petr Kracik, Vasek Chalupnicek
 
 """
-cat / ls / cp / rm / df
+cat / ls / mkdir / cp / rm / find / df
 ---
 clt / printHead / printTitle / printLog
+last update: 13.12.2019
 """
 
 class Conf:  # for temporary global variables and config setup
@@ -42,13 +43,17 @@ def cat(file='main.py', title = False): # concatenate - prepare
     globals()["cat"]=cat
 
 
-def ls(directory=""):
+def ls(directory="", line = False):
     printTitle("list > " + directory)
     from os import listdir
     ls = listdir(directory)
     ls.sort()
     for f in ls:
-        print(f)
+        if line:
+            print("%20s" %  f,end="")
+        else:
+            print(f)
+    print()
     #globals()["ls"]=ls
 
 
@@ -67,11 +72,19 @@ def cp(fileSource, fileTarget="main.py"):
     print(" ok")
 
 
+def mkdir(directory):
+    try:
+        from os import mkdir
+        mkdir(directory)
+    except Exception as e:
+        print("Exception: {0}".format(e))
+
+
 def rm(file = None):
     if file:
-        from os import remove
         printTitle("remove file > " + file)
         try:
+            from os import remove
             print("(Always be careful)")
             remove(file)
             runningEffect()
@@ -79,6 +92,16 @@ def rm(file = None):
             print("Exception: {0}".format(e))
     else:
         print("Input param: path + file name")
+
+
+def find(xstr, directory = "examples"):
+    printTitle("find file > " + xstr)
+    from os import listdir
+    ls = listdir(directory)
+    ls.sort()
+    for f in ls:
+        if f.find(xstr) > -1:
+            print(f)
 
 
 def df():
@@ -94,12 +117,12 @@ def free(echo = True):
     return mem_free()
 
 
-def upgrade(tar="https://octopusengine.org/download/micropython/stable.tar"):
-    printTitle("update from > ")
-    print(tar)
+def upgrade(urlTar = "https://octopusengine.org/download/micropython/stable.tar"):
+    printTitle("upgrade from url > ")
+    print(urlTar)
     from util.setup import deploy
     try:
-        deploy(tar)
+        deploy(urlTar)
     except Exception as e:
         print("Exception: {0}".format(e))
 
@@ -107,6 +130,7 @@ def clt():
     print(chr(27) + "[2J") # clear terminal
     print("\x1b[2J\x1b[H") # cursor up
 
+# ------------------------------------------------------------------
 
 def printHead(s):
     print()
