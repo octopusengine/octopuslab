@@ -43,14 +43,18 @@ def cat(file='main.py', title = False): # concatenate - prepare
     globals()["cat"]=cat
 
 
-def ls(directory="", line = False):
+def ls(directory="", line = False, cols = 2):
     printTitle("list > " + directory)
     from os import listdir
     ls = listdir(directory)
     ls.sort()
+    col = 0
     for f in ls:
         if line:
-            print("%20s" %  f,end="")
+            print("%25s" %  f,end="")
+            col += 1
+            if col % cols:
+                print()
         else:
             print(f)
     print()
