@@ -4,14 +4,14 @@
 
 from time import sleep
 from util.octopus import w, get_hhmm, time_init
-from util import printTitle, cls
+from util import printTitle, clt
 
 
 def clock():
-    cls()
+    clt()
     print(get_hhmm(":"))
     sleep(1)
-    cls()
+    clt()
     print(get_hhmm(" "))
     sleep(1)
 
