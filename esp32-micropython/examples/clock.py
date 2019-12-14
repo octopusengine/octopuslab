@@ -1,20 +1,21 @@
-# simple basic example - ESP32 + 7segment display
+# simple basic example - ESP32
 # cp("examples/clock.py") > main.py
 
 
 from time import sleep
-from util.octopus import w, disp7_init, get_hhmm, time_init
-from util import printTitle
+from util.octopus import w, get_hhmm, time_init
+from util import printTitle, cls
 
-w()	# wifi connect
-d7 = disp7_init()	# 8 x 7segment display init   
 
 def clock():
-	d7.show(get_hhmm("-"))
-	sleep(0.5)
-	d7.show(get_hhmm(" "))
-	sleep(0.5)
+    cls()
+    print(get_hhmm(":"))
+    sleep(1)
+    cls()
+    print(get_hhmm(" "))
+    sleep(1)
 
+w()	# wifi connect
 time_init() # server > time setup
 
 printTitle("examples/clock.py")

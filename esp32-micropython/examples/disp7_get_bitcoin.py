@@ -2,10 +2,12 @@
 
 from time import sleep
 import urequests, json
-from util.octopus import w
+from util.octopus import w, disp7_init
 from util import printTitle
 
+
 w()
+d7 = disp7_init()
 
 def bitcoin_usd():
     res = urequests.get("https://api.coinmarketcap.com/v1/ticker/bitcoin/")
@@ -19,4 +21,7 @@ print()
 while True:
     btc = bitcoin_usd()
     print(btc)
-    sleep(10)
+    d7.show(btc)
+    sleep(20)
+    d7.show("btc-usd")
+    sleep(3)
