@@ -13,6 +13,10 @@ def octopus():
     util.octopus.octopus()
     return util.octopus
 
+def h():
+    from util.octopus import o_help
+    o_help()
+
 def reset():
     import machine
     machine.reset()
