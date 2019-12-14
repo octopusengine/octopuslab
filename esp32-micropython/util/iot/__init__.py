@@ -2,21 +2,19 @@
 # octopusLAB 2019
 # Relay, Pwm, Thermometer
 
-# last update: 3.11.2019
+# last update: 13.12.2019
 """ 
 from util.iot import Relay
 re1 = Relay() # default IoTboard pin 
 re1.value(1)
 re2 = Relay(26)
-
 pwm_led = Pwm()
 pwm_led.duty(300)
-
 from util.iot import Thermometer
 tt = Thermometer(32)
 tx = tt.ds.scan()
-tt.read_temp() # default index 0 > first sensor
-tt.read_temp(tx[0])
+tt.get_temp() # default index 0 > first sensor
+tt.get_temp(tx[0])
 """
 
 from time import sleep_ms
