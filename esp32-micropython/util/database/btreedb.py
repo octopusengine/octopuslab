@@ -1,7 +1,7 @@
 """
 octopusLAB - database class
-from util.database import BTreeDB
-db = Db("test")
+from util.database.btreedb import BTreeDB
+db = BTreeDB("test")
 db.addOne("one","1")
 db.listAll()
 """
