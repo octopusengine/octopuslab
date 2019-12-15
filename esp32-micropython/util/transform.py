@@ -10,14 +10,43 @@ gimbal: 2 x pol / const r
 IK: invers kinematics
 for robotic arm (3/5 axes)
 drawbot and polar graph math.
+
+from util.transform import *
+ampy -p /COM6 put ./util/transform.py util/transform.py
 """
 
-
-def distance2(x1, y1, x2, y2, rr = 3):
-    # default round rr
-    dx = x2 - x1
-    dy = y2 - y1
+# point: p = x, y
+def distance2(p1, p2, rr = 3):  # default round rr
+    # x1 = p1[0], y2 = p1[1]
+    dx = p2[0] - p1[0]
+    dy = p2[1] - p1[1]
     return round(math.sqrt(dx*dx + dy*dy), rr)
+
+
+def move_2d_line(p_start, p_stop, steps = 100, max_dist = 100, debug = False): # default: one step per one unit
+    unit = max_dist/steps
+    move_dist = distance2(p_start, p_stop)
+    move_steps = move_dist/unit
+    if debug:
+        print(unit, move_dist, move_steps)
+
+    x = p_start[0]
+    y = p_start[1]
+    dx = p_stop[0] - x
+    dy = p_stop[1] - y
+    ddx = dx/move_steps
+    ddy = dy/move_steps
+        
+    points = []
+    for step in range(move_steps):
+        if debug:
+            print(step, x, y) # test / debug
+        points.append((x, y))
+        x += ddx
+        y += ddy
+    
+    points.append((p_stop[0], p_stop[1]))
+    return points
 
 
 def polar2cart(r, alfa, rr = 3):
@@ -26,8 +55,10 @@ def polar2cart(r, alfa, rr = 3):
     return round(x, rr), round(y, rr)
 
 
-def cart2polar(x, y):
-    r = distance2(0, 0, x, y)
+def cart2polar(point):
+    x = point[0]
+    y = point[1]
+    r = distance2((0, 0), point)
     c = x / r
     s = y / r
     
@@ -44,6 +75,8 @@ def cart2polar(x, y):
 
 
 def cosangle(opp, adj1, adj2):
+    # cosangle(1,1,1) => 60, True
+
     # Cosine rule:
     # C^2 = A^2 + B^2 - 2*A*B*cos(angle_AB)
     # cos(angle_AB) = (A^2 + B^2 - C^2)/(2*A*B)
