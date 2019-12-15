@@ -15,6 +15,9 @@ from util.transform import *
 ampy -p /COM6 put ./util/transform.py util/transform.py
 """
 
+point0_2d = 0, 0
+point0_3d = 0, 0, 0
+
 # point: p = x, y
 def distance2(p1, p2, rr = 3):  # default round rr
     # x1 = p1[0], y2 = p1[1]
@@ -100,6 +103,36 @@ def cosangle(opp, adj1, adj2):
     alfa = math.degrees(math.acos(c))
 
     return alfa, direct
+
+arm = 20
+
+def arm2d_2angles(point, l1=arm, l2=arm, rr = 6, debug = True): # for l1 = l2
+    # 2 servos in 2D - arm l1, l2
+    # diff**2 = l**2 - dist**2
+    # dist = distance2(point0_2d, point, 5)
+    dist, alfa = cart2polar(point)
+    max_dist = (l1 + l2) / math.sqrt(2)
+    if debug:
+        print("point, arm: ", point, l1)
+        print("polar: ", dist, alfa)
+        print("max.dist: ", max_dist)
+    if dist < max_dist:
+        try:
+            diff = math.sqrt(l1**2 - dist**2/4)
+            epsilon = cosangle(diff, dist/2, l1)[0]
+            beta = 2 * cosangle(dist/2, diff, l1)[0]
+        except Exception as e:
+            print("Err: ", e)
+
+        if debug:
+            print("diff: ",diff) 
+            print("epsilon: ", epsilon) # temp angle
+            print("beta: ", beta)
+        return alfa - epsilon, beta
+    else:
+        print("Err. max distance is ", max_dist)
+        return 0, 0
+    
 
 
 def distance3(x1, y1, z1, x2, y2, z2):
