@@ -18,6 +18,14 @@ ampy -p /COM6 put ./util/transform.py util/transform.py
 point0_2d = 0, 0
 point0_3d = 0, 0, 0
 
+RADIANS = 0
+DEGREES = 1
+
+arm = 20
+l1 = arm
+l2 = arm
+
+
 # point: p = x, y
 def distance2(p1, p2, rr = 3):  # default round rr
     # x1 = p1[0], y2 = p1[1]
@@ -104,16 +112,15 @@ def cosangle(opp, adj1, adj2):
 
     return alfa, direct
 
-arm = 20
 
-def arm2d_2angles(point, l1=arm, l2=arm, rr = 6, debug = True): # for l1 = l2
+def invkin2_1(point2d, rr = 6, debug = True): # for l1 = l2
     # 2 servos in 2D - arm l1, l2
     # diff**2 = l**2 - dist**2
     # dist = distance2(point0_2d, point, 5)
-    dist, alfa = cart2polar(point)
+    dist, alfa = cart2polar(point2d)
     max_dist = (l1 + l2) / math.sqrt(2)
     if debug:
-        print("point, arm: ", point, l1)
+        print("point, arm: ", point2d, l1)
         print("polar: ", dist, alfa)
         print("max.dist: ", max_dist)
     if dist < max_dist:
@@ -132,7 +139,93 @@ def arm2d_2angles(point, l1=arm, l2=arm, rr = 6, debug = True): # for l1 = l2
     else:
         print("Err. max distance is ", max_dist)
         return 0, 0
+
+
+# https://ashwinnarayan.blogspot.com/2014/07/inverse-kinematics-for-2dof-arm.html
+#IK for just the 2 links
+def invkin2(point2d, angleMode=DEGREES):
+    """Returns the angles of the first two links
+    in the robotic arm as a list.
+    returns -> (th1, th2)
+    input:
+    x - The x coordinate of the effector
+    y - The y coordinate of the effector
+    angleMode - tells the function to give the angle in
+                degrees/radians. Default is degrees
+    output:
+    th1 - angle of the first link w.r.t ground
+    th2 - angle of the second link w.r.t the first"""
+    x, y = point2d
+
+    #stuff for calculating th2
+    r_2 = x**2 + y**2
+    l_sq = l1**2 + l2**2
+    term2 = (r_2 - l_sq)/(2*l1*l2)
+    term1 = ((1 - term2**2)**0.5)*-1
+    #calculate th2
+    th2 = math.atan2(term1, term2)
+    #optional line. Comment this one out if you 
+    #notice any problems
+    th2 = -1*th2
+
+    #Stuff for calculating th2
+    k1 = l1 + l2*math.cos(th2)
+    k2 = l2*math.sin(th2)
+    r  = (k1**2 + k2**2)**0.5
+    gamma = math.atan2(k2,k1)
+    #calculate th1
+    th1 = math.atan2(y,x) - gamma
+
+    if(angleMode == RADIANS):
+        return th1, th2
+    else:
+        return math.degrees(th1), math.degrees(th2)
+
+#--------------------------------------------------------
+#IK for two links plus the base drum
+def invkin3(point3d, angleMode=DEGREES):
+    """Returns the angles of the first two links and
+     the base drum in the robotic arm as a list.
+    returns -> (th0, th1, th2)
     
+    x - The x coordinate of the effector
+    y - The y coordinate of the effector
+    z - The z coordinate of the effector
+    angleMode - tells the function to give the angle in
+                degrees/radians. Default is degrees
+    output:
+    th0 - angle of the base motor
+    th1 - angle of the first link w.r.t ground
+    th2 - angle of the second link w.r.t the first"""
+    x, y, z = point3d
+
+    th0 = math.atan2(z,x)
+    x = (x**2 + z**2)**0.5
+    #stuff for calculating th2
+    r_2 = x**2 + y**2
+    l_sq = l1**2 + l2**2
+    term2 = (r_2 - l_sq)/(2*l1*l2)
+    term1 = ((1 - term2**2)**0.5)*-1
+    #calculate th2
+    th2 = math.atan2(term1, term2)
+    #optional line. Comment this one out if you 
+    #notice any problems
+    th2 = -1*th2
+
+    #Stuff for calculating th2
+    k1 = l1 + l2*math.cos(th2)
+    k2 = l2*math.sin(th2)
+    r  = (k1**2 + k2**2)**0.5
+    gamma = math.atan2(k2,k1)
+    #calculate th1
+    th1 = math.atan2(y,x) - gamma
+    
+
+    if(angleMode == RADIANS):
+        return th0, th1, th2
+    else:
+        return math.degrees(th0), math.degrees(th1),\
+            math.degrees(th2)
 
 
 def distance3(x1, y1, z1, x2, y2, z2):
