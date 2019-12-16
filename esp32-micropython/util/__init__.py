@@ -134,6 +134,35 @@ def clt():
     print(chr(27) + "[2J") # clear terminal
     print("\x1b[2J\x1b[H") # cursor up
 
+
+def run(file ="main.py"):
+     exec(open(file).read(), globals())
+
+
+def shell():
+    while True:
+        try:
+            sele = input("uPyShell:~$ ")
+            comm = sele.split(" ")
+
+            if sele == "exit":
+                # done with editing
+                break
+            if comm[0] == "cls": clt()
+            if comm[0] == "free": free()
+            if comm[0] == "df": df()
+            if comm[0] == "ls": ls()
+            if comm[0] == "mkdir": mkdir(comm[1])
+            if comm[0] == "cp": cp(comm[1])
+            if comm[0] == "rm": rm(comm[1])
+            if comm[0] == "find": find(comm[1])
+            if comm[0] == "cat": cat()
+            if comm[0] == "run": run()
+            if comm[0] == "help":
+                print("cls free df ls mkdir cp rm find cat exit")
+        except Exception as e:
+            print("Exception: {0}".format(e))
+
 # ------------------------------------------------------------------
 
 def printHead(s):
