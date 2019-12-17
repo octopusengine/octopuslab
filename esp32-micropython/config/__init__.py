@@ -17,7 +17,10 @@ conf.save()
 ampy -p /COM6 put ./config/__init__.py config/__init__.py
 """
 
-from util.oc import Conf, printTitle
+class Conf:
+    TW = 50
+
+from util.octopus import printTitle
 import ujson
 from ucollections import OrderedDict
 
@@ -147,8 +150,8 @@ class Config():
         printTitle(self.file)
         print(self.config)
         print("Keys: ")
-        self.keys
-        self.list_all()
+        print(self.keys)
+        self.print_all()
         print(".create_from_query(q) | .save()")
         print(".get(k) | .set(k,v) | .setup()")
         print(".list_all() | .list_for_keys()")
