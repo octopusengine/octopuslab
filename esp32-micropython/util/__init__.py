@@ -3,10 +3,11 @@
 # Copyright (c) 2016-2019 Jan Copak, Petr Kracik, Vasek Chalupnicek
 
 """
+from util import shell
 cat / ls / mkdir / cp / rm / find / df
 ---
 clt / printHead / printTitle / printLog
-last update: 13.12.2019
+last update: 17.12.2019
 """
 
 class Conf:  # for temporary global variables and config setup
@@ -138,32 +139,53 @@ def clt():
 def run(file ="main.py"):
      exec(open(file).read(), globals())
 
-
+# --------------------------------------------------------
+commandList = ["",""]
 def shell():
+    # todo: curl, wget...
+    # if is not ni commlist.... err
     while True:
         try:
             sele = input("uPyShell:~$ ")
             comm = sele.split(" ")
+            c1 = comm[0]
+            if len(comm) > 1: 
+                c2 = comm[1]
+                c2b = True
+            else: 
+                c2 = ""
+                c2b = False
+            if len(comm) > 2: c3 = comm[2]
+            else: c3 = ""
 
             if sele == "exit":
                 # done with editing
                 break
-            if comm[0] == "cls": clt()
-            if comm[0] == "free": free()
-            if comm[0] == "df": df()
-            if comm[0] == "ls": ls()
-            if comm[0] == "mkdir": mkdir(comm[1])
-            if comm[0] == "cp": cp(comm[1])
-            if comm[0] == "rm": rm(comm[1])
-            if comm[0] == "find": find(comm[1])
-            if comm[0] == "cat": cat()
-            if comm[0] == "run": run()
-            if comm[0] == "help":
-                print("cls free df ls mkdir cp rm find cat exit")
+            if c1 == "clear": clt()
+            if c1 == "free": free()
+            if c1 == "df": df()
+            if c1 == "run" or comm[0][:2] == "./": run()
+
+            if c2b:
+                if c1 == "ls": ls(c2)
+                if c1 == "cat": cat(c2)
+                if c1 == "mkdir": mkdir(c2)
+                if c1 == "rm": rm(c2)
+                if c1 == "find": find(c2)
+
+                if c1 == "cp": cp(c2) # todo c3
+            else:
+                if c1 == "ls": ls()
+                if c1 == "cat": cat()
+
+            if c1 == "help":
+                print("octopusLAB - simple shell help:")
+                cat("util/octopus_shell_help.txt", False)
+                print()
         except Exception as e:
             print("Exception: {0}".format(e))
 
-# ------------------------------------------------------------------
+# --------------------------------------------------------
 
 def printHead(s):
     print()

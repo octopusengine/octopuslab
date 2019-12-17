@@ -1,0 +1,16 @@
+  ---------+-------------------+--------------------
+           | F: file name      |
+           | M: "main.py"      |  octopusLAB 2019
+  ---------+-------------------+--------------------
+     clear | clear display     |   
+      free | free RAM          |
+        df | flash disk info   |
+        ls | list              | ls examples
+     mkdir | make directory    | mkdir newdir
+        cp | copy F (defaul M) | cp test.py back.py
+        rm | remove F          | rm test.py
+      find | find "text"       | find oled 
+       cat | cat F (defaul M)  | cat back.py
+        ./ | run F             | ./examples/blink.py
+      exit | back to uPy       | > Micropython
+  ---------|-------------------|---------------------
