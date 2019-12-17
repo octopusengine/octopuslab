@@ -37,13 +37,18 @@ class WiFiConnect:
                 # Upgrading to new version
                 self.config['version'] = 2
                 self.config['networks'] = dict()
-                self.add_network(self.config['wifi_ssid'], self.config['wifi_pass'])
 
-        except:
-           self.config = dict()
-           self.config['version'] = 2
-           self.config['networks'] = dict()
-           self.save_config()
+                ssid, psk = self.config['wifi_ssid'], self.config['wifi_pass']
+                del self.config['wifi_ssid']
+                del self.config['wifi_pass']
+                self.save_config()
+                self.add_network(ssid, psk)
+
+        except Exception as e:
+            self.config = dict()
+            self.config['version'] = 2
+            self.config['networks'] = dict()
+            self.save_config()
 
     def __call_events_connecting__(self, retry):
         for f in self.events_connecting:
