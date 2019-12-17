@@ -18,9 +18,30 @@ def h():
     o_help()
 
 def reset():
-    import machine
-    machine.reset()
+    from machine import reset
+    reset()
 
+
+try:
+    print("auto start from: config/boot.json")
+    from config import Config
+    autostart = Config("boot")
+
+    if autostart.get("import_shell"):
+        def shell():    
+            from util import shell
+            shell()
+    
+    if autostart.get("connect_wifi"):
+        from util.octopus import w
+        w()
+
+    if autostart.get("start_web_server"):
+        from util.octopus import web_server
+        web_server()
+
+except:
+    print("Autostart Err.")
 
 # when user enters REPL and executes setup()
 
