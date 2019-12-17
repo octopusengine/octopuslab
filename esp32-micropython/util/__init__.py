@@ -44,21 +44,23 @@ def cat(file='main.py', title = False): # concatenate - prepare
     globals()["cat"]=cat
 
 
-def ls(directory="", line = False, cols = 2):
-    printTitle("list > " + directory)
+def ls(directory="", line = False, cols = 2, goPrint = True):
+    if goPrint: printTitle("list > " + directory)
     from os import listdir
     ls = listdir(directory)
     ls.sort()
-    col = 0
-    for f in ls:
-        if line:
-            print("%25s" %  f,end="")
-            col += 1
-            if col % cols:
-                print()
-        else:
-            print(f)
-    print()
+    if goPrint:
+        col = 0
+        for f in ls:
+            if line:
+                print("%25s" %  f,end="")
+                col += 1
+                if col % cols:
+                    print()
+            else:
+                print(f)
+        print()
+    return ls
     #globals()["ls"]=ls
 
 
@@ -139,16 +141,37 @@ def clt():
 def run(file ="main.py"):
      exec(open(file).read(), globals())
 
+def wget(urlApi ="http://www.octopusengine.org/api"):
+    # get api text / jsoun / etc
+    from util.octopus import w
+    try:
+        w()
+    except Exception as e:
+        print("Exception: {0}".format(e))
+
+    from urequests import get
+    urltxt=urlApi+"/text123.txt"
+    try:
+        response = get(urltxt)
+        dt_str = response.text
+    except Exception as e:
+        print("Err. read txt from URL")
+    return dt_str
+
 # --------------------------------------------------------
 commandList = ["",""]
 def shell():
+    subDir = ""
     # todo: curl, wget...
-    # if is not ni commlist.... err
+    commlist = ["","pwd","cd","clear","free","df","run","ls","cat","mkdir","rm","find","cp","wget","help","exit"]
     while True:
         try:
-            sele = input("uPyShell:~$ ")
+            sele = input("uPyShell:~" + subDir+ "$ ")
             comm = sele.split(" ")
             c1 = comm[0]
+            if c1 not in commlist and c1[:2] != "./":
+                print(c1, ": command not found")
+
             if len(comm) > 1: 
                 c2 = comm[1]
                 c2b = True
@@ -162,28 +185,48 @@ def shell():
                 # done with editing
                 break
             if c1 == "clear": clt()
+            if c1 == "pwd": print(subDir)
             if c1 == "free": free()
             if c1 == "df": df()
-            if c1 == "run" or comm[0][:2] == "./": run()
+            if c1[:2] == "./": run(c1[2:])
 
             if c2b:
+                if c1 == "cd":
+                    #ls = ls(goPrint=False)
+
+                    subDir = "/"+c2
+                    if c2 == "..":
+                        subDir =""
+                """
+                if c1 == "cd": 
+                    ls = ls(goPrint=False)
+                    if c2 in ls
+                        subDir = c2
+                    else:
+                        print(c2 + "dir not found")
+                """
+
                 if c1 == "ls": ls(c2)
                 if c1 == "cat": cat(c2)
                 if c1 == "mkdir": mkdir(c2)
                 if c1 == "rm": rm(c2)
                 if c1 == "find": find(c2)
+                if c1 == "run": run(c2)
+                if c1 == "wget": print(wget(c2))
 
                 if c1 == "cp": cp(c2) # todo c3
             else:
-                if c1 == "ls": ls()
+                if c1 == "run": run()
+                if c1 == "ls": ls(subDir)
                 if c1 == "cat": cat()
+                if c1 == "wget": print(wget())
 
             if c1 == "help":
                 print("octopusLAB - simple shell help:")
                 cat("util/octopus_shell_help.txt", False)
                 print()
         except Exception as e:
-            print("Exception: {0}".format(e))
+            print("Shell Err. > Exception: {0}".format(e))
 
 # --------------------------------------------------------
 
