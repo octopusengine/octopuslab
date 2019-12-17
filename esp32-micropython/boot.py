@@ -29,7 +29,7 @@ try:
 
     if autostart.get("import_shell"):
         def shell():    
-            from util import shell
+            from util.shell import shell
             shell()
     
     if autostart.get("connect_wifi"):
