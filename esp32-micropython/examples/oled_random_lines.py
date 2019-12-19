@@ -4,7 +4,7 @@
 # start: import examples/oled_random_lines
 
 from util.octopus import oled_init
-from util import printTitle
+from util.shell import printTitle
 from os import urandom
 
 o = oled_init()      # init oled display

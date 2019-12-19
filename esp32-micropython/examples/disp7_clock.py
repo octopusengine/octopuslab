@@ -3,7 +3,7 @@
 
 from time import sleep
 from util.octopus import w, disp7_init, get_hhmm, time_init
-from util import printTitle
+from util.shell import printTitle
 
 w()	# wifi connect
 d7 = disp7_init()	# 8 x 7segment display init   
