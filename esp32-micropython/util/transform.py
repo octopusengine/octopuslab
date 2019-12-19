@@ -26,15 +26,36 @@ l1 = arm
 l2 = arm
 
 
+
+class Point2D():
+    def __init__(self, x=0, y=0):
+        self.x = x
+        self.y = y
+
+    def __add__(self, add):
+        return Point2D(self.x + add.x, self.y + add.y)
+    
+    def __str__(self):
+        return(self.x, self.y)
+
+
+# point: p = Point2D(x,y)
+def distance2D(p1, p2, rr = 5):  # default round rr
+    # x1 = p1[0], y2 = p1[1]
+    dx = p2.x - p1.x
+    dy = p2.y - p1.y
+    return round(math.sqrt(dx*dx + dy*dy), rr)
+
+
 # point: p = x, y
-def distance2(p1, p2, rr = 3):  # default round rr
+def distance2(p1, p2, rr = 5):  # default round rr
     # x1 = p1[0], y2 = p1[1]
     dx = p2[0] - p1[0]
     dy = p2[1] - p1[1]
     return round(math.sqrt(dx*dx + dy*dy), rr)
 
 
-def move_2d_line(p_start, p_stop, steps = 100, max_dist = 100, debug = False): # default: one step per one unit
+def move_2d_line(p_start, p_stop, steps = 300, max_dist = 100, debug = False): # default: one step per one unit
     unit = max_dist/steps
     move_dist = distance2(p_start, p_stop)
     move_steps = move_dist/unit
@@ -182,6 +203,20 @@ def invkin2(point2d, angleMode=DEGREES):
         return math.degrees(th1), math.degrees(th2)
 
 #--------------------------------------------------------
+
+class Point3D():
+    def __init__(self, x=0, y=0, z=0):
+        self.x = x
+        self.y = y
+        self.z = z
+
+    def __add__(self, add):
+        return Point2D(self.x + add.x, self.y + add.y, self.z + add.z)
+    
+    def __str__(self):
+        return(self.x, self.y, self.z)
+
+
 #IK for two links plus the base drum
 def invkin3(point3d, angleMode=DEGREES):
     """Returns the angles of the first two links and
