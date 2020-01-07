@@ -383,7 +383,7 @@ def time_init(urlApi ="http://www.octopusengine.org/api/hydrop"):
         print("Err. Setup time from URL")
 
 
-def getApiJson(urlApi = "https://www.octopuslab.cz/data/" ,urlFile = "led2.json"):
+def getApiJson(urlApi ="https://www.octopuslab.cz/data/", urlFile = "led2.json", debug = "True"):
     # "http://www.octopusengine.org/api/"    
     from urequests import get
     from json import loads
@@ -392,7 +392,7 @@ def getApiJson(urlApi = "https://www.octopuslab.cz/data/" ,urlFile = "led2.json"
     try:
         response = get(urljson)
         dt_str = (response.text)
-        #print(str(dt_str))
+        if debug: print(str(dt_str))
         j = loads(dt_str)
         #print(str(j))
         aj = j['light']
