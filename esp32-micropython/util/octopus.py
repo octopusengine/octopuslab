@@ -24,7 +24,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.97"  # version - log: num = ver*100
-    verDat = "12.12.2019 #1045"
+    verDat = "30.12.2019 #1045"
     debug = True
     logDev = True
     autoInit = True
@@ -66,7 +66,7 @@ def printInfo(w=Env.TW):
 
 
 def o_help():
-    from util import cat
+    from util.shell import cat
     printOctopus()
     print("Welcome to MicroPython on the ESP32 octopusLAB board")
     print("("+getVer()+")")
