@@ -298,12 +298,12 @@ def setup():
           
         if sele == "sd":
             shutil()
-            deplUrl = "http://octopusengine.org/download/micropython/stable.tar"
+            deplUrl = "https://octopusengine.org/download/micropython/stable.tar"
             deploy(deplUrl)
 
         if sele == "sde":
             shutil()
-            deplUrl = "http://octopusengine.org/download/micropython/examples.tar"
+            deplUrl = "https://octopusengine.org/download/micropython/examples.tar"
             deploy(deplUrl) 
 
         if sele == "sdp":
@@ -313,12 +313,12 @@ def setup():
 
         if sele == "sdo":
             shutil()
-            deplUrl = "http://octopusengine.org/download/latest.tar"
+            deplUrl = "https://octopusengine.org/download/latest.tar"
             deploy(deplUrl)
 
         if sele == "sdh":
             shutil()
-            deplUrl = "http://octopusengine.org/download/hydroponics.tar"
+            deplUrl = "https://octopusengine.org/download/hydroponics.tar"
             deploy(deplUrl)
 
         if sele == "wr":
