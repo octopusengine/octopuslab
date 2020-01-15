@@ -22,8 +22,6 @@ def edit(filename='main.py'):
             not file_exists and ' [NEW]' or '',
             changed and ' [CHANGED]' or '',
         )
-        # print('=' * SEPARATOR_WIDTH)
-        # print()
 
         print()
         title_top_prefix = ''
@@ -55,9 +53,6 @@ def edit(filename='main.py'):
         if show_line_numbers:
             bottom_prefix = EDITOR_BOTTOM_PREFIX
         print('{:s}{:s}'.format(bottom_prefix, '─' * (SEPARATOR_WIDTH-len(bottom_prefix))))
-
-        # print()
-        # print('=' * SEPARATOR_WIDTH)
 
     def print_help():
         print('  h      print this help')
