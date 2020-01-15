@@ -1,135 +1,209 @@
 import sys
 
-SEPARATOR_WIDTH = 50
-
 def edit(filename='main.py'):
+    SEPARATOR_WIDTH = 50
+    EDITOR_LINE_PREFIX_TPL = '{:>4d}│'
+    EDITOR_TITLE_TOP_PREFIX = '    ┌'
+    EDITOR_TITLE_TOP_SUFIX = '┐'
+    EDITOR_TITLE_PREFIX = '    │'
+    EDITOR_TITLE_SUFIX = '│'
+    EDITOR_TOP_PREFIX = '    ├'
+    EDITOR_TOP_TITLE_SUFIX = '┴'
+    EDITOR_BOTTOM_PREFIX = '    └'
+
+    show_line_numbers = True
     changed = False
+    file_exists = True
     buff = []  # empty new file contains one line with a newline character
 
     def print_buff():
-        print('{2} {0}{1} {2}'.format(
+        editor_title = '{:s}{:s}{:s}'.format(
             filename,
+            not file_exists and ' [NEW]' or '',
             changed and ' [CHANGED]' or '',
-            '=' * int((SEPARATOR_WIDTH - len(filename)) / 2))
         )
+        # print('=' * SEPARATOR_WIDTH)
+        # print()
+
         print()
+        title_top_prefix = ''
+        if show_line_numbers:
+            title_top_prefix = EDITOR_TITLE_TOP_PREFIX
+        print('{:s}{:s}{:s}'.format(title_top_prefix, '─' * (len(editor_title)+4), EDITOR_TITLE_TOP_SUFIX))
+        title_prefix = ''
+        if show_line_numbers:
+            title_prefix = EDITOR_TITLE_PREFIX
+        print('{:s}  {:s}  {:s}'.format(title_prefix, editor_title, EDITOR_TITLE_SUFIX))
+        top_prefix = ''
+        if show_line_numbers:
+            top_prefix = EDITOR_TOP_PREFIX
+        print('{:s}{:s}{:s}{:s}'.format(top_prefix, '─' * (len(editor_title)+4), EDITOR_TOP_TITLE_SUFIX, '─' * (SEPARATOR_WIDTH-len(top_prefix)-(len(editor_title)+4))))
 
         line_cnt = 0
+        line_prefix = ''
         for line in buff:
+            if show_line_numbers:
+                line_cnt += 1
+                line_prefix = EDITOR_LINE_PREFIX_TPL.format(line_cnt)
+            print('{:s}{:s}'.format(line_prefix, line))
+        if show_line_numbers:
             line_cnt += 1
-            print('{:>4d}'.format(line_cnt), line, end='')
-        if line.endswith('\n'):
-            line_cnt += 1
-            print('{:>4d}'.format(line_cnt))
-        else:
-            # adding newline without linenumber if missing on the last line in the file
-            print()
+            line_prefix = EDITOR_LINE_PREFIX_TPL.format(line_cnt)
+        print('{:s}{:s}'.format(line_prefix, ''))
 
-        print()
-        print('=' * SEPARATOR_WIDTH)
-        print()
+        bottom_prefix = ''
+        if show_line_numbers:
+            bottom_prefix = EDITOR_BOTTOM_PREFIX
+        print('{:s}{:s}'.format(bottom_prefix, '─' * (SEPARATOR_WIDTH-len(bottom_prefix))))
 
-    def buff_lines():
-        if buff[-1].endswith('\n'):
-            return len(buff) + 1
-        return len(buff)
+        # print()
+        # print('=' * SEPARATOR_WIDTH)
 
     def print_help():
-        print('Welcome to MicroPython text file line editor. New line at the end')
-        print('of the file is enforced. Possible Actions are:')
-        print()
         print('  h      print this help')
         print('  p      print file (current state in buffer)')
+        print('  l      toggle line numbers (copy mode)')
         print('  q      quit')
         print('  w      write file (save)')
         print('  wq     write into file and quit')
         print()
-        print('  i<int> [<str>]   insert new line after line number [int], containing [txt] or empty')
-        print('  e<int> [<str>]   edit line number [int], replace line with [txt] or interactive editing')
+        print('  i<int> [<str>]   insert new line at given position [int], containing [str] or empty')
+        print('  a<int> [<str>]   insert new line after given [int], containing [str] or empty')
+        print('  e<int> [<str>]   edit line number [int], replace line with [str] or will be prompted')
         print('  d<int>           delete line number [int]')
         print()
 
-    def parse_lineno(input):
+    def parse_line_no(input):
         try:
-            lineno = int(input)
-            if 1 <= lineno <= buff_lines():
-                return lineno
+            line_no = int(input)
+            if 1 <= line_no <= len(buff) + 1:
+                return line_no
         except:
             pass
-        print('Line number must be between 1 and {0}'.format(buff_lines()))
+        print('Line number must be between 1 and {0}, "h" for help'.format(len(buff) + 1))
         return 0
 
-    def parse_lineno_txt(input):
-        lineno_el = input.split(' ')[0]
-        lineno = parse_lineno(lineno_el)
+    def parse_line_no_txt(input):
+        line_no_el = input.split(' ')[0]
+        line_no = parse_line_no(line_no_el)
         txt = ''
         try:
             # +1 for a space separator between [int] and [txt]
-            txt = input[len(lineno_el)+1:]
+            txt = input[len(line_no_el)+1:]
         except:
             pass
-        return lineno, txt
+        return line_no, txt
 
-    # read file into buff
-    with open(filename, 'r') as fi:
-        for line in fi:
-            buff.append(line)
-    # ensure last line ends with a newline
-    if not buff[-1].endswith('\n'):
-        buff[-1] += '\n'
-        changed = True
+    try:
+        # read file into buff
+        with open(filename, 'r') as fi:
+            for line in fi:
+                l = line
+                if line.endswith('\n'):
+                    l = line[:-1]
+                buff.append(l)
+    except FileNotFoundError:
+        file_exists = False
 
-    print_help()
+    # welcome messages
+    print('Welcome to MicroPython text file line editor. New line at the end of every non empty file is enforced. Use "h" for help.')
     print_buff()
+    print()
 
     while True:
-        print('action: ', end='')
-        action = input()
+        action = input('action: ')
+
+        # action print current buffer
         if action == 'p':
             print_buff()
+
+        # action print help
         elif action == 'h':
             print_help()
+
+        # action print help
+        elif action == 'l':
+            show_line_numbers = not show_line_numbers
+            print_buff()
+
+        # action edit one line
         elif action.startswith('e'):
-            lineno, txt = parse_lineno_txt(action[1:])
-            if not lineno:
+            line_no, txt = parse_line_no_txt(action[1:])
+            if not line_no:
                 continue
+            # get new text interactivelly if was not provided
             if not txt:
-                print('Current:', buff[lineno-1], end='')
-                txt = input('New:     ')
-            buff[lineno-1] = '{0}\n'.format(txt)
+                try:
+                    print('         ┌───┬───┬───┬───┬───┬───')
+                    print('Current:', buff[line_no-1])
+                    txt = input('    New: ')
+                except IndexError:
+                    txt = ''
+            if line_no == len(buff) + 1:
+                # editing last line means append to buffer
+                buff.append('{0}'.format(txt))
+            else:
+                # edit regular line
+                buff[line_no-1] = '{0}'.format(txt)
             changed = True
             print_buff()
-        elif action.startswith('i') or action.startswith('a'):
-            lineno, txt = parse_lineno_txt(action[1:])
-            if not lineno:
+
+        # action insert new line
+        elif action.startswith('i'):
+            line_no, txt = parse_line_no_txt(action[1:])
+            if not line_no:
                 continue
-            # inserting after index means list index is the same as lineno
-            buff.insert(lineno, '{0}\n'.format(txt))
+            # insert txt and shift all records in buffer
+            buff.insert(line_no-1, '{0}'.format(txt))
             changed = True
             print_buff()
+
+        # action append new line
+        elif action.startswith('a'):
+            line_no, txt = parse_line_no_txt(action[1:])
+            if not line_no:
+                continue
+            if line_no == len(buff) + 1:
+                print('Can not append after the last line in file, use insert instead')
+                continue
+            # inserting after index means index is line_no-1 +1
+            buff.insert(line_no, '{0}'.format(txt))
+            changed = True
+            print_buff()
+
+        # action delete a line
         elif action.startswith('d'):
-            lineno = parse_lineno(action[1:])
-            if not lineno:
+            line_no = parse_line_no(action[1:])
+            if not line_no:
                 continue
-            if lineno == buff_lines():
+            if line_no == len(buff) + 1:
                 print('Last line in file can not be removed')
                 continue
-            del(buff[lineno-1])
+            del(buff[line_no-1])
             changed = True
             print_buff()
+
+        # action save buffer to file
         elif action in ('w', 'wq'):
             print('Writing into file "{0}"'.format(filename))
+            file_mode = 'w'
             # save buff into file
-            with open(filename, 'w') as fo:
+            with open(filename, file_mode) as fo:
                 for line in buff:
-                    fo.write(line)
+                    fo.write(line + '\n')
+            file_exists = True
+            changed = False
+        elif action == 'q':
+            pass
         else:
-            print('Bad option, try again')
+            print('Bad option, try again, "h" for help')
 
         # exit condition
         if action in ('q', 'wq'):
             print('Bye')
             break
+
+        print()
 
 if __name__ == '__main__':
     # print command line arguments
