@@ -7,7 +7,7 @@ import time, uos
 import ujson
 import machine # datetime
 
-ver = "0.65 / 22.8.2019"
+ver = "0.67 / 15.1.2020"
 
 devices = [
 ["oLAB Default","esp32"],
