@@ -4,10 +4,11 @@
 
 """
 from util.shell import shell
-> cat / ls / mkdir / cp / rm / find / df ...
+shell()
+> cat / edit / ls / mkdir / cp / rm / find / df ...
 ---
 clt / printHead / printTitle / printLog
-last update: 17.12.2019
+last update: 16.01.2020
 """
 
 class Conf:  # for temporary global variables and config setup
@@ -42,6 +43,11 @@ def cat(file='main.py', title = False): # concatenate - prepare
     for line in fi:
         print(line, end="")
     globals()["cat"]=cat
+
+
+def edit(file="main.py"):
+    from util.shell.editor import edit
+    edit(file)
 
 
 def ls(directory="", line = False, cols = 2, goPrint = True):
@@ -165,7 +171,7 @@ def shell():
     # todo: curl, wget...
     # print("\033[31mred\033[m")
     # print("\033[32mgreen\033[m")
-    commlist = ["","pwd","cd","clear","free","df","run","ls","cat","mkdir","rm","find","cp","wget","help","exit"]
+    commlist = ["","pwd","cd","clear","free","df","run","ls","cat","mkdir","rm","find","cp","wget","help","edit","exit"]
     while True:
         try:
             print("\033[32muPyShell\033[m",end="")
@@ -200,6 +206,7 @@ def shell():
                     subDir = "/"+c2
                     if c2 == "..":
                         subDir =""
+
                 """
                 if c1 == "cd":
                     ls = ls(goPrint=False)
@@ -211,6 +218,7 @@ def shell():
 
                 if c1 == "ls": ls(c2)
                 if c1 == "cat": cat(c2)
+                if c1 == "edit": edit(c2)
                 if c1 == "mkdir": mkdir(c2)
                 if c1 == "rm": rm(c2)
                 if c1 == "find": find(c2)
@@ -222,6 +230,7 @@ def shell():
                 if c1 == "run": run()
                 if c1 == "ls": ls(subDir)
                 if c1 == "cat": cat()
+                if c1 == "edit": edit()
                 if c1 == "wget": print(wget())
 
             if c1 == "help":
