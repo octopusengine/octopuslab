@@ -119,7 +119,7 @@ def df():
 
 def free(echo = True):
     from gc import mem_free
-    if echo: 
+    if echo:
         print("--- RAM free ---> " + str(mem_free()))
     return mem_free()
 
@@ -163,19 +163,22 @@ commandList = ["",""]
 def shell():
     subDir = ""
     # todo: curl, wget...
+    # print("\033[31mred\033[m")
+    # print("\033[32mgreen\033[m")
     commlist = ["","pwd","cd","clear","free","df","run","ls","cat","mkdir","rm","find","cp","wget","help","exit"]
     while True:
         try:
-            sele = input("uPyShell:~" + subDir+ "$ ")
+            print("\033[32muPyShell\033[m",end="")
+            sele = input(":~" + subDir+ "$ ")
             comm = sele.split(" ")
             c1 = comm[0]
             if c1 not in commlist and c1[:2] != "./":
                 print(c1, ": command not found")
 
-            if len(comm) > 1: 
+            if len(comm) > 1:
                 c2 = comm[1]
                 c2b = True
-            else: 
+            else:
                 c2 = ""
                 c2b = False
             if len(comm) > 2: c3 = comm[2]
@@ -198,7 +201,7 @@ def shell():
                     if c2 == "..":
                         subDir =""
                 """
-                if c1 == "cd": 
+                if c1 == "cd":
                     ls = ls(goPrint=False)
                     if c2 in ls
                         subDir = c2
