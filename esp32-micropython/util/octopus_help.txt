@@ -1,6 +1,6 @@
    setup()  > w, a > cw, sd   > ds, ios ------------
-   h() / o_help() HELP        | i() / o_info() INFO
-   w() / w_connect()  WIFI    | r() = reset() system
+   h() / o_help() HELP        | o_info() INFO
+   w() / w_connect()  WIFI    | reset() system
    ---------------------------|---------------------
    from util.octopus import led_init, oled_init, w 
    from util import ls, cp, cat, free, find, rm, ...

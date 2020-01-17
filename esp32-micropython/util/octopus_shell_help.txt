@@ -1,6 +1,6 @@
   ---------+--------------------+--------------------
            | F: file name       |
-           | M: "main.py"       |  octopusLAB 2019
+           | M: "main.py"       |  octopusLAB 2020
   ---------+--------------------+--------------------
      clear | clear display      |   
       free | free RAM           |
@@ -13,6 +13,7 @@
         rm | remove F           | rm test.py
       find | find "text"        | find oled 
        cat | cat F (defaul M)   | cat back.py
+       edit| edit (defaul M)    | simple "line editor"
         ./ | run F              | ./examples/blink.py
       exit | back to uPy        | > Micropython
   ---------+--------------------+---------------------

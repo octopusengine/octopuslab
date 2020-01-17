@@ -20,11 +20,12 @@ pinout = set_pinout()  # set board pinout
 io_conf = get_from_file()  # read configuration for peripherals
 rtc = RTC()  # real time
 
+
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "0.97"  # version - log: num = ver*100
-    verDat = "30.12.2019 #1045"
+    ver = "0.98"  # version - log: num = ver*100
+    verDat = "17.01.2020 #1033"
     debug = True
     logDev = True
     autoInit = True
@@ -108,10 +109,6 @@ def o_info():
     printInfo()
 
 
-def i():
-    o_info()
-
-
 def led_init(pin = pinout.BUILT_IN_LED):
     from util.led import Led
     if pin is not None and pinout is not None and (pin == pinout.RXD0 or pin == pinout.TXD0):
@@ -148,15 +145,6 @@ def i2c_init(scan = False, freq=100000, HWorSW = 0, printInfo = True):
 def clt():
     print(chr(27) + "[2J") # clear terminal
     print("\x1b[2J\x1b[H") # cursor up
-
-
-def c():
-    clt()
-
-
-def r():
-    import machine
-    machine.reset()
 
 
 octopusASCII = [
@@ -319,7 +307,7 @@ def lan_connect():
     return lan
 
 
-def logDevice(urlPOST = "http://www.octopusengine.org/iot17/add18.php"):
+def logDevice(urlPOST = "https://www.octopusengine.org/iot17/add18.php"):
     from urequests import post
     header = {}
     header["Content-Type"] = "application/x-www-form-urlencoded"
@@ -366,7 +354,7 @@ def bme280_init():
         print("bme280_init() Exception: {0}".format(e))
 
 
-def time_init(urlApi ="http://www.octopusengine.org/api/hydrop"):
+def time_init(urlApi ="https://www.octopusengine.org/api/hydrop"):
     from urequests import get
     printTitle("time setup from url")
     urltime=urlApi+"/get-datetime.php"
@@ -408,7 +396,7 @@ def getApiTest():
     print(getApiJson())
 
 
-def getApiText(urlApi ="http://www.octopusengine.org/api"):
+def getApiText(urlApi ="https://www.octopusengine.org/api"):
     from urequests import get
     urltxt=urlApi+"/text123.txt"
     try:
