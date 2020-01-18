@@ -1,6 +1,5 @@
 # 555 je retro - přejděte konenečně na attiny!
 octopusLAB - temp_cz<br /><br />
-<img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/attiny-schem3-export1.png" alt="attiny" width="500">
 <br />
 
 V našich ukázkách budeme používat některý z nejrozšířenějších "osminohých" mikrokotrolerů ATMEL -> Attiny:<br />
