@@ -109,7 +109,7 @@ def edit(filename='main.py'):
     print()
 
     while True:
-        action = input('action: ')
+        action = input(terminal_color('action: '))
 
         # action print current buffer
         if action == 'p':
