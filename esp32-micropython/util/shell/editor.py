@@ -1,15 +1,18 @@
 import sys
+from util.shell import terminal_color
+
 
 def edit(filename='main.py'):
     SEPARATOR_WIDTH = 50
-    EDITOR_LINE_PREFIX_TPL = '{:>4d}│'
-    EDITOR_TITLE_TOP_PREFIX = '    ┌'
-    EDITOR_TITLE_TOP_SUFIX = '┐'
-    EDITOR_TITLE_PREFIX = '    │'
-    EDITOR_TITLE_SUFIX = '│'
-    EDITOR_TOP_PREFIX = '    ├'
-    EDITOR_TOP_TITLE_SUFIX = '┴'
-    EDITOR_BOTTOM_PREFIX = '    └'
+    EDITOR_LINE_PREFIX_TPL = terminal_color('{:>4d}│')
+    EDITOR_TITLE_TOP_PREFIX = terminal_color('    ┌')
+    EDITOR_TITLE_TOP_SUFIX = terminal_color('┐')
+    EDITOR_TITLE_PREFIX = terminal_color('    │')
+    #EDITOR_TITLE_SUFIX = "\033[32m│\033[m" # '│'
+    EDITOR_TITLE_SUFIX = terminal_color('│')
+    EDITOR_TOP_PREFIX = terminal_color('    ├')
+    EDITOR_TOP_TITLE_SUFIX = terminal_color('┴')
+    EDITOR_BOTTOM_PREFIX = terminal_color('    └')
 
     show_line_numbers = True
     changed = False
@@ -27,7 +30,7 @@ def edit(filename='main.py'):
         title_top_prefix = ''
         if show_line_numbers:
             title_top_prefix = EDITOR_TITLE_TOP_PREFIX
-        print('{:s}{:s}{:s}'.format(title_top_prefix, '─' * (len(editor_title)+4), EDITOR_TITLE_TOP_SUFIX))
+        print('{:s}{:s}{:s}'.format(title_top_prefix, terminal_color('─' * (len(editor_title)+4)), EDITOR_TITLE_TOP_SUFIX))
         title_prefix = ''
         if show_line_numbers:
             title_prefix = EDITOR_TITLE_PREFIX
@@ -35,7 +38,7 @@ def edit(filename='main.py'):
         top_prefix = ''
         if show_line_numbers:
             top_prefix = EDITOR_TOP_PREFIX
-        print('{:s}{:s}{:s}{:s}'.format(top_prefix, '─' * (len(editor_title)+4), EDITOR_TOP_TITLE_SUFIX, '─' * (SEPARATOR_WIDTH-len(top_prefix)-(len(editor_title)+4))))
+        print('{:s}{:s}{:s}{:s}'.format(top_prefix, terminal_color('─' * (len(editor_title)+4)), EDITOR_TOP_TITLE_SUFIX, terminal_color('─' * (SEPARATOR_WIDTH-len(top_prefix)-(len(editor_title)+4)))))
 
         line_cnt = 0
         line_prefix = ''
@@ -52,7 +55,7 @@ def edit(filename='main.py'):
         bottom_prefix = ''
         if show_line_numbers:
             bottom_prefix = EDITOR_BOTTOM_PREFIX
-        print('{:s}{:s}'.format(bottom_prefix, '─' * (SEPARATOR_WIDTH-len(bottom_prefix))))
+        print('{:s}{:s}'.format(bottom_prefix, terminal_color('─' * (SEPARATOR_WIDTH-len(bottom_prefix)))))
 
     def print_help():
         print('  h      print this help')

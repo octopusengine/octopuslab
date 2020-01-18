@@ -15,6 +15,13 @@ class Conf:  # for temporary global variables and config setup
       TW = 50  # terminal width
 
 
+def terminal_color(txt,col=33): # default yellow
+    # 30 black / 31 red / 32 green / 33 yellow / 34 blue / 35 violet / 36 cyan 
+    # 21 underline
+    # print("\033[32mgreen\033[m")
+    return "\033[" + str(col) + "m" + str(txt) + "\033[m"
+
+
 def runningEffect(num = 16):
     from time import sleep_ms
     for ii in range(num):
@@ -168,9 +175,7 @@ def wget(urlApi ="http://www.octopusengine.org/api"):
 commandList = ["",""]
 def shell():
     subDir = ""
-    # todo: curl, wget...
-    # print("\033[31mred\033[m")
-    # print("\033[32mgreen\033[m")
+    # todo: curl, wget... 
     commlist = ["","pwd","cd","clear","free","df","run","ls","cat","mkdir","rm","find","cp","wget","help","edit","exit"]
     while True:
         try:
