@@ -1,6 +1,6 @@
 # This file is part of the octopusLAB project
 # The MIT License (MIT)
-# Copyright (c) 2016-2019 Jan Copak, Petr Kracik, Vasek Chalupnicek
+# Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek
 
 """
 from util.shell import shell
@@ -8,8 +8,11 @@ shell()
 > cat / edit / ls / mkdir / cp / rm / find / df ...
 ---
 clt / printHead / printTitle / printLog
-last update: 16.01.2020
+last update: 
 """
+ver = "0.23 - 18.01.2020"
+
+# toto: ifconfig, ping? 
 
 class Conf:  # for temporary global variables and config setup
       TW = 50  # terminal width
@@ -27,6 +30,13 @@ def runningEffect(num = 16):
     for ii in range(num):
         print(".",end="")
         sleep_ms(200)
+
+
+def printBar(num1,num2,char="|",col1=32,col2=33):
+    print("[",end="")
+    print((("\033[" + str(col1) + "m" + str(char) + "\033[m")*num1),end="")
+    print((("\033[" + str(col2) + "m" + str(char) + "\033[m")*num2),end="")
+    print("]  ",end="")
 
 
 def cat(file='main.py', title = False): # concatenate - prepare
@@ -55,6 +65,10 @@ def cat(file='main.py', title = False): # concatenate - prepare
 def edit(file="main.py"):
     from util.shell.editor import edit
     edit(file)
+
+
+def getVer():
+    return ver
 
 
 def ls(directory="", line = False, cols = 2, goPrint = True):
@@ -124,10 +138,12 @@ def find(xstr, directory = "examples"):
             print(f)
 
 
-def df():
+def df(echo = True):
     from os import statvfs
-    print("> flash info: "+str(statvfs("/")))
-    print("> flash free: "+str(int(statvfs("/")[0])*int(statvfs("/")[3])))
+    if echo: print("> flash info: "+str(statvfs("/")))
+    flash_free = int(statvfs("/")[0])*int(statvfs("/")[3])
+    if echo: print("> flash free: "+str(flash_free))
+    return flash_free
 
 
 def free(echo = True):
@@ -135,6 +151,29 @@ def free(echo = True):
     if echo:
         print("--- RAM free ---> " + str(mem_free()))
     return mem_free()
+
+
+def top():
+    bar100 = 30
+    print(terminal_color("-" * (bar100+20)))
+    print(terminal_color("free Memory and Flash >"))
+    ram100 = 128000
+    b1 = ram100/bar100
+    ram = free(False)
+    print("RAM:   ",end="")
+    printBar(bar100-int(ram/b1),int(ram/b1))
+    print(terminal_color(str(ram/1000) + " kB"))
+
+    flash100 = 4000000
+    b1 = flash100/bar100
+    flash = df(False)
+    print("Flash: ",end="")
+    printBar(bar100-int(flash/b1),int(flash/b1))
+    print(terminal_color(str(flash/1000) + " kB"))
+
+    print(terminal_color("-" * (bar100+20)))
+    print("octopusLAB shell version: " + getVer())
+
 
 
 def upgrade(urlTar = "https://octopusengine.org/download/micropython/stable.tar"):
@@ -176,7 +215,7 @@ commandList = ["",""]
 def shell():
     subDir = ""
     # todo: curl, wget... 
-    commlist = ["","pwd","cd","clear","free","df","run","ls","cat","mkdir","rm","find","cp","wget","help","edit","exit"]
+    commlist = ["","ver","pwd","cd","clear","free","df","top","run","ls","cat","mkdir","rm","find","cp","wget","help","edit","exit"]
     while True:
         try:
             print("\033[32muPyShell\033[m",end="")
@@ -199,9 +238,11 @@ def shell():
                 # done with editing
                 break
             if c1 == "clear": clt()
+            if c1 == "ver": print("version: " + getVer())
             if c1 == "pwd": print(subDir)
             if c1 == "free": free()
             if c1 == "df": df()
+            if c1 == "top": top()
             if c1[:2] == "./": run(c1[2:])
 
             if c2b:
