@@ -72,20 +72,27 @@ def getVer():
 
 
 def ls(directory="", line = False, cols = 2, goPrint = True):
-    if goPrint: printTitle("list > " + directory)
-    from os import listdir
-    ls = listdir(directory)
-    ls.sort()
+    # if goPrint: printTitle("list > " + directory)
+    # from os import listdir
+    from uos import ilistdir
+    ls_all = ilistdir(directory)
+    # ls.sort()
     if goPrint:
         col = 0
-        for f in ls:
-            if line:
+        for f in ls_all:
+            # print("%28s %8s " % ( str(f[0]),str(f[1])))
+            if f[1] == 16384:
+                print(terminal_color(str(f[0])))
+
+            if f[1] == 32768:
+                print(str(f[0]))
+
+            """if line:
                 print("%25s" %  f,end="")
                 col += 1
                 if col % cols:
                     print()
-            else:
-                print(f)
+            else:"""
         print()
     return ls
     #globals()["ls"]=ls
@@ -175,6 +182,10 @@ def top():
     print("octopusLAB shell version: " + getVer())
 
 
+def ping(url='google.com'):
+    from util.shell import uping
+    uping.ping(url)
+
 
 def upgrade(urlTar = "https://octopusengine.org/download/micropython/stable.tar"):
     printTitle("upgrade from url > ")
@@ -215,7 +226,7 @@ commandList = ["",""]
 def shell():
     subDir = ""
     # todo: curl, wget... 
-    commlist = ["","ver","pwd","cd","clear","free","df","top","run","ls","cat","mkdir","rm","find","cp","wget","help","edit","exit"]
+    commlist = ["","ver","pwd","cd","clear","free","df","top","run","ls","cat","mkdir","rm","find","cp","ping","wget","help","edit","exit"]
     while True:
         try:
             print("\033[32muPyShell\033[m",end="")
@@ -248,6 +259,7 @@ def shell():
             if c2b:
                 if c1 == "cd":
                     #ls = ls(goPrint=False)
+                    #ToDo: uos.chdir(path)
 
                     subDir = "/"+c2
                     if c2 == "..":
@@ -269,6 +281,7 @@ def shell():
                 if c1 == "rm": rm(c2)
                 if c1 == "find": find(c2)
                 if c1 == "run": run(c2)
+                if c1 == "ping": ping(c2)
                 if c1 == "wget": print(wget(c2))
 
                 if c1 == "cp": cp(c2) # todo c3
@@ -277,6 +290,7 @@ def shell():
                 if c1 == "ls": ls(subDir)
                 if c1 == "cat": cat()
                 if c1 == "edit": edit()
+                if c1 == "ping": ping()
                 if c1 == "wget": print(wget())
 
             if c1 == "help":
