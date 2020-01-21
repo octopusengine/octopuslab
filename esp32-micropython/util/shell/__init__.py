@@ -226,14 +226,14 @@ def wget(urlApi ="http://www.octopusengine.org/api"):
     return dt_str
 
 # --------------------------------------------------------
-commandList = ["",""]
 def shell():
+    from util.shell.terminal import terminal_color
     subDir = ""
     # todo: curl, wget... 
     commlist = ["","ver","pwd","cd","clear","free","df","top","run","ls","cat","mkdir","rm","find","cp","ping","wget","help","edit","exit"]
     while True:
-            #try:
-            print("\033[32muPyShell\033[m",end="")
+        try:
+            print( terminal_color("uPyShell",32),end="")
             sele = input(":~" + subDir+ "$ ")
             comm = sele.split(" ")
             c1 = comm[0]
@@ -301,5 +301,5 @@ def shell():
                 print("octopusLAB - simple shell help:")
                 cat("util/octopus_shell_help.txt", False)
                 print()
-        #except Exception as e:
-        #    print("Shell Err. > Exception: {0}".format(e))
+        except Exception as e:
+            print("Shell Err. > Exception: {0}".format(e))
