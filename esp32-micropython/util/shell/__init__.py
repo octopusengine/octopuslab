@@ -7,29 +7,16 @@ from util.shell import shell
 shell()
 > cat / edit / ls / mkdir / cp / rm / find / df ...
 ---
-clt / printHead / printTitle / printLog
+clt / printTitle
 last update: 
 """
-ver = "0.23 - 18.01.2020"
+ver = "0.23 - 20.01.2020"
 
 # toto: ifconfig, ping? 
-
-class Conf:  # for temporary global variables and config setup
-      TW = 50  # terminal width
+# from util.shell.terminal import printTitle
 
 
-def terminal_color(txt,col=33): # default yellow
-    # 30 black / 31 red / 32 green / 33 yellow / 34 blue / 35 violet / 36 cyan 
-    # 21 underline
-    # print("\033[32mgreen\033[m")
-    return "\033[" + str(col) + "m" + str(txt) + "\033[m"
-
-
-def runningEffect(num = 16):
-    from time import sleep_ms
-    for ii in range(num):
-        print(".",end="")
-        sleep_ms(200)
+SEPARATOR_WIDTH = 50
 
 
 def printBar(num1,num2,char="|",col1=32,col2=33):
@@ -43,6 +30,7 @@ def cat(file='main.py', title = False): # concatenate - prepare
     """print data: f("filename") """
     fi = open(file, 'r')
     if title:
+        from util.shell.terminal import printTitle
         printTitle("file > " + file)
         # file statistic
         lines = 0
@@ -55,7 +43,7 @@ def cat(file='main.py', title = False): # concatenate - prepare
             characters = characters + len(line)
 
         print("Statistic > lines: " + str(lines) + " | words: " + str(words) + " | chars: " + str(characters))
-        print('-' * Conf.TW)
+        print('-' * SEPARATOR_WIDTH)
         fi = open(file, 'r')
     for line in fi:
         print(line, end="")
@@ -72,20 +60,32 @@ def getVer():
 
 
 def ls(directory="", line = False, cols = 2, goPrint = True):
+    from util.shell.terminal import terminal_color
+    debug = False
     # if goPrint: printTitle("list > " + directory)
     # from os import listdir
     from uos import ilistdir
+    from os import stat
     ls_all = ilistdir(directory)
+    if debug:
+        print(directory)
+        print(str(ls_all))
     # ls.sort()
     if goPrint:
         col = 0
+        print("%8s %s " % ( "d/[B]", "name"))
         for f in ls_all:
-            # print("%28s %8s " % ( str(f[0]),str(f[1])))
             if f[1] == 16384:
-                print(terminal_color(str(f[0])))
+                # print(terminal_color(str(f[0])))
+                print("%8s %s " % ( "---", terminal_color(str(f[0]))))
 
             if f[1] == 32768:
-                print(str(f[0]))
+                # print(str(f[0]) + "" + str(stat(f[0])[6]))
+                try:
+                   print("%8s %s" % ( str(stat(f[0])[6]), terminal_color(str(f[0]),36)))
+                except:
+                   # print("%8s %s" % ( str(stat(directory+f[0])[6]), terminal_color(str(f[0]),36)))
+                   print("%8s %s" % ( "?", terminal_color(str(f[0]),36)))
 
             """if line:
                 print("%25s" %  f,end="")
@@ -99,7 +99,7 @@ def ls(directory="", line = False, cols = 2, goPrint = True):
 
 
 def cp(fileSource, fileTarget="main.py"):
-
+    from util.shell.terminal import printTitle
     printTitle("file_copy to " + fileTarget)
     print("(Always be careful)")
     fs = open(fileSource)
@@ -123,6 +123,7 @@ def mkdir(directory):
 
 def rm(file = None):
     if file:
+        from util.shell.terminal import printTitle
         printTitle("remove file > " + file)
         try:
             from os import remove
@@ -136,6 +137,7 @@ def rm(file = None):
 
 
 def find(xstr, directory = "examples"):
+    from util.shell.terminal import printTitle
     printTitle("find file > " + xstr)
     from os import listdir
     ls = listdir(directory)
@@ -161,6 +163,7 @@ def free(echo = True):
 
 
 def top():
+    from util.shell.terminal import terminal_color
     bar100 = 30
     print(terminal_color("-" * (bar100+20)))
     print(terminal_color("free Memory and Flash >"))
@@ -188,6 +191,7 @@ def ping(url='google.com'):
 
 
 def upgrade(urlTar = "https://octopusengine.org/download/micropython/stable.tar"):
+    from util.shell.terminal import printTitle
     printTitle("upgrade from url > ")
     print(urlTar)
     from util.setup import deploy
@@ -228,7 +232,7 @@ def shell():
     # todo: curl, wget... 
     commlist = ["","ver","pwd","cd","clear","free","df","top","run","ls","cat","mkdir","rm","find","cp","ping","wget","help","edit","exit"]
     while True:
-        try:
+            #try:
             print("\033[32muPyShell\033[m",end="")
             sele = input(":~" + subDir+ "$ ")
             comm = sele.split(" ")
@@ -297,38 +301,5 @@ def shell():
                 print("octopusLAB - simple shell help:")
                 cat("util/octopus_shell_help.txt", False)
                 print()
-        except Exception as e:
-            print("Shell Err. > Exception: {0}".format(e))
-
-# --------------------------------------------------------
-
-def printHead(s):
-    print()
-    print('-' * Conf.TW)
-    print("[--- " + s + " ---] ")
-
-
-def printTitle(t,w=Conf.TW):
-    print()
-    print('=' * w)
-    print("|",end="")
-    print(t.center(w-2),end="")
-    print("|")
-    print('=' * w)
-
-
-def printLog(i,s=""):
-    print()
-    print('-' * Conf.TW)
-    print("[--- " + str(i) + " ---] " + s)
-
-
-def printInfo():
-    import gc #mem_free
-    print("> mem_free: "+str(gc.mem_free()))
-    df()
-
-
-def printMachineInfo():
-    import machine
-    print("> machine.freq: "+str(machine.freq()))
+        #except Exception as e:
+        #    print("Shell Err. > Exception: {0}".format(e))
