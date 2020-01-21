@@ -1,5 +1,5 @@
 import sys
-from util.shell import terminal_color
+from util.shell.terminal import terminal_color
 
 
 def edit(filename='main.py'):
