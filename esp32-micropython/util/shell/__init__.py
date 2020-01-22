@@ -5,12 +5,18 @@
 """
 from util.shell import shell
 shell()
+
 > cat / edit / ls / mkdir / cp / rm / find / df ...
----
-clt / printTitle
+--------
+autostart:
+>>> from config import Config
+>>> cc = Config("boot")
+>>> cc.set("import_shell",1)
+>>> cc.save()
+--------
 last update: 
 """
-ver = "0.23 - 20.01.2020"
+ver = "0.25 - 21.01.2020"
 
 # toto: ifconfig, ping? 
 # from util.shell.terminal import printTitle
@@ -99,7 +105,7 @@ def ls(directory="", line = False, cols = 2, goPrint = True):
 
 
 def cp(fileSource, fileTarget="main.py"):
-    from util.shell.terminal import printTitle
+    from util.shell.terminal import printTitle, runningEffect
     printTitle("file_copy to " + fileTarget)
     print("(Always be careful)")
     fs = open(fileSource)
@@ -123,7 +129,7 @@ def mkdir(directory):
 
 def rm(file = None):
     if file:
-        from util.shell.terminal import printTitle
+        from util.shell.terminal import printTitle, runningEffect
         printTitle("remove file > " + file)
         try:
             from os import remove
@@ -229,6 +235,7 @@ def wget(urlApi ="http://www.octopusengine.org/api"):
 def shell():
     from util.shell.terminal import terminal_color
     subDir = ""
+    # standard Linux commands and special (ver, edit, run, wifion, wifioff, ...)
     # todo: curl, wget... 
     commlist = ["","ver","pwd","cd","clear","free","df","top","run","ls","cat","mkdir","rm","find","cp","ping","wget","help","edit","exit"]
     while True:
@@ -246,8 +253,12 @@ def shell():
             else:
                 c2 = ""
                 c2b = False
-            if len(comm) > 2: c3 = comm[2]
-            else: c3 = ""
+            if len(comm) > 2: 
+                c3 = comm[2]
+                c3b = True
+            else: 
+                c3 = ""
+                c3b = False
 
             if sele == "exit":
                 # done with editing
@@ -288,7 +299,7 @@ def shell():
                 if c1 == "ping": ping(c2)
                 if c1 == "wget": print(wget(c2))
 
-                if c1 == "cp": cp(c2) # todo c3
+                # if c1 == "cp": cp(c2) # todo c3
             else:
                 if c1 == "run": run()
                 if c1 == "ls": ls(subDir)
@@ -296,6 +307,9 @@ def shell():
                 if c1 == "edit": edit()
                 if c1 == "ping": ping()
                 if c1 == "wget": print(wget())
+
+            if c3b:
+                if c1 == "cp": cp(c2, c3)
 
             if c1 == "help":
                 print("octopusLAB - simple shell help:")
