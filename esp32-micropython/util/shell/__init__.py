@@ -1,6 +1,6 @@
 # This file is part of the octopusLAB project
 # The MIT License (MIT)
-# Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek
+# Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek, Jan Cespivo
 
 """
 from util.shell import shell
@@ -16,7 +16,7 @@ autostart:
 --------
 last update: 
 """
-ver = "0.25 - 21.01.2020"
+__version__ = "0.25 - 21.01.2020"
 
 # toto: ifconfig, ping? 
 # from util.shell.terminal import printTitle
@@ -24,15 +24,46 @@ ver = "0.25 - 21.01.2020"
 
 SEPARATOR_WIDTH = 50
 
-
-def printBar(num1,num2,char="|",col1=32,col2=33):
-    print("[",end="")
-    print((("\033[" + str(col1) + "m" + str(char) + "\033[m")*num1),end="")
-    print((("\033[" + str(col2) + "m" + str(char) + "\033[m")*num2),end="")
-    print("]  ",end="")
+_command_registry = {}
 
 
-def cat(file='main.py', title = False): # concatenate - prepare
+def shell_run(command_list):
+    cmd, *arguments = command_list
+    try:
+        func = _command_registry[cmd]
+    except KeyError as exc:
+        raise KeyError(str(exc) + ": command not found")
+
+    func(*arguments)
+
+
+def _register_command(func_name):
+    def _command(func):
+        _command_registry[func_name] = func
+        return func
+
+    return _command
+
+
+def command(func_or_name):
+    if callable(func_or_name):
+        return _register_command(func_or_name.__name__)(func_or_name)
+    elif isinstance(func_or_name, str):
+        name = func_or_name
+        return _register_command(name)
+
+    raise ImportError('bad decorator command')
+
+
+def printBar(num1, num2, char="|", col1=32, col2=33):
+    print("[", end="")
+    print((("\033[" + str(col1) + "m" + str(char) + "\033[m") * num1), end="")
+    print((("\033[" + str(col2) + "m" + str(char) + "\033[m") * num2), end="")
+    print("]  ", end="")
+
+
+@command
+def cat(file='main.py', title=False):  # concatenate - prepare
     """print data: f("filename") """
     fi = open(file, 'r')
     if title:
@@ -48,24 +79,23 @@ def cat(file='main.py', title = False): # concatenate - prepare
             words = words + len(wordslist)
             characters = characters + len(line)
 
-        print("Statistic > lines: " + str(lines) + " | words: " + str(words) + " | chars: " + str(characters))
+        print("Statistic > lines: " + str(lines) + " | words: " + str(
+            words) + " | chars: " + str(characters))
         print('-' * SEPARATOR_WIDTH)
         fi = open(file, 'r')
     for line in fi:
         print(line, end="")
-    globals()["cat"]=cat
+    globals()["cat"] = cat
 
 
+@command
 def edit(file="main.py"):
     from util.shell.editor import edit
     edit(file)
 
 
-def getVer():
-    return ver
-
-
-def ls(directory="", line = False, cols = 2, goPrint = True):
+@command
+def ls(directory="", line=False, cols=2, goPrint=True):
     from util.shell.terminal import terminal_color
     debug = False
     # if goPrint: printTitle("list > " + directory)
@@ -79,19 +109,20 @@ def ls(directory="", line = False, cols = 2, goPrint = True):
     # ls.sort()
     if goPrint:
         col = 0
-        print("%8s %s " % ( "d/[B]", "name"))
+        print("%8s %s " % ("d/[B]", "name"))
         for f in ls_all:
             if f[1] == 16384:
                 # print(terminal_color(str(f[0])))
-                print("%8s %s " % ( "---", terminal_color(str(f[0]))))
+                print("%8s %s " % ("---", terminal_color(str(f[0]))))
 
             if f[1] == 32768:
                 # print(str(f[0]) + "" + str(stat(f[0])[6]))
                 try:
-                   print("%8s %s" % ( str(stat(f[0])[6]), terminal_color(str(f[0]),36)))
+                    print(
+                        "%8s %s" % (str(stat(f[0])[6]), terminal_color(str(f[0]), 36)))
                 except:
-                   # print("%8s %s" % ( str(stat(directory+f[0])[6]), terminal_color(str(f[0]),36)))
-                   print("%8s %s" % ( "?", terminal_color(str(f[0]),36)))
+                    # print("%8s %s" % ( str(stat(directory+f[0])[6]), terminal_color(str(f[0]),36)))
+                    print("%8s %s" % ("?", terminal_color(str(f[0]), 36)))
 
             """if line:
                 print("%25s" %  f,end="")
@@ -101,9 +132,10 @@ def ls(directory="", line = False, cols = 2, goPrint = True):
             else:"""
         print()
     return ls
-    #globals()["ls"]=ls
+    # globals()["ls"]=ls
 
 
+@command
 def cp(fileSource, fileTarget="main.py"):
     from util.shell.terminal import printTitle, runningEffect
     printTitle("file_copy to " + fileTarget)
@@ -119,6 +151,7 @@ def cp(fileSource, fileTarget="main.py"):
     print(" ok")
 
 
+@command
 def mkdir(directory):
     try:
         from os import mkdir
@@ -127,7 +160,8 @@ def mkdir(directory):
         print("Exception: {0}".format(e))
 
 
-def rm(file = None):
+@command
+def rm(file=None):
     if file:
         from util.shell.terminal import printTitle, runningEffect
         printTitle("remove file > " + file)
@@ -142,7 +176,8 @@ def rm(file = None):
         print("Input param: path + file name")
 
 
-def find(xstr, directory = "examples"):
+@command
+def find(xstr, directory="examples"):
     from util.shell.terminal import printTitle
     printTitle("find file > " + xstr)
     from os import listdir
@@ -153,50 +188,57 @@ def find(xstr, directory = "examples"):
             print(f)
 
 
-def df(echo = True):
+@command
+def df(echo=True):
     from os import statvfs
-    if echo: print("> flash info: "+str(statvfs("/")))
-    flash_free = int(statvfs("/")[0])*int(statvfs("/")[3])
-    if echo: print("> flash free: "+str(flash_free))
+    if echo:
+        print("> flash info: " + str(statvfs("/")))
+    flash_free = int(statvfs("/")[0]) * int(statvfs("/")[3])
+    if echo:
+        print("> flash free: " + str(flash_free))
     return flash_free
 
 
-def free(echo = True):
+@command
+def free(echo=True):
     from gc import mem_free
     if echo:
         print("--- RAM free ---> " + str(mem_free()))
     return mem_free()
 
 
+@command
 def top():
     from util.shell.terminal import terminal_color
     bar100 = 30
-    print(terminal_color("-" * (bar100+20)))
+    print(terminal_color("-" * (bar100 + 20)))
     print(terminal_color("free Memory and Flash >"))
     ram100 = 128000
-    b1 = ram100/bar100
+    b1 = ram100 / bar100
     ram = free(False)
-    print("RAM:   ",end="")
-    printBar(bar100-int(ram/b1),int(ram/b1))
-    print(terminal_color(str(ram/1000) + " kB"))
+    print("RAM:   ", end="")
+    printBar(bar100 - int(ram / b1), int(ram / b1))
+    print(terminal_color(str(ram / 1000) + " kB"))
 
     flash100 = 4000000
-    b1 = flash100/bar100
+    b1 = flash100 / bar100
     flash = df(False)
-    print("Flash: ",end="")
-    printBar(bar100-int(flash/b1),int(flash/b1))
-    print(terminal_color(str(flash/1000) + " kB"))
+    print("Flash: ", end="")
+    printBar(bar100 - int(flash / b1), int(flash / b1))
+    print(terminal_color(str(flash / 1000) + " kB"))
 
-    print(terminal_color("-" * (bar100+20)))
-    print("octopusLAB shell version: " + getVer())
+    print(terminal_color("-" * (bar100 + 20)))
+    print("octopusLAB shell version: " + __version__)
 
 
+@command
 def ping(url='google.com'):
     from util.shell import uping
     uping.ping(url)
 
 
-def upgrade(urlTar = "https://octopusengine.org/download/micropython/stable.tar"):
+# @command TODO
+def upgrade(urlTar="https://octopusengine.org/download/micropython/stable.tar"):
     from util.shell.terminal import printTitle
     printTitle("upgrade from url > ")
     print(urlTar)
@@ -206,15 +248,25 @@ def upgrade(urlTar = "https://octopusengine.org/download/micropython/stable.tar"
     except Exception as e:
         print("Exception: {0}".format(e))
 
-def clt():
-    print(chr(27) + "[2J") # clear terminal
-    print("\x1b[2J\x1b[H") # cursor up
+
+@command
+def clear():
+    print(chr(27) + "[2J")  # clear terminal
+    print("\x1b[2J\x1b[H")  # cursor up
 
 
-def run(file ="main.py"):
-     exec(open(file).read(), globals())
+@command
+def run(file="main.py"):
+    exec(open(file).read(), globals())
 
-def wget(urlApi ="http://www.octopusengine.org/api"):
+
+@command
+def ver():
+    print(__version__)
+
+
+@command
+def wget(urlApi="http://www.octopusengine.org/api"):
     # get api text / jsoun / etc
     from util.octopus import w
     try:
@@ -223,97 +275,58 @@ def wget(urlApi ="http://www.octopusengine.org/api"):
         print("Exception: {0}".format(e))
 
     from urequests import get
-    urltxt=urlApi+"/text123.txt"
+    urltxt = urlApi + "/text123.txt"
     try:
         response = get(urltxt)
         dt_str = response.text
     except Exception as e:
         print("Err. read txt from URL")
-    return dt_str
+    print(dt_str)
 
-# --------------------------------------------------------
+
+@command
+def pwd():
+    from uos import getcwd
+    print(getcwd())
+
+
+@command
+def cd(directory):
+    from uos import chdir
+    chdir(directory)
+
+
+@command
+def exit():
+    raise KeyboardInterrupt('shell exiting...')
+
+
+@command
+def help():
+    print("octopusLAB - simple shell help:")
+    cat("util/octopus_shell_help.txt", False)
+    print()
+
+
 def shell():
     from util.shell.terminal import terminal_color
-    subDir = ""
-    # standard Linux commands and special (ver, edit, run, wifion, wifioff, ...)
-    # todo: curl, wget... 
-    commlist = ["","ver","pwd","cd","clear","free","df","top","run","ls","cat","mkdir","rm","find","cp","ping","wget","help","edit","exit"]
-    while True:
-        try:
-            print( terminal_color("uPyShell",32),end="")
-            sele = input(":~" + subDir+ "$ ")
-            comm = sele.split(" ")
-            c1 = comm[0]
-            if c1 not in commlist and c1[:2] != "./":
-                print(c1, ": command not found")
+    from uos import getcwd
+    try:
+        while True:
+            input_str = input(
+                terminal_color("uPyShell", 32) + ":~" + getcwd() + "$ "
+            )
+            command_list = input_str.split(" ")
 
-            if len(comm) > 1:
-                c2 = comm[1]
-                c2b = True
-            else:
-                c2 = ""
-                c2b = False
-            if len(comm) > 2: 
-                c3 = comm[2]
-                c3b = True
-            else: 
-                c3 = ""
-                c3b = False
+            # hacky support for run ./file.py
+            if command_list[0][:2] == "./":
+                cmd = command_list.pop(0)
+                command_list = ['run', cmd[2:]] + command_list
 
-            if sele == "exit":
-                # done with editing
-                break
-            if c1 == "clear": clt()
-            if c1 == "ver": print("version: " + getVer())
-            if c1 == "pwd": print(subDir)
-            if c1 == "free": free()
-            if c1 == "df": df()
-            if c1 == "top": top()
-            if c1[:2] == "./": run(c1[2:])
-
-            if c2b:
-                if c1 == "cd":
-                    #ls = ls(goPrint=False)
-                    #ToDo: uos.chdir(path)
-
-                    subDir = "/"+c2
-                    if c2 == "..":
-                        subDir =""
-
-                """
-                if c1 == "cd":
-                    ls = ls(goPrint=False)
-                    if c2 in ls
-                        subDir = c2
-                    else:
-                        print(c2 + "dir not found")
-                """
-
-                if c1 == "ls": ls(c2)
-                if c1 == "cat": cat(c2)
-                if c1 == "edit": edit(c2)
-                if c1 == "mkdir": mkdir(c2)
-                if c1 == "rm": rm(c2)
-                if c1 == "find": find(c2)
-                if c1 == "run": run(c2)
-                if c1 == "ping": ping(c2)
-                if c1 == "wget": print(wget(c2))
-
-                # if c1 == "cp": cp(c2) # todo c3
-            else:
-                if c1 == "run": run()
-                if c1 == "ls": ls(subDir)
-                if c1 == "cat": cat()
-                if c1 == "edit": edit()
-                if c1 == "ping": ping()
-                if c1 == "wget": print(wget())
-
-            if c3b:
-                if c1 == "cp": cp(c2, c3)
-
-            if c1 == "help":
-                print("octopusLAB - simple shell help:")
-                cat("util/octopus_shell_help.txt", False)
-                print()
-        except Exception as e:
-            print("Shell Err. > Exception: {0}".format(e))
+            try:
+                shell_run(command_list)
+            except Exception as exc:
+                print(exc)
+    except KeyboardInterrupt as exc:
+        print(exc)
+        return
