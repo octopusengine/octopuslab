@@ -16,15 +16,19 @@ autostart:
 --------
 last update: 
 """
-__version__ = "0.25 - 21.01.2020"
+__version__ = "0.26 - 23.01.2020"
 
-# toto: ifconfig, ping? 
+# toto: ifconfig, kill, wifion, wifioff, wget, wsend, ... 
 # from util.shell.terminal import printTitle
-
+from time import sleep_ms, ticks_ms, ticks_diff
+from machine import RTC
+rtc = RTC() # real time
 
 SEPARATOR_WIDTH = 50
 
 _command_registry = {}
+running_process = ""
+process_start_time = 0
 
 
 def shell_run(command_list):
@@ -53,6 +57,21 @@ def command(func_or_name):
         return _register_command(name)
 
     raise ImportError('bad decorator command')
+
+
+def add0(sn):
+    ret_str=str(sn)
+    if int(sn)<10:
+       ret_str = "0"+str(sn)
+    return ret_str
+
+
+def get_hhmmss(separator=":",rtc=rtc):
+    #get_hhmm(separator) | separator = string: "-" / " "
+    hh=add0(rtc.datetime()[4])
+    mm=add0(rtc.datetime()[5])
+    ss=add0(rtc.datetime()[6])
+    return hh + separator + mm + separator + ss
 
 
 def printBar(num1, num2, char="|", col1=32, col2=33):
@@ -209,6 +228,7 @@ def free(echo=True):
 
 @command
 def top():
+    import os, ubinascii, machine
     from util.shell.terminal import terminal_color
     bar100 = 30
     print(terminal_color("-" * (bar100 + 20)))
@@ -228,7 +248,15 @@ def top():
     print(terminal_color(str(flash / 1000) + " kB"))
 
     print(terminal_color("-" * (bar100 + 20)))
-    print("octopusLAB shell version: " + __version__)
+    uid = ubinascii.hexlify(machine.unique_id()).decode()
+    print(terminal_color("> ESP32 unique_id: ") + str(uid))
+    print(terminal_color("> uPy version:  ") + str(os.uname()[3]))
+    print(terminal_color("> octopusLAB shell: ") + __version__)
+
+    print(terminal_color("-" * (bar100 + 20)))
+    delta = ticks_diff(ticks_ms(), process_start_time)
+    print(terminal_color("[1] ",35) + running_process, str(delta/1000))
+    print(terminal_color(get_hhmmss()),36)
 
 
 @command
@@ -257,6 +285,9 @@ def clear():
 
 @command
 def run(file="main.py"):
+    global running_process, process_start_time
+    running_process = file
+    process_start_time = ticks_ms()
     exec(open(file).read(), globals())
 
 
