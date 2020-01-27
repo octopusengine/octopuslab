@@ -1,8 +1,5 @@
-import sys
-from util.shell.terminal import terminal_color
-
-
-def edit(filename='main.py'):
+def edit(filename='/main.py'):
+    from .terminal import terminal_color
     SEPARATOR_WIDTH = 50
     EDITOR_LINE_PREFIX_TPL = terminal_color('{:>4d}│')
     EDITOR_TITLE_TOP_PREFIX = terminal_color('    ┌')
@@ -205,6 +202,8 @@ def edit(filename='main.py'):
 
 if __name__ == '__main__':
     # print command line arguments
+    import sys
+
     if len(sys.argv) > 1:
         edit(sys.argv[1])
     else:
