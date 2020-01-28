@@ -82,11 +82,11 @@ def printBar(num1, num2, char="|", col1=32, col2=33):
 
 
 @command
-def cat(file='main.py', title=False):  # concatenate - prepare
+def cat(file='/main.py', title=False):  # concatenate - prepare
     """print data: f("filename") """
     fi = open(file, 'r')
     if title:
-        from util.shell.terminal import printTitle
+        from .terminal import printTitle
         printTitle("file > " + file)
         # file statistic
         lines = 0
@@ -108,14 +108,14 @@ def cat(file='main.py', title=False):  # concatenate - prepare
 
 
 @command
-def edit(file="main.py"):
-    from util.shell.editor import edit
+def edit(file="/main.py"):
+    from .editor import edit
     edit(file)
 
 
 @command
 def ls(directory="", line=False, cols=2, goPrint=True):
-    from util.shell.terminal import terminal_color
+    from .terminal import terminal_color
     debug = False
     # if goPrint: printTitle("list > " + directory)
     # from os import listdir
@@ -155,8 +155,8 @@ def ls(directory="", line=False, cols=2, goPrint=True):
 
 
 @command
-def cp(fileSource, fileTarget="main.py"):
-    from util.shell.terminal import printTitle, runningEffect
+def cp(fileSource, fileTarget="/main.py"):
+    from .terminal import printTitle, runningEffect
     printTitle("file_copy to " + fileTarget)
     print("(Always be careful)")
     fs = open(fileSource)
@@ -182,7 +182,7 @@ def mkdir(directory):
 @command
 def rm(file=None):
     if file:
-        from util.shell.terminal import printTitle, runningEffect
+        from .terminal import printTitle, runningEffect
         printTitle("remove file > " + file)
         try:
             from os import remove
@@ -197,9 +197,9 @@ def rm(file=None):
 
 @command
 def find(xstr, directory="examples"):
-    from util.shell.terminal import printTitle
-    printTitle("find file > " + xstr)
     from os import listdir
+    from .terminal import printTitle
+    printTitle("find file > " + xstr)
     ls = listdir(directory)
     ls.sort()
     for f in ls:
@@ -229,7 +229,7 @@ def free(echo=True):
 @command
 def top():
     import os, ubinascii, machine
-    from util.shell.terminal import terminal_color
+    from .terminal import terminal_color
     bar100 = 30
     print(terminal_color("-" * (bar100 + 20)))
     print(terminal_color("free Memory and Flash >"))
@@ -261,16 +261,16 @@ def top():
 
 @command
 def ping(url='google.com'):
-    from util.shell import uping
-    uping.ping(url)
+    from .uping import ping
+    ping(url)
 
 
 # @command TODO
 def upgrade(urlTar="https://octopusengine.org/download/micropython/stable.tar"):
-    from util.shell.terminal import printTitle
+    from ..setup import deploy
+    from .terminal import printTitle
     printTitle("upgrade from url > ")
     print(urlTar)
-    from util.setup import deploy
     try:
         deploy(urlTar)
     except Exception as e:
@@ -284,7 +284,7 @@ def clear():
 
 
 @command
-def run(file="main.py"):
+def run(file="/main.py"):
     global running_process, process_start_time
     running_process = file
     process_start_time = ticks_ms()
@@ -299,7 +299,7 @@ def ver():
 @command
 def wget(urlApi="http://www.octopusengine.org/api"):
     # get api text / jsoun / etc
-    from util.octopus import w
+    from ..octopus import w
     try:
         w()
     except Exception as e:
@@ -339,25 +339,37 @@ def help():
     print()
 
 
+class _release_cwd:
+    def __enter__(self):
+        from uos import getcwd
+        self.current_directory = getcwd()
+
+    def __exit__(self, type, value, traceback):
+        from uos import chdir
+        chdir(self.current_directory)
+
+
 def shell():
-    from util.shell.terminal import terminal_color
     from uos import getcwd
-    try:
-        while True:
-            input_str = input(
-                terminal_color("uPyShell", 32) + ":~" + getcwd() + "$ "
-            )
-            command_list = input_str.split(" ")
+    from sys import print_exception
+    from .terminal import terminal_color
+    with _release_cwd():
+        try:
+            while True:
+                input_str = input(
+                    terminal_color("uPyShell", 32) + ":~" + getcwd() + "$ "
+                )
+                command_list = input_str.split(" ")
 
-            # hacky support for run ./file.py
-            if command_list[0][:2] == "./":
-                cmd = command_list.pop(0)
-                command_list = ['run', cmd[2:]] + command_list
+                # hacky support for run ./file.py
+                if command_list[0][:2] == "./":
+                    cmd = command_list.pop(0)
+                    command_list = ['run', cmd[2:]] + command_list
 
-            try:
-                shell_run(command_list)
-            except Exception as exc:
-                print(exc)
-    except KeyboardInterrupt as exc:
-        print(exc)
-        return
+                try:
+                    shell_run(command_list)
+                except Exception as exc:
+                    print_exception(exc)
+        except KeyboardInterrupt as exc:
+            print(exc)
+            return
