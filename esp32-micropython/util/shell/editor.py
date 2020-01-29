@@ -97,7 +97,7 @@ def edit(filename='/main.py'):
                 if line.endswith('\n'):
                     l = line[:-1]
                 buff.append(l)
-    except FileNotFoundError:
+    except OSError:
         file_exists = False
 
     # welcome messages
