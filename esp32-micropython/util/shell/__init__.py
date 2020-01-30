@@ -16,7 +16,7 @@ autostart:
 --------
 last update: 
 """
-__version__ = "0.26 - 23.01.2020"
+__version__ = "0.27 - 29.01.2020"
 
 # toto: ifconfig, kill, wifion, wifioff, wget, wsend, ... 
 # from util.shell.terminal import printTitle
@@ -104,6 +104,7 @@ def cat(file='/main.py', title=False):  # concatenate - prepare
         fi = open(file, 'r')
     for line in fi:
         print(line, end="")
+    print()
     globals()["cat"] = cat
 
 
@@ -196,7 +197,7 @@ def rm(file=None):
 
 
 @command
-def find(xstr, directory="examples"):
+def find(xstr, directory="examples"): # ?getcwd()
     from os import listdir
     from .terminal import printTitle
     printTitle("find file > " + xstr)
@@ -265,7 +266,7 @@ def ping(url='google.com'):
     ping(url)
 
 
-# @command TODO
+@command # TODO
 def upgrade(urlTar="https://octopusengine.org/download/micropython/stable.tar"):
     from ..setup import deploy
     from .terminal import printTitle
