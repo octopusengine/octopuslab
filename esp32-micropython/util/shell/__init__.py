@@ -20,25 +20,31 @@ __version__ = "0.27 - 29.01.2020"
 
 # toto: ifconfig, kill, wifion, wifioff, wget, wsend, ... 
 # from util.shell.terminal import printTitle
-from time import sleep_ms, ticks_ms, ticks_diff
-from machine import RTC
-rtc = RTC() # real time
 
 SEPARATOR_WIDTH = 50
 
 _command_registry = {}
-running_process = ""
-process_start_time = 0
+_background_jobs = {}
 
 
-def shell_run(command_list):
-    cmd, *arguments = command_list
+def _thread_wrapper(func, job_id, *arguments):
     try:
-        func = _command_registry[cmd]
-    except KeyError as exc:
-        raise KeyError(str(exc) + ": command not found")
+        func(*arguments)
+    finally:
+        del _background_jobs[job_id]
+        print('[{job_id}] stopped'.format(job_id=job_id))
 
-    func(*arguments)
+
+def _background_func(func, command_list):
+    def _wrapper(*arguments):
+        from _thread import start_new_thread
+        from time import ticks_ms
+        job_id = start_time = ticks_ms()
+        start_new_thread(_thread_wrapper, (func, job_id) + arguments)
+        _background_jobs[job_id] = {'start_time': start_time, 'command_list': command_list}
+        print('[{job_id}] started'.format(job_id=job_id))
+
+    return _wrapper
 
 
 def _register_command(func_name):
@@ -59,26 +65,17 @@ def command(func_or_name):
     raise ImportError('bad decorator command')
 
 
-def add0(sn):
-    ret_str=str(sn)
-    if int(sn)<10:
-       ret_str = "0"+str(sn)
-    return ret_str
-
-
-def get_hhmmss(separator=":",rtc=rtc):
-    #get_hhmm(separator) | separator = string: "-" / " "
-    hh=add0(rtc.datetime()[4])
-    mm=add0(rtc.datetime()[5])
-    ss=add0(rtc.datetime()[6])
-    return hh + separator + mm + separator + ss
-
-
 def printBar(num1, num2, char="|", col1=32, col2=33):
     print("[", end="")
     print((("\033[" + str(col1) + "m" + str(char) + "\033[m") * num1), end="")
     print((("\033[" + str(col2) + "m" + str(char) + "\033[m") * num2), end="")
     print("]  ", end="")
+
+
+@command
+def sleep(seconds):
+    from time import sleep
+    sleep(float(seconds))
 
 
 @command
@@ -230,7 +227,25 @@ def free(echo=True):
 @command
 def top():
     import os, ubinascii, machine
+    from time import ticks_ms, ticks_diff
+    from machine import RTC
+
     from .terminal import terminal_color
+
+    def add0(sn):
+        ret_str = str(sn)
+        if int(sn) < 10:
+            ret_str = "0" + str(sn)
+        return ret_str
+
+    def get_hhmmss(separator=":"):
+        rtc = RTC()  # real time
+        # get_hhmm(separator) | separator = string: "-" / " "
+        hh = add0(rtc.datetime()[4])
+        mm = add0(rtc.datetime()[5])
+        ss = add0(rtc.datetime()[6])
+        return hh + separator + mm + separator + ss
+
     bar100 = 30
     print(terminal_color("-" * (bar100 + 20)))
     print(terminal_color("free Memory and Flash >"))
@@ -255,9 +270,21 @@ def top():
     print(terminal_color("> octopusLAB shell: ") + __version__)
 
     print(terminal_color("-" * (bar100 + 20)))
-    delta = ticks_diff(ticks_ms(), process_start_time)
-    print(terminal_color("[1] ",35) + running_process, str(delta/1000))
-    print(terminal_color(get_hhmmss()),36)
+    now = ticks_ms()
+    for job_id, job_info in _background_jobs.items():
+        job_duration = ticks_diff(now, job_info['start_time'])
+        job_command = ' '.join(job_info['command_list'])
+        print(
+            terminal_color(
+                "[{job_id}] {job_duration}s {job_command}".format(
+                    job_id=job_id,
+                    job_duration=job_duration / 1000,
+                    job_command=job_command,
+                ),
+                35
+            ),
+        )
+    print(terminal_color(get_hhmmss()), 36)
 
 
 @command
@@ -286,9 +313,6 @@ def clear():
 
 @command
 def run(file="/main.py"):
-    global running_process, process_start_time
-    running_process = file
-    process_start_time = ticks_ms()
     exec(open(file).read(), globals())
 
 
@@ -330,7 +354,7 @@ def cd(directory):
 
 @command
 def exit():
-    raise KeyboardInterrupt('shell exiting...')
+    raise SystemExit
 
 
 @command
@@ -350,27 +374,72 @@ class _release_cwd:
         chdir(self.current_directory)
 
 
+def parse_input(input_str):
+    command_list = input_str.strip().split()
+
+    # support for background jobs via `&` at the end of line
+    # TODO tests:
+    # arguments = ['one', 'two', 'three&']
+    # arguments = ['one', 'two', 'three', '&']
+    # arguments = ['&']
+    # arguments = ['one&']
+    # arguments = ['one', 'two', 'three']
+    # arguments = ['one']
+    # arguments = []
+    if command_list and command_list[-1][-1] == '&':
+        run_in_background = True
+        command_list[-1] = command_list[-1][:-1]
+        if not command_list[-1]:
+            command_list = command_list[:-1]
+    else:
+        run_in_background = False
+
+    return command_list, run_in_background
+
+
 def shell():
     from uos import getcwd
     from sys import print_exception
     from .terminal import terminal_color
     with _release_cwd():
-        try:
-            while True:
+        while True:
+            try:
                 input_str = input(
                     terminal_color("uPyShell", 32) + ":~" + getcwd() + "$ "
                 )
-                command_list = input_str.split(" ")
+            except KeyboardInterrupt:
+                print('^C')
+                continue
+            except EOFError:
+                print()
+                return
 
-                # hacky support for run ./file.py
-                if command_list[0][:2] == "./":
-                    cmd = command_list.pop(0)
-                    command_list = ['run', cmd[2:]] + command_list
+            command_list, run_in_background = parse_input(input_str)
 
-                try:
-                    shell_run(command_list)
-                except Exception as exc:
-                    print_exception(exc)
-        except KeyboardInterrupt as exc:
-            print(exc)
-            return
+            if not command_list:
+                continue
+
+            # hacky support for run ./file.py
+            if command_list[0][:2] == "./":
+                cmd = command_list.pop(0)
+                command_list = ['run', cmd[2:]] + command_list
+
+            cmd, *arguments = command_list
+
+            try:
+                func = _command_registry[cmd]
+            except KeyError:
+                print('{cmd}: command not found'.format(cmd=cmd))
+                continue
+
+            if run_in_background:
+                func = _background_func(func, command_list)
+
+            try:
+                func(*arguments)
+            except Exception as exc:
+                print_exception(exc)
+            except KeyboardInterrupt:
+                print('^C')
+            except SystemExit:
+                return
