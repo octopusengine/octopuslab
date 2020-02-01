@@ -65,13 +65,6 @@ def command(func_or_name):
     raise ImportError('bad decorator command')
 
 
-def printBar(num1, num2, char="|", col1=32, col2=33):
-    print("[", end="")
-    print((("\033[" + str(col1) + "m" + str(char) + "\033[m") * num1), end="")
-    print((("\033[" + str(col2) + "m" + str(char) + "\033[m") * num2), end="")
-    print("]  ", end="")
-
-
 def w_connect():
     led.value(1)
 
@@ -269,7 +262,7 @@ def top():
     from time import ticks_ms, ticks_diff
     from machine import RTC
 
-    from .terminal import terminal_color
+    from .terminal import terminal_color, printBar
 
     def add0(sn):
         ret_str = str(sn)
