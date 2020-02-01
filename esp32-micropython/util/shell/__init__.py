@@ -16,7 +16,7 @@ autostart:
 --------
 last update: 
 """
-__version__ = "0.27 - 29.01.2020"
+__version__ = "0.27 - 31.01.2020"
 
 # toto: ifconfig, kill, wifion, wifioff, wget, wsend, ... 
 # from util.shell.terminal import printTitle
@@ -72,10 +72,49 @@ def printBar(num1, num2, char="|", col1=32, col2=33):
     print("]  ", end="")
 
 
+def w_connect():
+    led.value(1)
+
+    from util.wifi_connect import WiFiConnect
+    sleep(1)
+    w = WiFiConnect()
+    if w.connect():
+        print("WiFi: OK")
+    else:
+        print("WiFi: Connect error, check configuration")
+
+    led.value(0)
+    return w
+
+
 @command
 def sleep(seconds):
     from time import sleep
     sleep(float(seconds))
+
+
+@command
+def ifconfig():
+    from .terminal import terminal_color
+    # test for wifi on / off/ connect / disconnect
+    #from util.octopus import led_init
+    #led =  led_init()
+
+    from ..octopus import w
+    #w = w_connect()
+    w = w(echo = False)
+    print('-' * SEPARATOR_WIDTH)
+    print('IP address:', terminal_color(w.sta_if.ifconfig()[0]))
+    print('subnet mask:', w.sta_if.ifconfig()[1])
+    print('gateway:', w.sta_if.ifconfig()[2])
+    print('DNS server:', w.sta_if.ifconfig()[3])
+    from ubinascii import hexlify
+    try:
+        MAC = terminal_color(hexlify(w.sta_if.config('mac'),':').decode())
+    except:
+        MAC = "Err: w.sta_if"
+    print("HWaddr (MAC): " + MAC)
+    print('-' * SEPARATOR_WIDTH)
 
 
 @command
@@ -322,11 +361,12 @@ def ver():
 
 
 @command
-def wget(urlApi="http://www.octopusengine.org/api"):
+def wget(urlApi="https://www.octopusengine.org/api"):
+    # https://www.octopusengine.org/api/message.php
     # get api text / jsoun / etc
     from ..octopus import w
     try:
-        w()
+        w(echo = False)
     except Exception as e:
         print("Exception: {0}".format(e))
 
