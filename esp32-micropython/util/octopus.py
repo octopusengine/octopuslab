@@ -25,7 +25,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "0.98"  # version - log: num = ver*100
-    verDat = "17.01.2020 #1033"
+    verDat = "31.01.2020 #1036"
     debug = True
     logDev = True
     autoInit = True
@@ -322,9 +322,11 @@ def logDevice(urlPOST = "https://www.octopusengine.org/iot17/add18.php"):
     except Exception as e:
         print("Err.logDevice: {0}".format(e))
 
-def w(logD = True):
-    printInfo()
-    printTitle("WiFi connect > ")
+
+def w(logD = True, echo = True):
+    if echo:
+        printInfo()
+        printTitle("WiFi connect > ")
     w = w_connect()
     if logD and Env.logDev: logDevice()
     
@@ -333,7 +335,8 @@ def w(logD = True):
         Env.MAC = hexlify(w.sta_if.config('mac'),':').decode()
     except:
         Env.MAC = "Err: w.sta_if"
-    getFree(True)
+    if echo:
+        getFree(True)
     return w
 
 
