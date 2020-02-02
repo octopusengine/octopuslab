@@ -16,7 +16,7 @@ autostart:
 --------
 last update: 
 """
-__version__ = "0.27 - 31.01.2020"
+__version__ = "0.28 - 1.2.2020"
 
 # toto: ifconfig, kill, wifion, wifioff, wget, wsend, ... 
 # from util.shell.terminal import printTitle
@@ -25,6 +25,7 @@ SEPARATOR_WIDTH = 50
 
 _command_registry = {}
 _background_jobs = {}
+_is_wifi_connect = False
 
 
 def _thread_wrapper(func, job_id, *arguments):
@@ -63,20 +64,22 @@ def command(func_or_name):
         return _register_command(name)
 
     raise ImportError('bad decorator command')
-
+ 
 
 def w_connect():
-    led.value(1)
+    global _is_wifi_connect
+    # led.value(1)
 
     from util.wifi_connect import WiFiConnect
     sleep(1)
     w = WiFiConnect()
     if w.connect():
         print("WiFi: OK")
+        _is_wifi_connect = True
     else:
         print("WiFi: Connect error, check configuration")
 
-    led.value(0)
+    # led.value(0)
     return w
 
 
@@ -92,11 +95,15 @@ def ifconfig():
     # test for wifi on / off/ connect / disconnect
     #from util.octopus import led_init
     #led =  led_init()
-
+    
     from ..octopus import w
     #w = w_connect()
-    w = w(echo = False)
+    if (not _is_wifi_connect):
+        w = w(echo = False)
+        # _is_wifi_connect = True # todo
+    
     print('-' * SEPARATOR_WIDTH)
+    # print("_is_wifi_connect", _is_wifi_connect)
     print('IP address:', terminal_color(w.sta_if.ifconfig()[0]))
     print('subnet mask:', w.sta_if.ifconfig()[1])
     print('gateway:', w.sta_if.ifconfig()[2])
@@ -261,6 +268,7 @@ def top():
     import os, ubinascii, machine
     from time import ticks_ms, ticks_diff
     from machine import RTC
+    import esp32
 
     from .terminal import terminal_color, printBar
 
@@ -277,6 +285,10 @@ def top():
         mm = add0(rtc.datetime()[5])
         ss = add0(rtc.datetime()[6])
         return hh + separator + mm + separator + ss
+
+    def f2c(Fahrenheit):
+        Celsius = (Fahrenheit - 32) * 5.0/9.0
+        return Celsius
 
     bar100 = 30
     print(terminal_color("-" * (bar100 + 20)))
@@ -302,6 +314,9 @@ def top():
     print(terminal_color("> octopusLAB shell: ") + __version__)
 
     print(terminal_color("-" * (bar100 + 20)))
+    raw_c = int(f2c(esp32.raw_temperature())*10)/10
+    print(terminal_color("> proc. raw_temperature: ") + terminal_color(str(raw_c) + " C", 31))
+
     now = ticks_ms()
     for job_id, job_info in _background_jobs.items():
         job_duration = ticks_diff(now, job_info['start_time'])
