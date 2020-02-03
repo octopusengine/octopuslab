@@ -132,19 +132,18 @@ CTRL+A, K, (y) => screen, kill
 
 Other steps for linux are the same as for Windows (see other sections)
 
-(1) Files required for Prepare are as follows: (directories included)
-<pre> boot_prepare.py
- /config/device.json
- /util/setup.py
- /util/sys_info.py
- /util/wifi_connect.py
- /util/mqtt_connect.py
-</pre>
+
 
 ## Initial setup
 
 * Prepare
-    * Once booted in by Putty (or similar software), run setup()
+    * From our Micropython frok run:
+>>> octpus_initial.setup()
+
+w > setup wifi (SSID and PSW)
+cw > connect wifi
+sd > system download
+
 <pre>
       ,'''`.
      /      \
@@ -163,15 +162,7 @@ Press Ctrl+C to abort
 "===============================
 [w]   - wifi submenu
 [cw]  - connect wifi
-[sdp]  - system download > petrkr (update octopus modules from URL)
-[sdo]  - system download > octopus (update octopus modules from URL)
-[ds]  - device setting
-[ios]  - I/O setting submenu
-[iot]  - I/O test - run io_test()
-[mq]  - mqtt() setup
-[st]  - set time
-[si]  - system info
-[o]   - run octopus() demo
+[sd]  - system downloa
 [x]   - exit setup
 "==============================
 </pre>
@@ -179,8 +170,10 @@ Press Ctrl+C to abort
     * select <b>ds</b> (device setting), then choose which board you're using    
     * select <b>cw</b> (connect wifi) to reach the internets!
     * select <b>sd</b> (system downloads) to download and apply the rest of files
-    * select <b>ios</b> I/O input/output interface:
 <pre>
+next:
+setup()
+
 "==================================================
         S E T U P - I / O    (interfaces)
 "==================================================
