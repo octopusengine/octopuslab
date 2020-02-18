@@ -46,7 +46,7 @@ for d in range(6):
 
 def runAuto():
     ir = urandom.randint(1, 6)
-    print(ir)
+    # print(ir)
     show_dice(ir)
     sleep(1)
 
