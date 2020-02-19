@@ -12,8 +12,7 @@ pinout = set_pinout()
 # s2 = Servo(pinout.PWM2_PIN)
 s3 = Servo(pinout.PWM3_PIN)
 
-angles = [-50, 0, 50]
-angles = [0, 20, 50]
+angles = [0, 20, 50, 70, 90]
 
 while True:
     for a in angles:
