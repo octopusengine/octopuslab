@@ -1,5 +1,6 @@
 # module for defining colors to be used in displays and WS LEDs
 
+WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 ORANGE = (255, 64, 0)
 YELLOW = (255, 150, 0)
