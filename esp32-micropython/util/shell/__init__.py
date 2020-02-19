@@ -16,7 +16,7 @@ autostart:
 --------
 last update: 
 """
-__version__ = "0.28 - 1.2.2020"
+__version__ = "0.29 - 18.2.2020"
 
 # toto: ifconfig, kill, wifion, wifioff, wget, wsend, ... 
 # from util.shell.terminal import printTitle
@@ -359,9 +359,9 @@ def clear():
 
 
 @command
-def run(file="/main.py"):
-    exec(open(file).read(), globals())
-
+def run(filepath, *args):
+    # exec(open(file).read(), globals())
+    exec(open(filepath).read(), { "_ARGS": args })
 
 @command
 def ver():
