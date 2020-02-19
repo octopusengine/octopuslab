@@ -4,7 +4,7 @@
 # start: import examples/oled_random_lines
 
 from util.octopus import oled_init
-from util.shell import printTitle
+from util.shell.terminal import printTitle
 from os import urandom
 
 o = oled_init()      # init oled display
@@ -18,7 +18,7 @@ printTitle("oled_random_lines.py")
 print("this is simple Micropython example | ESP32 & octopusLAB")
 print()
 
-while True:   
+while True:
    old_x = x
    old_y = y
    # get new position

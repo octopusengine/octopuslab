@@ -4,7 +4,7 @@
 
 from time import sleep
 from util.octopus import w, lcd2_init, get_hhmm, time_init
-from util import printTitle
+from util.shell.terminal import printTitle
 
 w()	# wifi connect
 lcd = lcd2_init()	# 8 x 7segment display init   

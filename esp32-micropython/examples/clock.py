@@ -3,8 +3,8 @@
 
 
 from time import sleep
-from util.octopus import w, get_hhmm, time_init
-from util import printTitle, clt
+from util.octopus import w, get_hhmm, time_init, clt
+from util.shell.terminal import printTitle
 
 
 def clock():

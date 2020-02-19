@@ -1,6 +1,6 @@
 from time import sleep
 from util.octopus import *
-from util import printTitle
+from util.shell.terminal import printTitle
 
 d7 = disp7_init()
 
