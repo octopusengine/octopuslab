@@ -2,7 +2,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2016-2019 Jan Copak, Petr Kracik, Vasek Chalupnicek
 
-# this module is main library - for other modules
+# this module is main library for other modules
 # or directly in terminal:
 # >>> octopus()
 # >>> h() help /i() info /w() wifi connect
@@ -24,8 +24,8 @@ rtc = RTC()  # real time
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "0.98"  # version - log: num = ver*100
-    verDat = "31.01.2020 #1036"
+    ver = "0.99"  # version - log: num = ver*100
+    verDat = "29.02.2020 #1021"
     debug = True
     logDev = True
     autoInit = True
@@ -85,7 +85,7 @@ def o_info():
     from gc import mem_free
     printTitle("basic info > ")
     print("This is basic info about system and setup")
-
+   
     print("> machine.freq: "+str(Env.freq) + " [Hz]")
     printLog("memory")
     print("> ram free: "+str(mem_free()) + " [B]")
@@ -130,9 +130,9 @@ def i2c_init(scan = False, freq=100000, HWorSW = 0, printInfo = True):
         try:
             i2cdevs = i2c.scan()
             if printInfo: print(i2cdevs)
-            if (OLED_ADDR in i2cdevs):
+            if (OLED_ADDR in i2cdevs): 
                 if printInfo: print("ok > OLED: "+str(OLED_ADDR))
-            if (LCD_ADDR in i2cdevs):
+            if (LCD_ADDR in i2cdevs): 
                 if printInfo: print("ok > LCD: "+str(LCD_ADDR))
             bhLight = 0x23 in i2cdevs
             bh2Light = 0x5c in i2cdevs
@@ -140,11 +140,6 @@ def i2c_init(scan = False, freq=100000, HWorSW = 0, printInfo = True):
         except Exception as e:
             print("Exception: {0}".format(e))
     return i2c
-
-
-def clt():
-    print(chr(27) + "[2J") # clear terminal
-    print("\x1b[2J\x1b[H") # cursor up
 
 
 octopusASCII = [
@@ -161,7 +156,7 @@ octopusASCII = [
 def printOctopus():
     print()
     for ol in octopusASCII:
-        print("     " + str(ol))
+        print(" "*5 + str(ol))
     print()
 
 
@@ -188,7 +183,7 @@ def printLog(i,s=""):
 
 def getFree(echo = False):
     from gc import mem_free
-    if echo:
+    if echo: 
         print("--- RAM free ---> " + str(mem_free()))
     return mem_free()
 
@@ -227,16 +222,6 @@ def get_hhmmss(separator=":",rtc=rtc):
     return hh + separator + mm + separator + ss
 
 
-# Define function callback for connecting event
-"""def connected_callback(sta):
-    global WSBindIP
-    blink(led, 50, 100)
-    print(sta.ifconfig())
-    WSBindIP = sta.ifconfig()[0]
-def connecting_callback():
-    blink(led, 50, 100)
-"""
-
 def timer_init():
     printLog("timer_init")
     print("timer tim1 is ready - periodic - 10s")
@@ -251,7 +236,7 @@ def timerAction():
     Env.timerCounter += 1
     if Env.timerLed: led.blink(100, 50)
     if Env.timerBeep: beep()
-    Env.timerFlag = 0
+    Env.timerFlag = 0   
 
 
 def ap_init(): #192.168.4.1
@@ -329,7 +314,7 @@ def w(logD = True, echo = True):
         printTitle("WiFi connect > ")
     w = w_connect()
     if logD and Env.logDev: logDevice()
-
+    
     from ubinascii import hexlify
     try:
         Env.MAC = hexlify(w.sta_if.config('mac'),':').decode()
@@ -375,7 +360,7 @@ def time_init(urlApi ="https://www.octopusengine.org/api/hydrop"):
 
 
 def getApiJson(urlApi ="https://www.octopuslab.cz/data/", urlFile = "led2.json", debug = "True"):
-    # "http://www.octopusengine.org/api/"
+    # "http://www.octopusengine.org/api/"    
     from urequests import get
     from json import loads
     urljson=urlApi + urlFile
@@ -427,7 +412,7 @@ def octopus(auto = True):
 
 
 def octopus_init():
-    # from util.octopus import *
+    # from util.octopus import * 
     Env.start = ticks_ms()
     print("auto Init: " + str(Env.autoInit))
     #if Env.autoInit:
@@ -493,7 +478,7 @@ if Env.autoInit:  # test
             piezzo.play_tone(f, l)
     # else:   #    piezzo =Buzzer(None)
 
-    if io_conf.get('ws'):
+    if io_conf.get('ws'): 
         print("ws | ",end="")
         from util.rgb import Rgb
         from util.colors import *
@@ -501,7 +486,7 @@ if Env.autoInit:  # test
             print("Warning: WS LED not supported on this board")
         else:
             ws = Rgb(pinout.WS_LED_PIN,io_conf.get('ws')) # default rgb init
-
+ 
         def rgb_init(num_led=io_conf.get('ws'), pin=None):  # default autoinit ws
             if pinout.WS_LED_PIN is None:
                 print("Warning: WS LED not supported on this board")
@@ -512,8 +497,8 @@ if Env.autoInit:  # test
             from util.rgb import Rgb  # setupNeopixel
             ws = Rgb(pin, num_led)
             return ws
-
-    #if io_conf.get('fet'):
+    
+    #if io_conf.get('fet'): 
     #    print("fet | ",end="")
     #    FET = PWM(Pin(pinout.MFET_PIN), freq=500)
     #    FET.duty(0) # pin(14) Robot(MOTO_3A), ESP(JTAG-MTMS)
@@ -586,14 +571,14 @@ if Env.autoInit:  # test
         from util.display_segment import oneDigit, threeDigits
         from util.oled import Oled
 
-        def oled_init(ox=128, oy=64, addr=60, runTest=True):
+        def oled_init(ox=128, oy=64, runTest = True):
             printTitle("oled_init()")
 
             from util.oled import Oled
             from util.display_segment import threeDigits
             sleep_ms(1000)
-
-            oled = Oled(i2c, addr, ox, oy)
+            
+            oled = Oled(i2c, ox, oy)
             print("test oled display: OK")
             if runTest:
                 oled.test()
@@ -605,7 +590,7 @@ if Env.autoInit:  # test
         print("lcd | ",end="")
         LCD_ADDR = 0x3F # 0x27
         def lcd2_init(addr = LCD_ADDR):
-
+            
             printTitle("lcd2init()")
             LCD_ROWS=2
             LCD_COLS=16
@@ -619,7 +604,7 @@ if Env.autoInit:  # test
             lcd.putstr("octopusLAB")
             return lcd
 
-    if io_conf.get('relay'):
+    if io_conf.get('relay'): 
         print("rel | ",end="")
         RELAY = Pin(pinout.RELAY_PIN) # pin(33) Robot(DEV2)
 
@@ -1021,7 +1006,6 @@ def web_server():
             httpResponse.WriteResponseOk(None)
 
         httpResponse.WriteResponse(code=204, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = None)
-
 
 
 # ******** prepare / test **********
