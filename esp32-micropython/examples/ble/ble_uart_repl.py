@@ -9,7 +9,7 @@ import machine
 
 print("Proof-of-concept of a REPL over BLE UART")
 
-from examples/ble/ble_uart_peripheral import BLEUART
+from examples.ble.ble_uart_peripheral import BLEUART
 
 _MP_STREAM_POLL = const(3)
 _MP_STREAM_POLL_RD = const(0x0001)

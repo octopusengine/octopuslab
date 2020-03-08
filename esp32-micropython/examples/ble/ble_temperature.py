@@ -7,7 +7,7 @@ import bluetooth
 import random
 import struct
 import time
-from examples/ble/ble_advertising import advertising_payload
+from examples.ble.ble_advertising import advertising_payload
 
 from micropython import const
 
