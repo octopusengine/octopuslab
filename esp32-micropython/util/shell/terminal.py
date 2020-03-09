@@ -4,7 +4,6 @@
 
 # from util.shell.terminal import printTitle
 
-
 SEPARATOR_WIDTH = 50
 
 
@@ -50,6 +49,15 @@ def printLog(i,s=""):
     print()
     print('-' * SEPARATOR_WIDTH)
     print("[--- " + str(i) + " ---] " + s)
+
+
+def getUid(short = False): # full or short (5 chars: first 2 + last 3)
+    import machine, ubinascii
+    id = ubinascii.hexlify(machine.unique_id()).decode()
+    if short:
+        return id[:2]+id[-3:]
+    else:
+        return id
 
 
 def printInfo():
