@@ -4,6 +4,9 @@
 print("---> BLE and BlueFruit mobile app. - led")
 print("This is simple Micropython example | ESP32 & octopusLAB")
 
+from util.shell.terminal import getUid
+uID5 = getUid(short=5)
+
 from time import sleep
 from util.led import Led
 led = Led(2)
@@ -23,5 +26,8 @@ def on_data_received(connection, data):
         led.value(0)
 
 
-uart = bleuart.BLEUART(name='octopus-led', on_data_received=on_data_received)
+devName = 'octopus-led-'+uID5
+print("BLE ESP32 device name: " + devName)
+
+uart = bleuart.BLEUART(name=devName, on_data_received=on_data_received)
 uart.start()
