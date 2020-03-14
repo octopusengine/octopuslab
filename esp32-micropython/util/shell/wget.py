@@ -10,7 +10,7 @@ def wget(url="",path="/download"):
     from util.shell.new_urequests import get
     from os import mkdir
     from gc import collect
-    debug = True
+    debug = False
     filename = url.split("/")[-1]
     
     valid_chars = '-_.()abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -27,7 +27,7 @@ def wget(url="",path="/download"):
         except:
             pass
         path = path + "/"
-    
+
     collect()
     try:
         if debug: print("get")
@@ -36,7 +36,7 @@ def wget(url="",path="/download"):
         if debug: print(res.status_code)
         collect()
         if res.status_code == 200:
-            if debug: print("opening file")
+            if debug: print("opening file:", path+correc_filename)
             f = open(path+correc_filename, 'w')
             if debug: print("opened file")
             while True: 
