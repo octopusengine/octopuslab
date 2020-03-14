@@ -1,8 +1,16 @@
-def wget(url="",path=""):
+# wget for octopusLAB MicroPython uPyShell
+# copyright (c) 2020 Milan Spacek
+# License: MIT
+
+# wget https://www.octopusengine.org/api/text123.txt [subdir]
+# default subdir: "download"
+
+
+def wget(url="",path="/download"):
     from util.shell.new_urequests import get
     from os import mkdir
     from gc import collect
-    debug = False
+    debug = True
     filename = url.split("/")[-1]
     
     valid_chars = '-_.()abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -16,9 +24,9 @@ def wget(url="",path=""):
             if path.endswith('/'):
                 path = path[:-1]
             os.mkdir(path)
-            path = path + "/"
         except:
             pass
+        path = path + "/"
     
     collect()
     try:
