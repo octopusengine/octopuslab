@@ -36,7 +36,7 @@ def wget(url="",path="/download"):
         if debug: print(res.status_code)
         collect()
         if res.status_code == 200:
-            if debug: print("opening file:", path+correc_filename)
+            print("opening file:", path+correc_filename)
             f = open(path+correc_filename, 'w')
             if debug: print("opened file")
             while True: 

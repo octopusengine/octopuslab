@@ -1,6 +1,6 @@
 # This file is part of the octopusLAB project
 # The MIT License (MIT)
-# Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek, Jan Cespivo
+# Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek, Jan Cespivo, Milan
 
 """
 from util.shell import shell
@@ -16,7 +16,7 @@ autostart:
 --------
 last update: 
 """
-__version__ = "0.29 - 18.2.2020"
+__version__ = "0.30 - 11.3.2020" #535
 
 # toto: ifconfig, kill, wifion, wifioff, wget, wsend, ... 
 # from util.shell.terminal import printTitle
@@ -268,6 +268,7 @@ def top():
     import os, ubinascii, machine
     from time import ticks_ms, ticks_diff
     from machine import RTC
+    from gc import mem_free, mem_alloc
     import esp32
 
     from .terminal import terminal_color, printBar
@@ -293,9 +294,9 @@ def top():
     bar100 = 30
     print(terminal_color("-" * (bar100 + 20)))
     print(terminal_color("free Memory and Flash >"))
-    ram100 = 128000
+    ram100 = mem_alloc() * 100
     b1 = ram100 / bar100
-    ram = free(False)
+    ram = mem_free()
     print("RAM:   ", end="")
     printBar(bar100 - int(ram / b1), int(ram / b1))
     print(terminal_color(str(ram / 1000) + " kB"))
@@ -331,7 +332,7 @@ def top():
                 35
             ),
         )
-    print(terminal_color(get_hhmmss()), 36)
+    print(terminal_color(get_hhmmss(), 36))
 
 
 @command
@@ -369,7 +370,7 @@ def ver():
 
 
 @command
-def wget(urlApi="https://www.octopusengine.org/api"):
+def wgetapi(urlApi="https://www.octopusengine.org/api"):
     # https://www.octopusengine.org/api/message.php
     # get api text / jsoun / etc
     from ..octopus import w
@@ -380,12 +381,25 @@ def wget(urlApi="https://www.octopusengine.org/api"):
 
     from urequests import get
     urltxt = urlApi + "/text123.txt"
+    dt_str ="?"
     try:
         response = get(urltxt)
         dt_str = response.text
     except Exception as e:
         print("Err. read txt from URL")
     print(dt_str)
+
+
+@command
+def wget(url="https://www.octopusengine.org/api/text123.txt",path="download"):
+    from ..octopus import w
+    try:
+        w(echo = False)
+    except Exception as e:
+        print("Exception: {0}".format(e))
+
+    from .wget import wget
+    wget(url,path)
 
 
 @command
