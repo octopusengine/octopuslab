@@ -16,17 +16,15 @@ autostart:
 --------
 last update: 
 """
-__version__ = "0.30 - 11.3.2020" #535
+__version__ = "0.31 - 15.3.2020" #533
 
-# toto: ifconfig, kill, wifion, wifioff, wget, wsend, ... 
-# from util.shell.terminal import printTitle
-
+# toto: kill, wget/wsend?, ... 
 SEPARATOR_WIDTH = 50
 
 _command_registry = {}
 _background_jobs = {}
 _is_wifi_connect = False
-
+_wc = None # global wifi_connect
 
 def _thread_wrapper(func, job_id, *arguments):
     try:
@@ -74,7 +72,7 @@ def w_connect():
     sleep(1)
     w = WiFiConnect()
     if w.connect():
-        print("WiFi: OK")
+        print("*")
         _is_wifi_connect = True
     else:
         print("WiFi: Connect error, check configuration")
@@ -92,25 +90,22 @@ def sleep(seconds):
 @command
 def ifconfig():
     from .terminal import terminal_color
-    # test for wifi on / off/ connect / disconnect
-    #from util.octopus import led_init
-    #led =  led_init()
-    
-    from ..octopus import w
-    #w = w_connect()
-    if (not _is_wifi_connect):
-        w = w(echo = False)
-        # _is_wifi_connect = True # todo
-    
+    #if (not _is_wifi_connect):
+    _wc = w_connect()
+
     print('-' * SEPARATOR_WIDTH)
     # print("_is_wifi_connect", _is_wifi_connect)
-    print('IP address:', terminal_color(w.sta_if.ifconfig()[0]))
-    print('subnet mask:', w.sta_if.ifconfig()[1])
-    print('gateway:', w.sta_if.ifconfig()[2])
-    print('DNS server:', w.sta_if.ifconfig()[3])
+    try:
+        print('IP address:', terminal_color(_wc.sta_if.ifconfig()[0]))
+        print('subnet mask:', _wc.sta_if.ifconfig()[1])
+        print('gateway:', _wc.sta_if.ifconfig()[2])
+        print('DNS server:', _wc.sta_if.ifconfig()[3])
+    except Exception as e:
+        print("Exception: {0}".format(e))
+
     from ubinascii import hexlify
     try:
-        MAC = terminal_color(hexlify(w.sta_if.config('mac'),':').decode())
+        MAC = terminal_color(hexlify(_wc.sta_if.config('mac'),':').decode())
     except:
         MAC = "Err: w.sta_if"
     print("HWaddr (MAC): " + MAC)
@@ -336,7 +331,38 @@ def top():
 
 
 @command
+def wifi(comm="on"):
+    global _is_wifi_connect, _wc
+
+    if (not _is_wifi_connect):
+        from ..octopus import w
+        try:
+            w(echo = False) # log
+        except Exception as e:
+            print("Exception: {0}".format(e))
+
+        _wc = w_connect()
+        _is_wifi_connect = True
+
+    if comm == "on":
+        print("")
+
+    if comm == "scan":
+        from ubinascii import hexlify
+        print("networks:") 
+        print('-' * SEPARATOR_WIDTH)
+        nets = [[item[0], hexlify(item[1], ":"), item[2], item[3], item[4]] for item in _wc.sta_if.scan()]
+        for net in nets:
+            print(str(net))
+        print('-' * SEPARATOR_WIDTH)
+
+    if comm == "off":
+        print("---off---") 
+
+
+@command
 def ping(url='google.com'):
+    wifi(comm="on")
     from .uping import ping
     ping(url)
 
