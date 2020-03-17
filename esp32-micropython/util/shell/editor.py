@@ -222,7 +222,7 @@ def edit(filename='/main.py'):
                 print('Line range start can not be greater than end')
                 continue
             # for each line in range
-            for line_idx in range(line_idx_start, line_idx_end):
+            for line_idx in range(line_idx_start, line_idx_end + 1):
                 initial_ws = ''
                 line_content = ''
                 try:
