@@ -1,3 +1,20 @@
+'''
+This is simple interactive text file editor to be used as part of uPyShell
+
+This module has a dependency on re module and
+local .terminal for color support
+
+This can be executed locally (without micropython or a controller):
+step one dir up and execute:
+$ python 3 -m shell.editor [optional filename]
+
+# This file is part of the octopusLAB project
+# The MIT License (MIT)
+# Copyright (c) 2016-2020 Jan Copak, Vasek Chalupnicek
+'''
+import re
+
+
 def edit(filename='/main.py'):
     from .terminal import terminal_color
     SEPARATOR_WIDTH = 50
@@ -5,7 +22,7 @@ def edit(filename='/main.py'):
     EDITOR_TITLE_TOP_PREFIX = terminal_color('    ┌')
     EDITOR_TITLE_TOP_SUFIX = terminal_color('┐')
     EDITOR_TITLE_PREFIX = terminal_color('    │')
-    #EDITOR_TITLE_SUFIX = "\033[32m│\033[m" # '│'
+    # EDITOR_TITLE_SUFIX = "\033[32m│\033[m" # '│'
     EDITOR_TITLE_SUFIX = terminal_color('│')
     EDITOR_TOP_PREFIX = terminal_color('    ├')
     EDITOR_TOP_TITLE_SUFIX = terminal_color('┴')
@@ -27,7 +44,7 @@ def edit(filename='/main.py'):
         title_top_prefix = ''
         if show_line_numbers:
             title_top_prefix = EDITOR_TITLE_TOP_PREFIX
-        print('{:s}{:s}{:s}'.format(title_top_prefix, terminal_color('─' * (len(editor_title)+4)), EDITOR_TITLE_TOP_SUFIX))
+        print('{:s}{:s}{:s}'.format(title_top_prefix, terminal_color('─' * (len(editor_title) + 4)), EDITOR_TITLE_TOP_SUFIX))
         title_prefix = ''
         if show_line_numbers:
             title_prefix = EDITOR_TITLE_PREFIX
@@ -35,7 +52,12 @@ def edit(filename='/main.py'):
         top_prefix = ''
         if show_line_numbers:
             top_prefix = EDITOR_TOP_PREFIX
-        print('{:s}{:s}{:s}{:s}'.format(top_prefix, terminal_color('─' * (len(editor_title)+4)), EDITOR_TOP_TITLE_SUFIX, terminal_color('─' * (SEPARATOR_WIDTH-len(top_prefix)-(len(editor_title)+4)))))
+        print('{:s}{:s}{:s}{:s}'.format(
+            top_prefix,
+            terminal_color('─' * (len(editor_title) + 4)),
+            EDITOR_TOP_TITLE_SUFIX,
+            terminal_color('─' * (SEPARATOR_WIDTH - len(top_prefix) - (len(editor_title) + 4))))
+        )
 
         line_cnt = 0
         line_prefix = ''
@@ -52,7 +74,7 @@ def edit(filename='/main.py'):
         bottom_prefix = ''
         if show_line_numbers:
             bottom_prefix = EDITOR_BOTTOM_PREFIX
-        print('{:s}{:s}'.format(bottom_prefix, terminal_color('─' * (SEPARATOR_WIDTH-len(bottom_prefix)))))
+        print('{:s}{:s}'.format(bottom_prefix, terminal_color('─' * (SEPARATOR_WIDTH - len(bottom_prefix)))))
 
     def print_help():
         print('  h      print this help')
@@ -66,6 +88,7 @@ def edit(filename='/main.py'):
         print('  a<int> [<str>]   insert new line after given [int], containing [str] or empty')
         print('  e<int> [<str>]   edit line number [int], replace line with [str] or will be prompted')
         print('  d<int>           delete line number [int]')
+        print('  c<int>[-<int>]   comment/uncomment line [int] with a #, or multiple lines if a range is provided (does each line separately)')
         print()
 
     def parse_line_no(input):
@@ -84,7 +107,7 @@ def edit(filename='/main.py'):
         txt = ''
         try:
             # +1 for a space separator between [int] and [txt]
-            txt = input[len(line_no_el)+1:]
+            txt = input[len(line_no_el) + 1:]
         except:
             pass
         return line_no, txt
@@ -93,10 +116,10 @@ def edit(filename='/main.py'):
         # read file into buff
         with open(filename, 'r') as fi:
             for line in fi:
-                l = line
+                ln = line
                 if line.endswith('\n'):
-                    l = line[:-1]
-                buff.append(l)
+                    ln = line[:-1]
+                buff.append(ln)
     except OSError:
         file_exists = False
 
@@ -130,7 +153,7 @@ def edit(filename='/main.py'):
             if not txt:
                 try:
                     print('         ┌───┬───┬───┬───┬───┬───')
-                    print('Current:', buff[line_no-1])
+                    print('Current:', buff[line_no - 1])
                     txt = input('    New: ')
                 except IndexError:
                     txt = ''
@@ -139,7 +162,7 @@ def edit(filename='/main.py'):
                 buff.append('{0}'.format(txt))
             else:
                 # edit regular line
-                buff[line_no-1] = '{0}'.format(txt)
+                buff[line_no - 1] = '{0}'.format(txt)
             changed = True
             print_buff()
 
@@ -149,7 +172,7 @@ def edit(filename='/main.py'):
             if not line_no:
                 continue
             # insert txt and shift all records in buffer
-            buff.insert(line_no-1, '{0}'.format(txt))
+            buff.insert(line_no - 1, '{0}'.format(txt))
             changed = True
             print_buff()
 
@@ -174,7 +197,50 @@ def edit(filename='/main.py'):
             if line_no == len(buff) + 1:
                 print('Last line in file can not be removed')
                 continue
-            del(buff[line_no-1])
+            del(buff[line_no - 1])
+            changed = True
+            print_buff()
+
+        # action comment/uncomment a line
+        elif action.startswith('c'):
+            idxs = action[1:].split('-')
+            line_no = parse_line_no(idxs[0])
+            if not line_no:
+                # for invalid inputs skip
+                continue
+            line_idx_start = line_no - 1
+            line_idx_end = line_idx_start
+            if len(idxs) == 2:
+                # if we have a range on input
+                line_no = parse_line_no(idxs[1])
+                if not line_no:
+                    # for invalid inputs skip
+                    continue
+                line_idx_end = line_no - 1
+            # check start < end
+            if line_idx_start > line_idx_end:
+                print('Line range start can not be greater than end')
+                continue
+            # for each line in range
+            for line_idx in range(line_idx_start, line_idx_end):
+                initial_ws = ''
+                line_content = ''
+                try:
+                    mo = re.search(r'^(\s*)(.*)', buff[line_idx])
+                    # remember starting whitespaces
+                    initial_ws = mo.group(1)
+                    line_content = mo.group(2)
+                except IndexError:
+                    pass
+                # if first non-whitespace character is #, then uncomment
+                if len(line_content) and line_content[0] == '#':
+                    # remove hash and any whitespaces until first character
+                    mo = re.search(r'^(#\s*)(.*)', line_content)
+                    buff[line_idx] = initial_ws + mo.group(2)
+                # else comment
+                else:
+                    # add "# " after initial whitespaces and then the rest of the line
+                    buff[line_idx] = initial_ws + '# ' + line_content
             changed = True
             print_buff()
 
@@ -199,6 +265,7 @@ def edit(filename='/main.py'):
             break
 
         print()
+
 
 if __name__ == '__main__':
     # print command line arguments
