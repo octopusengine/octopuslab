@@ -1,5 +1,5 @@
-# basic library for class Analog input 
-# octopusLAB 2019
+# basic library for dc motors (octopusLAB #ROBOT board)
+# octopusLAB 2018-20 - Jan Cespivo, Jan Copak
 
 """
 # ROBOTboard example
@@ -23,6 +23,7 @@ steering.left(speed)
 from machine import PWM, Pin
 
 
+
 class Motor:
     def __init__(self, pin_1, pin_2, pin_3):
         # TODO add corrections
@@ -34,16 +35,16 @@ class Motor:
         forward = value >= 0
         self._pin_1.value(forward)
         self._pin_2.value(not forward)
-        self._pin_3_pwm.duty(abs(value))
+        self._pin_3_pwm.duty(abs(int(value)))
 
 
-
-# TODO add steering which achieve speed (for real transport, for example racing cars)
 
 class Steering:
     '''
     Very simple steering
     '''
+    # TODO add steering which achieve speed (for real transport, for example racing cars)
+
     def __init__(self, motor_l, motor_r):
         self.motor_l = motor_l
         self.motor_r = motor_r
