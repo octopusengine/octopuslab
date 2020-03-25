@@ -1,6 +1,7 @@
 # basic library for dc motors (octopusLAB #ROBOT board)
 # octopusLAB 2018-20 - Jan Cespivo, Jan Copak
 
+
 """
 # ROBOTboard example
  
@@ -60,3 +61,7 @@ class Steering:
     def center(self, value):
         self.motor_l.speed(value)
         self.motor_r.speed(value)
+
+    def dynamicLR(self, valueL,valueR):
+        self.motor_l.speed(valueL)
+        self.motor_r.speed(valueR)
