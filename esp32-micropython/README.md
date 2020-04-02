@@ -138,7 +138,7 @@ Other steps for linux are the same as for Windows (see other sections)
 
 * Prepare
     * From our Micropython frok run:
->>> octpus_initial.setup()
+>>> octopus_initial.setup()
 
 w > setup wifi (SSID and PSW)
 cw > connect wifi
