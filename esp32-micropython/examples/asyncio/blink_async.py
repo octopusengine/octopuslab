@@ -12,12 +12,15 @@ print("---examples/asyncio/blink_async.py---")
 
 import uasyncio
 
-async def blink(period_ms):
+async def ablink(period_ms):
     while True:
-        led.blink(period_ms)
+        led.value(1)
+        await uasyncio.sleep_ms(period_ms)
+        led.value(0)
+        await uasyncio.sleep_ms(period_ms)
 
 async def main():
-    uasyncio.create_task(blink(700))
+    uasyncio.create_task(ablink(700))
     await uasyncio.sleep_ms(10000)
 
 # Running on a ROBOTboard
