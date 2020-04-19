@@ -1,33 +1,51 @@
-# octopusLAB - main.py - BLE and BlueFruit mobile app.
-## uPyShell:~/$ run examples/ble/ble_led.py
-
-print("---> BLE and BlueFruit mobile app. - led")
-print("This is simple Micropython example | ESP32 & octopusLAB")
+print("---> BLE-BLE led controller")
 
 from util.shell.terminal import getUid
 uID5 = getUid(short=5)
 
 from time import sleep
+from util.pinout import set_pinout
+pinout = set_pinout()
+
+from util.rgb import Rgb
+ws = Rgb(pinout.PWM3_PIN)
+ws.simpleTest()
+
+
 from util.led import Led
 led = Led(2)
 
-led.blink()
-sleep(3)
-led.blink()
+from machine import Pin
+import util.ble.blesync_server
+import util.ble.blesync_uart.server
 
-from util.ble import bleuart
-import util.ble.bluefruit as bf
 
-def on_data_received(connection, data):
-    print(str(data))
-    if data == bf.UP:
+@blesync_uart.server.UARTService.on_message
+def on_message(service, conn_handle, message):
+    if message == b'!B516':
         led.value(1)
-    if data == bf.DOWN:
+    elif message == b'!B507':
         led.value(0)
 
 
-devName = 'octopus-led-'+uID5
-print("BLE ESP32 device name: " + devName)
+    service.send(conn_handle, message)
 
-uart = bleuart.BLEUART(name=devName, on_data_received=on_data_received)
-uart.start()
+
+class Connections:
+    _connections = []
+
+    @blesync_server.on_connect
+    @classmethod
+    def on_connect(cls, conn_handle, addr_type, addr):
+        cls._connections.append(conn_handle)
+        built_in_led.on()
+
+    @blesync_server.on_disconnect
+    @classmethod
+    def on_disconnect(cls, conn_handle, addr_type, addr):
+        cls._connections.remove(conn_handle)
+        if not cls._connections:
+            built_in_led.off()
+
+
+blesync_server.Server.start('octopus_led', blesync_uart.server.UARTService)
