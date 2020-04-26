@@ -2,7 +2,6 @@
 octopusLAB - database class
 
 """
-import btree
 from util.octopus import printTitle
 
 

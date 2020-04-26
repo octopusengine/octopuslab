@@ -5,7 +5,7 @@
 # testflux.write(temperature=24, humidiry=60)
 
 from util.database import Database
-import urequests
+from urequests import post
 
 
 class InfluxDB(Database):
@@ -56,7 +56,7 @@ class InfluxDB(Database):
 
         post_data = self.__generate_post_data(metric, **kwargs)
         try:
-            response = urequests.post(self.__writeURL, data=post_data)
+            response = post(self.__writeURL, data=post_data)
             response.close()
             return response.status_code == 204
         except Exception as e:
