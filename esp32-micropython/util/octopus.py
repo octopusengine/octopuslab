@@ -1,6 +1,6 @@
 # This file is part of the octopusLAB project
 # The MIT License (MIT)
-# Copyright (c) 2016-2019 Jan Copak, Petr Kracik, Vasek Chalupnicek
+# Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek
 
 # this module is main library for other modules
 # or directly in terminal:
@@ -304,6 +304,7 @@ def logDevice(urlPOST = "https://www.octopusengine.org/iot17/add18.php"):
         res = post(urlPOST, data=postdata_v, headers=header)
         sleep_ms(100)
         print("logDevice.ok")
+        res.close()
     except Exception as e:
         print("Err.logDevice: {0}".format(e))
 
