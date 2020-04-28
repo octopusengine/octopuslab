@@ -2,30 +2,26 @@
 # The MIT License (MIT)
 # Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek
 
-# this module is main library for other modules
-# or directly in terminal:
-# >>> octopus()
-# >>> h() help /i() info /w() wifi connect
-
 from sys import modules
 from time import sleep, sleep_ms, sleep_us, ticks_ms, ticks_diff
 from machine import Pin, Timer, RTC
 #from os import urandom
 from util.pinout import set_pinout
+from util.shell.terminal import printTitle, printLog, printHead
 from util.io_config import get_from_file
 
 
 # olab = Env()  # for initialized equipment
-pinout = set_pinout()  # set board pinout
-io_conf = get_from_file()  # read configuration for peripherals
+pinout = set_pinout()     # set board pinout
+io_conf = get_from_file() # read configuration for peripherals
 rtc = RTC()  # real time
 
 
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "0.99"  # version - log: num = ver*100
-    verDat = "29.02.2020 #1021"
+    ver = "1.00"  # version - log: num = ver*100
+    verDat = "28.04.2020 #997"
     debug = True
     logDev = True
     autoInit = True
@@ -158,27 +154,6 @@ def printOctopus():
     for ol in octopusASCII:
         print(" "*5 + str(ol))
     print()
-
-
-def printHead(s):
-    print()
-    print('-' * Env.TW)
-    print("[--- " + s + " ---] ")
-
-
-def printTitle(t,w=Env.TW):
-    print()
-    print('=' * w)
-    print("|",end="")
-    print(t.center(w-2),end="")
-    print("|")
-    print('=' * w)
-
-
-def printLog(i,s=""):
-    print()
-    print('-' * Env.TW)
-    print("[--- " + str(i) + " ---] " + s)
 
 
 def getFree(echo = False):
