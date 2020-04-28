@@ -80,11 +80,8 @@ class Config():
             c = 0
             for i in self.keys:
                 c += 1
-                # print("[%2d] - %8s [%s] - %s" % (c, i['attr'], io_conf.get(i['attr'], 0), i['descr']))
-                try:
-                    print("[%2d] - %16s - %s" % (c, i, self.config[i]))
-                except:
-                    this_key_in_json = False
+                print("[%2d] - %16s - %s" % (c, i, self.config[i] if i in self.config else ""))
+
             print("[ x] - Exit from json setup")
 
             print('=' * Conf.TW)
@@ -100,7 +97,7 @@ class Config():
                 print("Invalid input, try again.")
 
             # change selected item if integer
-            if sele > 0 and sele <= len(self.config):
+            if sele > 0 and sele <= len(self.keys):
                 # print attribute name and description
                 print()
                 # print current value
@@ -110,7 +107,7 @@ class Config():
                     try:
                         new_val = int(new_val)
                     except:
-                        new_val_it_int = False
+                        pass
                 except ValueError:
                     # if invalid input, 0 is inserted
                     new_val = 0
