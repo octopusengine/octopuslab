@@ -16,7 +16,7 @@ autostart:
 --------
 last update: 
 """
-__version__ = "0.31 - 15.3.2020" #533
+__version__ = "0.32 - 28.4.2020" #533
 
 # toto: kill, wget/wsend?, ... 
 SEPARATOR_WIDTH = 50
@@ -289,14 +289,14 @@ def top():
     bar100 = 30
     print(terminal_color("-" * (bar100 + 20)))
     print(terminal_color("free Memory and Flash >"))
-    ram100 = mem_alloc() * 100
+    ram100 = 95000 # mem_alloc() * 100
     b1 = ram100 / bar100
     ram = mem_free()
     print("RAM:   ", end="")
     printBar(bar100 - int(ram / b1), int(ram / b1))
     print(terminal_color(str(ram / 1000) + " kB"))
 
-    flash100 = 4000000
+    flash100 = 2000000
     b1 = flash100 / bar100
     flash = df(False)
     print("Flash: ", end="")
