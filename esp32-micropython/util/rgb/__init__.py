@@ -1,6 +1,8 @@
 # library for ws rgb neopixel led - single / strip / ring
 # octopusLAB 2019
 
+__version__ = "1.0.0"
+
 from time import sleep, sleep_ms
 from os import urandom
 from machine import Pin

@@ -13,6 +13,8 @@ $ python3 -m shell.editor [optional filename]
 # Copyright (c) 2016-2020 Jan Copak, Vasek Chalupnicek
 '''
 
+__version__ = "1.0.0"
+
 def edit(filename='/main.py'):
     import re
     from .editstr import editstr

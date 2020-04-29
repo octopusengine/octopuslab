@@ -2,6 +2,8 @@
 # Display8 - 8x8 matrix
 # max7919
 
+__version__ = "1.0.0"
+
 REG_NO_OP           = 0x00
 REG_DIGIT_BASE      = 0x01
 REG_DECODE_MODE     = 0x09

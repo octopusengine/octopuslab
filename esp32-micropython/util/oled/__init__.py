@@ -1,5 +1,7 @@
 # Oled display - ssd1306
 
+__version__ = "1.0.0"
+
 from time import sleep_ms
 from machine import Pin
 from lib import ssd1306

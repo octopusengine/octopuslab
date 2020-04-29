@@ -1,6 +1,7 @@
 from machine import Pin, Timer
 from micropython import schedule
 
+__version__ = "1.0.0"
 
 class Button:
     debounce_time_ms = 10

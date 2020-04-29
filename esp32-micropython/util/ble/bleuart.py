@@ -9,6 +9,7 @@ uart = bleuart.BLEUART(name='octopus', on_data_received=on_data_received)
 uart.start()
 """
 
+__version__ = "1.0.0"
 
 import struct
 

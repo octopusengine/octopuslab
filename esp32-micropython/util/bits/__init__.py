@@ -4,6 +4,8 @@
 # int2bin(reverse(b1))   >   '10011111'
 # int2bin(reverse(b1),1) > '0b10011111'
 
+__version__ = "1.0.0"
+
 from micropython import const
 
 bar = (

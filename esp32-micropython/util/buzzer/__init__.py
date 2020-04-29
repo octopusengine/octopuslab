@@ -6,6 +6,8 @@ piezzo = Buzzer(33)
 piezzo.beep()
 """
 
+__version__ = "1.0.0"
+
 from time import sleep_ms
 from machine import Pin, PWM
 # from util.buzzer.notes import *

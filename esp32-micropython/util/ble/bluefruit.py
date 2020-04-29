@@ -2,6 +2,8 @@
 # import util.ble.bluefruit as bf
 # -> exist bf.UP ...
 
+__version__ = "1.0.0"
+
 # --- control pad ---
 UP =   b'!B516'
 DOWN = b'!B615'

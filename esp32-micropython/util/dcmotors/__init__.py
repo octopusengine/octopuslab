@@ -21,6 +21,8 @@ steering.right(speed)
 steering.left(speed) 
 """
 
+__version__ = "1.0.0"
+
 from machine import PWM, Pin
 
 

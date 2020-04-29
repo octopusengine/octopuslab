@@ -17,6 +17,8 @@ tt.get_temp() # default index 0 > first sensor
 tt.get_temp(tx[0])
 """
 
+__version__ = "1.0.0"
+
 from time import sleep_ms
 from machine import Pin, PWM
 from util.pinout import set_pinout

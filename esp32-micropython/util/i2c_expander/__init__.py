@@ -4,6 +4,8 @@
 # e8 = Expander8(addr) addr default 000 > 0x20
 # e8.test()
 
+__version__ = "1.0.0"
+
 from time import sleep_ms
 from micropython import const
 from util.pinout import set_pinout

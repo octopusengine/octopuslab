@@ -2,6 +2,9 @@
 octopusLAB - database class
 
 """
+
+__version__ = "1.0.0"
+
 from util.octopus import printTitle
 
 
