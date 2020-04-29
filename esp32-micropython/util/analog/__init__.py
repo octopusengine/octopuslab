@@ -1,7 +1,7 @@
-# basic library for class Analog input 
+# basic library for class Analog input
 # octopusLAB 2019
 
-""" 
+"""
 from util.analog import Analog
 an1 = Analog(36)
 an1.adc_test()

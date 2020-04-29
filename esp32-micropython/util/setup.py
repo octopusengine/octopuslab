@@ -295,7 +295,7 @@ def setup():
             dt_int = [int(numeric_string) for numeric_string in dt_str]
             rtc.init(dt_int)
             print(str(rtc.datetime()))
-          
+
         if sele == "sd":
             shutil()
             deplUrl = "https://octopusengine.org/download/micropython/stable.tar"
@@ -304,7 +304,7 @@ def setup():
         if sele == "sde":
             shutil()
             deplUrl = "https://octopusengine.org/download/micropython/examples.tar"
-            deploy(deplUrl) 
+            deploy(deplUrl)
 
         if sele == "sdp":
             shutil()

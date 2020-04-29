@@ -14,12 +14,12 @@ autostart:
 >>> cc.set("import_shell",1)
 >>> cc.save()
 --------
-last update: 
+last update:
 """
 
 __version__ = "0.32.0-28042020" #533
 
-# toto: kill, wget/wsend?, ... 
+# toto: kill, wget/wsend?, ...
 SEPARATOR_WIDTH = 50
 
 _command_registry = {}
@@ -63,7 +63,7 @@ def command(func_or_name):
         return _register_command(name)
 
     raise ImportError('bad decorator command')
- 
+
 
 def w_connect():
     global _is_wifi_connect
@@ -350,7 +350,7 @@ def wifi(comm="on"):
 
     if comm == "scan":
         from ubinascii import hexlify
-        print("networks:") 
+        print("networks:")
         print('-' * SEPARATOR_WIDTH)
         nets = [[item[0], hexlify(item[1], ":"), item[2], item[3], item[4]] for item in _wc.sta_if.scan()]
         for net in nets:
@@ -358,7 +358,7 @@ def wifi(comm="on"):
         print('-' * SEPARATOR_WIDTH)
 
     if comm == "off":
-        print("---off---") 
+        print("---off---")
 
 
 @command

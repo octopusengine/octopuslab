@@ -25,14 +25,14 @@ class BTreeDB(Database):
 
         self.data = btree.open(f)
         #super().open(f)
-     
-    def addOne(self, key, val): # edit is the same > last value
+
+    def addOne(self, key, val):  # edit is the same > last value
         self.data[key] = val
         self.data.flush()
 
     def delKey(self, key):
         del self.data[key]
-    
+
     def listAll(self):
         printTitle("listAll > ")
         for key in self.data:

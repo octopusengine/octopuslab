@@ -63,7 +63,7 @@ class Rgb(NeoPixel):
             self.np.write()
             sleep(wait)
 
-    def rainbow_cycle(self, wait=3, intensity = 2): 
+    def rainbow_cycle(self, wait=3, intensity = 2):
         for j in range(255):
             for i in range(self.num):
                 rc_index = (i * 256 // self.num) + j

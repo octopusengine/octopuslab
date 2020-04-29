@@ -48,7 +48,7 @@ class Display7:
         self.ss.value(0)
         self.spi.write(bytearray([register, value]))
         self.ss.value(1)
-    
+
     def intensity(self, i):
         self.send(self.intensity, i)
 

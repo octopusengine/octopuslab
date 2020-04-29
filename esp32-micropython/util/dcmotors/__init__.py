@@ -4,7 +4,7 @@
 
 """
 # ROBOTboard example
- 
+
 from util.pinout import set_pinout
 pinout = set_pinout()
 
@@ -18,7 +18,7 @@ speed = 800
 steering.center(0)
 steering.center(-speed)
 steering.right(speed)
-steering.left(speed) 
+steering.left(speed)
 """
 
 __version__ = "1.0.0"

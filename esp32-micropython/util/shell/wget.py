@@ -12,13 +12,13 @@ def wget(url="",path="/download"):
     from gc import collect
     debug = False
     filename = url.split("/")[-1]
-    
+
     valid_chars = '-_.()abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     correc_filename = ''.join(c for c in filename if c in valid_chars)
-    
+
     if filename != correc_filename:
         print("Wrong filename corrected:" + correc_filename)
-    
+
     if path != "":
         try:
             if path.endswith('/'):
@@ -39,14 +39,14 @@ def wget(url="",path="/download"):
             print("opening file:", path+correc_filename)
             f = open(path+correc_filename, 'w')
             if debug: print("opened file")
-            while True: 
+            while True:
                 if debug: print("reading chunk")
                 chunk = res.raw.read(256)
                 if debug: print("writing chunk")
                 #if debug: print(chunk)
                 f.write(chunk)
                 if debug: print("chunk writen")
-                if not chunk: 
+                if not chunk:
                     break
             f.close()
             print("Done")
