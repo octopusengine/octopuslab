@@ -1,29 +1,29 @@
 import sys
 
 def get_cursor_position():
-    x=0
-    y=0
+    height=0
+    width=0
     num=''
 
     sys.stdout.write('\x1b[6n')
     while True:
         char = sys.stdin.read(1)
         if char is 'R':
-            y = int(num)
+            width = int(num)
             break
         if char is '\x1b':
-            x=0
-            y=0
+            width=0
+            height=0
             num=''
             continue
         if char is '[':
             continue
         if char is ';':
-            x=int(num)
+            height=int(num)
             num=''
             continue
         num+=char
-    return (x,y)
+    return (width, height)
 
 def get_terminal_size():
     # Save cursor position
@@ -31,9 +31,9 @@ def get_terminal_size():
     
     #Move cursor outside of screen
     sys.stdout.write('\x1b[999B\x1b[999C')
-    (x,y) = get_cursor_position()
+    (w, h) = get_cursor_position()
     
     # Restore cursor position
     sys.stdout.write('\x1b[u')
 
-    return (x,y)
+    return (w, h)
