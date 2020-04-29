@@ -6,27 +6,17 @@ local .terminal for color support
 
 This can be executed locally (without micropython or a controller):
 step one dir up and execute:
-$ python 3 -m shell.editor [optional filename]
+$ python3 -m shell.editor [optional filename]
 
 # This file is part of the octopusLAB project
 # The MIT License (MIT)
 # Copyright (c) 2016-2020 Jan Copak, Vasek Chalupnicek
 '''
-import re
-
 
 def edit(filename='/main.py'):
+    import re
+    from .editstr import editstr
     from .terminal import terminal_color
-    SEPARATOR_WIDTH = 50
-    EDITOR_LINE_PREFIX_TPL = terminal_color('{:>4d}│')
-    EDITOR_TITLE_TOP_PREFIX = terminal_color('    ┌')
-    EDITOR_TITLE_TOP_SUFIX = terminal_color('┐')
-    EDITOR_TITLE_PREFIX = terminal_color('    │')
-    # EDITOR_TITLE_SUFIX = "\033[32m│\033[m" # '│'
-    EDITOR_TITLE_SUFIX = terminal_color('│')
-    EDITOR_TOP_PREFIX = terminal_color('    ├')
-    EDITOR_TOP_TITLE_SUFIX = terminal_color('┴')
-    EDITOR_BOTTOM_PREFIX = terminal_color('    └')
 
     show_line_numbers = True
     changed = False
@@ -34,53 +24,111 @@ def edit(filename='/main.py'):
     buff = []  # empty new file contains one line with a newline character
 
     def print_buff():
-        editor_title = '{:s}{:s}{:s}'.format(
-            filename,
-            not file_exists and ' [NEW]' or '',
-            changed and ' [CHANGED]' or '',
-        )
+        '''
+        Print current state of the file in editor memory
+        '''
+        nonlocal show_line_numbers, changed, file_exists, buff
 
-        print()
+        EDITOR_WIDTH = 50
+        LINE_NO_DIGITS = 4
+        EDITOR_LINE_PREFIX_TPL = '{:>' + str(LINE_NO_DIGITS) + 'd}│'
+        EDITOR_TITLE_TOP_PREFIX = ' ' * LINE_NO_DIGITS + '┌'
+        EDITOR_TITLE_TOP_SUFIX  = '┐'
+        EDITOR_TITLE_PREFIX     = ' ' * LINE_NO_DIGITS + '│'
+        EDITOR_TITLE_SPACER     = '  '
+        EDITOR_TITLE_SUFIX      = '│'
+        EDITOR_TOP_PREFIX       = ' ' * LINE_NO_DIGITS + '├'
+        EDITOR_TOP_TITLE_SUFIX  = '┴'
+        EDITOR_BOTTOM_PREFIX    = ' ' * LINE_NO_DIGITS + '└'
+
+        # find the longest line in the buffer
+        max_len = 0
+        for line in buff:
+            l = len(line)
+            if l > max_len:
+                max_len = l
+        if max_len > EDITOR_WIDTH:
+            EDITOR_WIDTH = max_len
+        if show_line_numbers:
+            EDITOR_WIDTH += len(EDITOR_TITLE_PREFIX)
+
+        #     ┌────────────────────────────┐
+        #     │  /test.py [NEW] [CHANGED]  │
+        #     ├────────────────────────────┴─────────
+
         title_top_prefix = ''
         if show_line_numbers:
             title_top_prefix = EDITOR_TITLE_TOP_PREFIX
-        print('{:s}{:s}{:s}'.format(title_top_prefix, terminal_color('─' * (len(editor_title) + 4)), EDITOR_TITLE_TOP_SUFIX))
+        
+        editor_title = '{:s}{:s}{:s}'.format(
+            filename,
+            not file_exists and ' [NEW]' or '',
+            file_exists and changed and ' [CHANGED]' or '',
+        )
+
+        title_border = '─' * (len(editor_title) + 2 * len(EDITOR_TITLE_SPACER))
+
         title_prefix = ''
         if show_line_numbers:
             title_prefix = EDITOR_TITLE_PREFIX
-        print('{:s}  {:s}  {:s}'.format(title_prefix, editor_title, EDITOR_TITLE_SUFIX))
+
         top_prefix = ''
         if show_line_numbers:
             top_prefix = EDITOR_TOP_PREFIX
-        print('{:s}{:s}{:s}{:s}'.format(
-            top_prefix,
-            terminal_color('─' * (len(editor_title) + 4)),
-            EDITOR_TOP_TITLE_SUFIX,
-            terminal_color('─' * (SEPARATOR_WIDTH - len(top_prefix) - (len(editor_title) + 4))))
-        )
+        
+        title_border_after = '─' * (EDITOR_WIDTH - len(top_prefix) - len(title_border) - len(EDITOR_TOP_TITLE_SUFIX))
 
+        print()
+        print('{:s}{:s}{:s}'.format(
+            terminal_color(title_top_prefix),
+            terminal_color(title_border),
+            terminal_color(EDITOR_TITLE_TOP_SUFIX)
+        ))
+        print('{:s}{:s}{:s}{:s}{:s}'.format(
+            terminal_color(title_prefix),
+            EDITOR_TITLE_SPACER,
+            editor_title,
+            EDITOR_TITLE_SPACER,
+            terminal_color(EDITOR_TITLE_SUFIX)
+        ))
+        print('{:s}{:s}{:s}{:s}'.format(
+            terminal_color(top_prefix),
+            terminal_color(title_border),
+            terminal_color(EDITOR_TOP_TITLE_SUFIX),
+            terminal_color(title_border_after)
+        ))
+
+        #    1│
+        #    2│
+        #    ...
         line_cnt = 0
         line_prefix = ''
         for line in buff:
             if show_line_numbers:
                 line_cnt += 1
                 line_prefix = EDITOR_LINE_PREFIX_TPL.format(line_cnt)
-            print('{:s}{:s}'.format(line_prefix, line))
+            print('{:s}{:s}'.format(terminal_color(line_prefix), line))
+        # newline at the end of the file
         if show_line_numbers:
             line_cnt += 1
             line_prefix = EDITOR_LINE_PREFIX_TPL.format(line_cnt)
-        print('{:s}{:s}'.format(line_prefix, ''))
+        print('{:s}'.format(terminal_color(line_prefix)))
 
+        #    └─────────────────────────────────────
         bottom_prefix = ''
         if show_line_numbers:
             bottom_prefix = EDITOR_BOTTOM_PREFIX
-        print('{:s}{:s}'.format(bottom_prefix, terminal_color('─' * (SEPARATOR_WIDTH - len(bottom_prefix)))))
+        print('{:s}{:s}'.format(
+            terminal_color(bottom_prefix),
+            terminal_color('─' * (EDITOR_WIDTH - len(bottom_prefix)))
+        ))
 
     def print_help():
         print('  h      print this help')
         print('  p      print file (current state in buffer)')
         print('  l      toggle line numbers (copy mode)')
         print('  q      quit')
+        print('  q!     quit without saving changes')
         print('  w      write file (save)')
         print('  wq     write into file and quit')
         print()
@@ -90,8 +138,13 @@ def edit(filename='/main.py'):
         print('  d<int>           delete line number [int]')
         print('  c<int>[-<int>]   comment/uncomment line [int] with a #, or multiple lines if a range is provided (does each line separately)')
         print()
+        print('NOTE: New line at the end of every non empty file is enforced.')
+        print()
+        print('WARNING: Do not use for editing lines exceeding your terminal width - you may BREAK TOUR FILE!')
+        print()
 
     def parse_line_no(input):
+        nonlocal buff
         try:
             line_no = int(input)
             if 1 <= line_no <= len(buff) + 1:
@@ -124,7 +177,7 @@ def edit(filename='/main.py'):
         file_exists = False
 
     # welcome messages
-    print('Welcome to MicroPython text file line editor. New line at the end of every non empty file is enforced. Use "h" for help.')
+    print('Welcome to MicroPython text file line editor. Use "h" for help.')
     print_buff()
     print()
 
@@ -149,14 +202,28 @@ def edit(filename='/main.py'):
             line_no, txt = parse_line_no_txt(action[1:])
             if not line_no:
                 continue
+
             # get new text interactivelly if was not provided
             if not txt:
-                try:
-                    print('         ┌───┬───┬───┬───┬───┬───')
-                    print('Current:', buff[line_no - 1])
-                    txt = input('    New: ')
-                except IndexError:
+                # old version without editstr
+                # try:
+                #     print('         ┌───┬───┬───┬───┬───┬───')
+                #     print('Current:', buff[line_no - 1])
+                #     txt = input('    New: ')
+                # except IndexError:
+                #     txt = ''
+
+                if line_no > len(buff):
+                    # for empty line on the end of the file use empty string
                     txt = ''
+                else:
+                    # for any existing line use current content for editing
+                    txt = buff[line_no - 1]
+                print(terminal_color('Interactive editing line {}, hit ENTER when done'.format(line_no)))
+                txt = editstr(txt)
+                print(txt)
+
+            # put new content into buffer
             if line_no == len(buff) + 1:
                 # editing last line means append to buffer
                 buff.append('{0}'.format(txt))
@@ -255,13 +322,16 @@ def edit(filename='/main.py'):
             file_exists = True
             changed = False
         elif action == 'q':
-            pass
+            if changed:
+                print('Changes not saved, force quit with "q!"')
+        elif action == 'q!':
+            if changed:
+                print('Changes not saved')
         else:
             print('Bad option, try again, "h" for help')
 
         # exit condition
-        if action in ('q', 'wq'):
-            print('Bye')
+        if not changed and action == 'q' or action in ('q!', 'wq'):
             break
 
         print()
