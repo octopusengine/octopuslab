@@ -17,7 +17,7 @@ autostart:
 last update:
 """
 
-__version__ = "0.32.0-28042020" #533
+__version__ = "0.32.1-30042020" #533
 
 # toto: kill, wget/wsend?, ...
 SEPARATOR_WIDTH = 50
@@ -364,7 +364,7 @@ def wifi(comm="on"):
 @command
 def ping(url='google.com'):
     wifi(comm="on")
-    from .uping import ping
+    from lib.uping import ping
     ping(url)
 
 
