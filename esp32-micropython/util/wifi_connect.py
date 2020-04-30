@@ -12,6 +12,7 @@
 # and then use for connect to known networks
 # w.connect()
 
+__version__ = "1.0.0"
 
 # Includes
 import network

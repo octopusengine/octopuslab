@@ -1,5 +1,8 @@
 # library for pwm servo
 # octopusLAB 2019
+
+__version__ = "1.0.0"
+
 from time import sleep
 from machine import Pin, PWM
 from util import pinout

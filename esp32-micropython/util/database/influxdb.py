@@ -1,5 +1,13 @@
+# Example usage
+# from util.database.influxdb import InfluxDB
+# testflux = InfluxDB("https://url/to/influxdb", "database", "user", "pass", "metrics", namedtag="value")
+# testflux.write(field1=value1, field2=value2)
+# testflux.write(temperature=24, humidiry=60)
+
+__version__ = "1.0.0"
+
 from util.database import Database
-import urequests
+from urequests import post
 
 
 class InfluxDB(Database):
@@ -50,7 +58,7 @@ class InfluxDB(Database):
 
         post_data = self.__generate_post_data(metric, **kwargs)
         try:
-            response = urequests.post(self.__writeURL, data=post_data)
+            response = post(self.__writeURL, data=post_data)
             response.close()
             return response.status_code == 204
         except Exception as e:

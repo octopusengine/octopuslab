@@ -1,6 +1,8 @@
 # The MIT License (MIT)
 # Copyright (c) 2020 Jan Cespivo
 
+__version__ = "1.0.0"
+
 from collections import deque
 from sys import print_exception
 from _thread import allocate_lock, start_new_thread

@@ -1,7 +1,7 @@
-# basic library for class Analog input 
+# basic library for class Analog input
 # octopusLAB 2019
 
-""" 
+"""
 from util.analog import Analog
 an1 = Analog(36)
 an1.adc_test()
@@ -9,6 +9,8 @@ an1.get_adc_aver(20)
 
 an1.adc.atten(ADC.ATTN_2_5DB) #Full range: 3.3v
 """
+
+__version__ = "1.0.0"
 
 from time import sleep_ms, sleep_us
 from machine import Pin, ADC

@@ -2,7 +2,7 @@
 
 from time import sleep
 from util.octopus import button_init, button, disp7_init
-from util import printTitle
+from util.shell.terminal import printTitle
 
 BB = button_init(0) # button boot = 0
 # debounce: read 10 samples, only tolerate one false reading
@@ -27,7 +27,7 @@ while True:
         sleep(0.1)
 
     if button(BB)[0] >= debounce:
-        beep()
+        # beep()
         select += 1 
         sleep(0.3)
 

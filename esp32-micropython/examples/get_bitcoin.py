@@ -3,7 +3,7 @@
 from time import sleep
 import urequests, json
 from util.octopus import w
-from util.shell import printTitle
+from util.shell.terminal import printTitle
 
 w()
 

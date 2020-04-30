@@ -2,7 +2,7 @@
 # HW: ESP32board + EDUshield1 + i2c OLED display
 
 from util.octopus import *
-from util import printTitle
+from util.shell.terminal import printTitle
 
 octopus()            # include main library
 o = oled_init()      # init oled display

@@ -2,7 +2,9 @@
 octopusLAB - database class
 
 """
-import btree
+
+__version__ = "1.0.0"
+
 from util.octopus import printTitle
 
 

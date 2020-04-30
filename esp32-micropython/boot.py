@@ -21,17 +21,15 @@ def reset():
     from machine import reset
     reset()
 
+def shell():
+    import util.shell
+    util.shell.shell()
 
 try:
     print("auto start from: config/boot.json")
     from config import Config
     autostart = Config("boot")
 
-    if autostart.get("import_shell"):
-        def shell():    
-            from util.shell import shell
-            shell()
-    
     if autostart.get("connect_wifi"):
         from util.octopus import w
         w()

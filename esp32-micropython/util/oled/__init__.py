@@ -1,5 +1,7 @@
 # Oled display - ssd1306
 
+__version__ = "1.0.0"
+
 from time import sleep_ms
 from machine import Pin
 from lib import ssd1306
@@ -13,10 +15,10 @@ IMAGE_WIDTH = 63 # default size
 IMAGE_HEIGHT = 63
 
 class Oled(ssd1306.SSD1306_I2C):
-    def __init__(self, i2c, ox = OLEDX, oy = OLEDY):
+    def __init__(self, i2c, addr=0x60, ox = OLEDX, oy = OLEDY):
         self.ox = ox
         self.oy = oy
-        super().__init__(ox, oy, i2c)
+        super().__init__(ox, oy, i2c, addr=addr)
 
     def clear(self,how=0):
         self.fill(how)
@@ -49,7 +51,7 @@ class Oled(ssd1306.SSD1306_I2C):
         self.show()
 
     def oledSegment(self,num,point=False,deg=False):
-        threeDigits(num,point,deg)    
+        threeDigits(num,point,deg)
 
 """
 def oledSegmentTest(oled):
@@ -59,4 +61,4 @@ def oledSegmentTest(oled):
     for num in range(100):
         oledSegment(oled,100-num)
         sleep_ms(50)
-"""                
+"""

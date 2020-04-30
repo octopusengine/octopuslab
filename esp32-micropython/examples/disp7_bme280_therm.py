@@ -3,7 +3,6 @@
 
 from time import sleep
 from util.octopus import i2c_init, disp7_init
-from util import printTitle
 from bme280 import BME280
 
 
@@ -13,7 +12,7 @@ def bme280_init():
     print(bme.values)
     return bme
 
-printTitle("examples/bme280-therm.py")
+print("examples/bme280-therm.py")
 print("this is simple Micropython example | ESP32 & octopusLAB")
 print()
 

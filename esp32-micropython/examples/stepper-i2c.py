@@ -22,8 +22,8 @@ motor1 = SM28BYJ48(i2c, ADDRESS, MOTOR_ID1)
 
 while True:
 
-   # turn right 90 deg
+   # turn right 180 deg
    motor1.turn_degree(90*2)
 
-   # turn left 90 deg
+   # turn left 180 deg
    motor1.turn_degree(90*2, 1)

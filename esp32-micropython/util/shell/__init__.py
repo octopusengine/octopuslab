@@ -1,6 +1,6 @@
 # This file is part of the octopusLAB project
 # The MIT License (MIT)
-# Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek, Jan Cespivo
+# Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek, Jan Cespivo, Milan
 
 """
 from util.shell import shell
@@ -14,19 +14,18 @@ autostart:
 >>> cc.set("import_shell",1)
 >>> cc.save()
 --------
-last update: 
+last update:
 """
-__version__ = "0.28 - 1.2.2020"
 
-# toto: ifconfig, kill, wifion, wifioff, wget, wsend, ... 
-# from util.shell.terminal import printTitle
+__version__ = "0.32.0-28042020" #533
 
+# toto: kill, wget/wsend?, ...
 SEPARATOR_WIDTH = 50
 
 _command_registry = {}
 _background_jobs = {}
 _is_wifi_connect = False
-
+_wc = None # global wifi_connect
 
 def _thread_wrapper(func, job_id, *arguments):
     try:
@@ -64,7 +63,7 @@ def command(func_or_name):
         return _register_command(name)
 
     raise ImportError('bad decorator command')
- 
+
 
 def w_connect():
     global _is_wifi_connect
@@ -74,7 +73,7 @@ def w_connect():
     sleep(1)
     w = WiFiConnect()
     if w.connect():
-        print("WiFi: OK")
+        print("*")
         _is_wifi_connect = True
     else:
         print("WiFi: Connect error, check configuration")
@@ -92,25 +91,22 @@ def sleep(seconds):
 @command
 def ifconfig():
     from .terminal import terminal_color
-    # test for wifi on / off/ connect / disconnect
-    #from util.octopus import led_init
-    #led =  led_init()
-    
-    from ..octopus import w
-    #w = w_connect()
-    if (not _is_wifi_connect):
-        w = w(echo = False)
-        # _is_wifi_connect = True # todo
-    
+    #if (not _is_wifi_connect):
+    _wc = w_connect()
+
     print('-' * SEPARATOR_WIDTH)
     # print("_is_wifi_connect", _is_wifi_connect)
-    print('IP address:', terminal_color(w.sta_if.ifconfig()[0]))
-    print('subnet mask:', w.sta_if.ifconfig()[1])
-    print('gateway:', w.sta_if.ifconfig()[2])
-    print('DNS server:', w.sta_if.ifconfig()[3])
+    try:
+        print('IP address:', terminal_color(_wc.sta_if.ifconfig()[0]))
+        print('subnet mask:', _wc.sta_if.ifconfig()[1])
+        print('gateway:', _wc.sta_if.ifconfig()[2])
+        print('DNS server:', _wc.sta_if.ifconfig()[3])
+    except Exception as e:
+        print("Exception: {0}".format(e))
+
     from ubinascii import hexlify
     try:
-        MAC = terminal_color(hexlify(w.sta_if.config('mac'),':').decode())
+        MAC = terminal_color(hexlify(_wc.sta_if.config('mac'),':').decode())
     except:
         MAC = "Err: w.sta_if"
     print("HWaddr (MAC): " + MAC)
@@ -268,6 +264,7 @@ def top():
     import os, ubinascii, machine
     from time import ticks_ms, ticks_diff
     from machine import RTC
+    from gc import mem_free, mem_alloc
     import esp32
 
     from .terminal import terminal_color, printBar
@@ -293,14 +290,14 @@ def top():
     bar100 = 30
     print(terminal_color("-" * (bar100 + 20)))
     print(terminal_color("free Memory and Flash >"))
-    ram100 = 128000
+    ram100 = 95000 # mem_alloc() * 100
     b1 = ram100 / bar100
-    ram = free(False)
+    ram = mem_free()
     print("RAM:   ", end="")
     printBar(bar100 - int(ram / b1), int(ram / b1))
     print(terminal_color(str(ram / 1000) + " kB"))
 
-    flash100 = 4000000
+    flash100 = 2000000
     b1 = flash100 / bar100
     flash = df(False)
     print("Flash: ", end="")
@@ -331,11 +328,42 @@ def top():
                 35
             ),
         )
-    print(terminal_color(get_hhmmss()), 36)
+    print(terminal_color(get_hhmmss(), 36))
+
+
+@command
+def wifi(comm="on"):
+    global _is_wifi_connect, _wc
+
+    if (not _is_wifi_connect):
+        from ..octopus import w
+        try:
+            w(echo = False) # log
+        except Exception as e:
+            print("Exception: {0}".format(e))
+
+        _wc = w_connect()
+        _is_wifi_connect = True
+
+    if comm == "on":
+        print("")
+
+    if comm == "scan":
+        from ubinascii import hexlify
+        print("networks:")
+        print('-' * SEPARATOR_WIDTH)
+        nets = [[item[0], hexlify(item[1], ":"), item[2], item[3], item[4]] for item in _wc.sta_if.scan()]
+        for net in nets:
+            print(str(net))
+        print('-' * SEPARATOR_WIDTH)
+
+    if comm == "off":
+        print("---off---")
 
 
 @command
 def ping(url='google.com'):
+    wifi(comm="on")
     from .uping import ping
     ping(url)
 
@@ -359,9 +387,9 @@ def clear():
 
 
 @command
-def run(file="/main.py"):
-    exec(open(file).read(), globals())
-
+def run(filepath, *args):
+    # exec(open(file).read(), globals())
+    exec(open(filepath).read(), { "_ARGS": args })
 
 @command
 def ver():
@@ -369,7 +397,7 @@ def ver():
 
 
 @command
-def wget(urlApi="https://www.octopusengine.org/api"):
+def wgetapi(urlApi="https://www.octopusengine.org/api"):
     # https://www.octopusengine.org/api/message.php
     # get api text / jsoun / etc
     from ..octopus import w
@@ -380,12 +408,25 @@ def wget(urlApi="https://www.octopusengine.org/api"):
 
     from urequests import get
     urltxt = urlApi + "/text123.txt"
+    dt_str ="?"
     try:
         response = get(urltxt)
         dt_str = response.text
     except Exception as e:
         print("Err. read txt from URL")
     print(dt_str)
+
+
+@command
+def wget(url="https://www.octopusengine.org/api/text123.txt",path="download"):
+    from ..octopus import w
+    try:
+        w(echo = False)
+    except Exception as e:
+        print("Exception: {0}".format(e))
+
+    from .wget import wget
+    wget(url,path)
 
 
 @command

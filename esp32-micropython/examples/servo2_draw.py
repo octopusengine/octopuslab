@@ -24,17 +24,14 @@ def move_servo2(p1, p2, delay = delay):
         s2.set_degree(beta)
         sleep_ms(delay)
 
-def run_test_circle():
-    
-
 
 def run_test():
     p1 = 0, 0 # strart point
-    p2 = 50, 50 # stop point    
+    p2 = 50, 50 # stop point
     move_servo2(p1, p2)
 
-    p1 = 50, 50 
-    p2 = 0, 0 
+    p1 = 50, 50
+    p2 = 0, 0
     move_servo2(p1, p2)
 
     move_servo2((0,0),(0,100))

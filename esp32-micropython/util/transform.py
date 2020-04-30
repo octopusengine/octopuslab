@@ -26,7 +26,6 @@ l1 = arm
 l2 = arm
 
 
-
 class Point2D():
     def __init__(self, x=0, y=0):
         self.x = x
@@ -34,7 +33,7 @@ class Point2D():
 
     def __add__(self, add):
         return Point2D(self.x + add.x, self.y + add.y)
-    
+
     def __str__(self):
         return(self.x, self.y)
 
@@ -68,7 +67,7 @@ def move_2d_line(p_start, p_stop, steps = 300, max_dist = 100, debug = False): #
     dy = p_stop[1] - y
     ddx = dx/move_steps
     ddy = dy/move_steps
-        
+
     points = []
     for step in range(move_steps):
         if debug:
@@ -76,7 +75,7 @@ def move_2d_line(p_start, p_stop, steps = 300, max_dist = 100, debug = False): #
         points.append((x, y))
         x += ddx
         y += ddy
-    
+
     points.append((p_stop[0], p_stop[1]))
     return points
 
@@ -93,16 +92,16 @@ def cart2polar(point):
     r = distance2((0, 0), point)
     c = x / r
     s = y / r
-    
+
     #Safety!
     if(s > 1): s = 1
     if(c > 1): c = 1
     if(s < -1): s = -1
     if(c < -1): c = -1
-    
+
     alfa = math.degrees(math.acos(c))
     if(s < 0): alfa *= -1
-    
+
     return(r, alfa)
 
 
@@ -119,13 +118,13 @@ def cosangle(opp, adj1, adj2):
     direct = True
 
     den = 2*adj1*adj2
-    if(den==0): 
+    if(den==0):
         direct = False
         return alfa, direct
 
     c = (adj1*adj1 + adj2*adj2 - opp*opp)/den
 
-    if(c>1 or c<-1): 
+    if(c>1 or c<-1):
         direct = False
         return alfa, direct
 
@@ -185,7 +184,7 @@ def invkin2(point2d, angleMode=DEGREES):
     term1 = ((1 - term2**2)**0.5)*-1
     #calculate th2
     th2 = math.atan2(term1, term2)
-    #optional line. Comment this one out if you 
+    #optional line. Comment this one out if you
     #notice any problems
     th2 = -1*th2
 
@@ -212,7 +211,7 @@ class Point3D():
 
     def __add__(self, add):
         return Point2D(self.x + add.x, self.y + add.y, self.z + add.z)
-    
+
     def __str__(self):
         return(self.x, self.y, self.z)
 
@@ -222,7 +221,7 @@ def invkin3(point3d, angleMode=DEGREES):
     """Returns the angles of the first two links and
      the base drum in the robotic arm as a list.
     returns -> (th0, th1, th2)
-    
+
     x - The x coordinate of the effector
     y - The y coordinate of the effector
     z - The z coordinate of the effector
@@ -254,7 +253,7 @@ def invkin3(point3d, angleMode=DEGREES):
     gamma = math.atan2(k2,k1)
     #calculate th1
     th1 = math.atan2(y,x) - gamma
-    
+
 
     if(angleMode == RADIANS):
         return th0, th1, th2
@@ -274,5 +273,3 @@ def distance3(x1, y1, z1, x2, y2, z2):
 # print(math.radians(180 / math.pi)) # def 1 rad: 360 / 2pi
 # math.degrees(math.pi) # > 180.0
 # print(cart2polar(polar2chart(1,90)[0],polar2cart(1,90)[1]))
-
-
