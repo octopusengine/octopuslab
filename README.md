@@ -14,8 +14,8 @@ There are multiple development boards what we support now. All of them are bello
 - <a href=https://github.com/octopusengine/octopuslab/tree/master/esp32-micropython>ESP32 - Micropython</a> - octopusLAB ESP-interface/ROBOTboard
 - Raspberry Pi 2/3/ZERO
 - Cortex M0/M3
-- <a href=https://github.com/octopusengine/octopuslab/tree/master/attiny>Attiny</a> 85/45/13
-- <a href=https://github.com/octopusengine/octopuslab/tree/master/arduino-nano>Arduino</a> (Nano)
+- <a href=https://github.com/octopusengine/octopuslab-arduino-attiny>Attiny</a> 85/45/13
+- <a href=https://github.com/octopusengine/octopuslab-arduino-attiny>Arduino</a> (Nano)
 
 If you want to reduce time you need for development use our new library for Arduino IDE: https://github.com/TomasRoj/OctopusLab-Library Thanks!
 
