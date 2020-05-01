@@ -10,7 +10,7 @@ https://www.instagram.com/p/Boo4LTRALBZ/?taken-by=octopusengine
 https://boneskull.com/micropython-on-esp32-part-1/
 
 
-## PINout:
+## PINout - DoIt 2x15 pins:
 <pre>
 oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
                            -----------     (GPIO)
@@ -37,6 +37,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                                [ROBOT Board]:::
 * download MicroPython - https://octopusengine.org/download/micropython/micropython-octopus.bin 
 * install esptool - https://github.com/espressif/esptool  `pip install esptool`
 * install ampy - `pip install adafruit-ampy` read more on https://github.com/adafruit/ampy
+* or ter deploy
 
 ## Windows:
 * connect ESP32 and detect COM port
