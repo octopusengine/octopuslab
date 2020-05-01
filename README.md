@@ -17,7 +17,6 @@ There are multiple development boards what we support now. All of them are bello
 - <a href=https://github.com/octopusengine/octopuslab-arduino-attiny>Attiny</a> 85/45/13
 - <a href=https://github.com/octopusengine/octopuslab-arduino-attiny>Arduino</a> (Nano)
 
-If you want to reduce time you need for development use our new library for Arduino IDE: https://github.com/TomasRoj/OctopusLab-Library Thanks!
 
 ## Contibution
 You are welcome to contribute to this repository by providing documentation to code, submitting issue reports, enhancement requests and pull requests. We are glad that people like you help make us future of electronics better and easier. For full describtion of how can you contribute and what rules you must respect, please visit our CODE of CONDUCT.
