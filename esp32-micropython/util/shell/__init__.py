@@ -17,7 +17,7 @@ autostart:
 last update:
 """
 
-__version__ = "0.32.1-30042020" #533
+__version__ = "0.32.2-01052020" #533
 
 # toto: kill, wget/wsend?, ...
 SEPARATOR_WIDTH = 50
@@ -436,9 +436,12 @@ def pwd():
 
 
 @command
-def cd(directory):
+def cd(directory=""):
     from uos import chdir
-    chdir(directory)
+    try:
+        chdir(directory)
+    except OSError as e:
+        print("cd: {}: No such file or directory".format(directory))
 
 
 @command
