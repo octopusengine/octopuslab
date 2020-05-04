@@ -4,9 +4,8 @@ This is simple interactive text file editor to be used as part of uPyShell
 This module has a dependency on re module and
 local .terminal for color support
 
-This can be executed locally (without micropython or a controller):
-step one dir up and execute:
-$ python3 -m shell.editor [optional filename]
+from util.shell.editor import edit
+edit('/test.py')
 
 # This file is part of the octopusLAB project
 # The MIT License (MIT)
@@ -130,7 +129,7 @@ def edit(filename='/main.py'):
         print('  p      print file (current state in buffer)')
         print('  l      toggle line numbers (copy mode)')
         print('  q      quit')
-        print('  q!     quit without saving changes')
+        print('  q! x   quit without saving changes')
         print('  w      write file (save)')
         print('  wq     write into file and quit')
         print()
@@ -222,6 +221,7 @@ def edit(filename='/main.py'):
                     # for any existing line use current content for editing
                     txt = buff[line_no - 1]
                 print(terminal_color('Interactive editing line {}, hit ENTER when done'.format(line_no)))
+                print(terminal_color('┌───┬───┬───┬───┬───┬───'))
                 txt = editstr(txt)
                 print(txt)
 
@@ -333,7 +333,7 @@ def edit(filename='/main.py'):
             print('Bad option, try again, "h" for help')
 
         # exit condition
-        if not changed and action == 'q' or action in ('q!', 'wq'):
+        if not changed and action == 'q' or action in ('q!', 'wq', 'x'):
             break
 
         print()
