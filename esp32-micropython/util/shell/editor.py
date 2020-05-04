@@ -171,8 +171,12 @@ def edit(filename='/main.py'):
         with open(filename, 'r') as fi:
             for line in fi:
                 ln = line
-                if line.endswith('\n'):
-                    ln = line[:-1]
+                if ln.endswith('\r\n'):
+                    # strip CRLF endings
+                    ln = ln[:-2]
+                elif ln.endswith('\n'):
+                    # strip LF endings
+                    ln = ln[:-1]
                 buff.append(ln)
     except OSError:
         file_exists = False
@@ -326,7 +330,7 @@ def edit(filename='/main.py'):
         elif action == 'q':
             if changed:
                 print('Changes not saved, force quit with "q!"')
-        elif action == 'q!':
+        elif action in ('q!', 'x'):
             if changed:
                 print('Changes not saved')
         else:
