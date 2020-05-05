@@ -74,7 +74,7 @@ def setupMenu():
     print("[cw]  - connect wifi")
     print("[cl]  - connect LAN")
     print("[sd]  - system download")
-    print("[x]   - exit setup")
+    print("[q]   - quit setup")
 
     print('=' * 30)
     sel = input("select: ")
@@ -115,9 +115,9 @@ def setup():
     while run:
         sele = setupMenu()
 
-        if sele == "x":
+        if sele == "q":
             print("Setup - exit >")
-            time.sleep_ms(2000)
+            time.sleep_ms(1000)
             print("all OK, press CTRL+D to soft reboot")
             run = False
 
