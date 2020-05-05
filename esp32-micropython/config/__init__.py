@@ -17,6 +17,8 @@ conf.save()
 ampy -p /COM6 put ./config/__init__.py config/__init__.py
 """
 
+__version__ = "1.0.0"
+
 class Conf:
     TW = 50
 
