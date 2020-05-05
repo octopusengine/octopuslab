@@ -17,15 +17,15 @@ autostart:
 last update:
 """
 
-__version__ = "0.33.1-20200505" #533
+__version__ = "0.33.1-20200505"  # 533
 
 # toto: kill, wget/wsend?, ...
 SEPARATOR_WIDTH = 50
 
 _command_registry = {}
 _background_jobs = {}
-_is_wifi_connect = False
-_wc = None # global wifi_connect
+_wc = None  # global wifi_connect
+
 
 def _thread_wrapper(func, job_id, *arguments):
     try:
@@ -65,22 +65,6 @@ def command(func_or_name):
     raise ImportError('bad decorator command')
 
 
-def w_connect():
-    global _is_wifi_connect
-    # led.value(1)
-
-    from util.wifi_connect import WiFiConnect
-    sleep(1)
-    w = WiFiConnect()
-    if w.connect():
-        print("*")
-        _is_wifi_connect = True
-    else:
-        print("WiFi: Connect error, check configuration")
-
-    # led.value(0)
-    return w
-
 
 @command
 def sleep(seconds):
@@ -90,12 +74,13 @@ def sleep(seconds):
 
 @command
 def ifconfig():
+    if _wc is None:
+        print("ifconfig: Connection not active")
+        return
+
     from .terminal import terminal_color
-    #if (not _is_wifi_connect):
-    _wc = w_connect()
 
     print('-' * SEPARATOR_WIDTH)
-    # print("_is_wifi_connect", _is_wifi_connect)
     try:
         print('IP address:', terminal_color(_wc.sta_if.ifconfig()[0]))
         print('subnet mask:', _wc.sta_if.ifconfig()[1])
@@ -106,7 +91,7 @@ def ifconfig():
 
     from ubinascii import hexlify
     try:
-        MAC = terminal_color(hexlify(_wc.sta_if.config('mac'),':').decode())
+        MAC = terminal_color(hexlify(_wc.sta_if.config('mac'), ':').decode())
     except:
         MAC = "Err: w.sta_if"
     print("HWaddr (MAC): " + MAC)
@@ -333,20 +318,17 @@ def top():
 
 @command
 def wifi(comm="on"):
-    global _is_wifi_connect, _wc
+    global _wc
 
-    if (not _is_wifi_connect):
-        from ..octopus import w
-        try:
-            w(echo = False) # log
-        except Exception as e:
-            print("Exception: {0}".format(e))
-
-        _wc = w_connect()
-        _is_wifi_connect = True
+    if _wc is None:
+        from util.wifi_connect import WiFiConnect
+        _wc = WiFiConnect()
 
     if comm == "on":
-        print("")
+        if _wc.connect():
+            print("WiFi: OK")
+        else:
+            print("WiFi: Connect error, check configuration")
 
     if comm == "scan":
         from ubinascii import hexlify
