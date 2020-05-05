@@ -83,12 +83,12 @@ def setupMenu():
 def wifiMenu():
     print()
     print('=' * 30)
-    print('        S E T U P - W I F I')
+    print('       S E T U P - W I F I')
     print('=' * 30)
-    print("[a]  - Add wifi network")
-    print("[r]  - Remove wifi network")
-    print("[s]  - Show configuration")
-    print("[q]  - Quit")
+    print(" [a] - add wifi network")
+    print(" [r] - remove wifi network")
+    print(" [s] - show configuration")
+    print(" [q] - quit")
 
     print('=' * 30)
     sel = input("select: ")
