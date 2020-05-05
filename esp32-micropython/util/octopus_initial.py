@@ -116,8 +116,6 @@ def setup():
         sele = setupMenu()
 
         if sele == "q":
-            print("Setup - exit >")
-            time.sleep_ms(1000)
             print("all OK, press CTRL+D to soft reboot")
             run = False
 
