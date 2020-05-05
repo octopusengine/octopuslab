@@ -84,7 +84,7 @@ class WiFiConnect:
             self.__call_events_connecting__(retry)
             retry+=1
             sleep_ms(100)
-            
+
 
         # print connection info - automatic
         # currently this prints out as if no connection was established - giving 0.0.0.0 sd ip
