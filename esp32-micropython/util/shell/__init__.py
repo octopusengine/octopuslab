@@ -331,24 +331,29 @@ def wifi(comm="on"):
             print("WiFi: Connect error, check configuration")
 
     if comm == "scan":
+        staactive = _wc.sta_if.active()
+        if not staactive:
+            _wc.sta_if.active(True)
+
         from ubinascii import hexlify
         print("networks:")
         print('-' * SEPARATOR_WIDTH)
-        nets = [[item[0], hexlify(item[1], ":"), item[2], item[3], item[4]] for item in _wc.sta_if.scan()]
+        nets = [[item[0].decode('utf-8'), hexlify(item[1], ":").decode(), item[2], item[3], item[4]] for item in _wc.sta_if.scan()]
         for net in nets:
             print(str(net))
         print('-' * SEPARATOR_WIDTH)
+        _wc.sta_if.active(staactive)
 
     if comm == "off":
         try:
             _wc.sta_if.disconnect()
+            _wc.sta_if.active(False)
         except Exception as e:
             print("Exception: {0}".format(e))
 
 
 @command
 def ping(host='google.com'):
-    # wifi(comm="on")
     from lib.uping import ping
     try:
         ping(host)
@@ -371,7 +376,6 @@ def upgrade(urlTar="https://octopusengine.org/download/micropython/stable.tar"):
         deploy(urlTar)
     except Exception as e:
         print("Exception: {0}".format(e))
-
 
 @command
 def clear():
