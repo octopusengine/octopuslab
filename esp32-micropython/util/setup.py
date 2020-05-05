@@ -97,7 +97,7 @@ def setupMenu():
     # print("[st]  - set time")
     print("[si]  - system info")
     print("[wr]  - run web repl")
-    print("[x]   - exit setup")
+    print("[q]   - quit setup")
 
     print('=' * 30)
     sel = input("select: ")
@@ -136,7 +136,7 @@ def ioMenu():
         print('=' * 50)
         sele = input("select: ")
 
-        if sele == "x":
+        if sele == "q":
             # done with editing
             break
 
@@ -186,9 +186,9 @@ def setup():
     while run:
         sele = setupMenu()
 
-        if sele == "x":
-            print("Setup - exit >")
-            time.sleep_ms(2000)
+        if sele == "q":
+            print("Setup - quit >")
+            time.sleep_ms(1000)
             print("all OK, press CTRL+D to soft reboot")
             run = False
 
