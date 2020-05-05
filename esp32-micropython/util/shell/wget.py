@@ -5,6 +5,7 @@
 # wget https://www.octopusengine.org/api/text123.txt [subdir]
 # default subdir: "download"
 
+__version__ = "1.0.0"
 
 def wget(url="",path="/download"):
     from util.shell.new_urequests import get
@@ -53,6 +54,11 @@ def wget(url="",path="/download"):
         elif res.status_code == 404:
             print("File not found")
         else:
-            print("Error status:",res.status_code)
+            print("Error status:", res.status_code)
+    except OSError as e:
+        if e.args[0] == -202:
+            print("wget: unable to resolve host address")
+        else:
+            print("OSError, exception: {0}".format(e))
     except Exception as e:
         print("Error, exception: {0}".format(e))

@@ -17,7 +17,7 @@ autostart:
 last update:
 """
 
-__version__ = "0.33.0-20200505" #533
+__version__ = "0.33.1-20200505" #533
 
 # toto: kill, wget/wsend?, ...
 SEPARATOR_WIDTH = 50
@@ -365,16 +365,21 @@ def wifi(comm="on"):
 
 
 @command
-def ping(url='google.com'):
+def ping(host='google.com'):
     # wifi(comm="on")
     from lib.uping import ping
     try:
-        ping(url)
+        ping(host)
+    except OSError as e:
+        if e.args[0] == -202:
+            print("ping: {}: Name or service not known".format(host))
+        else:
+            print("OSError, exception: {0}".format(e))
     except Exception as e:
         print("Exception: {0}".format(e))
 
 
-@command # TODO
+@command  # TODO
 def upgrade(urlTar="https://octopusengine.org/download/micropython/stable.tar"):
     from ..setup import deploy
     from .terminal import printTitle
@@ -446,7 +451,7 @@ def cd(directory=""):
     from uos import chdir
     try:
         chdir(directory)
-    except OSError as e:
+    except OSError:
         print("cd: {}: No such file or directory".format(directory))
 
 
