@@ -411,33 +411,21 @@ def ver():
 def wgetapi(urlApi="https://www.octopusengine.org/api"):
     # https://www.octopusengine.org/api/message.php
     # get api text / jsoun / etc
-    from ..octopus import w
-    try:
-        w(echo = False)
-    except Exception as e:
-        print("Exception: {0}".format(e))
-
     from urequests import get
     urltxt = urlApi + "/text123.txt"
-    dt_str ="?"
+    dt_str = "?"
     try:
         response = get(urltxt)
         dt_str = response.text
     except Exception as e:
-        print("Err. read txt from URL")
+        print("Err. read txt from URL", e)
     print(dt_str)
 
 
 @command
 def wget(url="https://www.octopusengine.org/api/text123.txt",path="download"):
-    from ..octopus import w
-    try:
-        w(echo = False)
-    except Exception as e:
-        print("Exception: {0}".format(e))
-
     from .wget import wget
-    wget(url,path)
+    wget(url, path)
 
 
 @command
