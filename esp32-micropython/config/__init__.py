@@ -1,6 +1,6 @@
 """
 octopusLAB - config class
-last update: 8.12.2019
+last update: 5.5.2020
 
 config (all) and config_data (for selected keys)
 set / get / 
