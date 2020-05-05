@@ -17,7 +17,7 @@ autostart:
 last update:
 """
 
-__version__ = "0.32.2-01052020" #533
+__version__ = "0.33.0-20200505" #533
 
 # toto: kill, wget/wsend?, ...
 SEPARATOR_WIDTH = 50
@@ -358,14 +358,20 @@ def wifi(comm="on"):
         print('-' * SEPARATOR_WIDTH)
 
     if comm == "off":
-        print("---off---")
+        try:
+            _wc.sta_if.disconnect()
+        except Exception as e:
+            print("Exception: {0}".format(e))
 
 
 @command
 def ping(url='google.com'):
-    wifi(comm="on")
+    # wifi(comm="on")
     from lib.uping import ping
-    ping(url)
+    try:
+        ping(url)
+    except Exception as e:
+        print("Exception: {0}".format(e))
 
 
 @command # TODO
