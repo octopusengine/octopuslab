@@ -20,7 +20,6 @@ ampy -p /COM6 put ./config/__init__.py config/__init__.py
 class Conf:
     TW = 50
 
-from util.octopus import printTitle
 import ujson
 from ucollections import OrderedDict
 
@@ -144,7 +143,7 @@ class Config():
 
 
     def __str__(self):
-        printTitle(self.file)
+        print(self.file)
         print(self.config)
         print("Keys: ")
         print(self.keys)
