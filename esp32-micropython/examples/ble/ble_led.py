@@ -1,4 +1,4 @@
-# octopusLAB - main.py - BLE and BlueFruit mobile app.
+# octopusLAB
 ## uPyShell:~/$ run examples/ble/ble_led.py
 
 print("---> BLE and BlueFruit mobile app. - led")
@@ -24,6 +24,8 @@ def on_data_received(connection, data):
         led.value(1)
     if data == bf.DOWN:
         led.value(0)
+    if data == bf.RIGHT:
+        led.toggle()
 
 
 devName = 'octopus-led-'+uID5
