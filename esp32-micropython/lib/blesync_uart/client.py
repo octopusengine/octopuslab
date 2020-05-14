@@ -15,5 +15,5 @@ class UARTService(blesync_client.Service):
 
     on_message = _tx.on_message
 
-    def send(self, message):
-        self._rx.write(message)
+    def send(self, message, ack=False):
+        self._rx.write(message, ack)

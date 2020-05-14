@@ -58,7 +58,6 @@ _events = {
     _IRQ_SCAN_RESULT: {},
     _IRQ_SCAN_COMPLETE: {},
     _IRQ_PERIPHERAL_CONNECT: {},
-    _IRQ_PERIPHERAL_DISCONNECT: {},
     _IRQ_GATTC_SERVICE_RESULT: {},
     _IRQ_GATTC_CHARACTERISTIC_RESULT: {},
     _IRQ_GATTC_DESCRIPTOR_RESULT: {},
@@ -69,6 +68,7 @@ _events = {
 _callbacks = {
     _IRQ_CENTRAL_CONNECT: [],
     _IRQ_CENTRAL_DISCONNECT: [],
+    _IRQ_PERIPHERAL_DISCONNECT: [],
     _IRQ_GATTS_WRITE: [],
     _IRQ_GATTC_NOTIFY: [],
     _IRQ_GATTC_INDICATE: [],
@@ -281,8 +281,7 @@ def gattc_write(conn_handle, value_handle, data, ack=False, timeout_ms=None):
 def on_central_connect(callback):
     # A central has connected to this peripheral.
     # conn_handle, addr_type, addr
-    _register_callback(_IRQ_CENTRAL_CONNECT, callback)
-    return callback
+    return _register_callback(_IRQ_CENTRAL_CONNECT, callback)
 
 
 def on_central_disconnect(callback):
@@ -293,6 +292,8 @@ def on_central_disconnect(callback):
 
 
 def on_peripherial_disconnect(callback):
+    # Connected peripheral has disconnected.
+    # conn_handle, addr_type, addr
     _register_callback(_IRQ_PERIPHERAL_DISCONNECT, callback)
     return callback
 

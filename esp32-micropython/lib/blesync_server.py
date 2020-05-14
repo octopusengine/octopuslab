@@ -42,7 +42,7 @@ Example: Beacons in museums defining proximity to specific exhibits.
 
 
 # Generate a payload to be passed to gap_advertise(adv_data=...).
-def advertising_payload(
+def _create_advertising_payload(
     limited_disc=False,
     br_edr=False,
     name=None,
@@ -55,6 +55,8 @@ def advertising_payload(
         nonlocal payload
         payload += struct.pack("BB", len(value) + 1, adv_type) + value
 
+
+    # some combinations of flags aren't allowed TODO describe
     adv_type_flags = (0x01 if limited_disc else 0x02) + (0x00 if br_edr else 0x04)
     _append(
         _ADV_TYPE_FLAGS,
@@ -76,7 +78,6 @@ def advertising_payload(
 
     # See org.bluetooth.characteristic.gap.appearance.xml
     _append(_ADV_TYPE_APPEARANCE, struct.pack("<h", appearance))
-
     return payload
 
 
@@ -87,6 +88,7 @@ class Characteristic:
         self.buffer_size = buffer_size
         self.append = append
         self.value_handle = None
+        self._on_message_callback = lambda *_: None
 
     def __get__(self, instance, owner):
         return self
@@ -94,42 +96,33 @@ class Characteristic:
     def notify(self, conn_handle, data=None):
         blesync.gatts_notify(conn_handle, self.value_handle, data)
 
-    def write(self, conn_handle, data):
-        blesync.gatts_write(conn_handle, self.value_handle, data)
+    def write(self, data):
+        blesync.gatts_write(self.value_handle, data)
+
+    def on_message(self, callback):
+        self._on_message_callback = callback
+        return callback
 
 
 class Service:
     characteristics = tuple()  # TODO it won't be needed in py 3.6
 
     @classmethod
-    def _get_characteristic_names(cls):
-        for name in dir(cls):
-            attr = getattr(cls, name)
-            if isinstance(attr, Characteristic):
-                yield attr, name
-
-    @classmethod
     def get_characteristics_declarations(cls):
         return [
-            (characteristic.uuid, characteristic.flags)  # TODO descriptors
+            (characteristic.uuid, characteristic.flags)  # TODO BLE descriptors
             for characteristic in cls.characteristics
         ]
 
     def _on_gatts_write(self, conn_handle, value_handle):
         received_data = blesync.gatts_read(value_handle)
-        getattr(
-            self,
-            'on_{characteristic_name}_message'.format(
-                characteristic_name=self.characteristics_names[value_handle]
-            ),
-            lambda *_: None
-        )(conn_handle, received_data)
+        characteristic = self._characteristics[value_handle]
+        characteristic._on_message_callback(self, conn_handle, received_data)
 
     def __init__(self, handles):
-        characteristics_names = dict(self._get_characteristic_names())
-        self.characteristics_names = {}
+        self._characteristics = {}
         for characteristic, handle in zip(self.characteristics, handles):
-            self.characteristics_names[handle] = characteristics_names[characteristic]
+            self._characteristics[handle] = characteristic
             characteristic.value_handle = handle
             if characteristic.buffer_size:
                 blesync.gatts_set_buffer(
@@ -138,46 +131,33 @@ class Service:
                     characteristic.append
                 )
 
-    def on_connect(self, conn_handle: int, addr_type: int, addr: bytes) -> None:
-        '''
-        Called if client is connected.
-        ..Note:
-            Client doesn't need to know the the service or the characteristics are not
-            discovered yet. So it can be useless to send the data to the client
-            from this method.
-        '''
-        pass
 
-    def on_disconnect(self, conn_handle, addr_type, addr):
-        '''
-        Called if client is disconnected.
-        ..Note:
-            Client doesn't need to know the the service or the characteristics are not
-            discovered yet. So it can be useless to send the data to the client
-            from this method.
-        '''
-        pass
+def _get_services_declarations(service_classes):
+    return [
+        (service_class.uuid, service_class.get_characteristics_declarations())
+        for service_class in service_classes
+    ]
 
 
-class BLEServer:
-    def __init__(self, name, *service_classes, appearance=0):
+class Server:
+    def __init__(self,
+        name,
+        *service_classes,
+        multiple_connections=False,
+        appearance=0,
+    ):
         self._service_classes = service_classes
+        self._multiple_connections = multiple_connections
         self._service_by_handle = {}
-        self._services = []
-        self._advertising_payload = advertising_payload(
+        self._advertising_payload = _create_advertising_payload(
             name=name,
-            appearance=appearance
+            appearance=appearance,
         )
 
-    def _get_services_declarations(self):
-        return [
-            (service_class.uuid, service_class.get_characteristics_declarations())
-            for service_class in self._service_classes
-        ]
-
     def start(self):
+
         blesync.active(True)
-        services_declarations = self._get_services_declarations()
+        services_declarations = _get_services_declarations(self._service_classes)
         all_handles = blesync.gatts_register_services(services_declarations)
 
         for handles, service_class in zip(
@@ -185,29 +165,32 @@ class BLEServer:
             self._service_classes
         ):
             service = service_class(handles)
-            self._services.append(service)
             for handle in handles:
                 self._service_by_handle[handle] = service
 
-        blesync.on_central_connect(self._on_central_connect)
-        blesync.on_central_disconnect(self._on_central_disconnect)
+        if self._multiple_connections:
+            blesync.on_central_connect(self._advertise_on_central_connect)
+
         blesync.on_gatts_write(self._on_gatts_write)
+
+        blesync.on_central_disconnect(self._on_central_disconnect)
         self._advertise()
 
     def _advertise(self, interval_us=500000):
         blesync.gap_advertise(interval_us, adv_data=self._advertising_payload)
 
+    def _advertise_on_central_connect(self, conn_handle, addr_type, addr):
+        # Start advertising again to allow multiple connections
+        self._advertise()
+
     def _on_gatts_write(self, conn_handle, value_handle):
         service = self._service_by_handle[value_handle]
         service._on_gatts_write(conn_handle, value_handle)
 
-    def _on_central_connect(self, conn_handle, addr_type, addr):
-        for service in self._services:
-            service.on_connect(conn_handle, addr_type, addr)
-        self._advertise()  # TODO optional
-
     def _on_central_disconnect(self, conn_handle, addr_type, addr):
-        for service in self._services:
-            service.on_disconnect(conn_handle, addr_type, addr)
         # Start advertising again to allow a new connection.
         self._advertise()
+
+
+on_connect = blesync.on_central_connect
+on_disconnect = blesync.on_central_disconnect
