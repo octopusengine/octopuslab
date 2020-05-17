@@ -5,8 +5,7 @@
 
 from pubsub import PubSub
 
-pubsub = PubSub(100)
-pubsub.start()
+pubsub = PubSub()
 
 #######################################################################################
 from machine import Pin
