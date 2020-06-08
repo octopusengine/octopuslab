@@ -17,21 +17,6 @@ _ADV_TYPE_UUID128_MORE = const(0x6)
 _ADV_TYPE_APPEARANCE = const(0x19)
 
 
-# 0x00 - ADV_IND - connectable and scannable
-# undirected
-# advertising
-# 0x01 - ADV_DIRECT_IND - connectable
-# directed
-# advertising
-# 0x02 - ADV_SCAN_IND - scannable
-# undirected
-# advertising
-# 0x03 - ADV_NONCONN_IND - non - connectable
-# undirected
-# advertising
-# 0x04 - SCAN_RSP - scan
-# response
-
 def _next(iterator, default):
     try:
         return next(iterator)
@@ -68,7 +53,7 @@ def decode_adv_name(data):
     return ''
 
 
-def decode_adv_flags(data):
+def decode_adv_type_flags(data):
     payload = _next(_find_adv_data(data, _ADV_TYPE_FLAGS), None)
     if payload:
         return payload[0]
@@ -83,12 +68,6 @@ def decode_adv_services(data):
     for payload in _find_adv_data(data, _ADV_TYPE_UUID128_COMPLETE):
         services.append(bluetooth.UUID(payload))
     return services
-
-
-BLEDevice = namedtuple(
-    'BLEDevice',
-    ('addr_type', 'addr', 'adv_name', 'adv_type_flags', 'rssi', 'services')
-)
 
 
 # TODO ADV_FLAGS
@@ -112,18 +91,26 @@ BLEDevice = namedtuple(
 # Non connectable devices, advertising information to any listening device.
 # Example: Beacons in museums defining proximity to specific exhibits.
 # '''
+# _ADV_SCAN_RSP = const(0x04)
+# '''
+# Scan response
+# '''
 
 
-def scan():
+BLEDevice = namedtuple(
+    'BLEDevice',
+    ('addr_type', 'addr', 'adv_name', 'adv_type_flags', 'rssi', 'services')
+)
+
+
+def scan(duration_ms, interval_us=None, window_us=None, timeout_ms=None):
     blesync.active(True)
     for addr_type, addr, adv_type, rssi, adv_data in blesync.gap_scan(
-        2000,
-        30000,
-        30000
+        duration_ms, interval_us=interval_us, window_us=window_us, timeout_ms=timeout_ms
     ):
         parsed_data = parse_adv_data(adv_data)
         adv_name = decode_adv_name(parsed_data)
-        adv_type_flags = decode_adv_flags(parsed_data)
+        adv_type_flags = decode_adv_type_flags(parsed_data)
         adv_services = decode_adv_services(parsed_data)
         # addr buffer is owned by caller so need to copy it.
         addr_copy = bytes(addr)
@@ -239,14 +226,14 @@ class Service:
         for def_handle, value_handle, properties, uuid in blesync.gattc_discover_characteristics(
             conn_handle, start_handle, end_handle
         ):
-            for characteristic in characteristics:  # TODO enumerate
+            for index, characteristic in enumerate(characteristics, start=1):
                 try:
                     characteristic.register(uuid, self, value_handle)
                 except ValueError:
                     continue
                 else:
                     self._characteristics[value_handle] = characteristic
-                    if len(self._characteristics) == len(characteristics):
+                    if index == len(self._characteristics):
                         return
                     break
 
