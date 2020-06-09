@@ -1,6 +1,6 @@
 # Oled display - ssd1306
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 from time import sleep_ms
 from machine import Pin
@@ -15,7 +15,7 @@ IMAGE_WIDTH = 63 # default size
 IMAGE_HEIGHT = 63
 
 class Oled(ssd1306.SSD1306_I2C):
-    def __init__(self, i2c, addr=0x60, ox = OLEDX, oy = OLEDY):
+    def __init__(self, i2c, addr=0x3c, ox = OLEDX, oy = OLEDY):
         self.ox = ox
         self.oy = oy
         super().__init__(ox, oy, i2c, addr=addr)
