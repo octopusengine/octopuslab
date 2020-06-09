@@ -4,7 +4,7 @@ __version__ = "1.0.1"
 
 from time import sleep_ms
 from machine import Pin
-from lib import ssd1306
+import ssd1306
 from util.display_segment import *
 
 OLEDX = 128
