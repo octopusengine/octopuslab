@@ -22,8 +22,8 @@ def reset():
     reset()
 
 def shell():
-    import util.shell
-    util.shell.shell()
+    import shell
+    shell.shell()
 
 try:
     print("auto start from: config/boot.json")
