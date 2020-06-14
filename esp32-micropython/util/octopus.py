@@ -2,15 +2,15 @@
 # The MIT License (MIT)
 # Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 from sys import modules
 from time import sleep, sleep_ms, sleep_us, ticks_ms, ticks_diff
 from machine import Pin, Timer, RTC
 #from os import urandom
 from util.pinout import set_pinout
-from util.shell.terminal import printTitle, printLog, printHead
 from util.io_config import get_from_file
+from shell.terminal import printTitle, printLog, printHead
 
 
 # olab = Env()  # for initialized equipment
@@ -22,8 +22,8 @@ rtc = RTC()  # real time
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "1.01"  # version - log: num = ver*100
-    verDat = "09.06.2020 #997"
+    ver = "1.02"  # version - log: num = ver*100
+    verDat = "14.06.2020 #998"
     debug = True
     logDev = True
     autoInit = True
