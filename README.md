@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/octopusengine/octopuslab/master/images/oelab1.png" alt="oeLab" width="390">
 
-# OctopusLab
+# OctopusLab - ESP32
 
 Our goal is to make easier work with basic development of electronics devices.
 
