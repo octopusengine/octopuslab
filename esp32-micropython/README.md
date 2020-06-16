@@ -223,3 +223,12 @@ root
  ║        ╠═ led/buzzer
  ╠═ ...   ╠═ ...
 </pre>
+
+#google/Blockly
+
+go to > https://github.com/ItsMates/ardublockly-micropython
+
+https://developers.google.com/blockly/
+(A JavaScript library for building visual programming editors.)
+
+For Micropython programming go to https://github.com/octopusengine/octopuslab/tree/master/esp32-micropython
