@@ -8,8 +8,8 @@ Our goals are not simple. We want to connect electronics, IoT and robotics with 
 
 ## Development boards with code
 There are multiple development boards what we support now. All of them are bellow.
-- <a href=https://github.com/octopusengine/octopuslab/tree/master/esp8266>ESP8266</a> - NodeMcu (LoLin) / WeMos and octopus ESP-interface-board 
-- <a href=https://github.com/octopusengine/octopuslab/tree/master/esp32-micropython/_examples/esp8266-examples>ESP8266 - Micropython</a> - NodeMcu (LoLin) / WeMos and octopus ESP-interface-board 
+- <a href=https://github.com/octopusengine/esp8266-arduinoC>ESP8266</a> - NodeMcu (LoLin) / WeMos and octopus ESP-interface-board 
+- NodeMcu (LoLin) / WeMos and octopus ESP-interface-board 
 - <a href=https://github.com/octopusengine/octopuslab/tree/master/esp32>ESP32 - Arduino IDE-C</a> - octopusLAB ESP-interface/ROBOTboard
 - <a href=https://github.com/octopusengine/octopuslab/tree/master/esp32-micropython>ESP32 - Micropython</a> - octopusLAB ESP-interface/ROBOTboard
 - Raspberry Pi 2/3/ZERO
