@@ -3,7 +3,7 @@
 # octopusLAB pubsub example
 
 from time import sleep
-from examples.pubsub.ps_init import pubsub
+import pubsub
 
 print("start: ps_analog.py")
 
