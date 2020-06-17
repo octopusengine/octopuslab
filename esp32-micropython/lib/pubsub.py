@@ -1,3 +1,8 @@
+# The MIT License (MIT)
+# Copyright (c) 2019-2020 Jan Cespivo
+
+__version__ = "1.0.0"
+
 from micropython import schedule
 
 _subscribers = {}
