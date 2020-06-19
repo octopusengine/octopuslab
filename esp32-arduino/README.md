@@ -24,7 +24,7 @@ oeLAB-esp32 (DoIt) 2x15 pins:                               [ROBOT Board]:
                      GND -           - GND
                      VIN -           - 3V3 +
                           -----------
-                          
+
    </pre>
 
 ## Description of the ESP32
@@ -48,6 +48,8 @@ Ultra-low noise analog amplifier, Hall sensor, 10x capacitive touch interfaces
 PWM/timer input/output available on every GPIO pin
 OpenOCD debug interface with 32 kB TRAX buffer
 SDIO master/slave 50 MHz
+
+---
 
 ## Get help
 
