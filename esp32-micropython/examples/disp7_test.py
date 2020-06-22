@@ -1,13 +1,26 @@
 # simple basic example - ESP32 + 7segment display
 
 from time import sleep
-from util.octopus import disp7_init
+from machine import Pin, SPI
+from util.pinout import set_pinout
+from util.display7 import Display7
 
-print("this is simple Micropython example | ESP32 & octopusLAB")
-print()
 
-d7 = disp7_init()	# 8 x 7segment display init
+print("this is simple Micropython example | octopusLAB & ESP32")
 
-for i in range(999):
-    d7.show(1000-i)
-    sleep(1)
+print("--- spi-init---")
+pinout = set_pinout()
+spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
+ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
+#spi.deinit() #print("spi > close")
+
+print("--- display7-init---")
+d7 = Display7(spi, ss) # 8 x 7segment display init
+d7.write_to_buffer('octopus')
+d7.display()
+sleep(3)
+
+print("--- display7-test---")
+for i in range(6):
+    d7.show(5-i)
+    sleep(0.5)
