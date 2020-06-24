@@ -65,7 +65,7 @@ def printInfo(w=Env.TW):
 
 
 def o_help():
-    from util.shell import cat
+    from shell import cat
     printOctopus()
     print("Welcome to MicroPython on the ESP32 octopusLAB board")
     print("("+getVer()+")")

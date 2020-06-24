@@ -9,7 +9,7 @@ import blesync_server
 import blesync_uart.server
 import util.ble.bluefruit as bf
 
-from util.shell.terminal import getUid
+from shell.terminal import getUid
 uID5 = getUid(short=5)
 
 from time import sleep

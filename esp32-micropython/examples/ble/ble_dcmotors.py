@@ -6,7 +6,7 @@ print("This is simple Micropython example | ESP32 & octopusLAB")
 
 speed = 800
 
-from util.shell.terminal import getUid
+from shell.terminal import getUid
 uID5 = getUid(short=5)
 
 from time import sleep

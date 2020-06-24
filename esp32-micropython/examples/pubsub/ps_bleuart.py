@@ -7,7 +7,7 @@ from examples.pubsub.ps_init import pubsub
 
 print("start: ps_bleuart.py")
 
-from util.shell.terminal import getUid
+from shell.terminal import getUid
 uID5 = getUid(short=5)
 
 from time import sleep

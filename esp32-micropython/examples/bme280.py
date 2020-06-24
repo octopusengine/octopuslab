@@ -4,7 +4,7 @@
 
 from time import sleep
 from util.octopus import i2c_init
-from util.shell.terminal import printTitle
+from shell.terminal import printTitle
 from bme280 import BME280
 
 def bme280_init():
