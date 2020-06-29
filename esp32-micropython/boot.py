@@ -5,17 +5,13 @@
 #webrepl.start()
 
 def setup():
-    import util.setup
-    util.setup.setup()
+    import utils.setup
+    utils.setup.setup()
 
 def octopus():
-    import util.octopus
-    util.octopus.octopus()
-    return util.octopus
-
-def h():
-    from util.octopus import o_help
-    o_help()
+    import utils.octopus
+    utils.octopus.octopus()
+    return utils.octopus
 
 def reset():
     from machine import reset
@@ -31,15 +27,14 @@ try:
     autostart = Config("boot")
 
     if autostart.get("connect_wifi"):
-        from util.octopus import w
+        from utils.octopus import w
         w()
 
     if autostart.get("start_web_server"):
-        from util.octopus import web_server
+        from utils.octopus import web_server
         web_server()
 
 except:
     print("Autostart Err.")
 
 # when user enters REPL and executes setup()
-

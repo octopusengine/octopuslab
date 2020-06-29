@@ -8,8 +8,8 @@ from sys import modules
 from time import sleep, sleep_ms, sleep_us, ticks_ms, ticks_diff
 from machine import Pin, Timer, RTC
 #from os import urandom
-from util.pinout import set_pinout
-from util.io_config import get_from_file
+from utils.pinout import set_pinout
+from utils.io_config import get_from_file
 from shell.terminal import printTitle, printLog, printHead
 
 
@@ -108,7 +108,7 @@ def o_info():
 
 
 def led_init(pin = pinout.BUILT_IN_LED):
-    from util.led import Led
+    from components.led import Led
     if pin is not None and pinout is not None and (pin == pinout.RXD0 or pin == pinout.TXD0):
         print("WARNING: PIN {0} is used for UART0. REPL Over serial will be unusable")
 
@@ -218,7 +218,7 @@ def timerAction():
 
 def ap_init(): #192.168.4.1
     printTitle("AP init > ")
-    from util.wifi_connect import WiFiConnect
+    from utils.wifi_connect import WiFiConnect
     import ubinascii
     w = WiFiConnect()
     w.ap_if.active(True)
@@ -232,7 +232,7 @@ def ap_init(): #192.168.4.1
 def w_connect():
     led.value(1)
 
-    from util.wifi_connect import WiFiConnect
+    from utils.wifi_connect import WiFiConnect
     sleep(1)
     w = WiFiConnect()
     if w.connect():
@@ -304,7 +304,7 @@ def w(logD=True, echo=True):
 
 
 def database_init(name):
-    from util.database import Db
+    from utils.database import Db
     db = Db(name)
     return db
 
@@ -378,9 +378,6 @@ def octopus(auto = True):
         # print("auto")
         auto_init = True # todo
 
-    #from util.octopus import ls, cat
-    #globals()["ls"]=ls
-
     from gc import collect
     printOctopus()
     print("("+getVer()+")")
@@ -390,7 +387,6 @@ def octopus(auto = True):
 
 
 def octopus_init():
-    # from util.octopus import *
     Env.start = ticks_ms()
     print("auto Init: " + str(Env.autoInit))
     #if Env.autoInit:
@@ -445,10 +441,10 @@ if Env.autoInit:  # test
     piezzo = None
     if io_conf.get('piezzo'):
         print("piezzo | ",end="")
-        from util.buzzer import Buzzer
+        from components.buzzer import Buzzer
         piezzo = Buzzer(pinout.PIEZZO_PIN)
         piezzo.beep(1000,50)
-        from util.buzzer import Notes
+        from components.buzzer import Notes
         def beep(f=1000, l=50):  # noqa: E741
             piezzo.beep(f, l)
 
@@ -458,8 +454,8 @@ if Env.autoInit:  # test
 
     if io_conf.get('ws'):
         print("ws | ",end="")
-        from util.rgb import Rgb
-        from util.colors import *
+        from components.rgb import Rgb
+        from components.colors import *
         if pinout.WS_LED_PIN is None:
             print("Warning: WS LED not supported on this board")
         else:
@@ -472,7 +468,7 @@ if Env.autoInit:  # test
             if num_led is None or num_led == 0:
                 print("Warning: Number of WS LED is 0")
                 return
-            from util.rgb import Rgb  # setupNeopixel
+            from components.rgb import Rgb  # setupNeopixel
             ws = Rgb(pin, num_led)
             return ws
 
@@ -497,7 +493,7 @@ if Env.autoInit:  # test
         print("disp7 | ",end="")
         def disp7_init():
             printTitle("disp7init()")
-            from util.display7 import Display7
+            from components.display7 import Display7
             print("display test: octopus")
             d7 = Display7(spi, ss)
             d7.write_to_buffer('octopus')
@@ -546,14 +542,14 @@ if Env.autoInit:  # test
     if io_conf.get('oled'):
         print("OLED | ",end="")
         from assets.icons9x9 import ICON_clr, ICON_wifi
-        from util.display_segment import oneDigit, threeDigits
-        from util.oled import Oled
+        from components.display_segment import oneDigit, threeDigits
+        from components.oled import Oled
 
         def oled_init(ox=128, oy=64, runTest = True):
             printTitle("oled_init()")
 
-            from util.oled import Oled
-            from util.display_segment import threeDigits
+            from components.oled import Oled
+            from components.display_segment import threeDigits
             sleep_ms(1000)
 
             oled = Oled(i2c, 0x3c, ox, oy)
@@ -593,7 +589,7 @@ if Env.autoInit:  # test
 
     if io_conf.get('ad0') or io_conf.get('ad1') or io_conf.get('ad2'):
         print("Analog | ",end="")
-        from util.analog import Analog
+        from components.analog import Analog
         #adcpin = pinout.ANALOG_PIN
         adcpin = 39 #default
         an = Analog(adcpin)
@@ -604,7 +600,7 @@ if Env.autoInit:  # test
         try: PIN_TEMP = pinout.ONE_WIRE_PIN
         except: PIN_TEMP = 17 # ROBOT
         def temp_init(pin = PIN_TEMP):
-            from util.iot import Thermometer
+            from components.iot import Thermometer
             ts = Thermometer(pin)
             # tx = tt.ds.scan()
             # ts.read_temp(tx[0])
@@ -612,7 +608,7 @@ if Env.autoInit:  # test
 
     if io_conf.get('servo'):
         print("servo | ",end="")
-        from util.servo import Servo
+        from components.servo import Servo
         try: PIN_SER = pinout.PWM1_PIN
         except: PIN_SER = 17 # ROBOT
         def servo_init(pin = PIN_SER):
@@ -621,10 +617,10 @@ if Env.autoInit:  # test
 
     if io_conf.get('exp8'):
         print("exp8 | ",end="")
-        from util.i2c_expander import Expander8
+        from components.i2c_expander import Expander8
         def i2c_expander_init(addr = 0):
             printTitle("i2c_expander_init()")
-            from util.i2c_expander import Expander8 # from util.i2c_expander import neg, int2bin
+            from components.i2c_expander import Expander8 # from components.i2c_expander import neg, int2bin
             if addr == 0:
                 e8 = Expander8()
             else:
@@ -692,14 +688,13 @@ def small_web_server(wPath='www/'):
 
 
 def web_server():
-    # from util.octopus import w, web_server
     printTitle("web_server start > ")
     from lib.microWebSrv import MicroWebSrv
     import os, webrepl
     from ubinascii import hexlify
-    from util.wifi_connect import WiFiConnect
+    from utils.wifi_connect import WiFiConnect
     if Env.wscExp8:
-        from util.i2c_expander import Expander8
+        from components.i2c_expander import Expander8
         expander = Expander8()
 
     wc = WiFiConnect()
@@ -816,7 +811,7 @@ def web_server():
 
     @MicroWebSrv.route('/setup/devices.json') # GET boards
     def _httpHandlerDevices(httpClient, httpResponse):
-        from util.setup import devices
+        from utils.setup import devices
 
         httpResponse.WriteResponseJSONOk(devices)
 
@@ -876,7 +871,7 @@ def web_server():
 
     @MicroWebSrv.route('/esp/control/i2cexpander', "POST") # Set device
     def _httpHandlerSetI2CExpander(httpClient, httpResponse):
-        from util.i2c_expander import neg
+        from components.i2c_expander import neg
         data = httpClient.ReadRequestContent()
         print("i2cexpander.data: " + str(data) + str(bin(int(data))))
         try:
@@ -912,7 +907,7 @@ def web_server():
 
     @MicroWebSrv.route('/setup/io') # Get IO configuration
     def _httpHandlerIOConfigGet(httpClient, httpResponse):
-        from util.io_config import io_conf_file, io_menu_layout, get_from_file as get_io_config_from_file
+        from utils.io_config import io_conf_file, io_menu_layout, get_from_file as get_io_config_from_file
         io_conf = get_io_config_from_file()
         config = [ {'attr': item['attr'], 'descr': item['descr'], 'value': io_conf.get(item['attr'], None) } for item in io_menu_layout ]
 
@@ -926,7 +921,7 @@ def web_server():
             httpResponse.WriteResponse(code=400, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = "Value is not integer")
             return
 
-        from util.io_config import io_conf_file, io_menu_layout, get_from_file as get_io_config_from_file
+        from utils.io_config import io_conf_file, io_menu_layout, get_from_file as get_io_config_from_file
         io_conf = get_io_config_from_file()
         io_conf[data['attr']] = data['value']
 
