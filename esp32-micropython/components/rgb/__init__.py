@@ -1,14 +1,14 @@
 # library for ws rgb neopixel led - single / strip / ring
-# octopusLAB 2019
+# octopusLAB 2020
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 from time import sleep, sleep_ms
 from os import urandom
 from machine import Pin
 from neopixel import NeoPixel
 
-from util.colors import *
+from colors_rgb import *
 
 
 def wheel(pos, dev = 1):
