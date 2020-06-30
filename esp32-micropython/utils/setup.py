@@ -7,7 +7,7 @@ import time, uos
 import ujson
 import machine # datetime
 
-ver = "0.67 / 15.1.2020"
+ver = "0.68 / 30.6.2020"
 
 devices = [
 ["oLAB Default","esp32"],
@@ -92,7 +92,6 @@ def setupMenu():
     print("[sdo] - system download > octopus (Alfa octopus modules from URL)")
     print("[ds]  - device setting")
     print("[ios] - I/O setting submenu")
-    # print("[iot] - I/O test - run io_test()")
     print("[mq]  - mqtt() and sending data setup")
     # print("[st]  - set time")
     print("[si]  - system info")
@@ -117,7 +116,7 @@ def wifiMenu():
     return sel
 
 def ioMenu():
-    from util.io_config import io_conf_file, io_menu_layout, get_from_file as get_io_config_from_file
+    from utils.io_config import io_conf_file, io_menu_layout, get_from_file as get_io_config_from_file
     while True:
         # read current settings from json to config object
         io_conf = get_io_config_from_file()
@@ -193,7 +192,7 @@ def setup():
             run = False
 
         if sele == "si": #system_info()
-            from util.sys_info import sys_info
+            from utils.sys_info import sys_info
             sys_info()
 
         if sele == "ds":
@@ -223,13 +222,8 @@ def setup():
             # io menu
             ioMenu()
 
-        if sele == "iot":
-            print("Testing I/O")
-            from util import io_test
-            io_test.all()
-
         if sele == "w":
-            from util.wifi_connect import WiFiConnect
+            from utils.wifi_connect import WiFiConnect
             w = WiFiConnect()
 
             sel_w = wifiMenu()
@@ -251,7 +245,7 @@ def setup():
 
         if sele == "cw":
               print("Connect WiFi >")
-              from util.wifi_connect import WiFiConnect
+              from utils.wifi_connect import WiFiConnect
               w = WiFiConnect()
               if w.connect():
                   print("WiFi: OK")
@@ -280,10 +274,10 @@ def setup():
             print("mqtt setup >")
             try:
                 print()
-                from util.mqtt import mqtt
+                from utils.mqtt import mqtt
                 mqtt()
             except:
-               print("Err.mqtt() or 'util.mqtt.py' does not exist")
+               print("Err.mqtt() or 'utils.mqtt.py' does not exist")
 
         if sele == "st":
             print("Time setting >")
