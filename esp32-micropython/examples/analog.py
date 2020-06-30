@@ -1,5 +1,5 @@
 from time import sleep
-from util.analog import Analog
+from components.analog import Analog
 an2 = Analog(33)
 
 

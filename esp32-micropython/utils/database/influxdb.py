@@ -4,9 +4,9 @@
 # testflux.write(field1=value1, field2=value2)
 # testflux.write(temperature=24, humidiry=60)
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
-from util.database import Database
+from utils.database import Database
 from urequests import post
 
 

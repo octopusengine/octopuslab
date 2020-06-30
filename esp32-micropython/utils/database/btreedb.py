@@ -6,11 +6,11 @@ db.addOne("one","1")
 db.listAll()
 """
 
-__version__ = "0.0.1"
+__version__ = "1.0.1"
 
-from util.database import Database
+from utils.database import Database
 import btree
-from util.octopus import printTitle
+from utils.octopus import printTitle
 
 
 class BTreeDB(Database):

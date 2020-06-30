@@ -29,7 +29,6 @@ def random_color():
     return wheel(urandom(1)[0])
 
 
-
 class Rgb(NeoPixel):
     def __init__(self, pin, num=1):
         self.pin = pin

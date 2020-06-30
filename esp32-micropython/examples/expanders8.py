@@ -3,9 +3,9 @@
 # exl.addr = 62 (011) leds
 
 from time import sleep
-from util.octopus import i2c_init
-from util.i2c_expander import Expander8
-from util.bits import neg, reverse, int2bin, get_bit, set_bit
+from utils.octopus import i2c_init
+from utils.i2c_expander import Expander8
+from utils.bits import neg, reverse, int2bin, get_bit, set_bit
 # int2bin(reverse(b1))   >   '10011111'
 
 i2c = i2c_init(True,200)

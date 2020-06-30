@@ -4,24 +4,24 @@
 
 # last update: 13.12.2019
 """ 
-from util.iot import Relay
+from components.iot import Relay
 re1 = Relay() # default IoTboard pin 
 re1.value(1)
 re2 = Relay(26)
 pwm_led = Pwm()
 pwm_led.duty(300)
-from util.iot import Thermometer
+from components.iot import Thermometer
 tt = Thermometer(32)
 tx = tt.ds.scan()
 tt.get_temp() # default index 0 > first sensor
 tt.get_temp(tx[0])
 """
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 from time import sleep_ms
 from machine import Pin, PWM
-from util.pinout import set_pinout
+from utils.pinout import set_pinout
 from onewire import OneWire
 from ds18x20 import DS18X20
 
