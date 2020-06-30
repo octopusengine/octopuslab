@@ -160,18 +160,6 @@ def getFree(echo = False):
     return mem_free()
 
 
-def bytearrayToHexString(ba):
-    return ''.join('{:02X}'.format(x) for x in ba)
-
-
-def map(x, in_min, in_max, out_min, out_max):
-    return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)
-
-
-def bytearrayToHexString(ba):
-    return ''.join('{:02X}'.format(x) for x in ba)
-
-
 def add0(sn):
     ret_str=str(sn)
     if int(sn)<10:

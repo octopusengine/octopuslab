@@ -6,7 +6,7 @@ __version__ = "1.0.1"
 from time import sleep
 from machine import Pin, PWM
 from utils import pinout
-from utils.octopus import map
+from utils.octopus_lib import map
 
 SERVO_MIN = 45
 PWM_CENTER = 60
