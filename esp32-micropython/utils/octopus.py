@@ -2,7 +2,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 from sys import modules
 from time import sleep, sleep_ms, sleep_us, ticks_ms, ticks_diff
@@ -22,8 +22,8 @@ rtc = RTC()  # real time
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "1.02"  # version - log: num = ver*100
-    verDat = "14.06.2020 #998"
+    ver = "1.03"  # version - log: num = ver*100
+    verDat = "30.06.2020 #998"
     debug = True
     logDev = True
     autoInit = True
@@ -48,7 +48,6 @@ class Env:  # for temporary global variables and config setup
 if Env.isTimer:
     tim1 = Timer(0)
 
-
 # ------------- common terminal function ------------
 def getVer():
     return "octopusLAB - lib.version: " + Env.ver + " > " + Env.verDat
@@ -72,10 +71,6 @@ def o_help():
     printTitle("basic commands - list, examples", 53)
     cat("util/octopus_help.txt", False)
     printInfo()
-
-
-def h():
-    o_help()
 
 
 def o_info():
@@ -472,10 +467,6 @@ if Env.autoInit:  # test
             ws = Rgb(pin, num_led)
             return ws
 
-    #if io_conf.get('fet'):
-    #    print("fet | ",end="")
-    #    FET = PWM(Pin(pinout.MFET_PIN), freq=500)
-    #    FET.duty(0) # pin(14) Robot(MOTO_3A), ESP(JTAG-MTMS)
 
     if io_conf.get('led7') or io_conf.get('led8'):
         from machine import SPI
