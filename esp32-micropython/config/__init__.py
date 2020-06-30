@@ -17,7 +17,7 @@ conf.save()
 ampy -p /COM6 put ./config/__init__.py config/__init__.py
 """
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 class Conf:
     TW = 50
@@ -83,12 +83,12 @@ class Config():
                 c += 1
                 print("[%2d] - %16s - %s" % (c, i, self.config[i] if i in self.config else ""))
 
-            print("[ x] - Exit from json setup")
+            print("[q] - Quit from json setup")
 
             print('=' * Conf.TW)
             sele = input("select: ")
 
-            if sele == "x":
+            if sele == "q":
                 # done with editing
                 break
 
