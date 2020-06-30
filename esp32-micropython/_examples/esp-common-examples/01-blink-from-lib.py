@@ -5,7 +5,7 @@ blink with BUILT_IN_LED
 from time import sleep
 from machine import Pin
 
-from util.pinout import set_pinout
+from utils.pinout import set_pinout
 pinout = set_pinout()
 
 pin_led = Pin(pinout.BUILT_IN_LED, Pin.OUT)

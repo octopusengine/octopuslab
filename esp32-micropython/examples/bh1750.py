@@ -2,7 +2,7 @@
 
 from time import sleep
 from lib.bh1750 import BH1750
-from util.octopus import i2c_init
+from utils.octopus import i2c_init
 
 i2c = i2c_init()
 sbh = BH1750(i2c)

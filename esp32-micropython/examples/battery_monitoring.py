@@ -1,8 +1,8 @@
 # octopusLAB simple example 
 # ESP32board + wifi -> analog 36, 39, ...
 
-from util.analog import Analog
-from util.octopus import *
+from components.analog import Analog
+from utils.octopus import *
 
 octopus()       # include main library
 

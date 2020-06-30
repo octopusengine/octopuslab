@@ -9,10 +9,10 @@
 ver = "9.9.2019 - 0.12"
 
 from time import sleep
-from util.octopus import printLog, printFree, get_eui, temp_init, get_temp, w, ap_init
-from util.pinout import set_pinout
+from utils.octopus import printLog, printFree, get_eui, temp_init, get_temp, w, ap_init
+from utils.pinout import set_pinout
 pinout = set_pinout()
-from util.led import Led #?VCh
+from components.led import Led #?VCh
 led = Led(pinout.BUILT_IN_LED)
 wnum = 0
 web_wifi = ""

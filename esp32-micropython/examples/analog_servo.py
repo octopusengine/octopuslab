@@ -1,7 +1,7 @@
 from time import sleep
-from util.analog import Analog
-from util.servo import map
-from util.servo import Servo
+from components.analog import Analog
+from utils.octopus_lib import map
+from components.servo import Servo
 
 an2 = Analog(35)
 s1 = Servo(16)

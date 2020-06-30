@@ -5,7 +5,7 @@ octopusLAB - database class
 
 __version__ = "1.0.1"
 
-from utils.octopus import printTitle
+from utils.octopus_lib import printTitle
 
 
 class Database():
