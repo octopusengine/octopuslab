@@ -6,7 +6,7 @@ print('-' * 50)
 from gc import mem_free
 print("--- RAM before octopus(): " + str(mem_free()))
 
-from util.octopus import getFree
+from utils.octopus import getFree
 getFree(True)
 print()
 
