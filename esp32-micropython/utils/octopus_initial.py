@@ -121,7 +121,7 @@ def setup():
             run = False
 
         if sele == "w":
-            from util.wifi_connect import WiFiConnect
+            from utils.wifi_connect import WiFiConnect
             w = WiFiConnect()
 
             sel_w = wifiMenu()
@@ -143,7 +143,7 @@ def setup():
 
         if sele == "cw":
               print("Connect WiFi >")
-              from util.wifi_connect import WiFiConnect
+              from utils.wifi_connect import WiFiConnect
               w = WiFiConnect()
               if w.connect():
                   print("WiFi: OK")
