@@ -455,7 +455,7 @@ if Env.autoInit:  # test
     if io_conf.get('ws'):
         print("ws | ",end="")
         from components.rgb import Rgb
-        from components.colors import *
+        from colors_rgb import *
         if pinout.WS_LED_PIN is None:
             print("Warning: WS LED not supported on this board")
         else:
