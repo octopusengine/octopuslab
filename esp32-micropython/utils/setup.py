@@ -130,7 +130,7 @@ def ioMenu():
         for i in io_menu_layout:
             c += 1
             print("[%2d] - %8s [%s] - %s" % (c, i['attr'], io_conf.get(i['attr'], 0), i['descr']))
-        print("[x]  - Exit from I/O setup")
+        print("[q]  - Quit I/O setup")
 
         print('=' * 50)
         sele = input("select: ")

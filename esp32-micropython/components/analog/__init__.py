@@ -2,7 +2,7 @@
 # octopusLAB 2019
 
 """
-from util.analog import Analog
+from components.analog import Analog
 an1 = Analog(36)
 an1.adc_test()
 an1.get_adc_aver(20)

@@ -1,6 +1,6 @@
 # basic library for 8bit expander
 # octopusLAB 2019 / FIRSTboard with PCF8574
-# from util.expander8 import Expander8
+# from components.expander8 import Expander8
 # e8 = Expander8(addr) addr default 000 > 0x20
 # e8.test()
 
@@ -8,8 +8,8 @@ __version__ = "1.0.0"
 
 from time import sleep_ms
 from micropython import const
-from util.pinout import set_pinout
-from util.bits import neg, reverse, set_bit, get_bit
+from utils.pinout import set_pinout
+from utils.bits import neg, reverse, set_bit, get_bit
 from machine import Pin, I2C
 
 pinout = set_pinout() 
@@ -51,18 +51,22 @@ const(0b11111111)  #8
 class Expander8:
     def __init__(self, addr=ADDRESS):
         self.addr = addr
-        self.i2c = I2C(scl=i2c_scl, sda=i2c_sda, freq=100000) 
+        self.i2c = I2C(scl=i2c_scl, sda=i2c_sda, freq=100000)
+
 
     def write(self, data):
         self.i2c.writeto(self.addr, data)
+
 
     def write_8bit(self, dataInt): # (int) or 0b101010100
         # ...write(struct.pack('<B', 255)) # alternative
         tempByte[0] = dataInt
         self.i2c.writeto(self.addr, tempByte)
 
+
     def write_bar(self, dataInt): # 1-8
         self.i2c.writeto(self.addr, bytearray([bar[dataInt]]))
+
 
     def set_all(self, all_0):
         if all_0:
@@ -70,9 +74,11 @@ class Expander8:
         else:
             self.i2c.writeto(self.addr, bytearray([bar[8]]))
 
+
     def read(self):
         bR = self.i2c.readfrom(self.addr, 1)[0]
-        return(bR)        
+        return(bR)
+
 
     def pin_read(self, pinNum):
         mask = 0x1 << pinNum
@@ -93,6 +99,7 @@ class Expander8:
             self.i2c.writeto(self.addr, bytearray([neg(bar[dd])]))
             sleep_ms(200)
 
+
     def counter(self, delay = 100):
         for i in range(255):
             self.write(255-i)
@@ -102,7 +109,8 @@ class Expander8:
 class Expander16:
     def __init__(self, addr = ADDRESS):
         self.addr = addr
-        self.i2c = I2C(scl=i2c_scl, sda=i2c_sda, freq=100000) 
+        self.i2c = I2C(scl=i2c_scl, sda=i2c_sda, freq=100000)
+
 
     def write(self, data):
         self.i2c.writeto(self.addr, data)

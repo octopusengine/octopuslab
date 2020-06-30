@@ -10,8 +10,8 @@ __version__ = "1.0.0"
 
 from time import sleep_ms
 from machine import Pin, PWM
-# from util.buzzer.notes import *
-# from util.buzzer.melody import alert1
+# from components.buzzer.notes import *
+# from components.buzzer.melody import alert1
 # piezzo.speed = 100 # BPM
 # piezzo.play_melody(alert1)
 

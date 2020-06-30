@@ -5,10 +5,10 @@
 """
 # ROBOTboard example
 
-from util.pinout import set_pinout
+from utils.pinout import set_pinout
 pinout = set_pinout()
 
-from util.dcmotors import Motor, Steering
+from components.dcmotors import Motor, Steering
 motor_r = Motor(pinout.MOTOR_1A, pinout.MOTOR_2A, pinout.MOTOR_12EN)
 motor_l = Motor(pinout.MOTOR_3A, pinout.MOTOR_4A, pinout.MOTOR_34EN)
 
