@@ -1,4 +1,4 @@
-print("--- octopusLAB: led_test ---")
+print("--- octopusLAB: test_analog ---")
 
 print("-> init")
 

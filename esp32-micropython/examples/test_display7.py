@@ -5,7 +5,7 @@ print("-> imports")
 from time import sleep
 from machine import Pin, SPI
 from utils.pinout import set_pinout
-from utils.display7 import Display7
+from components.display7 import Display7
 
 print("-> spi-init")
 pinout = set_pinout()
