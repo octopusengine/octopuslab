@@ -1,4 +1,4 @@
-# from util.display_segment import *
+# from components.display_segment import *
 
 aa = 16 # size
 y0 = 16 # position

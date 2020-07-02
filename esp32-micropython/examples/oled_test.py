@@ -1,7 +1,7 @@
 # oled test - without octopusLIB
 from time import sleep, sleep_ms
-from util.pinout import set_pinout
-from util.display_segment import threeDigits 
+from utils.pinout import set_pinout
+from utils.display_segment import threeDigits 
 
 pinout = set_pinout()     # set board pinout
 
