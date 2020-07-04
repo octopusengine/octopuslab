@@ -22,7 +22,7 @@ oled = oled_init()
 print("--- ok ---")
 
 from components.buzzer.melody import jingle1
-piezzo.play_melody[jingle1]
+piezzo.play_melody(jingle1)
 l2.blink()
 l3.blink()
 oled.poweroff()
