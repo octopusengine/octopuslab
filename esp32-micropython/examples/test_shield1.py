@@ -1,6 +1,6 @@
 from time import sleep
 
-print("--- Led2 | Led3 ---)
+print("--- Led2 | Led3 ---")
 from components.led import Led
 l2 = Led(25)
 l3 = Led(27)
@@ -21,6 +21,9 @@ oled = oled_init()
 
 print("--- ok ---")
 
+from components.buzzer.melody import jingle1
+piezzo.play_melody[jingle1]
 l2.blink()
 l3.blink()
+oled.poweroff()
 
