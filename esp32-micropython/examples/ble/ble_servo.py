@@ -9,8 +9,8 @@ from shell.terminal import getUid
 uID5 = getUid(short=5)
 
 from time import sleep
-from util.pinout import set_pinout
-from util.servo import Servo
+from utils.pinout import set_pinout
+from components.servo import Servo
 pinout = set_pinout()
 
 s1 = Servo(pinout.PWM1_PIN)

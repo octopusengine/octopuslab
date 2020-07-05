@@ -3,10 +3,10 @@
 
 from time import sleep
 from machine import Pin
-from util.button import Button
+from components.button import Button
 import blesync_client
 import blesync_uart.client
-import util.ble.bluefruit as bf
+import utils.ble.bluefruit as bf
 
 built_in_led = Pin(2, Pin.OUT)
 led_button = Button(0, release_value=1)

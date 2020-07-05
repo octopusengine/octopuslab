@@ -9,8 +9,8 @@ from shell.terminal import getUid
 uID5 = getUid(short=5)
 
 from time import sleep
-from util.pinout import set_pinout
-from util.servo import Servo
+from utils.pinout import set_pinout
+from components.servo import Servo
 pinout = set_pinout()
 
 s1 = Servo(pinout.PWM1_PIN)
@@ -19,7 +19,7 @@ s2 = Servo(pinout.PWM2_PIN)
 
 import blesync_server
 import blesync_uart.server 
-import util.ble.bluefruit as bf
+import utils.ble.bluefruit as bf
 
 
 angle1 = 45

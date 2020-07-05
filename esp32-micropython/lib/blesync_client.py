@@ -1,3 +1,8 @@
+# The MIT License (MIT)
+# Copyright (c) 2019-2020 Jan Cespivo
+
+__version__ = "1.0.2"
+
 from collections import namedtuple
 import struct
 
@@ -97,44 +102,87 @@ def decode_adv_services(data):
 # '''
 
 
-BLEDevice = namedtuple(
-    'BLEDevice',
+Device = namedtuple(
+    'Device',
     ('addr_type', 'addr', 'adv_name', 'adv_type_flags', 'rssi', 'services')
 )
 
 
-def scan(duration_ms, interval_us=None, window_us=None, timeout_ms=None):
-    blesync.active(True)
-    for addr_type, addr, adv_type, rssi, adv_data in blesync.gap_scan(
-        duration_ms, interval_us=interval_us, window_us=window_us, timeout_ms=timeout_ms
-    ):
-        parsed_data = parse_adv_data(adv_data)
-        adv_name = decode_adv_name(parsed_data)
-        adv_type_flags = decode_adv_type_flags(parsed_data)
-        adv_services = decode_adv_services(parsed_data)
-        # addr buffer is owned by caller so need to copy it.
-        addr_copy = bytes(addr)
-        yield BLEDevice(
-            addr_type=addr_type,
-            addr=addr_copy,
-            adv_name=adv_name,
-            adv_type_flags=adv_type_flags,
-            rssi=rssi,
-            services=adv_services,
+def scan(duration_ms, interval_us=None, window_us=None):
+    """
+    if it is interrupted during the iteration, the close() has to be called
+    see https://github.com/micropython/micropython/issues/6183
+    Example:
+        scan_iter = scan(
+            duration_ms=duration_ms,
+            interval_us=interval_us,
+            window_us=window_us,
         )
 
+        for device in scan_iter:
+            scan_iter.close()
+            return device
+    """
 
-class BLEClient:
+    blesync.activate()
+    gap_scan_iter = blesync.gap_scan(
+        duration_ms, interval_us=interval_us, window_us=window_us
+    )
+    try:
+        for addr_type, addr, adv_type, rssi, adv_data in gap_scan_iter:
+            parsed_data = parse_adv_data(adv_data)
+            adv_name = decode_adv_name(parsed_data)
+            adv_type_flags = decode_adv_type_flags(parsed_data)
+            adv_services = decode_adv_services(parsed_data)
+            yield Device(
+                addr_type=addr_type,
+                addr=addr,
+                adv_name=adv_name,
+                adv_type_flags=adv_type_flags,
+                rssi=rssi,
+                services=adv_services,
+            )
+    except GeneratorExit:
+        gap_scan_iter.close()
+
+
+class DeviceNotFound(Exception):
+    pass
+
+
+def find_device(name, duration_ms, interval_us=None, window_us=None):
+    scan_iter = scan(
+        duration_ms=duration_ms,
+        interval_us=interval_us,
+        window_us=window_us,
+    )
+
+    for device in scan_iter:
+        if device.adv_name == name:
+            scan_iter.close()
+            return device
+
+    raise DeviceNotFound()
+
+
+class ConnectTimeoutError(Exception):
+    pass
+
+
+class Client:
     def __init__(self, *service_classes):
         self._service_classes = service_classes
         self._services = {}
-        blesync.on_gattc_notify(self._on_gattc_message)
-        blesync.on_gattc_indicate(self._on_gattc_message)
+        blesync.on_gattc_notify(self._on_notify)
+        blesync.on_gattc_indicate(self._on_notify)
 
-    def connect(self, addr_type, addr):
+    def connect(self, addr_type, addr, timeout_ms=2000):
         # TODO separate connect and service creation
-        blesync.active(True)
-        conn_handle = blesync.gap_connect(addr_type, addr)
+        blesync.activate()
+        try:
+            conn_handle = blesync.gap_connect(addr_type, addr, timeout_ms=timeout_ms)
+        except blesync.GapConnectTimeoutError:
+            raise ConnectTimeoutError
 
         if not self._service_classes:
             return {}
@@ -153,27 +201,59 @@ class BLEClient:
                     ret.setdefault(service_class, []).append(service)
         return ret
 
-    def _on_gattc_message(self, conn_handle, value_handle, notify_data):
+    def find_and_connect(
+        self,
+        device_name,
+        scan_duration_ms=20000,
+        scan_interval_us=30000,
+        scan_window_us=30000,
+        connect_timeout_ms=2000,
+    ):
+        device = find_device(
+            device_name,
+            duration_ms=scan_duration_ms,
+            interval_us=scan_interval_us,
+            window_us=scan_window_us,
+        )
+        return self.connect(
+            device.addr_type,
+            device.addr,
+            timeout_ms=connect_timeout_ms
+        )
+
+    def _on_notify(self, conn_handle, value_handle, notify_data):
         try:
             services = self._services[conn_handle]
         except KeyError:
             pass
         else:
             for service in services:
-                service._on_gattc_message(value_handle, notify_data)
+                service._on_notify(value_handle, notify_data)
 
 
 class Characteristic:
     def __init__(self, uuid):  # TODO flags
         self.uuid = uuid
         self._value_handles = {}
-        self.connected_characteristic = None
-        self._on_message_callback = lambda *_: None
+        self._on_notify_callback = lambda service, value: None
 
-    def __get__(self, service, owner=None):
-        return ConnectedCharacteristic(
+    def encode(self, decoded):
+        return decoded
+
+    def decode(self, encoded):
+        return encoded
+
+    def __get__(self, service, service_class):
+        # for cpython compliance
+        # in micropython cls.attribute doesn't invoke __get__
+        if service is None:
+            return self
+
+        return ClientServiceCharacteristic(
             service.conn_handle,
-            self._value_handles[service]
+            self._value_handles[service],
+            self.encode,
+            self.decode,
         )
 
     def register(self, uuid, service, value_handle):
@@ -181,33 +261,34 @@ class Characteristic:
             raise ValueError
         self._value_handles[service] = value_handle
 
-    def __delete__(self, service):
-        del self._value_handles[service]
+    def call_notify_callback(self, service, value):
+        self._on_notify_callback(service, self.decode(value))
 
-    def on_message(self, callback):
-        self._on_message_callback = callback
+    # if notify flag
+    def on_notify(self, callback):
+        self._on_notify_callback = callback
         return callback
 
 
-class ConnectedCharacteristic:
-    def __init__(self, conn_handle, value_handle):
+class ClientServiceCharacteristic:
+    def __init__(self, conn_handle, value_handle, encode, decode):
         self._conn_handle = conn_handle
         self._value_handle = value_handle
+        self._decode = encode
+        self._encode = decode
 
-    def read(self, timeout_ms=None):
-        return blesync.gattc_read(
-            self._conn_handle,
-            self._value_handle,
-            timeout_ms
-        )
+    # if read flag
+    def read(self):
+        return self._decode(blesync.gattc_read(self._conn_handle, self._value_handle))
 
-    def write(self, data, ack=False, timeout_ms=None):
-        blesync.gattc_write(
-            self._conn_handle, self._value_handle, data, ack, timeout_ms
-        )
+    # if write flag
+    def write(self, data, ack=False):
+        self._encode(data)
+        blesync.gattc_write(self._conn_handle, self._value_handle, data, ack)
 
 
 class Service:
+    # https://www.bluetooth.com/specifications/gatt/services/
     uuid = NotImplemented
 
     @classmethod
@@ -237,9 +318,9 @@ class Service:
                         return
                     break
 
-    def _on_gattc_message(self, value_handle, message):
+    def _on_notify(self, value_handle, message):
         characteristic = self._characteristics[value_handle]
-        characteristic._on_message_callback(self, message)
+        characteristic.call_notify_callback(self, message)
 
         # if bluetooth.FLAG_WRITE & properties == 0:
         # on_(characteristic_name)%_write_received

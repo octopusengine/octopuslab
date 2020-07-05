@@ -10,7 +10,4 @@ try:
 except Exception as e:
     print("Exception: {0}".format(e))
 
-uart.write(comm)      
-
-
-
+uart.write(comm)

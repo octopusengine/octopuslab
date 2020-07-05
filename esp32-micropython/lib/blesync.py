@@ -1,5 +1,9 @@
+# The MIT License (MIT)
+# Copyright (c) 2019-2020 Jan Cespivo
+
+__version__ = "1.0.2"
+
 from collections import deque
-import time
 
 from bluetooth import BLE, UUID
 import machine
@@ -62,6 +66,7 @@ _events = {
     _IRQ_SCAN_RESULT: {},
     _IRQ_SCAN_DONE: {},
     _IRQ_PERIPHERAL_CONNECT: {},
+    _IRQ_PERIPHERAL_DISCONNECT: {},
     _IRQ_GATTC_SERVICE_RESULT: {},
     _IRQ_GATTC_SERVICE_DONE: {},
     _IRQ_GATTC_CHARACTERISTIC_RESULT: {},
@@ -86,15 +91,22 @@ _callbacks = {
 def _irq(event, data):
     if event in (
         _IRQ_CENTRAL_CONNECT,
-        _IRQ_PERIPHERAL_DISCONNECT,
         _IRQ_CENTRAL_DISCONNECT
     ):
         # A central has connected to this peripheral.
         # A central has disconnected from this peripheral.
-        # A central has disconnected from this peripheral.
         conn_handle, addr_type, addr = data
         data = conn_handle, addr_type, bytes(addr)
         _callback(event, data)
+    elif event == _IRQ_PERIPHERAL_DISCONNECT:
+        # A central has disconnected from this peripheral or connect timeout
+        if data == (65535, 255, b'\x00\x00\x00\x00\x00\x00'):
+            # connect timeout
+            _event(event, None, None)
+        else:
+            conn_handle, addr_type, addr = data
+            data = conn_handle, addr_type, bytes(addr)
+            _callback(event, data)
     elif event == _IRQ_GATTS_WRITE:
         # A central has written to this characteristic or descriptor.
         # conn_handle, attr_handle = data
@@ -135,6 +147,7 @@ def _irq(event, data):
         _event(event, data, conn_handle)
     elif event == _IRQ_GATTC_CHARACTERISTIC_DONE:
         # Called once service discovery is complete.
+        # Note: Status will be zero on success, implementation-specific value otherwise.
         conn_handle, status = data
         _event(event, status, conn_handle)
     elif event == _IRQ_GATTC_DESCRIPTOR_RESULT:
@@ -153,7 +166,6 @@ def _irq(event, data):
         key = conn_handle, value_handle
         _event(event, bytes(char_data), key)
     elif event == _IRQ_GATTC_READ_DONE:
-        # TODO implement where is is used, raise an exception if status is non-zero
         # A gattc_read() has completed.
         # Note: The value_handle will be zero on btstack (but present on NimBLE).
         # Note: Status will be zero on success, implementation-specific value otherwise.
@@ -165,7 +177,6 @@ def _irq(event, data):
         # A gattc_write() has completed.
         # Note: The value_handle will be zero on btstack (but present on NimBLE).
         # Note: Status will be zero on success, implementation-specific value otherwise.
-        # TODO raise an exception if status is non-zero
         conn_handle, value_handle, status = data
         key = conn_handle, value_handle
         _event(event, status, key)
@@ -173,25 +184,29 @@ def _irq(event, data):
         return
 
 
-class EventTimeoutError(Exception):
-    pass
-
-
-def _maybe_raise_timeout(timeout_ms, start_time):
-    if timeout_ms and time.ticks_diff(time.ticks_ms(), start_time) > timeout_ms:
-        raise EventTimeoutError()
-
-
-def wait_for_event(irq, key, timeout_ms):
-    start_time = time.ticks_ms()
-
+def _wait_for_event(irq, key, event_exception_class=None):
     event_queue = _events[irq][key]
 
     while not event_queue:
-        _maybe_raise_timeout(timeout_ms, start_time)
         machine.idle()
 
-    return event_queue.popleft()
+    event_result = event_queue.popleft()
+    if event_exception_class and event_result:
+        raise event_exception_class(event_result)
+    return event_result
+
+
+def _wait_for_disjunct_events(irq_1, key_1, irq_2, key_2):
+    event_queue_1 = _events[irq_1][key_1]
+    event_queue_2 = _events[irq_2][key_2]
+
+    while True:
+        if event_queue_1:
+            return event_queue_1.popleft(), None
+        elif event_queue_2:
+            return None, event_queue_2.popleft()
+
+        machine.idle()
 
 
 _ble = BLE()
@@ -205,47 +220,65 @@ gatts_set_buffer = _ble.gatts_set_buffer
 gap_disconnect = _ble.gap_disconnect
 
 
-def _results_until_complete(event_result, event_complete, key, timeout_ms, func, *args):
-    start_time = time.ticks_ms()
-
-    _register_event(event_result, key, bufferlen=100)
-    _register_event(event_complete, key)
+def _results_until_done(
+    event_result, event_done, event_done_exception_class, event_key, func, args
+):
+    _register_event(event_result, event_key, bufferlen=100)
+    _register_event(event_done, event_key)
 
     func(*args)
 
-    results_queue = _events[event_result][key]
-    complete_queue = _events[event_complete][key]
-
+    results_queue = _events[event_result][event_key]
+    done_queue = _events[event_done][event_key]
     while True:
         while results_queue:
             yield results_queue.popleft()
 
-        if complete_queue:
-            complete_queue.popleft()
+        if done_queue:
+            done_status = done_queue.popleft()
+            if done_status:
+                raise event_done_exception_class(done_status)
             return
-        _maybe_raise_timeout(timeout_ms, start_time)
+
         machine.idle()
 
 
-def gap_scan(duration_ms, interval_us=None, window_us=None, timeout_ms=None):
+def gap_scan(duration_ms, interval_us=None, window_us=None):
+    """
+    if it is interrupted during the iteration, the close() has to be called
+    see https://github.com/micropython/micropython/issues/6183
+    Example:
+        scan_iter = scan(
+            duration_ms=duration_ms,
+            interval_us=interval_us,
+            window_us=window_us,
+        )
+
+        for device in scan_iter:
+            scan_iter.close()
+            return device
+    """
+
     assert not (interval_us is None and window_us is not None), \
         "Argument window_us has to be specified if interval_us is specified"
 
-    args = []
+    args = [duration_ms]
     if interval_us is not None:
         args.append(interval_us)
         if window_us is not None:
             args.append(window_us)
-
-    return list(_results_until_complete(
-        _IRQ_SCAN_RESULT,
-        _IRQ_SCAN_DONE,
-        None,
-        timeout_ms,
-        _ble.gap_scan,
-        duration_ms,
-        *args
-    ))
+    try:
+        yield from _results_until_done(
+            _IRQ_SCAN_RESULT,
+            _IRQ_SCAN_DONE,
+            None,
+            None,
+            func=_ble.gap_scan,
+            args=args
+        )
+    except GeneratorExit:
+        _ble.gap_scan(None)
+        _wait_for_event(_IRQ_SCAN_DONE, None)
 
 
 def gatts_notify(conn_handle, handle, data=None):
@@ -254,82 +287,121 @@ def gatts_notify(conn_handle, handle, data=None):
     return _ble.gatts_notify(conn_handle, handle, data)
 
 
-def active(change_to=None):
-    is_active = _ble.active(change_to)
-    if is_active:
+def activate():
+    if not _ble.active():
+        _ble.active(True)
         _ble.irq(_irq)
-    return is_active
 
 
-def gap_connect(addr_type, addr, scan_duration_ms=2000, timeout_ms=None):
+def deactivate():
+    if _ble.active():
+        _ble.active(False)
+
+
+def is_active():
+    return _ble.active()
+
+
+class GapConnectTimeoutError(Exception):
+    pass
+
+
+def gap_connect(addr_type, addr, timeout_ms=2000):
     _register_event(_IRQ_PERIPHERAL_CONNECT, (addr_type, addr))
-    _ble.gap_connect(addr_type, addr, scan_duration_ms)
-    return wait_for_event(_IRQ_PERIPHERAL_CONNECT, (addr_type, addr), timeout_ms)
+    _register_event(_IRQ_PERIPHERAL_DISCONNECT, None)
+    _ble.gap_connect(addr_type, addr, timeout_ms)
+    conn_handle, _ = _wait_for_disjunct_events(
+        _IRQ_PERIPHERAL_CONNECT, (addr_type, addr),
+        _IRQ_PERIPHERAL_DISCONNECT, None
+    )
+    if conn_handle is None:
+        raise GapConnectTimeoutError
+    return conn_handle
 
 
-def gattc_discover_services(conn_handle, timeout_ms=None):
-    # TODO raise an exception if status is non-zero
-    return list(_results_until_complete(
-        _IRQ_GATTC_SERVICE_RESULT,
-        _IRQ_GATTC_SERVICE_DONE,
-        conn_handle,
-        timeout_ms,
-        _ble.gattc_discover_services,
-        conn_handle
+class GattcDiscoverServicesError(Exception):
+    pass
+
+
+def gattc_discover_services(conn_handle, uuid=None):
+    args = [conn_handle]
+    if uuid is not None:
+        args.append(uuid)
+
+    return list(_results_until_done(
+        event_result=_IRQ_GATTC_SERVICE_RESULT,
+        event_done=_IRQ_GATTC_SERVICE_DONE,
+        event_done_exception_class=GattcDiscoverServicesError,
+        event_key=conn_handle,
+        func=_ble.gattc_discover_services,
+        args=args
     ))
+
+
+class GattcDiscoverCharacteristicsError(Exception):
+    pass
 
 
 def gattc_discover_characteristics(
     conn_handle,
     start_handle,
     end_handle,
-    timeout_ms=None
 ):
     # TODO uuid argument
-    return list(_results_until_complete(
-        _IRQ_GATTC_CHARACTERISTIC_RESULT,
-        _IRQ_GATTC_CHARACTERISTIC_DONE,
-        conn_handle,
-        timeout_ms,
-        _ble.gattc_discover_characteristics,
-        conn_handle, start_handle, end_handle
+    return list(_results_until_done(
+        event_result=_IRQ_GATTC_CHARACTERISTIC_RESULT,
+        event_done=_IRQ_GATTC_CHARACTERISTIC_DONE,
+        event_done_exception_class=GattcDiscoverCharacteristicsError,
+        event_key=conn_handle,
+        func=_ble.gattc_discover_characteristics,
+        args=(conn_handle, start_handle, end_handle)
     ))
 
 
-def gattc_discover_descriptors(conn_handle, start_handle, end_handle, timeout_ms=None):
-    # TODO raise an exception if status is non-zero
-    return list(_results_until_complete(
-        _IRQ_GATTC_DESCRIPTOR_RESULT,
-        _IRQ_GATTC_DESCRIPTOR_DONE,
-        conn_handle,
-        timeout_ms,
-        _ble.gattc_discover_descriptors,
-        conn_handle, start_handle, end_handle
+class GattcDiscoverDescriptorError(Exception):
+    pass
+
+
+def gattc_discover_descriptors(conn_handle, start_handle, end_handle):
+    return list(_results_until_done(
+        event_result=_IRQ_GATTC_DESCRIPTOR_RESULT,
+        event_done=_IRQ_GATTC_DESCRIPTOR_DONE,
+        event_done_exception_class=GattcDiscoverDescriptorError,
+        event_key=conn_handle,
+        func=_ble.gattc_discover_descriptors,
+        args=(conn_handle, start_handle, end_handle)
     ))
 
 
-def gattc_read(conn_handle, value_handle, timeout_ms=None):
+class GattcReadError(Exception):
+    pass
+
+
+def gattc_read(conn_handle, value_handle):
     # conn_handle, value_handle, char_data
     _register_event(_IRQ_GATTC_READ_RESULT, (conn_handle, value_handle))
     _ble.gattc_read(conn_handle, value_handle)
-    return wait_for_event(
+    return _wait_for_event(
         _IRQ_GATTC_READ_RESULT,
         (conn_handle, value_handle),
-        timeout_ms
+        GattcReadError
     )
 
 
-def gattc_write(conn_handle, value_handle, data, ack=False, timeout_ms=None):
+class GattcWriteError(Exception):
+    pass
+
+
+def gattc_write(conn_handle, value_handle, data, ack=False):
     # wait for return status of write if ack is True
     # otherwise return None immediately
     _register_event(_IRQ_GATTC_WRITE_DONE, (conn_handle, value_handle))
     _ble.gattc_write(conn_handle, value_handle, data, ack)
-    # TODO raise an exception if status is non-zero
     if ack:
-        return wait_for_event(
+        return _wait_for_event(
             _IRQ_GATTC_WRITE_DONE,
             (conn_handle, value_handle),
-            timeout_ms
+            GattcWriteError
         )
 
 

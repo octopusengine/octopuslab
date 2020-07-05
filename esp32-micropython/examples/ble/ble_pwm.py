@@ -10,7 +10,7 @@ uID5 = getUid(short=5)
 
 from time import sleep
 from machine import Pin,PWM
-from util.led import Led
+from components.led import Led
 
 led = Led(2)
 duty = 0
@@ -22,7 +22,7 @@ led.blink()
 
 import blesync_server
 import blesync_uart.server 
-import util.ble.bluefruit as bf
+import utils.ble.bluefruit as bf
 
 @blesync_uart.server.UARTService.on_message
 def on_message(service, conn_handle, message):

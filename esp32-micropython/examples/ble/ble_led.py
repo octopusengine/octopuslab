@@ -7,13 +7,13 @@ print("-"*39)
 
 import blesync_server
 import blesync_uart.server
-import util.ble.bluefruit as bf
+import utils.ble.bluefruit as bf
 
 from shell.terminal import getUid
 uID5 = getUid(short=5)
 
 from time import sleep
-from util.led import Led
+from components.led import Led
 led = Led(2)
 
 led.blink()

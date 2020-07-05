@@ -4,11 +4,11 @@
 
 from sys import exit
 from time import sleep
-from util.octopus import disp7_init
+from utils.octopus import disp7_init
 from machine import Pin, Timer, reset
 from config import Config
-from util.database.influxdb import InfluxDB
-from util.wifi_connect import WiFiConnect
+from utils.database.influxdb import InfluxDB
+from utils.wifi_connect import WiFiConnect
 
 mem_free = gc.mem_free
 
