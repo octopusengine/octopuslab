@@ -2,7 +2,7 @@
 from machine import Pin, SPI, SDCard
 from time import sleep, sleep_ms
 # from util.octopus import *
-from util.pinout import set_pinout
+from utils.pinout import set_pinout
 pinout = set_pinout()
 
 print("mount SD card >")
