@@ -52,7 +52,7 @@ for i in range(0,3):
     tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
     sleep(0.5)
 
-fb.line(0,83,128,83,color565(255,0,0)) # BGR
+fb.line(0,83,128,83,color565(255,0,0)) # BRG
 fb.line(0,0,128,166,color565(0,0,255))
 fb.line(128,0,0,166,color565(0,255,0))
 tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
