@@ -26,7 +26,3 @@ for i in range(8):
     print("keys: " + str(tm.keys()))
 
 tm.leds(0)
-
-
-
-
