@@ -2,14 +2,14 @@
 # iotBoard for project parallel garden
 #
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 
 #import machine, time, os, ubinascii, framebuf, gc
 
 # ---------------- procedures
 def getOctopusLibVer():
-    return "octopus lib.ver: " + __version__ + " / 2020-06-30"
+    return "octopus lib.ver: " + __version__ + " / 2020-07-09"
 
 
 def printTitle(t,num = 25):
@@ -45,9 +45,18 @@ def add0(sn): # 1 > 01
     return ret_str
 
 
-def get_eui():
+#def get_eui():
+#    id = ubinascii.hexlify(machine.unique_id()).decode()
+#    return id #mac2eui(id)
+
+
+def getUid(short = False): # full or short (5 chars: first 2 + last 3)
+    import machine, ubinascii
     id = ubinascii.hexlify(machine.unique_id()).decode()
-    return id #mac2eui(id)
+    if short:
+        return id[:2]+id[-3:]
+    else:
+        return id
 
 
 def get_hhmm(rtc):
