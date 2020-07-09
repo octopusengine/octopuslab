@@ -34,6 +34,15 @@ def map(x, in_min, in_max, out_min, out_max):
     return int((x-in_min) * (out_max-out_min) / (in_max-in_min) + out_min)
 
 
+def randint(min, max):
+    import urandom
+    span = max - min + 1
+    div = 0x3fffffff // span
+    offset = urandom.getrandbits(30) // div
+    val = min + offset
+    return val
+
+
 def bytearrayToHexString(ba):
     return ''.join('{:02X}'.format(x) for x in ba)
 
