@@ -60,3 +60,22 @@ def get_hh_mm(rtc):
     hh=add0(rtc.datetime()[4])
     mm=add0(rtc.datetime()[5])
     return hh+"-"+mm
+#-----------------------------------
+
+
+def spi_init():
+    from machine import Pin, SPI
+    from utils.pinout import set_pinout
+    pinout = set_pinout()
+    spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
+    return spi
+
+
+def i2c_init(HWorSW=0,freq=100000):
+    from machine import Pin, I2C
+    from utils.pinout import set_pinout
+    pinout = set_pinout()
+    # i = I2C(scl=Pin(22), sda=Pin(21), freq=f)
+    # HW or SW: HW 0 - | SW -1
+    i2c = I2C(HWorSW, scl=Pin(pinout.I2C_SCL_PIN), sda=Pin(pinout.I2C_SDA_PIN), freq=freq)
+    return i2c
