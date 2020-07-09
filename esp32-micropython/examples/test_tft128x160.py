@@ -27,15 +27,16 @@ print("spi.TFT framebufer >")
 fb = framebuf.FrameBuffer(bytearray(tft.width*tft.height*2), tft.width, tft.height, framebuf.RGB565)
 fbp = fb.pixel
 
-fb.fill(color565(255,0,0))
+# fb.fill(color565(255,0,0))
+fb.fill(color565(*BLUE))
 tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
 sleep(1)
 
-fb.fill(color565(0,255,0))
+fb.fill(color565(*RED))
 tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
 sleep(1)
 
-fb.fill(color565(0,0,255))
+fb.fill(color565(*GREEN))
 tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
 sleep(1)
 
