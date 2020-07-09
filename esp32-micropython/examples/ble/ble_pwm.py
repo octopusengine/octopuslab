@@ -5,7 +5,7 @@
 print("---> BLE and BlueFruit mobile app. - pwm")
 print("This is simple Micropython example | ESP32 & octopusLAB")
 
-from shell.terminal import getUid
+from utils.octopus_lib import getUid
 uID5 = getUid(short=5)
 
 from time import sleep
