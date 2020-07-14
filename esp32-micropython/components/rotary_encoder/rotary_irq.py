@@ -10,7 +10,7 @@
 #   https://github.com/MikeTeachman/micropython-rotary
 
 from machine import Pin
-from util.rotary_encoder.rotary import Rotary
+from components.rotary_encoder.rotary import Rotary
 # from sys import platform
 
 # _esp8266_whitelist_pins = [4, 5, 12, 13, 14]
