@@ -1,3 +1,5 @@
+# octopusLAB simple example
+
 from time import sleep
 from components.analog import Analog
 an2 = Analog(33)

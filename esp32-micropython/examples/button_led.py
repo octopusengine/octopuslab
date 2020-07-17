@@ -1,4 +1,4 @@
-# octopusLAB test - 2020
+# octopusLAB 2020
 # simple test Button lib
 
 from time import sleep

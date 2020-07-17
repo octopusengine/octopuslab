@@ -1,9 +1,8 @@
 # octopusLAB simple example
 # ESP32board with "BUILT_IN_LED"
-# run: import examples.blink
 
 from components.led import Led
-# from util.octopus import led # short way
+# from utils.octopus import led # short way
 from utils.pinout import set_pinout
 
 pinout = set_pinout()           # set board pinout

@@ -1,6 +1,8 @@
+# octopusLAB simple example
+
 from time import sleep
 from components.analog import Analog
-from utils.octopus_lib import map
+# from utils.octopus_lib import map
 from components.servo import Servo
 
 an2 = Analog(35)

@@ -1,3 +1,1 @@
-# rotary_encoder lib.
-# octopusLAB
-
+# octopusLAB - rotary_encoder lib.
