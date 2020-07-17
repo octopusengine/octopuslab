@@ -10,17 +10,17 @@ from utils.octopus_lib import getUid
 uID5 = getUid(short=5)
 
 from time import sleep
-from util.pinout import set_pinout
+from utils.pinout import set_pinout
 pinout = set_pinout()
 
 
 print("DCmotors init")
-from util.dcmotors import Motor, Steering
+from components.dcmotors import Motor, Steering
 motor_r = Motor(pinout.MOTOR_1A, pinout.MOTOR_2A, pinout.MOTOR_12EN)
 motor_l = Motor(pinout.MOTOR_3A, pinout.MOTOR_4A, pinout.MOTOR_34EN)
 steering = Steering(motor_l, motor_r)
 
-from util.led import Led
+from components.led import Led
 led = Led(2)
 
 led.blink()
@@ -30,7 +30,7 @@ led.blink()
 steering.center(0)
 
 print("BLE init")
-from util.ble import bleuart
+from utils.ble import bleuart
 import util.ble.bluefruit as bf
 
 
