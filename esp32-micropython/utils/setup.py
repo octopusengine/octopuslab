@@ -7,7 +7,7 @@ import time, uos
 import ujson
 import machine # datetime
 
-ver = "0.68 / 30.6.2020"
+ver = "0.69 / 24.7.2020"
 
 devices = [
 ["oLAB Default","esp32"],
@@ -20,7 +20,8 @@ devices = [
 ["oLAB IoTBoard1","esp32"],
 ["oLAB LANboard1","esp32"],
 ["oLAB ESP32board1", "esp32"],
-["WeMos OLED","esp32"]
+["WeMos OLED","esp32"],
+["oLAB PLCshield","esp32"]
 ]
 
 octopusASCII = [
