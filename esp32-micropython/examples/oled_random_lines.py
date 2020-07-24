@@ -3,7 +3,7 @@
 # ampy -p /COM6 put examples/oled_random_lines.py main.py
 # start: import examples/oled_random_lines
 
-from util.octopus import oled_init
+from utils.octopus import oled_init
 from shell.terminal import printTitle
 from os import urandom
 

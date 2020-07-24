@@ -5,10 +5,10 @@
 ver = "10.9.2019 - 0.15"
 
 from time import sleep
-from util.octopus import printLog, printFree, get_eui, temp_init, get_temp, w_connect, ap_init, oled_init, button_init, button
-# from util.pinout import set_pinout
+from utils.octopus import printLog, printFree, get_eui, temp_init, get_temp, w_connect, ap_init, oled_init, button_init, button
+# from utils.pinout import set_pinout
 # pinout = set_pinout()
-from util.led import Led #?VCh
+from components.led import Led #?VCh
 #from machine import Pin
 import network
 import esp
@@ -121,7 +121,7 @@ def webconn(s):
   # led_on = request.find('/?led=on')
   print()
   print("wifi_config: ")
-  from util.wifi_connect import WiFiConnect
+  from utils.wifi_connect import WiFiConnect
   wc = WiFiConnect()
 
   webWc = "<hr /><b>Saved networks: </b><br />"
@@ -236,7 +236,7 @@ if btn == "R":
     oled_info(ip,3)
 
     try: 
-        from util.octopus import web_editor
+        from utils.octopus import web_editor
         web_editor()
         oled_info("> web_editor",4)
     except:

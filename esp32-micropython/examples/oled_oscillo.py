@@ -4,8 +4,8 @@
 # signal pwmPin 16 > RC > analog read anIn 35
 
 import machine
-from util.octopus import *
-from util.analog import Analog
+from utils.octopus import *
+from utils.analog import Analog
 import array as arr
 
 octopus()

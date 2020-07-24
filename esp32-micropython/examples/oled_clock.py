@@ -1,8 +1,8 @@
 # simple basic example - ESP32 + 7segment display
 
 from time import sleep
-from util.octopus import oled_init, time_init, w, get_hhmm
-from util.display_segment import fourDigits
+from utils.octopus import oled_init, time_init, w, get_hhmm
+from utils.display_segment import fourDigits
 
 w()			# wifi connect
 o = oled_init()

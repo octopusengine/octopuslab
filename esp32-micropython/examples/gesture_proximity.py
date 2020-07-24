@@ -3,7 +3,7 @@
 # GPLv3
 
 from time import sleep
-from util.octopus import i2c_init
+from utils.octopus import i2c_init
 from lib.apds9960 import uAPDS9960 as APDS9960
 
 i2c = i2c_init()

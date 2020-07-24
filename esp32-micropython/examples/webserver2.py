@@ -2,11 +2,11 @@
 # web server - dynamic info
 ver = "2.9.2019 - 0.11"
 
-from util.octopus import printLog, printFree, get_eui, temp_init, get_temp
+from utils.octopus import printLog, printFree, get_eui, temp_init, get_temp
 
-from util.pinout import set_pinout
+from utils.pinout import set_pinout
 pinout = set_pinout()
-from util.led import Led #?VCh
+from components.led import Led #?VCh
 led = Led(pinout.BUILT_IN_LED)
 t = temp_init()
 

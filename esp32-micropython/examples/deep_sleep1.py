@@ -9,7 +9,7 @@ isOled = False
 isDisp7 = True
 
 printTitle("examples/deep_sleep1.py")
-from util.led import Led
+from components.led import Led
 led = Led(2)
 
 
@@ -42,7 +42,7 @@ led.blink()
 
 if isDisp7:
     try:
-        from util.octopus import disp7_init
+        from utils.octopus import disp7_init
         disp7 = disp7_init()
         disp7.show(get_hhmm("-"))
         sleep(3)
@@ -52,7 +52,7 @@ if isDisp7:
 
 if isOled:
     try:
-        from util.octopus import oled_init
+        from utils.octopus import oled_init
         oled = oled_init(runTest=False)
         sleep(1)
         oled.clear()

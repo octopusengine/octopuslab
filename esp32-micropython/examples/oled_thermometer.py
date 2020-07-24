@@ -2,9 +2,9 @@
 # simple example: dallas thermometer and oled display
 
 from time import sleep
-from util.octopus import oled_init
-from util.iot import Thermometer
-from util.display_segment import threeDigits
+from utils.octopus import oled_init
+from components.iot import Thermometer
+from utils.display_segment import threeDigits
 
 
 print("init > ")

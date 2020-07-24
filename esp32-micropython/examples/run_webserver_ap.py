@@ -1,7 +1,7 @@
 # octopusLAB test - 2019
 from time import sleep
-from util.octopus import button_init, button, w, web_server, ap_init
-from util.led import Led
+from utils.octopus import button_init, button, w, web_server, ap_init
+from components.led import Led
 led = Led(2)
 button0 = button_init(0)
 debounce = 9

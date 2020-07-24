@@ -1,9 +1,9 @@
 # octopusLAB - simple test for gimbal two servos
 
 from pca9685.servo import Servos
-from util.octopus import i2c_init
+from utils.octopus import i2c_init
 from time import sleep_ms
-from util.transform import * # include all - only for example
+from utils.transform import * # include all - only for example
 
 
 # blocking - simple test

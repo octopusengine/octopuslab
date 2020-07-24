@@ -2,8 +2,8 @@
 # ESP32board with "BUILT_IN_LED" and boot button0
 # import examples.led_and_button
 
-# from util.octopus import octopus, button_init, button, led
-from util.octopus import *
+# from utils.octopus import octopus, button_init, button, led
+from utils.octopus import *
 
 octopus()
 

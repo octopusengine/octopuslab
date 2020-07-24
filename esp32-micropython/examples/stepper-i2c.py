@@ -5,7 +5,7 @@ Set your expander address and motor id in constants
 from machine import Pin, I2C
 from lib.sm28byj48 import SM28BYJ48
 
-from util.pinout import set_pinout
+from utils.pinout import set_pinout
 pinout = set_pinout()
 
 #PCF address = 33 #33-0x21/35-0x23

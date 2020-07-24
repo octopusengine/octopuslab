@@ -1,8 +1,8 @@
 # Upload wav file using ampy or deploy tar
 #
 # TAR:
-# import util.setup
-# util.setup.deploy("http[s]://path/to/file.tar")
+# import utils.setup
+# utils.setup.deploy("http[s]://path/to/file.tar")
 
 import os
 import struct
@@ -10,7 +10,7 @@ from machine import Timer
 from machine import DAC, Pin
 from time import sleep
 
-#from util.pinout import set_pinout
+#from utils.pinout import set_pinout
 #pinout = set_pinout()  
 #out = pinout.PIEZZO_PIN
 

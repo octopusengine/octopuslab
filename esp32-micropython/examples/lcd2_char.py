@@ -2,7 +2,7 @@
 
 import assets.lcd_chars as ch
 
-from util.octopus import lcd2_init
+from utils.octopus import lcd2_init
 lcd = lcd2_init()
 
 lcd.custom_char(0, ch.happy)

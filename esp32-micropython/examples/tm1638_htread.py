@@ -3,8 +3,8 @@
 from machine import Pin
 from time import sleep
 from lib.tm1638 import TM1638
-from util.bits import neg, reverse, set_bit, get_bit
-from util.led import Led
+from utils.bits import neg, reverse, set_bit, get_bit
+from components.led import Led
 import _thread
 
 # right OCTOBUS SCI:

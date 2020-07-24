@@ -1,9 +1,9 @@
 # servo laser pointer - example
 
 from time import sleep_ms
-from util.transform import *
+from utils.transform import *
 
-from util.servo import Servo
+from components.servo import Servo
 # todo: PWM double setup error
 
 s1 = Servo(17)

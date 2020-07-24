@@ -4,9 +4,9 @@
 # ampy -p /COM6 put ./examples/servo2_laser_geometry.py main.py
 
 from time import sleep_ms
-from util.transform import *
+from utils.transform import *
 
-from util.servo import Servo
+from components.servo import Servo
 # todo: PWM double setup error
 
 s1 = Servo(17)

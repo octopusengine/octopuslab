@@ -2,11 +2,11 @@
 # HW: ESP32 + i2c small OLED display 128x32
 
 from time import sleep
-from util.octopus import *
+from utils.octopus import *
 
 octopus()            # include main library
 o = oled_init(128, 32)      # init oled display
-from util.display_segment import displayDigit
+from utils.display_segment import displayDigit
 
 def displayNum(num, row = 0):
     num = str(num)

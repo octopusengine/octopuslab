@@ -1,6 +1,6 @@
 # L1,L2 simple 2 servos draw bot
 from time import sleep_ms
-from util.transform import invkin2, move_2d_line
+from utils.transform import invkin2, move_2d_line
 # invkin2(point2d, angleMode=DEGREES, l1=l1,l2=l2)
 
 
@@ -18,7 +18,7 @@ print("L1, L2: " + str(L1) + ", "+ str(L2) )
 
 
 print("servos init")
-from util.servo import Servo
+from components.servo import Servo
 s1 = Servo(17)
 s2 = Servo(16)
 

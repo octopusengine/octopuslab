@@ -2,8 +2,8 @@
 # simple example: dallas thermometer and 8x7 segment display (disp7)
 
 from time import sleep
-from util.octopus import disp7_init
-from util.iot import Thermometer
+from utils.octopus import disp7_init
+from components.iot import Thermometer
 
 
 print("init > ")

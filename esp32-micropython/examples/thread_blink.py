@@ -3,7 +3,7 @@
 # https://techtutorialsx.com/2017/10/02/esp32-micropython-creating-a-thread/
 
 
-from util.octopus import led
+from utils.octopus import led
 import _thread
 from time import sleep
 

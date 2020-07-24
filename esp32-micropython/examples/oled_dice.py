@@ -3,7 +3,7 @@
 # esp32 board and EDU shield1 with oled display
 
 from micropython import const
-from util.octopus import printLog, printFree, oled_init, button_init, button
+from utils.octopus import printLog, printFree, oled_init, button_init, button
 from time import sleep
 import urandom
 

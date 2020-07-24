@@ -1,6 +1,6 @@
 # simple basic api example - ESP32 + WS rgb color from twitter: #cheerlights
 
-from util.octopus import *
+from utils.octopus import *
 import urequests
 
 url = 'http://api.thingspeak.com/channels/1417/field/2/last.txt'

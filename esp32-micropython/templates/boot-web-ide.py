@@ -4,7 +4,7 @@ esp.osdebug(None)
 import webrepl
 
 def setup():
-    import util.setup
+    import utils.setup
     utils.setup.setup()
 
 def octopus():

@@ -3,7 +3,7 @@
 
 
 from time import sleep
-from util.octopus import w, lcd2_init, get_hhmm, time_init
+from utils.octopus import w, lcd2_init, get_hhmm, time_init
 from shell.terminal import printTitle
 
 w()	# wifi connect

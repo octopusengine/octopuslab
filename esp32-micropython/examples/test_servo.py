@@ -1,8 +1,8 @@
 # servo test - example
 from time import sleep
-from util.pinout import set_pinout
+from utils.pinout import set_pinout
 
-from util.servo import Servo
+from components.servo import Servo
 # todo: PWM double setup error
 
 pinout = set_pinout()

@@ -2,11 +2,11 @@
 # more project details at https://RandomNerdTutorials.com
 ver = "23.7.2019 #79"
 
-from util.octopus import printLog, printFree, get_eui
+from utils.octopus import printLog, printFree, get_eui
 
-from util.pinout import set_pinout
+from utils.pinout import set_pinout
 pinout = set_pinout()
-from util.led import Led #?VCh
+from components.led import Led #?VCh
 led = Led(pinout.BUILT_IN_LED)
 
 def webserver_init():

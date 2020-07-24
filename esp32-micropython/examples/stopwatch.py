@@ -1,7 +1,7 @@
 # stopwatch
 
 from time import sleep
-from util.octopus import button_init, button, disp7_init
+from utils.octopus import button_init, button, disp7_init
 from shell.terminal import printTitle
 
 BB = button_init(0) # button boot = 0

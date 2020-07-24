@@ -1,5 +1,5 @@
 from time import sleep
-from util.octopus import *
+from utils.octopus import *
 from shell.terminal import printTitle
 
 d7 = disp7_init()

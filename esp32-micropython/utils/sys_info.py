@@ -1,5 +1,5 @@
 
-# from util.sys_info import sys_info
+# from utils.sys_info import sys_info
 # sys_info()
 # 2019/03
 

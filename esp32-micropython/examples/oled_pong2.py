@@ -4,9 +4,9 @@
 
 # imports
 from time import sleep_ms
-from util.octopus import *
+from utils.octopus import *
 from shell.terminal import printTitle
-from util.display_segment import displayDigit
+from utils.display_segment import displayDigit
 
 octopus()            # include main library
 
