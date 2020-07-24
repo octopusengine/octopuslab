@@ -7,7 +7,7 @@ from examples.pubsub.ps_init import pubsub
 
 print("start: ps_rgb.py")
 
-from util.rgb import Rgb
+from components.rgb import Rgb
 rgb = Rgb(15) # robot board default
 
 rgb.color((0,0,0))

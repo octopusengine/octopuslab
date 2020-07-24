@@ -2,7 +2,7 @@
 # simple dallas thermometer and oled test
 
 from time import sleep
-from util.octopus import temp_init, disp7_init
+from utils.octopus import temp_init, disp7_init
 
 
 print("init > ")

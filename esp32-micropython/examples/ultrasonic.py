@@ -1,4 +1,4 @@
-from util.pinout import set_pinout
+from utils.pinout import set_pinout
 from time import sleep
 pinout = set_pinout()
 

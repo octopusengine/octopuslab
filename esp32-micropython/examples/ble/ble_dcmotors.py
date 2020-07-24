@@ -31,7 +31,7 @@ steering.center(0)
 
 print("BLE init")
 from utils.ble import bleuart
-import util.ble.bluefruit as bf
+import utils.ble.bluefruit as bf
 
 
 

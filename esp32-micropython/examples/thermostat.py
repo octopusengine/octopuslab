@@ -4,8 +4,8 @@
 # (temperature < temperature1) -> relay(on)
 # 
 from time import sleep
-from util.octopus import temp_init, disp7_init
-from util.iot import Relay
+from utils.octopus import temp_init, disp7_init
+from components.iot import Relay
 
 print("setup > ")
 from config import Config 

@@ -5,19 +5,19 @@
 #webrepl.start()
 
 def setup():
-    import util.setup
-    util.setup.setup()
+    import utils.setup
+    utils.setup.setup()
 
 def octopus():
-    from util.octopus import *
+    from utils.octopus import *
     octopus()
 
 import builtins
 builtins.octopus=octopus
 
 def octopus_demo():
-    import util.octopus_demo
-    util.octopus_demo.octopus_demo()
+    import utils.octopus_demo
+    utils.octopus_demo.octopus_demo()
 
 def reset():
     import machine

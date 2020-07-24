@@ -3,7 +3,7 @@
 
 
 from time import sleep
-from util.octopus import w, get_hhmm, time_init, clt
+from utils.octopus import w, get_hhmm, time_init, clt
 from shell.terminal import printTitle
 
 

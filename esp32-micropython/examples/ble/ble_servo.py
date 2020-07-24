@@ -19,7 +19,7 @@ s1 = Servo(pinout.PWM1_PIN)
 
 import blesync_server
 import blesync_uart.server 
-import util.ble.bluefruit as bf
+import utils.ble.bluefruit as bf
 
 
 angle = 45

@@ -7,7 +7,7 @@ import pubsub
 
 print("start: ps_analog.py")
 
-from util.analog import Analog
+from components.analog import Analog
 an2 = Analog(36)
 
 # publish test

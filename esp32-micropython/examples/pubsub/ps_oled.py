@@ -5,8 +5,8 @@
 from examples.pubsub.ps_init import pubsub
 
 from time import sleep
-from util.octopus import oled_init
-from util.display_segment import fourDigits
+from utils.octopus import oled_init
+from components.display_segment import fourDigits
 
 o = oled_init()
 

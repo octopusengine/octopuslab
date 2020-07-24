@@ -1,5 +1,5 @@
 # basic library - bits operations - for bool and 8bit expander
-# from util.bits import neg, reverse
+# from utils.bits import neg, reverse
 # b1 = 0b11111001
 # int2bin(reverse(b1))   >   '10011111'
 # int2bin(reverse(b1),1) > '0b10011111'
