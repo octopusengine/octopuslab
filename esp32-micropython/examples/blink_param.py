@@ -3,7 +3,7 @@
 # parameter: delay [ms]
 
 from components.led import Led
-# from util.octopus import led # short way
+# from utils.octopus import led # short way
 from utils.pinout import set_pinout
 
 print("---examples/blink_param.py---")

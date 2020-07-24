@@ -1,7 +1,7 @@
 # octopusLAB simple example
 # HW: ESP32board + burtton 0 (boot) interupt
 
-from util.octopus import *
+from utils.octopus import led
 from machine import Pin
 
 counter=0

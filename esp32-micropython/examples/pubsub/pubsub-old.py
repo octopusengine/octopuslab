@@ -46,7 +46,7 @@ pubsub.subscribe('button', counter.on_button)
 pubsub.subscribe('timer', counter.on_timer)
 
 #######################################################################################
-from util.octopus import disp7_init
+from utils.octopus import disp7_init
 
 d7 = disp7_init()  # 8 x 7segment display init
 

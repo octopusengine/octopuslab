@@ -1,5 +1,5 @@
 # Example usage
-# from util.database.influxdb import InfluxDB
+# from utils.database.influxdb import InfluxDB
 # testflux = InfluxDB("https://url/to/influxdb", "database", "user", "pass", "metrics", namedtag="value")
 # testflux.write(field1=value1, field2=value2)
 # testflux.write(temperature=24, humidiry=60)

@@ -105,7 +105,7 @@ def webconn(s):
   # led_on = request.find('/?led=on')
   print()
   print("wifi_config: ")
-  from util.wifi_connect import WiFiConnect
+  from utils.wifi_connect import WiFiConnect
   wc = WiFiConnect()
 
   webWc = "<hr /><b>Saved networks: </b><br />"

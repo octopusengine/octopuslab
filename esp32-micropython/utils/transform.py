@@ -11,7 +11,7 @@ IK: invers kinematics
 for robotic arm (3/5 axes)
 drawbot and polar graph math.
 
-from util.transform import *
+from utils.transform import *
 ampy -p /COM6 put ./util/transform.py util/transform.py
 """
 

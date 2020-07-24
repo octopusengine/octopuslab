@@ -1,5 +1,5 @@
-# from util.octopus import piezzo
-# from util.buzzer.melody import jingle1
+# from componetns.octopus import piezzo
+# from componetns.buzzer.melody import jingle1
 # piezzo.play_melody[jingle1]
 
 # note lenght: 2 > 1/2, 4 > 1/4, 8 > 1/8 ...

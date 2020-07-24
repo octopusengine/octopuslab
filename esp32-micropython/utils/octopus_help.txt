@@ -2,8 +2,8 @@
    h() / o_help() HELP        | o_info() INFO
    w() / w_connect()  WIFI    | reset() system
    ---------------------------|---------------------
-   from util.octopus import led_init, oled_init, w 
-   from util import ls, cp, cat, free, find, rm, ...
+   from utils.octopus import led_init, oled_init, w 
+   from utils import ls, cp, cat, free, find, rm, ...
    octopus2.0:      from octopus import Octopus as o
 >> basic simple HW examples --|---------------------
    led.value(1)  / (0)        | led.blink()

@@ -3,7 +3,7 @@
 # from examples.bmp280 import bmp_init
 
 def bmp_init():
-   from util.octopus import i2c_init
+   from utils.octopus import i2c_init
    # "-1" > SW for old lib:
    i2c = i2c_init(1,100000,-1)
 

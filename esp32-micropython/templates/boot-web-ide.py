@@ -5,10 +5,10 @@ import webrepl
 
 def setup():
     import util.setup
-    util.setup.setup()
+    utils.setup.setup()
 
 def octopus():
-    from util.octopus import *
+    from utils.octopus import *
     octopus()
 
 import builtins

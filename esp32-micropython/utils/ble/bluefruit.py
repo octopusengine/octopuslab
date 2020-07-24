@@ -1,5 +1,5 @@
 # Blue fruit connect - mobile app.
-# import util.ble.bluefruit as bf
+# import utils.ble.bluefruit as bf
 # -> exist bf.UP ...
 
 __version__ = "1.0.0"

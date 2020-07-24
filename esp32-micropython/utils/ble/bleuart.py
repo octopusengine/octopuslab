@@ -1,6 +1,6 @@
 """
 # simple example:
-from util.ble import bleuart
+from utils.ble import bleuart
 
 def on_data_received(connection, data):
     print(str(data))

@@ -1,13 +1,13 @@
 # function mqtt() for octopuLAB boards
 # user is questioned in interactive mode
-# from util.mqtt import mqtt
+# from utils.mqtt import mqtt
 
 #TODO DRY for filename
 import machine, time, uos, ubinascii, ujson
 from umqtt.simple import MQTTClient
-from util.mqtt_connect import read_mqtt_config
-from util.wifi_connect import read_wifi_config, WiFiConnect
-from util.pinout import set_pinout
+from utils.mqtt_connect import read_mqtt_config
+from utils.wifi_connect import read_wifi_config, WiFiConnect
+from utils.pinout import set_pinout
 ver = "0.23 / 5.7.2019"
 esp_id = ubinascii.hexlify(machine.unique_id()).decode()
 
@@ -16,7 +16,7 @@ pin_led = machine.Pin(pinout.BUILT_IN_LED, machine.Pin.OUT)
 wifi_retries = 100  # for wifi connecting
 
 def mainOctopus():
-    from util.Setup import mainOctopus as printOctopus
+    from utils.Setup import mainOctopus as printOctopus
     printOctopus()
 
 def simple_blink():
@@ -76,7 +76,7 @@ def mqtt():
             run = False
 
         if sele == "si": #system_info()
-            from util.sys_info import sys_info
+            from utils.sys_info import sys_info
             sys_info()
 
         if sele == "cv":

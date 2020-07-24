@@ -9,7 +9,7 @@ connect to wifi
 > mqtt config
 
 usage:
-from util.mqtt_connect import read_mqtt_config
+from utils.mqtt_connect import read_mqtt_config
 b = read_mqtt_config()["mqtt_broker_ip"]
 
 TODO: connect()

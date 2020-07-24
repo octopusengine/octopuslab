@@ -1,7 +1,7 @@
 # simple basic example - ESP32 + 7segment display
 
 from time import sleep
-from util.octopus import disp7_init
+from utils.octopus import disp7_init
 
 print("this is simple Micropython example | ESP32 & octopusLAB")
 print()

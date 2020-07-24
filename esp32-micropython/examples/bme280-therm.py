@@ -3,7 +3,7 @@
 
 
 from time import sleep
-from util.octopus import i2c_init, disp7_init
+from utils.octopus import i2c_init, disp7_init
 from shell.terminal import printTitle
 from bme280 import BME280
 

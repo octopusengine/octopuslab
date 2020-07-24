@@ -42,7 +42,7 @@ def threeDigits(d, dnum, point=False, deg=False):  #display number 0-999 / point
        oneDigit(d, sevenSeg[10],x0+(aa+int(aa/2))*3,y0,aa)  #test deg
     d.show()
 
-# from util.display_segment import fourDigits
+# from components.display_segment import fourDigits
 def fourDigits(d, dhh, dmm, colon=True):  #display number 0-999 / point 99.9 / degrees
    x0 = 12
    dh10=int(dhh/10)

@@ -1,6 +1,6 @@
 # https://github.com/dhylands/python_lcd
 
-#from util.octopus import lcd2_init
+#from utils.octopus import lcd2_init
 #lcd = lcd2_init()
 
 

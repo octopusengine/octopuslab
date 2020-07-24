@@ -1,7 +1,7 @@
 #https://github.com/robert-hh/BME280/blob/master/bme280_float.py
 """
 from bme280 import BME280
-from util.octopus import i2c_init
+from utils.octopus import i2c_init
 
 i2c = i2c_init(1)
 bme280 = BME280(i2c=i2c)

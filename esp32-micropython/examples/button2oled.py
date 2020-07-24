@@ -1,7 +1,7 @@
 # octopusLAB simple example
 # HW: ESP32board + EDUshield1 + i2c OLED display
 
-from util.octopus import *
+from utils.octopus import *
 from shell.terminal import printTitle
 
 octopus()            # include main library

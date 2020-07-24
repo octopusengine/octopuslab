@@ -3,7 +3,7 @@
 
 from time import sleep
 from machine import Pin
-from util.button import Button
+from components.button import Button
 
 led_button = Button(0, release_value=1)
 built_in_led = Pin(2, Pin.OUT)
