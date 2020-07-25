@@ -10,8 +10,10 @@ w()
 d7 = disp7_init()
 
 def bitcoin_usd():
-    res = urequests.get("https://api.coinmarketcap.com/v1/ticker/bitcoin/")
-    btcusd = res.json()[0]['price_usd']
+    # res = urequests.get("https://api.coinmarketcap.com/v1/ticker/bitcoin/")
+    # btcusd = res.json()[0]['price_usd']
+    res = urequests.get("https://api.coinpaprika.com/v1/tickers/btc-bitcoin")
+    btcusd = res.json()['quotes']["USD"]["price"]
     return float(btcusd)
 
 printTitle("get_bitcoin.py")
