@@ -10,7 +10,7 @@ from config import Config
 from utils.database.influxdb import InfluxDB
 from utils.wifi_connect import WiFiConnect
 
-mem_free = gc.mem_free
+# mem_free = gc.mem_free
 
 keepalive=0
 errorcount=0
@@ -108,4 +108,5 @@ tim1 = Timer(0)     # for main 10 sec timer
 timer_init(tim1)
 
 # --- run ---
-print("--- run --- RAM free: " + str(mem_free()))
+print("--- run ---")
+# print("RAM free: " + str(mem_free()))
