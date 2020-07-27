@@ -32,11 +32,7 @@ def set_text(text):
 
 def get_text():
     global cursor
-    if (cursor + 8) > len(total_text):
-        end_cursor = len(total_text)
-    else:
-        end_cursor = cursor + 8
-    show_text = total_text[cursor:end_cursor]
+    show_text = total_text[cursor:cursor + 8]
     cursor += 1
     if cursor >= len(total_text):
         cursor = 0
@@ -45,7 +41,7 @@ def get_text():
 
 while True:
     if (time() - last_time) > 5:
-        response = urequests.get()
+        response = urequests.get(SERVER_URL)
         text = response.text
         if total_text != response.text:
             if response.text[0] == '#':
