@@ -25,28 +25,28 @@ class InfluxDB(Database):
         self.__measurement = measurement
 
     @classmethod
-    def fromconfig(cls, config_name="influx"):
+    def fromconfig(cls, config_name="influxdb"):
         from config import Config
         config = Config(config_name)
 
-        iurl = config.get("influx_url")
+        iurl = config.get("influxdb_url")
         if not iurl:
-            raise ValueError("InfluxDB config error: `influx_url` is not set. Check configuration file '{}'".format(config_name))
-        idb = config.get("influx_db")
+            raise ValueError("InfluxDB config error: `influxdb_url` is not set. Check configuration file '{}.json'".format(config_name))
+        idb = config.get("influxdb_name")
         if not idb:
-            raise ValueError("InfluxDB config error: `influx_db` is not set. Check configuration file '{}'".format(config_name))
-        iusr = config.get("influx_user")
+            raise ValueError("InfluxDB config error: `influxdb_name` is not set. Check configuration file '{}.json'".format(config_name))
+        iusr = config.get("influxdb_user")
         if not iusr:
-            raise ValueError("InfluxDB config error: `influx_user` is not set. Check configuration file '{}'".format(config_name))
-        ipsw = config.get("influx_pass")
+            raise ValueError("InfluxDB config error: `influxdb_user` is not set. Check configuration file '{}.json'".format(config_name))
+        ipsw = config.get("influxdb_pass")
         if not ipsw:
-            raise ValueError("InfluxDB config error: `influx_pass` is not set. Check configuration file '{}'".format(config_name))
-        imeasurement = config.get("influx_measurement")
+            raise ValueError("InfluxDB config error: `influxdb_pass` is not set. Check configuration file '{}.json'".format(config_name))
+        imeasurement = config.get("influxdb_measurement")
         if not imeasurement:
-            raise ValueError("InfluxDB config error: `influx_measurement` is not set. Check configuration file '{}'".format(config_name))
-        itags = config.get("influx_tags") or {}
+            raise ValueError("InfluxDB config error: `influxdb_measurement` is not set. Check configuration file '{}.json'".format(config_name))
+        itags = config.get("influxdb_tags") or {}
         if not isinstance(itags, dict):
-            raise ValueError("InfluxDB config error: `influx_tags` is object (dict). Check configuration file '{}'".format(config_name))
+            raise ValueError("InfluxDB config error: `influxdb_tags` is object (dict). Check configuration file '{}.json'".format(config_name))
     
         return cls(iurl, idb, iusr, ipsw, imeasurement, **itags)
 
