@@ -1,0 +1,26 @@
+{
+  "basecue/micropython-pubsub": [
+    "pubsub.py"
+  ],
+  "basecue/micropython-button": [
+    "button.py"
+  ],
+  "basecue/micropython-blesync": [
+    "blesync.py"
+  ],
+  "basecue/micropython-blesync-server": [
+    "blesync_server.py"
+  ],
+  "basecue/micropython-blesync-client": [
+    "blesync_client.py"
+  ],
+  "basecue/micropython-blesync-uart": [
+    "blesync_uart/__init__.py",
+    "blesync_uart/client.py",
+    "blesync_uart/server.py"
+  ],
+  "basecue/robotics/blerobot/controller": [
+    "deploy.json",
+    "main.py"
+  ]
+}
