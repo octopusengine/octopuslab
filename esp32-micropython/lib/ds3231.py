@@ -130,3 +130,8 @@ class DS3231:
         ppm = ratio * 1_000_000
         verbose and print('DS3231 leads RTC by {:4.1f}ppm {:4.1f}mins/yr'.format(ppm, ppm*1.903))
         return ratio * factor
+
+
+    def get_temperature(self):
+        t = self.ds3231.readfrom_mem(DS3231_I2C_ADDR, 0x11, 2)
+        return ((t[0] << 8) | t[1]) / 256.0
