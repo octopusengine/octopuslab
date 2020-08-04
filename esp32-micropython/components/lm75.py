@@ -1,20 +1,22 @@
 # The MIT License (MIT)
 
-class LM75():
-    ADDRESS = 0x49 # 48
-    FREQUENCY = 100000 # 100k
+class LM75B():
+    DEFAULT_ADDRESS = 0x49
+    RESOLUTION_BITS = 11
 
-    def __init__(self,i2c):
-        # self.i2c = I2C(scl=D1, sda=D2, freq=self.FREQUENCY)
+
+    def __init__(self,i2c, addr = DEFAULT_ADDRESS):
+        self.address = addr
         self.i2c = i2c
 
-    def get_output(self):
-        """Return raw output from the LM75 sensor."""
-        output = self.i2c.readfrom(self.ADDRESS, 2)
-        return output[0], output[1]
+
+    def __twos_complement(self, input_value: int, num_bits: int) -> int:
+        mask = 2 ** (num_bits - 1)
+        return -(input_value & mask) + (input_value & ~mask)
+
 
     def get_temp(self):
-        """Return a tuple of (temp_c, point)."""
-        from math import floor
-        temp = self.get_output()
-        return int(temp[0]), floor(int(temp[1]) / 23)
+        t = self.i2c.readfrom(self.address, 2)
+        i = t[0] << 8 | t[1]
+
+        return self.__twos_complement(i >> (16-self.RESOLUTION_BITS), self.RESOLUTION_BITS) * 0.125
