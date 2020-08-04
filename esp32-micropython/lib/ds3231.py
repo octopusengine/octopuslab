@@ -132,6 +132,12 @@ class DS3231:
         return ratio * factor
 
 
+    def __twos_complement(self, input_value: int, num_bits: int) -> int:
+        mask = 2 ** (num_bits - 1)
+        return -(input_value & mask) + (input_value & ~mask)
+
+
     def get_temperature(self):
         t = self.ds3231.readfrom_mem(DS3231_I2C_ADDR, 0x11, 2)
-        return ((t[0] << 8) | t[1]) / 256.0
+        i = t[0] << 8 | t[1]
+        return self.__twos_complement(i >> 6, 10) * 0.25
