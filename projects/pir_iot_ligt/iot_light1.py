@@ -16,6 +16,8 @@ from components.button import Button
 from time import ticks_ms, ticks_diff
 from components.analog import Analog
 from components.iot import Thermometer
+from utils.database.influxdb import InfluxDB
+from utils.wifi_connect import WiFiConnect
 
 led_light = False
 led = Led(2)
@@ -28,6 +30,9 @@ print("init-test")
 print("light", anLight.get_adc_aver(8))
 print("temp.",tt.get_temp())
 
+print("wifi")
+net = WiFiConnect()
+net.connect()
 
 led.blink()
 sleep(3)
@@ -105,6 +110,14 @@ print("BLE ESP32 device name: " + devName)
 # server = blesync_server.Server(devName, blesync_uart.server.UARTService)
 
 # server.start()
+influx = InfluxDB.fromconfig()
+
+print("test influx")
+
+light =  anLight.get_adc_aver(8)
+temp = tt.get_temp()
+print(influx.write(light=light,temperature=temp))
+
 
 p = Pin(16, Pin.IN)
 sfa = ticks_ms()
