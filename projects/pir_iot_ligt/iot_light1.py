@@ -14,15 +14,20 @@ from components.iot.pwm_fade import fade_in
 from components.led import Led
 from components.button import Button
 from time import ticks_ms, ticks_diff
-
-
+from components.analog import Analog
+from components.iot import Thermometer
 
 led_light = False
 led = Led(2)
 duty = 0
 led_button = Button(0, release_value=1)
-
+anLight = Analog(36)
 pwm = PWM(Pin(17, Pin.OUT), 500, duty) # PWM1
+tt = Thermometer(32)
+print("init-test")
+print("light", anLight.get_adc_aver(8))
+print("temp.",tt.get_temp())
+
 
 led.blink()
 sleep(3)
@@ -97,9 +102,9 @@ def on_disconnect(conn_handle, addr_type, addr):
 devName = 'octopus-pwm-'+uID5
 print("BLE ESP32 device name: " + devName)
 
-server = blesync_server.Server(devName, blesync_uart.server.UARTService)
+# server = blesync_server.Server(devName, blesync_uart.server.UARTService)
 
-#server.start()
+# server.start()
 
 p = Pin(16, Pin.IN)
 sfa = ticks_ms()
