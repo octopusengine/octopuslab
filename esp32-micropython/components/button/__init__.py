@@ -1,46 +1,52 @@
+from _thread import start_new_thread
 from machine import Pin, Timer
+import time
+
 from micropython import schedule
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 
 class Button:
     debounce_time_ms = 10
 
-    def __init__(self, pin_num: int, release_value=0):
+    def __init__(self, pin, release_value=0):
         self._on_press_callbacks = []
         self._on_release_callbacks = []
-        self.pin = Pin(pin_num, Pin.IN, Pin.PULL_DOWN)  # TODO pull
-        self._debounce_timer = Timer(1)
-        self._value = release_value
+        self.pin = pin
+        # TODO we assume now the button is not pressed during startup
+        self._original_value = release_value
         self._release_value = release_value
         self._register_irq()
 
     def _register_irq(self):
+        if self._original_value == 1:
+            waiting_for_irq = Pin.IRQ_FALLING
+        else:
+            waiting_for_irq = Pin.IRQ_RISING
+
         self.pin.irq(
-            trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING,
+            trigger=waiting_for_irq,
             handler=self._irq,
         )
 
     def _irq(self, pin):
-        value = pin.value()
-        if value == self._value:
+        if pin.value() == self._original_value:
             return
 
         pin.irq(trigger=0)
-        self._value = value
-        self._debounce_timer.init(
-            period=Button.debounce_time_ms,
-            mode=Timer.ONE_SHOT,
-            callback=self._debounce
-        )
+        start_new_thread(self._debounce, tuple())
 
-    def _debounce(self, _):
-        if self.pin.value() == self._value:
-            if self._value == self._release_value:
+    def _debounce(self):
+        time.sleep_ms(Button.debounce_time_ms)
+        value = self.pin.value()
+        if value != self._original_value:
+            if value == self._release_value:
                 callback = self._on_release_callback
             else:
                 callback = self._on_press_callback
             schedule(callback, None)
+            self._original_value = value
+
         self._register_irq()
 
     def _on_press_callback(self, _):
