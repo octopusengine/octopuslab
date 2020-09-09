@@ -2,7 +2,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek
 
-__version__ = "1.0.3"
+__version__ = "1.0.4"
 
 from sys import modules
 from time import sleep, sleep_ms, sleep_us, ticks_ms, ticks_diff
@@ -22,7 +22,7 @@ rtc = RTC()  # real time
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "1.03"  # version - log: num = ver*100
+    ver = "1.04"  # version - log: num = ver*100
     verDat = "30.06.2020 #998"
     debug = True
     logDev = True
@@ -182,23 +182,6 @@ def get_hhmmss(separator=":",rtc=rtc):
     return hh + separator + mm + separator + ss
 
 
-def timer_init():
-    printLog("timer_init")
-    print("timer tim1 is ready - periodic - 10s")
-    print("for deactivite: tim1.deinit()")
-    tim1.init(period=10000, mode=Timer.PERIODIC, callback=lambda t:timerAction())
-    Env.timerCounter = 0
-
-
-def timerAction():
-    print("timerAction " + str(Env.timerCounter))
-    Env.timerFlag = 1
-    Env.timerCounter += 1
-    if Env.timerLed: led.blink(100, 50)
-    if Env.timerBeep: beep()
-    Env.timerFlag = 0
-
-
 def ap_init(): #192.168.4.1
     printTitle("AP init > ")
     from utils.wifi_connect import WiFiConnect
@@ -284,12 +267,6 @@ def w(logD=True, echo=True):
     if echo:
         getFree(True)
     return w
-
-
-def database_init(name):
-    from utils.database import Db
-    db = Db(name)
-    return db
 
 
 def bme280_init():
@@ -557,22 +534,6 @@ if Env.autoInit:  # test
             lcd.putstr("octopusLAB")
             return lcd
 
-    if io_conf.get('relay'):
-        print("rel | ",end="")
-        RELAY = Pin(pinout.RELAY_PIN) # pin(33) Robot(DEV2)
-
-        def disp2(d,mess,r=0,s=0):
-            #d.clear()
-            d.move_to(s, r) # x/y
-            d.putstr(str(mess))
-
-    if io_conf.get('ad0') or io_conf.get('ad1') or io_conf.get('ad2'):
-        print("Analog | ",end="")
-        from components.analog import Analog
-        #adcpin = pinout.ANALOG_PIN
-        adcpin = 39 #default
-        an = Analog(adcpin)
-        #an0 = Analog(io_conf.get('ad0'))
 
     if io_conf.get('temp'):
         print("temp | ",end="")
@@ -585,14 +546,6 @@ if Env.autoInit:  # test
             # ts.read_temp(tx[0])
             return ts
 
-    if io_conf.get('servo'):
-        print("servo | ",end="")
-        from components.servo import Servo
-        try: PIN_SER = pinout.PWM1_PIN
-        except: PIN_SER = 17 # ROBOT
-        def servo_init(pin = PIN_SER):
-            servo = Servo(PIN_SER)
-            return servo
 
     if io_conf.get('exp8'):
         print("exp8 | ",end="")
@@ -606,31 +559,6 @@ if Env.autoInit:  # test
                 e8 = Expander8(addr)
             return e8
 
-    if io_conf.get('button'):
-        print("button | ",end="")
-        #test for Shield1 or FirstBoard hack buttons
-        def buttons_init(L = 34, R = 35, C = 39): # Left, Right, Central
-            b34 = Pin(L, Pin.IN) #SL
-            b35 = Pin(R, Pin.IN) #SR
-            b39 = Pin(C, Pin.IN)
-            return b34, b35, b39
-
-        def button_init(pin = 34, pull_up = False): #  B0 = button_init(False)
-            if pull_up:
-                bpin = Pin(pin, Pin.IN, Pin.PULL_UP)
-            else:
-                bpin = Pin(pin, Pin.IN)
-            return bpin
-
-        def button(pin, num=10): #num for debounce
-            value0 = value1 = 0
-            for i in range(num):
-                if pin.value() == 0:
-                    value0 += 1
-                else:
-                    value1 += 1
-                sleep_us(20)
-            return value0, value1
 
         def wait_pin_change(pin):
             # wait for pin to change value, it needs to be stable for a continuous 20ms
@@ -642,17 +570,6 @@ if Env.autoInit:  # test
                 else:
                     active = 0
                 sleep_ms(1)
-
-    if io_conf.get('stepper'):
-        print("stepper | ",end="")
-        from lib.sm28byj48 import SM28BYJ48   #PCF address = 35 #33-0x21/35-0x23
-        def stepper_init(ADDRESS = 0x23, MOTOR_ID = 1): # ID 1 / 2
-            motor = SM28BYJ48(i2c, ADDRESS, MOTOR_ID)
-            # turn right 90 deg
-            motor.turn_degree(90, 0)
-            # turn left 90 deg
-            motor.turn_degree(90, 1)
-            return motor
 
     print()
 
