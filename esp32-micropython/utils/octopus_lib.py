@@ -78,7 +78,24 @@ def get_hh_mm(rtc):
     hh=add0(rtc.datetime()[4])
     mm=add0(rtc.datetime()[5])
     return hh+"-"+mm
+
+
 #-----------------------------------
+def time_init(urlApi ="https://www.octopusengine.org/api/hydrop"):
+    from urequests import get
+    printTitle("time setup from url")
+    urltime=urlApi+"/get-datetime.php"
+    print("https://urlApi/"+urltime)
+    try:
+        response = get(urltime)
+        dt_str = (response.text+(",0,0")).split(",")
+        print(str(dt_str))
+        dt_int = [int(numeric_string) for numeric_string in dt_str]
+        rtc.init(dt_int)
+        #print(str(rtc.datetime()))
+        print("time: " + get_hhmm())
+    except Exception as e:
+        print("Err. Setup time from URL")
 
 
 def spi_init():

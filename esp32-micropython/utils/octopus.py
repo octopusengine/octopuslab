@@ -2,10 +2,10 @@
 # The MIT License (MIT)
 # Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek
 
-__version__ = "1.0.4"
+__version__ = "1.0.5"
 
-from sys import modules
-from time import sleep, sleep_ms, sleep_us, ticks_ms, ticks_diff
+# from sys import modules
+from time import sleep, sleep_ms, ticks_ms, ticks_diff
 from machine import Pin, Timer, RTC
 #from os import urandom
 from utils.pinout import set_pinout
@@ -23,7 +23,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "1.04"  # version - log: num = ver*100
-    verDat = "30.06.2020 #998"
+    verDat = "10.09.2020 #998"
     debug = True
     logDev = True
     autoInit = True
@@ -53,13 +53,9 @@ def getVer():
     return "octopusLAB - lib.version: " + Env.ver + " > " + Env.verDat
 
 
-def get_eui():
-    return Env.uID  # mac2eui(id)
-
-
 def printInfo(w=Env.TW):
     print('-' * w)
-    print("| ESP UID: " + Env.uID + " | RAM free: " + str(getFree()) + " | " + get_hhmm())
+    print("| ESP UID: " + Env.uID + " | RAM free: " + str(getFree()))
     print('-' * w)
 
 
@@ -160,28 +156,6 @@ def getFree(echo = False):
     return mem_free()
 
 
-def add0(sn):
-    ret_str=str(sn)
-    if int(sn)<10:
-       ret_str = "0"+str(sn)
-    return ret_str
-
-
-def get_hhmm(separator=":",rtc=rtc):
-    #get_hhmm(separator) | separator = string: "-" / " "
-    hh=add0(rtc.datetime()[4])
-    mm=add0(rtc.datetime()[5])
-    return hh + separator + mm
-
-
-def get_hhmmss(separator=":",rtc=rtc):
-    #get_hhmm(separator) | separator = string: "-" / " "
-    hh=add0(rtc.datetime()[4])
-    mm=add0(rtc.datetime()[5])
-    ss=add0(rtc.datetime()[6])
-    return hh + separator + mm + separator + ss
-
-
 def ap_init(): #192.168.4.1
     printTitle("AP init > ")
     from utils.wifi_connect import WiFiConnect
@@ -279,22 +253,6 @@ def bme280_init():
     except Exception as e:
         print("bme280_init() Exception: {0}".format(e))
 
-
-def time_init(urlApi ="https://www.octopusengine.org/api/hydrop"):
-    from urequests import get
-    printTitle("time setup from url")
-    urltime=urlApi+"/get-datetime.php"
-    print("https://urlApi/"+urltime)
-    try:
-        response = get(urltime)
-        dt_str = (response.text+(",0,0")).split(",")
-        print(str(dt_str))
-        dt_int = [int(numeric_string) for numeric_string in dt_str]
-        rtc.init(dt_int)
-        #print(str(rtc.datetime()))
-        print("time: " + get_hhmm())
-    except Exception as e:
-        print("Err. Setup time from URL")
 
 
 def getApiJson(urlApi ="https://www.octopuslab.cz/data/", urlFile = "led2.json", debug = "True"):
