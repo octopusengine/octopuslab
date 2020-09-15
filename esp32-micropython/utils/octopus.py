@@ -547,6 +547,8 @@ def web_server():
     import os, webrepl
     from ubinascii import hexlify
     from utils.wifi_connect import WiFiConnect
+
+    expander = None
     if Env.wscExp8:
         from components.i2c_expander import Expander8
         expander = Expander8()
@@ -725,6 +727,11 @@ def web_server():
 
     @MicroWebSrv.route('/esp/control/i2cexpander', "POST") # Set device
     def _httpHandlerSetI2CExpander(httpClient, httpResponse):
+        if expander is None:
+            print("I2C expander is not initialized!")
+            httpResponse.WriteResponseOk(None)
+            return
+
         from components.i2c_expander import neg
         data = httpClient.ReadRequestContent()
         print("i2cexpander.data: " + str(data) + str(bin(int(data))))
