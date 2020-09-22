@@ -6,7 +6,7 @@ __version__ = "1.0.5"
 
 # from sys import modules
 from time import sleep, sleep_ms, ticks_ms, ticks_diff
-from machine import Pin, Timer, RTC
+from machine import Pin, Timer
 #from os import urandom
 from utils.pinout import set_pinout
 from utils.io_config import get_from_file
@@ -16,14 +16,14 @@ from shell.terminal import printTitle, printLog, printHead
 # olab = Env()  # for initialized equipment
 pinout = set_pinout()     # set board pinout
 io_conf = get_from_file() # read configuration for peripherals
-rtc = RTC()  # real time
+# rtc = RTC()  # real time
 
 
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "1.04"  # version - log: num = ver*100
-    verDat = "10.09.2020 #998"
+    ver = "1.05"  # version - log: num = ver*100
+    verDat = "22.09.2020 #847"
     debug = True
     logDev = True
     autoInit = True
