@@ -1,13 +1,9 @@
 # https://github.com/micropython/micropython/blob/master/ports/esp8266/modules/ntptime.py
 
-try:
-    import usocket as socket
-except:
-    import socket
-try:
-    import ustruct as struct
-except:
-    import struct
+__version__ = "1.0.2"
+
+import usocket as socket
+import ustruct as struct
 
 # (date(2000, 1, 1) - date(1900, 1, 1)).days * 24*60*60
 NTP_DELTA = 3155673600
@@ -32,10 +28,22 @@ def time():
 
 
 # There's currently no timezone support in MicroPython, and the RTC is set in UTC time.
+# tm[6] + zone ?
 def settime():
     t = time()
-    import machine
+    from machine import RTC
     import utime
 
     tm = utime.gmtime(t)
-    machine.RTC().datetime((tm[0], tm[1], tm[2], tm[6] + 1, tm[3], tm[4], tm[5], 0))
+    machine.RTC().datetime((tm[0], tm[1], tm[2], tm[6], tm[3], tm[4], tm[5], 0))
+
+
+def setlocal(h=2):
+    import utime
+    from machine import RTC
+    rtc = RTC()
+    localtime = utime.time() + h * 3600
+    (year, month, mday, hour, minute, second, weekday, yearday)=utime.localtime(localtime)
+    rtc.datetime((year, month, mday, 0, hour, minute, second, 0))
+
+

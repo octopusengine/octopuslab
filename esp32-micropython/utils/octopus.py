@@ -16,7 +16,6 @@ from shell.terminal import printTitle, printLog, printHead
 # olab = Env()  # for initialized equipment
 pinout = set_pinout()     # set board pinout
 io_conf = get_from_file() # read configuration for peripherals
-# rtc = RTC()  # real time
 
 
 class Env:  # for temporary global variables and config setup

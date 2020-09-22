@@ -2,7 +2,7 @@
 # iotBoard for project parallel garden
 #
 
-__version__ = "1.0.3"
+__version__ = "1.0.5"
 
 
 #import machine, time, os, ubinascii, framebuf, gc
@@ -81,7 +81,20 @@ def get_hh_mm(rtc):
 
 
 #-----------------------------------
-def time_init(urlApi ="https://www.octopusengine.org/api/hydrop"):
+def time_init():
+    from ntptime import settime
+    from machine import RTC
+    # from utils.octopus_lib import get_hhmm
+
+    rtc = RTC()
+    # w()
+    settime(zone=0)
+    # print(get_hhmm(rtc))
+    # print()
+    print("time: " + get_hhmm(rtc))
+
+
+def time_init_o(urlApi ="https://www.octopusengine.org/api/hydrop"):
     from urequests import get
     printTitle("time setup from url")
     urltime=urlApi+"/get-datetime.php"
