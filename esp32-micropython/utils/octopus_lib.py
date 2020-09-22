@@ -111,6 +111,15 @@ def time_init_o(urlApi ="https://www.octopusengine.org/api/hydrop"):
         print("Err. Setup time from URL")
 
 
+def setlocal(h=2):
+    import utime
+    from machine import RTC
+    rtc = RTC()
+    localtime = utime.time() + h * 3600
+    (year, month, mday, hour, minute, second, weekday, yearday)=utime.localtime(localtime)
+    rtc.datetime((year, month, mday, 0, hour, minute, second, 0))
+
+
 def spi_init():
     from machine import Pin, SPI
     from utils.pinout import set_pinout
