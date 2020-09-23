@@ -1,7 +1,7 @@
 # octopusLab "decorators" lib
 
-
 def octopus_debug(fnc):
+    print()
     print("--- decorator --- @octopus_debug:")
     import time
     
@@ -9,8 +9,11 @@ def octopus_debug(fnc):
         start = time.time()
         result = fnc(*args, **kwargs)
         end = time.time() - start
-
-        print("=== function name: ", str(fnc.__name__))
+        try:
+           fname = fnc.__name__
+        except:
+           fname = "?"
+        print("=== function name: ", fname)
         print("=== duration (sec.) --->", str(end))
         return result
 
