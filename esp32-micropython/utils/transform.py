@@ -21,7 +21,7 @@ point0_3d = 0, 0, 0
 RADIANS = 0
 DEGREES = 1
 
-arm = 20
+arm = 70 #delta1
 l1 = arm
 l2 = arm
 
@@ -133,37 +133,9 @@ def cosangle(opp, adj1, adj2):
     return alfa, direct
 
 
-def invkin2_1(point2d, rr = 6, debug = True): # for l1 = l2
-    # 2 servos in 2D - arm l1, l2
-    # diff**2 = l**2 - dist**2
-    # dist = distance2(point0_2d, point, 5)
-    dist, alfa = cart2polar(point2d)
-    max_dist = (l1 + l2) / math.sqrt(2)
-    if debug:
-        print("point, arm: ", point2d, l1)
-        print("polar: ", dist, alfa)
-        print("max.dist: ", max_dist)
-    if dist < max_dist:
-        try:
-            diff = math.sqrt(l1**2 - dist**2/4)
-            epsilon = cosangle(diff, dist/2, l1)[0]
-            beta = 2 * cosangle(dist/2, diff, l1)[0]
-        except Exception as e:
-            print("Err: ", e)
-
-        if debug:
-            print("diff: ",diff) 
-            print("epsilon: ", epsilon) # temp angle
-            print("beta: ", beta)
-        return alfa - epsilon, beta
-    else:
-        print("Err. max distance is ", max_dist)
-        return 0, 0
-
-
 # https://ashwinnarayan.blogspot.com/2014/07/inverse-kinematics-for-2dof-arm.html
 #IK for just the 2 links
-def invkin2(point2d, angleMode=DEGREES):
+def invkin2(point2d):
     """Returns the angles of the first two links
     in the robotic arm as a list.
     returns -> (th1, th2)
@@ -175,33 +147,28 @@ def invkin2(point2d, angleMode=DEGREES):
     output:
     th1 - angle of the first link w.r.t ground
     th2 - angle of the second link w.r.t the first"""
-    x, y  = point2d
+    x, y = point2d.x, point2d.y
 
     #stuff for calculating th2
-    r_2   = x*x   + y*y
-    l_sq  = l1*l1 + l2*l2
-    term2 = (r_2 - l_sq) / (2 * l1 * l2)
-    term1 = -math.sqrt(1 - term2*term2)
+    r_2 = x * x+ y * y
+    l_sq = l1 * l1 + l2 * l2
+    term2 = (r_2 - l_sq)/(2*l1*l2)
+    term1 = ((1 - term2**2)**0.5)*-1
 
     #calculate th2
-    th2   = math.atan2(term1, term2)
+    th2 = math.atan2(term1, term2)
+    #optional line. Comment this one out if you notice any problems
+    # th2 = -1*th2
 
     #Stuff for calculating th2
-    k1    = l1 + l2*math.cos(th2)
-    k2    = l2*math.sin(th2)
-    r     = math.sqrt(k1*k1 + k2*k2)
+    k1 = l1 + l2*math.cos(th2)
+    k2 = l2*math.sin(th2)
+    r  = (k1**2 + k2**2)**0.5
     gamma = math.atan2(k2,k1)
-
     #calculate th1
-    th1   = math.atan2(y,x) - gamma
+    th1 = math.atan2(y,x) - gamma
 
-    th1   = abs(th1)
-    th2   = -th2
-
-    if(angleMode == RADIANS):
-        return th1, -th2
-    else:
-        return math.degrees(th1), -math.degrees(th2)
+    return abs(math.degrees(th1)), -math.degrees(th2)
 
 #--------------------------------------------------------
 
@@ -238,8 +205,8 @@ def invkin3(point3d, angleMode=DEGREES):
     th0 = math.atan2(z,x)
     x = (x**2 + z**2)**0.5
     #stuff for calculating th2
-    r_2 = x**2 + y**2
-    l_sq = l1**2 + l2**2
+    r_2 = x * x+ y * y
+    l_sq = l1 * l1 + l2 * l2
     term2 = (r_2 - l_sq)/(2*l1*l2)
     term1 = ((1 - term2**2)**0.5)*-1
     #calculate th2
