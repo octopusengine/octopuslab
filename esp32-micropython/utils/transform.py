@@ -175,31 +175,33 @@ def invkin2(point2d, angleMode=DEGREES):
     output:
     th1 - angle of the first link w.r.t ground
     th2 - angle of the second link w.r.t the first"""
-    x, y = point2d
+    x, y  = point2d
 
     #stuff for calculating th2
-    r_2 = x**2 + y**2
-    l_sq = l1**2 + l2**2
-    term2 = (r_2 - l_sq)/(2*l1*l2)
-    term1 = ((1 - term2**2)**0.5)*-1
+    r_2   = x*x   + y*y
+    l_sq  = l1*l1 + l2*l2
+    term2 = (r_2 - l_sq) / (2 * l1 * l2)
+    term1 = -math.sqrt(1 - term2*term2)
+
     #calculate th2
-    th2 = math.atan2(term1, term2)
-    #optional line. Comment this one out if you
-    #notice any problems
-    th2 = -1*th2
+    th2   = math.atan2(term1, term2)
 
     #Stuff for calculating th2
-    k1 = l1 + l2*math.cos(th2)
-    k2 = l2*math.sin(th2)
-    r  = (k1**2 + k2**2)**0.5
+    k1    = l1 + l2*math.cos(th2)
+    k2    = l2*math.sin(th2)
+    r     = math.sqrt(k1*k1 + k2*k2)
     gamma = math.atan2(k2,k1)
+
     #calculate th1
-    th1 = math.atan2(y,x) - gamma
+    th1   = math.atan2(y,x) - gamma
+
+    th1   = abs(th1)
+    th2   = -th2
 
     if(angleMode == RADIANS):
-        return th1, th2
+        return th1, -th2
     else:
-        return math.degrees(th1), math.degrees(th2)
+        return math.degrees(th1), -math.degrees(th2)
 
 #--------------------------------------------------------
 
