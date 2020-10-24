@@ -12,7 +12,6 @@ from utils.pinout import set_pinout
 from utils.io_config import get_from_file
 from shell.terminal import printTitle, printLog, printHead
 
-
 # olab = Env()  # for initialized equipment
 pinout = set_pinout()     # set board pinout
 io_conf = get_from_file() # read configuration for peripherals
@@ -22,7 +21,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "1.05"  # version - log: num = ver*100
-    verDat = "22.09.2020 #847"
+    verDat = "23.10.2020 #845"
     debug = True
     logDev = True
     autoInit = True
@@ -531,15 +530,6 @@ if Env.autoInit:  # test
     print()
 
 
-def small_web_server(wPath='www/'):
-    from lib.microWebSrv import MicroWebSrv
-    # ? webPath as parameter
-    mws = MicroWebSrv(webPath=wPath)      # TCP port 80 and files in /flash/www
-    mws.Start(threaded=True) # Starts server in a new thread
-    print("Web server started > " + wPath)
-    getFree(True)
-
-
 def web_server():
     printTitle("web_server start > ")
     from lib.microWebSrv import MicroWebSrv
@@ -841,7 +831,7 @@ def web_server():
         httpResponse.WriteResponse(code=204, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = None)
 
 
-# ******** prepare / test **********
+# ***** prepare / test ******
 # todo: Env.set/get
 
 class Octopus:
@@ -850,4 +840,4 @@ class Octopus:
 
     def hello(self,name = "octopus"):
         print("hello " + name)
-# **********************************
+# ***************************
