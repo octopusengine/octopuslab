@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <script src="huewheel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+</head>
+
+<body style="font-size: 150%; font-family: Monaco, monospace; background-color: #fff1d4;">
+<div id="container" style="width:360px; margin:25px auto 0 auto;">
+        <h3>OctopusLAB RGB</h3>
+	<div id="huewheel"></div><br>
+	<div id="info"></div><br>
+</div>
+<script type="text/javascript">
+	var throttleSetColor = _.throttle(setColor, 400);
+
+	hw = new HueWheel('huewheel', {
+	onChange:  throttleSetColor,
+	saturation: 1.0,
+	lightness: 0.5,
+	colorSpace: 'hsl',
+	diameter: 300,
+	shadowBlur: 7,
+	changeSaturation: false,
+	changeLightness: true,
+	showColor: true,
+	colorSpotWidth: 0.7,
+	colorSpotBorder: 1,
+	colorSpotBorderColor: '#333',
+	quality: 2,
+	hueKnobSize: 0.12,
+	hueKnobColor: '#ffc',
+	lightKnobColor: '#ff0',
+	hueKnobColorSelected: '#fff',
+	hueKnobShadow: true,
+	lightnessKnobColorSelected: '#f00',
+	lightnessRingClickable: true,
+	useKeys: true,
+	hueKeyDelta: 2,
+	saturationKeyDelta: 1,
+	lightnessKeyDelta: 1,
+	shiftKeyFactor: 10
+	});
+	
+	function setColor(e) {
+	document.getElementById('info').innerHTML = 'R:' + ('000' + e.r).substr(-3) +
+		'   G:' + ('000' + e.g).substr(-3) + 
+		'   B:' + ('000' + e.b).substr(-3);
+	var colorJSON = '{"red":' + e.r + ', "green":' + e.g + ', "blue":' + e.b + '}';
+	var xhttp = new XMLHttpRequest();
+	xhttp.open('POST', 'http://' + window.location.hostname + '/led', true);
+	xhttp.setRequestHeader('Content-type', 'application/json');
+	xhttp.send(colorJSON);
+	}
+		
+</script>
+</body>
+</html>
