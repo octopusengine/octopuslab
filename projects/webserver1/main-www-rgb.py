@@ -5,6 +5,7 @@ from microWebSrv import MicroWebSrv
 from neopixel import NeoPixel
 import json
 
+
 print("-"*50)
 print("ftp and WebServer - RGB neopixel")
 print("-"*50)
@@ -21,17 +22,18 @@ def _httpHandlerLEDPost(httpClient, httpResponse):
 
 
 btnum = 0
+
 button = Pin(0, Pin.IN)
 print("press button / CTRL+C or continue")
 sleep(1)
 
 for i in range(12):
     print("-",end="")
-    btnum += button.value()
+    if(not button.value()): btnum += 1 
     sleep(0.2)
 
 w()
-print()
+print("-"*50)
 
 if (btnum==0):
     print("button0 -> start WebServer www/rgb")
