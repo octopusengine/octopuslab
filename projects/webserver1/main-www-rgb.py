@@ -1,12 +1,15 @@
 from time import sleep
 from machine import Pin
-from utils.octopus import w
+from utils.octopus_lib import w
 from microWebSrv import MicroWebSrv
 from neopixel import NeoPixel
 import json
 
-np = NeoPixel(Pin(15), 1)
+print("-"*50)
+print("ftp and WebServer - RGB neopixel")
+print("-"*50)
 
+np = NeoPixel(Pin(15), 1)
 
 def _httpHandlerLEDPost(httpClient, httpResponse):
     content = httpClient.ReadRequestContent()  # Read JSON color data
@@ -17,26 +20,20 @@ def _httpHandlerLEDPost(httpClient, httpResponse):
     httpResponse.WriteResponseJSONOk()
 
 
-print("-"*50)
-print("ftp and WebServer - RGB neopixel")
-print("-"*50)
-
+btnum = 0
 button = Pin(0, Pin.IN)
-
-w() # wifi connect
-
-print("CTRL+C or continue")
+print("press button / CTRL+C or continue")
 sleep(1)
-btn = button.value()
-if (btn): print("button ok")
 
 for i in range(12):
     print("-",end="")
-    sleep(0.3)
+    btnum += button.value()
+    sleep(0.2)
 
+w()
 print()
 
-if (btn):
+if (btnum==0):
     print("button0 -> start WebServer www/rgb")
     #mws = MicroWebSrv(webPath="www/rgb")
     #mws.Start(threaded=True)
@@ -48,7 +45,3 @@ else:
     import ftp
 
 print("="*50)
-
-
-
-
