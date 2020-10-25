@@ -1,18 +1,21 @@
-# this module is to setup your board
-# iotBoard for project parallel garden
+# this module is basic library for OctopusLAB FrameWork
 #
+# -----------------------------------------------------
 
-__version__ = "1.0.5"
+__version__ = "1.0.6" # format: N.N.N, N<10 ->
+libVerDate = "2020-10-25"
+libVer100 = __version__[0] + __version__[2] + __version__[4]
 
 
-#import machine, time, os, ubinascii, framebuf, gc
+TW = 50 # terminal width
 
-# ---------------- procedures
+
+
 def getOctopusLibVer():
-    return "octopus lib.ver: " + __version__ + " / 2020-07-09"
+    return "octopus lib.ver: " + __version__ + " | " + libVerDate
 
 
-def printTitle(t,num = 25):
+def printTitle(t,num = TW):
     print()
     print('=' * num)
     print(t.center(num))
@@ -22,12 +25,24 @@ def printTitle(t,num = 25):
 def printLog(i = 1,s = ""):
     print()
     print('-' * 35)
-    print("[--- " + str(i) + " ---] " + s)
+    print("[----- " + str(i) + " -----] " + s)
+
+
+def getFree(echo = False):
+    from gc import mem_free
+    if echo:
+        print("--- RAM free ---> " + str(mem_free()))
+    return mem_free()
 
 
 def printFree():
-    import gc
-    print("Free: "+str(gc.mem_free()))
+    getFree(True)
+
+
+def printInfo(w=TW):
+    print('-' * TW)
+    print("| ESP UID: " + getUid() + " | RAM free: " + str(getFree()))
+    print('-' * TW)
 
 
 def map(x, in_min, in_max, out_min, out_max):
@@ -54,11 +69,6 @@ def add0(sn): # 1 > 01
     return ret_str
 
 
-#def get_eui():
-#    id = ubinascii.hexlify(machine.unique_id()).decode()
-#    return id #mac2eui(id)
-
-
 def getUid(short = False): # full or short (5 chars: first 2 + last 3)
     import machine, ubinascii
     id = ubinascii.hexlify(machine.unique_id()).decode()
@@ -80,7 +90,6 @@ def get_hh_mm(rtc):
     return hh+"-"+mm
 
 
-#-----------------------------------
 def time_init():
     from ntptime import settime
     from machine import RTC
@@ -91,7 +100,7 @@ def time_init():
     settime(zone=0)
     # print(get_hhmm(rtc))
     # print()
-    print("time: " + get_hhmm(rtc))
+    print("--- time: " + get_hhmm(rtc))
 
 
 def time_init_o(urlApi ="https://www.octopusengine.org/api/hydrop"):
@@ -136,3 +145,90 @@ def i2c_init(HWorSW=0,freq=100000):
     # HW or SW: HW 0 - | SW -1
     i2c = I2C(HWorSW, scl=Pin(pinout.I2C_SCL_PIN), sda=Pin(pinout.I2C_SDA_PIN), freq=freq)
     return i2c
+
+
+def w_connect():
+    from time import sleep_ms
+    from utils.wifi_connect import WiFiConnect
+    sleep_ms(200)
+    w = WiFiConnect()
+    if w.connect():
+        print("--- WiFi: OK")
+    else:
+        print("--- WiFi: Connect error, check configuration")
+
+    print('Network config:', w.sta_if.ifconfig())
+    return w
+
+
+def lan_connect():
+    from time import sleep_ms
+    from network import LAN, ETH_CLOCK_GPIO17_OUT, PHY_LAN8720
+    lan = LAN(mdc=Pin(23), mdio=Pin(18), phy_type=PHY_LAN8720, phy_addr=1, clock_mode=ETH_CLOCK_GPIO17_OUT)
+    lan.active(1)
+
+    retry = 0
+    while not lan.isconnected() or lan.ifconfig()[0] is '0.0.0.0':
+        retry+=1
+        sleep_ms(500)
+
+        if retry > 20:
+            break
+
+    if not lan.isconnected():
+        print("--- LAN: Connect error, check cable or DHCP server")
+        return None
+
+    print("--- LAN: OK")
+    print('--- network config:', lan.ifconfig())
+    return lan
+
+
+def logDevice(urlPOST = "https://www.octopusengine.org/iot17/add18.php"):
+    from time import sleep_ms
+    from urequests import post
+    header = {}
+    header["Content-Type"] = "application/x-www-form-urlencoded"
+    deviceID = getUid()
+    place = "octoPy32"
+    logVer =  int(libVer100)
+    try:
+        postdata_v = "device={0}&place={1}&value={2}&type={3}".format(deviceID, place, logVer,"log_ver")
+        res = post(urlPOST, data=postdata_v, headers=header)
+        sleep_ms(200)
+        print("--- logDevice.ok")
+        res.close()
+    except Exception as e:
+        print("--- Err.logDevice: {0}".format(e))
+
+
+def w(logD=True, echo=True):
+    MAC = "..."
+    if echo:
+        printInfo()
+        printTitle("--- WiFi connect -> ")
+    w = w_connect()
+    if logD: logDevice()
+
+    from ubinascii import hexlify
+    try:
+        MAC = hexlify(w.sta_if.config('mac'),':').decode()
+    except:
+        MAC = "Err: w.sta_if"
+    if echo:
+        print("--- MAC: ", MAC)
+        getFree(True)
+    return w
+
+
+def ap_init(): #192.168.4.1
+    printTitle("--- AP init > ")
+    from utils.wifi_connect import WiFiConnect
+    import ubinascii
+    w = WiFiConnect()
+    w.ap_if.active(True)
+    mac = ubinascii.hexlify(w.ap_if.config('mac'),':').decode()
+    w.ap_if.config(essid="octopus_ESP32_" + mac)
+    print(w.ap_if.ifconfig())
+    print("AP Running: " + w.ap_if.config("essid"))
+    return w
