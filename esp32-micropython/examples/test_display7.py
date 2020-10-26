@@ -1,6 +1,7 @@
 # simple basic example - ESP32 + 7segment display
 print("--- octopusLAB: test_display7.py ---")
 
+
 print("-> imports")
 from time import sleep
 from machine import Pin, SPI
