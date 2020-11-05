@@ -1,8 +1,7 @@
 # octopusLAB simple example
-# ESP32board with "BUILT_IN_LED"
+# ROBOTboart (DoIt) or ESP32board with "BUILT_IN_LED" (Pin 2)
 
 from components.led import Led
-# from utils.octopus import led # short way
 from utils.pinout import set_pinout
 
 pinout = set_pinout()           # set board pinout
