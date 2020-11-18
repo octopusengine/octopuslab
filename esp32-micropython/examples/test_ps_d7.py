@@ -1,8 +1,13 @@
 from time import sleep
-from utils.octopus_lib import w # for ftp
+from os import urandom
+import pubsub # /lib
+import octopus.ps_disp7
+   
 
-print("--- start ---")
-sleep(5) # for hard reset
+print("start ps_random")
 
-import octopus.ps_display7
-import octopus.ps_timer_rnd
+while True:
+    value =  int(urandom(1)[0])
+    print("rnd.: ", value)
+    pubsub.publish('d7_text', value)
+    sleep(1)
