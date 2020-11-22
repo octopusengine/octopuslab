@@ -34,10 +34,12 @@ octopusASCII = [
 "   )  \ `)(' / ( ",
 ]
 
+
 def mainOctopus():
     for ol in octopusASCII:
         print(str(ol))
     print()
+
 
 def deploy(url):
     import sys
@@ -79,30 +81,32 @@ def deploy(url):
             with open(f.name, "wb") as fobj:
                 shutil.copyfileobj(extracted, fobj)
 
+
 def setupMenu():
     print()
-    print('=' * 30)
-    print('        S E T U P')
-    print('=' * 30)
-    print("[w]   - wifi submenu")
-    print("[cw]  - connect wifi")
-    print("[cl]  - connect LAN")
-    print("[sd]  - system download > stable octopus modules from URL")
-    print("[sde] - system download > examples (from URL) /[sdh] hydroponics")
+    print('=' * 32)
+    print('          S E T U P')
+    print('=' * 32)
+    print(" [w]    - wifi submenu")
+    print(" [cw]   - connect wifi")
+    print(" [cl]   - connect LAN")
+    print(" [sd]   - system download > stable octopus modules from URL")
+    print(" [sde]  - system download > examples (from URL) /[sdh] hydroponics")
     # print("[sdp] - system download > petrkr (Beta octopus modules from URL)")
-    print("[sdo] - system download > octopus (Alfa octopus modules from URL)")
-    print("[ds]  - device setting")
-    print("[ios] - I/O setting submenu")
+    print(" [sdo]  - system download > octopus (Alfa octopus modules from URL)")
+    print(" [ds]   - device setting")
+    print(" [ios]  - I/O setting submenu")
     # print("[mq]  - mqtt() and sending data setup")
     # print("[st]  - set time")
-    print("[si]  - system info")
-    print("[wr]  - run web repl")
-    print("[f]   - start FTP")
-    print("[q]   - quit setup")
+    print(" [si]   - system info")
+    print(" [wr]   - run web repl")
+    print(" [ftp]  - start FTP")
+    print(" [q]    - quit setup")
 
-    print('=' * 30)
+    print('=' * 32)
     sel = input("select: ")
     return sel
+
 
 def wifiMenu():
     print()
@@ -116,6 +120,7 @@ def wifiMenu():
     print('=' * 30)
     sel = input("select: ")
     return sel
+
 
 def ioMenu():
     from utils.io_config import io_conf_file, io_menu_layout, get_from_file as get_io_config_from_file
@@ -165,12 +170,14 @@ def ioMenu():
         else:
             print("Invalid input, try again.")
 
+
 def shutil():
     print("System download > (initial octopus modules)")
     import upip
     print("Installing shutil")
     upip.install("micropython-shutil")
     print("Running deploy")
+
 
 def setup():
     mainOctopus()
@@ -324,5 +331,5 @@ def setup():
             import webrepl
             webrepl.start()
 
-        if sele == "f":
+        if sele == "ftp":
             import ftp
