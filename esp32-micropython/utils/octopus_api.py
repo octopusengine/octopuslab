@@ -26,10 +26,10 @@ def get_json(urlApi ="https://www.octopuslab.cz/data/", urlFile = "led2.json", d
 
 
 def getApiTest():
-    printTitle("data from url")
+    print("data from url ->")
     #print("https://urlApi/"+urljson)
     print("htts://public_unsecure_web/data.json")
-    print(getApiJson())
+    print(get_json())
 
 
 # getApiText
