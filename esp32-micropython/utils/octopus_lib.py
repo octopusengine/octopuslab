@@ -2,17 +2,36 @@
 #
 # -----------------------------------------------------
 
-__version__ = "1.0.6" # format: N.N.N, N<10 ->
-libVerDate = "2020-10-25"
+
+
+__version__ = "1.0.7" # format: N.N.N, N<10 ->
+libVerDate = "2020-11-22"
 libVer100 = __version__[0] + __version__[2] + __version__[4]
 
 
 TW = 50 # terminal width
 
 
-
 def getOctopusLibVer():
     return "octopus lib.ver: " + __version__ + " | " + libVerDate
+
+
+octopusASCII = [
+"      ,'''`.",
+"     /      \ ",
+"     |(@)(@)|",
+"     )      (",
+"    /,'))((`.\ ",
+"   (( ((  )) ))",
+"   ) \ `)(' / ( ",
+]
+
+
+def printOctopus():
+    print()
+    for ol in octopusASCII:
+        print(" "*5 + str(ol))
+    print()
 
 
 def printTitle(t,num = TW):

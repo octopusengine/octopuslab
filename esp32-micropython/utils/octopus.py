@@ -2,7 +2,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek
 
-__version__ = "1.0.5"
+__version__ = "1.0.7"
 
 # from sys import modules
 from time import sleep, sleep_ms, ticks_ms, ticks_diff
@@ -20,8 +20,8 @@ io_conf = get_from_file() # read configuration for peripherals
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "1.05"  # version - log: num = ver*100
-    verDat = "23.10.2020 #845"
+    ver = "1.07"  # version - log: num = ver*100
+    verDat = "22.11.2020 #790"
     debug = True
     logDev = True
     autoInit = True
@@ -59,6 +59,7 @@ def printInfo(w=Env.TW):
 
 def o_help():
     from shell import cat
+    from utils.octopus_lib import printOctopus
     printOctopus()
     print("Welcome to MicroPython on the ESP32 octopusLAB board")
     print("("+getVer()+")")
@@ -127,25 +128,6 @@ def i2c_init(scan = False, freq=100000, HWorSW = 0, printInfo = True):
         except Exception as e:
             print("Exception: {0}".format(e))
     return i2c
-
-
-octopusASCII = [
-"      ,'''`.",
-"     /      \ ",
-"     |(@)(@)|",
-"     )      (",
-"    /,'))((`.\ ",
-"   (( ((  )) ))",
-"   ) \ `)(' / ( ",
-]
-
-
-def printOctopus():
-    print()
-    for ol in octopusASCII:
-        print(" "*5 + str(ol))
-    print()
-
 
 def getFree(echo = False):
     from gc import mem_free
@@ -252,54 +234,18 @@ def bme280_init():
         print("bme280_init() Exception: {0}".format(e))
 
 
-
-def getApiJson(urlApi ="https://www.octopuslab.cz/data/", urlFile = "led2.json", debug = "True"):
-    # "http://www.octopusengine.org/api/"
-    from urequests import get
-    from json import loads
-    urljson=urlApi + urlFile
-    aj = ""
-    try:
-        response = get(urljson)
-        dt_str = (response.text)
-        if debug: print(str(dt_str))
-        j = loads(dt_str)
-        #print(str(j))
-        aj = j['light']
-    except Exception as e:
-        print("Err. read json from URL")
-    return aj
-
-
-def getApiTest():
-    printTitle("data from url")
-    #print("https://urlApi/"+urljson)
-    print("htts://public_unsecure_web/data.json")
-    print(getApiJson())
-
-
-def getApiText(urlApi ="https://www.octopusengine.org/api"):
-    from urequests import get
-    urltxt=urlApi+"/text123.txt"
-    try:
-        response = get(urltxt)
-        dt_str = response.text
-    except Exception as e:
-        print("Err. read txt from URL")
-    return dt_str
-
-
 def octopus(auto = True):
     if auto:
         # print("auto")
         auto_init = True # todo
 
     from gc import collect
+    from utils.octopus_lib import printOctopus
     printOctopus()
     print("("+getVer()+")")
     collect()
     printInfo()
-    print("This is basic library, type h() for help")
+    # print("This is basic library, type h() for help")
 
 
 def octopus_init():

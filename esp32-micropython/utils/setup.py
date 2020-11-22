@@ -7,7 +7,7 @@ import time, uos
 import ujson
 import machine # datetime
 
-ver = "0.69 / 24.7.2020"
+ver = "0.71 / 22.11.2020"
 
 devices = [
 ["oLAB Default","esp32"],
@@ -89,14 +89,15 @@ def setupMenu():
     print("[cl]  - connect LAN")
     print("[sd]  - system download > stable octopus modules from URL")
     print("[sde] - system download > examples (from URL) /[sdh] hydroponics")
-    print("[sdp] - system download > petrkr (Beta octopus modules from URL)")
+    # print("[sdp] - system download > petrkr (Beta octopus modules from URL)")
     print("[sdo] - system download > octopus (Alfa octopus modules from URL)")
     print("[ds]  - device setting")
     print("[ios] - I/O setting submenu")
-    print("[mq]  - mqtt() and sending data setup")
+    # print("[mq]  - mqtt() and sending data setup")
     # print("[st]  - set time")
     print("[si]  - system info")
     print("[wr]  - run web repl")
+    print("[f]   - start FTP")
     print("[q]   - quit setup")
 
     print('=' * 30)
@@ -322,3 +323,6 @@ def setup():
             esp.osdebug(None)
             import webrepl
             webrepl.start()
+
+        if sele == "f":
+            import ftp

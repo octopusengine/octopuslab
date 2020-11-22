@@ -1,4 +1,7 @@
-# octopusLab "decorators" lib
+# this module is "decorators" library for Octopus FrameWork
+# usage:
+# @octopus_debug
+# def yourFunc(): ...
 
 def octopus_debug(ledon=False,info=True):
    if ledon:
