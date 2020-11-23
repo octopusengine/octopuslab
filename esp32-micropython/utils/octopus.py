@@ -11,6 +11,7 @@ from machine import Pin, Timer
 from utils.pinout import set_pinout
 from utils.io_config import get_from_file
 from shell.terminal import printTitle, printLog, printHead
+from utils.octopus_lib import getFree
 
 # olab = Env()  # for initialized equipment
 pinout = set_pinout()     # set board pinout
@@ -21,7 +22,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "1.07"  # version - log: num = ver*100
-    verDat = "22.11.2020 #790"
+    verDat = "22.11.2020 #755"
     debug = True
     logDev = True
     autoInit = True
@@ -129,25 +130,6 @@ def i2c_init(scan = False, freq=100000, HWorSW = 0, printInfo = True):
             print("Exception: {0}".format(e))
     return i2c
 
-def getFree(echo = False):
-    from gc import mem_free
-    if echo:
-        print("--- RAM free ---> " + str(mem_free()))
-    return mem_free()
-
-
-def ap_init(): #192.168.4.1
-    printTitle("AP init > ")
-    from utils.wifi_connect import WiFiConnect
-    import ubinascii
-    w = WiFiConnect()
-    w.ap_if.active(True)
-    mac = ubinascii.hexlify(w.ap_if.config('mac'),':').decode()
-    w.ap_if.config(essid="octopus_ESP32_" + mac)
-    print(w.ap_if.ifconfig())
-    print("AP Running: " + w.ap_if.config("essid"))
-    return w
-
 
 def w_connect():
     led.value(1)
@@ -204,23 +186,6 @@ def logDevice(urlPOST = "https://www.octopusengine.org/iot17/add18.php"):
         res.close()
     except Exception as e:
         print("Err.logDevice: {0}".format(e))
-
-
-def w(logD=True, echo=True):
-    if echo:
-        printInfo()
-        printTitle("WiFi connect > ")
-    w = w_connect()
-    if logD and Env.logDev: logDevice()
-
-    from ubinascii import hexlify
-    try:
-        Env.MAC = hexlify(w.sta_if.config('mac'),':').decode()
-    except:
-        Env.MAC = "Err: w.sta_if"
-    if echo:
-        getFree(True)
-    return w
 
 
 def bme280_init():
