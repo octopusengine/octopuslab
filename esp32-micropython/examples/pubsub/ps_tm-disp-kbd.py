@@ -1,3 +1,7 @@
+# pub sub kbd+display example
+# EDU_KIT1 + TM1638 shield
+
+
 from time import sleep
 import pubsub
 from octopus import ps_tm
