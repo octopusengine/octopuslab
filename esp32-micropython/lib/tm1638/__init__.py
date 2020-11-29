@@ -139,15 +139,18 @@ class TM1638(object):
             pos += 1
             self.stb(1)
 
-    def keys(self):
+    def keys(self,num_scan=4):
         """Return a byte representing which keys are pressed. LSB is SW1"""
         keys = 0
         self.stb(0)
         self._byte(TM1638_CMD1 | TM1638_READ)
-        for i in range(4):
-            keys |= self._scan_keys() << i
+        scan = [0,0,0,0]
+        for i in range(num_scan):
+            scan[i] |= self._scan_keys() << i
         self.stb(1)
-        return keys
+
+        return scan[0]+scan[1]*256+scan[2]+scan[3]*512, scan[0], scan[1], scan[2], scan[3]
+
 
     def encode_digit(self, digit):
         """Convert a character 0-9, a-f to a segment."""
@@ -227,6 +230,10 @@ class TM1638(object):
         """Displays a string"""
         segments = self.encode_string(string)
         self.segments(segments[:8], pos)
+
+    def show2(self, string, pos=0):
+        segments = self.encode_string(string)
+        self.segments(segments[4:]+segments[:4], pos)     
 
     def scroll(self, string, delay=250):
         """Display a string, scrolling from the right to left, speed adjustable.
