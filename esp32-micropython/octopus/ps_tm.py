@@ -41,11 +41,5 @@ def timerAction():
     old_kbd = kbd[0]
 
 
-
 timer_init()
 print("---/---")
-
-
-
-
-
