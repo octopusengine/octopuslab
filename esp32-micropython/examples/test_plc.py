@@ -4,6 +4,9 @@ from components.lm75 import LM75B
 from components.i2c_expander import Expander8
 from utils.bits import neg, reverse, int2bin, get_bit, set_bit
 
+IN1, IN2, IN3, IN4     = 0, 1, 2, 3
+OUT1, OUT2, OUT3, OUT4 = 4, 5, 6, 7
+
 print("--- PLC shield ---")
 print("-"*50)
 
@@ -25,8 +28,19 @@ print("- PCF:", print(exp8.read()))
 
 for i in range(3):
     exp8.write_8bit(0)
-    sleep(0.5)
+    sleep(0.1)
     exp8.write_8bit(255)
-    sleep(1)
+    sleep(0.5)
+    
+exp8.write_8bit(set_bit(255,OUT1,0))
+sleep(1)
+exp8.write_8bit(set_bit(255,OUT2,0))
+sleep(1)
+exp8.write_8bit(set_bit(255,OUT3,0))
+sleep(1)
+exp8.write_8bit(set_bit(255,OUT4,0))
+
+sleep(1)
+exp8.write_8bit(255)
 
 print("- EEPROM:")

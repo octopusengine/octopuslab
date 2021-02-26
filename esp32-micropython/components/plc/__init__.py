@@ -143,7 +143,6 @@ print("NAND: {}".format(na.output()))
 print("NOT: {}".format(nt.output()))
 print("OR: {}".format(or1.output()))
 print("OD: {}".format(od1.output()))
-"""
 
 
 i4._value = False
@@ -154,3 +153,4 @@ od1._value = False
 print("OR: {}".format(or1.output()))
 od1._enabled = False
 print("OR: {}".format(or1.output()))
+"""
