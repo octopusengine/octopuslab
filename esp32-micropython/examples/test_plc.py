@@ -62,11 +62,11 @@ gate_and = Operand_AND()
 gate_and.addInput(in1)
 gate_and.addInput(in2)
 
+byte8 = 255
 
 for test in range(10000):
     #in8 = exp8.read()
     """
-    temp8 = 0
     exp8.write_8bit(set_bit(temp8,OUT4,0))
     sleep(0.1)
     exp8.write_8bit(set_bit(temp8,OUT4,1))
@@ -77,7 +77,12 @@ for test in range(10000):
     in1._value = int(get_bit(in8,0))
     in2._value = int(get_bit(in8,1))
     in3._value = int(get_bit(in8,2))
-    print(in1.output, in2.output, in3.output, "->", gate_or.output, gate_and.output)
-    exp8.write_8bit(set_bit(255,OUT1,gate_or.output))
+    """
+    set_bit(byte8,0,in1._value)
+    set_bit(byte8,1,in2._value)
+    set_bit(byte8,2,in3._value)
+    """
+    print(byte8, in1.output, in2.output, in3.output, "->", gate_or.output, gate_and.output)
+    exp8.write_8bit(set_bit(byte8,OUT1,int(not gate_or.output)))
 
     sleep(0.1)
