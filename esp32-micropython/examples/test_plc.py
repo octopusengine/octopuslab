@@ -49,18 +49,18 @@ print("- EEPROM:")
 # todo
 
 print("- modules")
-in1 = DummyInput()
-in2 = DummyInput()
-in3 = DummyInput()
+in1 = Dummy_input()
+in2 = Dummy_input()
+in3 = Dummy_input()
 
 gate_or = Operand_OR()
-gate_or.addInput(in1)
-gate_or.addInput(in2)
-gate_or.addInput(in3)
+gate_or.add_input(in1)
+gate_or.add_input(in2)
+gate_or.add_input(in3)
 
 gate_and = Operand_AND()
-gate_and.addInput(in1)
-gate_and.addInput(in2)
+gate_and.add_input(in1)
+gate_and.add_input(in2)
 
 byte8 = 255
 

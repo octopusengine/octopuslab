@@ -5,6 +5,7 @@
 
 class Input():
     def __init__(self):
+        self._value = None
         pass
 
     @property
@@ -12,16 +13,16 @@ class Input():
         return self._value
 
 
-class DummyInput(Input):
+class Dummy_input(Input):
     def __init__(self, initialvalue=0):
         self._value = initialvalue
 
 
 class Output():
-    def setValue():
+    def set_value(self):
         raise "Not implemented"
 
-    def getvalue():
+    def get_value(self):
         raise "Not implemented"
 
 
@@ -32,27 +33,24 @@ class Operands():
     def get_value(self):
         return self._value
 
-    def input():
+    def input(self):
         raise "Not Implemented"
 
-    def inputs():
+    def inputs(self):
         raise "Not Implemented"
 
     @property
-    def output():
+    def output(self):
         raise "Not Implemented"
 
     value = property(get_value, set_value)
 
 
-class Operand_AND:
-    def __init__(self, inputs=None):
-        if not inputs:
-            self._inputs = list()
-        else:
-            self._inputs = inputs
+class Operand_AND():
+    def __init__(self, inputs=[]):
+        self._inputs = inputs
 
-    def addInput(self, input):
+    def add_input(self, input):
         self._inputs.append(input)
 
     @property
@@ -71,14 +69,11 @@ class Operand_NAND(Operand_AND):
         return not super().output
 
 
-class Operand_OR:
-    def __init__(self, inputs=None):
-        if not inputs:
-            self._inputs = list()
-        else:
-            self._inputs = inputs
+class Operand_OR():
+    def __init__(self, inputs=[]):
+        self._inputs = inputs
 
-    def addInput(self, input):
+    def add_input(self, input):
         self._inputs.append(input)
 
     @property
@@ -109,6 +104,7 @@ class Operand_NOT(Operands):
 class Override():
     def __init__(self, input):
         self._input = input
+        self._value = False
         self._enabled = False
 
     @property
@@ -145,47 +141,6 @@ class Override_DYNAMIC(Override):
     @value.setter
     def value(self, value):
         self._value = value
-
-
-a = Operand_AND()
-na = Operand_NAND()
-or1 = Operand_OR()
-
-i1 = DummyInput(True)
-od1 = Override_DYNAMIC(i1)
-i2 = DummyInput(0)
-i3 = DummyInput("asd")
-i4 = DummyInput(True)
-
-a.addInput(i1)
-a.addInput(i2)
-a.addInput(i3)
-
-na.addInput(i1)
-na.addInput(i2)
-na.addInput(i3)
-
-or1.addInput(od1)
-or1.addInput(a)
-
-nt = Operand_NOT(a)
-
-print("AND: {}".format(a.output))
-print("NAND: {}".format(na.output))
-print("NOT: {}".format(nt.output))
-print("OR: {}".format(or1.output))
-print("OD: {}".format(od1.output))
-
-
-i4._value = False
-od1.enabled = True
-print("OR: {}".format(or1.output))
-od1.value = False
-print("OR: {}".format(or1.output))
-od1.enabled = False
-print("OR: {}".format(or1.output))
-
-
 
 """
 a = Operand_AND()
