@@ -1,4 +1,5 @@
 from time import sleep
+from machine import Timer
 from utils.octopus_lib import i2c_init
 from components.lm75 import LM75B
 from components.i2c_expander import Expander8
@@ -8,6 +9,27 @@ from components.plc import *
 IN1, IN2, IN3, IN4     = 0, 1, 2, 3
 OUT1, OUT2, OUT3, OUT4 = 4, 5, 6, 7
 # OUT4 - signalization
+
+timer_counter = 0
+periodic = False
+tim1 = Timer(0)
+
+byte8 = 255 # all leds off
+
+
+def timer_init(per= 2000): # period 10 s (10000 ms)
+    print("timer_init")
+    print("timer tim1 is ready - periodic")
+    print("for deactivite: tim1.deinit()")
+    tim1.init(period=per, mode=Timer.PERIODIC, callback=lambda t:timer_action())
+
+def timer_action():
+    global timer_counter, periodic, byte8  
+    print("timerAction " + str(timer_counter))
+    timer_counter += 1
+    periodic = not periodic
+    byte8 = set_bit(byte8,OUT4,int(periodic)) 
+
 
 print("--- PLC shield ---")
 print("-"*50)
@@ -62,27 +84,24 @@ gate_and = Operand_AND()
 gate_and.add_input(in1)
 gate_and.add_input(in2)
 
-byte8 = 255
 
-for test in range(10000):
-    #in8 = exp8.read()
-    """
-    exp8.write_8bit(set_bit(temp8,OUT4,0))
-    sleep(0.1)
-    exp8.write_8bit(set_bit(temp8,OUT4,1))
-    sleep(0.001)
-    """
-    
+sleep(3)
+timer_init()
+
+
+for test in range(10000):  
     in8 = exp8.read()
     in1._value = int(get_bit(in8,0))
     in2._value = int(get_bit(in8,1))
     in3._value = int(get_bit(in8,2))
-    """
-    set_bit(byte8,0,in1._value)
-    set_bit(byte8,1,in2._value)
-    set_bit(byte8,2,in3._value)
-    """
-    print(byte8, in1.output, in2.output, in3.output, "->", gate_or.output, gate_and.output)
-    exp8.write_8bit(set_bit(byte8,OUT1,int(not gate_or.output)))
+        
+    set_bit(byte8,OUT1,int(not gate_or.output))
+    set_bit(byte8,OUT4,periodic)
+    print(periodic, byte8, in1.output, in2.output, in3.output, "->", gate_or.output, gate_and.output)
 
-    sleep(0.1)
+    byte8 = set_bit(byte8,OUT1,not gate_or.output)
+    byte8 = set_bit(byte8,OUT2,not gate_and.output)
+    byte8 = set_bit(byte8,OUT3,not in2._value)
+    exp8.write_8bit(byte8)
+
+    sleep(0.05)
