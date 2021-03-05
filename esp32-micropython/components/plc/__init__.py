@@ -27,8 +27,8 @@ class Operands():
 
 
 class Operand_AND():
-    def __init__(self, inputs=[]):
-        self._inputs = inputs
+    def __init__(self, inputs=None):
+        self._inputs = inputs or list()
 
     def add_input(self, input):
         self._inputs.append(input)
@@ -50,8 +50,8 @@ class Operand_NAND(Operand_AND):
 
 
 class Operand_OR():
-    def __init__(self, inputs=[]):
-        self._inputs = inputs
+    def __init__(self, inputs=None):
+        self._inputs = inputs or list()
 
     def add_input(self, input):
         self._inputs.append(input)
