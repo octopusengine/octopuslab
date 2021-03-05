@@ -2,28 +2,8 @@
 # Input / Output
 # Operand_AND / Operand_NAND / Operand_OR
 
-
-class Input():
-    def __init__(self):
-        self._value = None
-        pass
-
-    @property
-    def output(self):
-        return self._value
-
-
-class Dummy_input(Input):
-    def __init__(self, initialvalue=0):
-        self._value = initialvalue
-
-    @property
-    def value(self):
-        return self._value
-
-    @value.setter
-    def value(self, value):
-        self._value = value
+class PLC_base():
+    pass
 
 
 class Output():
@@ -105,55 +85,6 @@ class PLC_exception(Exception):
     pass
 
 
-class PLC_element():
-    def __init__(self, initialvalue=False):
-        self._value = initialvalue
-
-    @property
-    def output(self):
-        return self._value
-
-
-class PLC_element_RS(PLC_element):
-    def __init__(self, set_element=None, reset_element=None, initialvalue=False):
-        self._set_element = set_element
-        self._reset_element = reset_element
-        super().__init__(initialvalue)
-
-    @property
-    def set(self):
-        return self._set_element
-
-    @set.setter
-    def set(self, element):
-        if element:
-            self._set_element = element
-
-    @property
-    def reset(self):
-        return self._reset_element
-
-    @reset.setter
-    def reset(self, element):
-        if element:
-            self._reset_element = element
-    
-    @property
-    def output(self):
-        s = self._set_element.output
-        r = self._reset_element.output
-        if r == s:
-            return self._value
-
-        if s:
-            self._value = True
-
-        if r:
-            self._value = False
-
-        return self._value
-
-
 class Override():
     def __init__(self, input):
         self._input = input
@@ -194,63 +125,3 @@ class Override_DYNAMIC(Override):
     @value.setter
     def value(self, value):
         self._value = value
-
-"""
-i1 = Dummy_input(False)
-i2 = Dummy_input(False)
-
-rs = PLC_element_RS(i1, i2)
-
-print("Init: ", rs.output)
-i1.value = True
-print("SET 1", rs.output)
-i1.value = False
-print("SET 0", rs.output)
-
-i2.value = True
-print("RESET 1", rs.output)
-
-i2.value = False
-print("RESET 0", rs.output)
-
-
-
-
-a = Operand_AND()
-na = Operand_NAND()
-or1 = Operand_OR()
-
-i1 = DummyInput(True)
-od1 = Override_DYNAMIC(i1)
-i2 = DummyInput(0)
-i3 = DummyInput("asd")
-i4 = DummyInput(True)
-
-a.addInput(i1)
-a.addInput(i2)
-a.addInput(i3)
-
-na.addInput(i1)
-na.addInput(i2)
-na.addInput(i3)
-
-or1.addInput(od1)
-or1.addInput(a)
-
-nt = Operand_NOT(a)
-
-print("AND: {}".format(a.output))
-print("NAND: {}".format(na.output))
-print("NOT: {}".format(nt.output))
-print("OR: {}".format(or1.output))
-print("OD: {}".format(od1.output))
-
-
-i4._value = False
-od1.enabled = True
-print("OR: {}".format(or1.output))
-od1.value = False
-print("OR: {}".format(or1.output))
-od1.enabled = False
-print("OR: {}".format(or1.output))
-"""
