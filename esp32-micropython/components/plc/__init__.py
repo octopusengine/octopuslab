@@ -101,6 +101,10 @@ class Operand_NOT(Operands):
         return not self._input.output
 
 
+class PLC_exception(Exception):
+    pass
+
+
 class PLC_element():
     def __init__(self, initialvalue=False):
         self._value = initialvalue
