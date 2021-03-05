@@ -136,10 +136,15 @@ class PLC_element_RS(PLC_element):
     
     @property
     def output(self):
-        if self._set_element.output:
+        s = self._set_element.output
+        r = self._reset_element.output
+        if r == s:
+            return self._value
+
+        if s:
             self._value = True
 
-        if self._reset_element.output:
+        if r:
             self._value = False
 
         return self._value
