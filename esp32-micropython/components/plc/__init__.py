@@ -17,6 +17,14 @@ class Dummy_input(Input):
     def __init__(self, initialvalue=0):
         self._value = initialvalue
 
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = value
+
 
 class Output():
     def set_value(self):
@@ -27,12 +35,6 @@ class Output():
 
 
 class Operands():
-    def set_value(self, value):
-        self._value = value
-
-    def get_value(self):
-        return self._value
-
     def input(self):
         raise "Not Implemented"
 
@@ -42,8 +44,6 @@ class Operands():
     @property
     def output(self):
         raise "Not Implemented"
-
-    value = property(get_value, set_value)
 
 
 class Operand_AND():
@@ -101,6 +101,50 @@ class Operand_NOT(Operands):
         return not self._input.output
 
 
+class PLCElement():
+    def __init__(self, initialvalue=False):
+        self._value = initialvalue
+
+    @property
+    def output(self):
+        return self._value
+
+
+class PLCElement_RS(PLCElement):
+    def __init__(self, set_element=None, reset_element=None, initialvalue=False):
+        self._set_element = set_element
+        self._reset_element = reset_element
+        super().__init__(initialvalue)
+
+    @property
+    def set(self):
+        return self._set_element
+
+    @set.setter
+    def set(self, element):
+        if element:
+            self._set_element = element
+
+    @property
+    def reset(self):
+        return self._reset_element
+
+    @reset.setter
+    def reset(self, element):
+        if element:
+            self._reset_element = element
+    
+    @property
+    def output(self):
+        if self._set_element.output:
+            self._value = True
+
+        if self._reset_element.output:
+            self._value = False
+
+        return self._value
+
+
 class Override():
     def __init__(self, input):
         self._input = input
@@ -143,6 +187,26 @@ class Override_DYNAMIC(Override):
         self._value = value
 
 """
+i1 = Dummy_input(False)
+i2 = Dummy_input(False)
+
+rs = PLCElement_RS(i1, i2)
+
+print("Init: ", rs.output)
+i1.value = True
+print("SET 1", rs.output)
+i1.value = False
+print("SET 0", rs.output)
+
+i2.value = True
+print("RESET 1", rs.output)
+
+i2.value = False
+print("RESET 0", rs.output)
+
+
+
+
 a = Operand_AND()
 na = Operand_NAND()
 or1 = Operand_OR()
