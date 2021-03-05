@@ -101,7 +101,7 @@ class Operand_NOT(Operands):
         return not self._input.output
 
 
-class PLCElement():
+class PLC_element():
     def __init__(self, initialvalue=False):
         self._value = initialvalue
 
@@ -110,7 +110,7 @@ class PLCElement():
         return self._value
 
 
-class PLCElement_RS(PLCElement):
+class PLC_element_RS(PLC_element):
     def __init__(self, set_element=None, reset_element=None, initialvalue=False):
         self._set_element = set_element
         self._reset_element = reset_element
@@ -190,7 +190,7 @@ class Override_DYNAMIC(Override):
 i1 = Dummy_input(False)
 i2 = Dummy_input(False)
 
-rs = PLCElement_RS(i1, i2)
+rs = PLC_element_RS(i1, i2)
 
 print("Init: ", rs.output)
 i1.value = True
