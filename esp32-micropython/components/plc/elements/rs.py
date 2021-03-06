@@ -1,4 +1,5 @@
-from . import PLC_element
+from components.plc.elements import PLC_element
+
 
 class PLC_element_RS(PLC_element):
     def __init__(self, set_element=None, reset_element=None, initialvalue=False):

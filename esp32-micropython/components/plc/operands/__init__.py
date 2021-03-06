@@ -1,4 +1,7 @@
-class PLC_operand():
+from components.plc import PLC_base
+
+
+class PLC_operand(PLC_base):
     def input(self):
         raise NotImplementedError()
 
