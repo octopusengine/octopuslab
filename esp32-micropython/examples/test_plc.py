@@ -8,7 +8,8 @@ from utils.bits import neg, reverse, int2bin, get_bit, set_bit
 from components.plc.inputs.dummy import PLC_input_dummy
 from components.plc.inputs.fixed import plc_input_fixed_high, plc_input_fixed_low
 from components.plc.elements.rs import PLC_element_RS
-from components.plc.operands.op_and import PLC_operand_AND, PLC_operand_OR
+from components.plc.operands.op_and import PLC_operand_AND
+from components.plc.operands.op_or import PLC_operand_OR
 
 
 IN1, IN2, IN3, IN4     = 0, 1, 2, 3
