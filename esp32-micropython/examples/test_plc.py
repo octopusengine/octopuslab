@@ -90,12 +90,14 @@ gate_and = PLC_operand_AND()
 gate_and.add_input(in1)
 gate_and.add_input(in2)
 
+rs = PLC_element_RS(in1, in2)
+
 
 sleep(3)
 # timer_init()
 
 
-for test in range(100):  
+for test in range(10000):  
     in8 = exp8.read()
     in1._value = int(get_bit(in8,0))
     in2._value = int(get_bit(in8,1))
@@ -107,30 +109,8 @@ for test in range(100):
 
     byte8 = set_bit(byte8,OUT1,not gate_or.output)
     byte8 = set_bit(byte8,OUT2,not gate_and.output)
-    byte8 = set_bit(byte8,OUT3,not in2._value)
+    # byte8 = set_bit(byte8,OUT3,not in2._value)
+    byte8 = set_bit(byte8,OUT3,not rs.output)
     exp8.write_8bit(byte8)
 
-    sleep(0.05)
-
-
-rs = PLC_element_RS(in1, in2)
-
-print("Init: ", rs.output)
-in1.value = True
-print("SET 1", rs.output)
-in1.value = False
-print("SET 0", rs.output)
-
-in2.value = True
-print("RESET 1", rs.output)
-
-in2.value = False
-print("RESET 0", rs.output)
-
-
-for test in range(10000):
-    in8 = exp8.read()
-    in1._value = int(get_bit(in8,0))
-    in2._value = int(get_bit(in8,1))
-    print("RS", rs.output)
     sleep(0.05)
