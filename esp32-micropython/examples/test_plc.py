@@ -4,7 +4,12 @@ from utils.octopus_lib import i2c_init
 from components.lm75 import LM75B
 from components.i2c_expander import Expander8
 from utils.bits import neg, reverse, int2bin, get_bit, set_bit
-from components.plc import *
+
+from components.plc.inputs.dummy import PLC_input_dummy
+from components.plc.inputs.fixed import plc_input_fixed_high, plc_input_fixed_low
+from components.plc.elements.rs import PLC_element_RS
+from components.plc.operands.op_and import PLC_operand_AND, PLC_operand_OR
+
 
 IN1, IN2, IN3, IN4     = 0, 1, 2, 3
 OUT1, OUT2, OUT3, OUT4 = 4, 5, 6, 7
@@ -71,25 +76,25 @@ print("- EEPROM:")
 # todo
 
 print("- modules")
-in1 = Dummy_input()
-in2 = Dummy_input()
-in3 = Dummy_input()
+in1 = PLC_input_dummy()
+in2 = PLC_input_dummy()
+in3 = PLC_input_dummy()
 
-gate_or = Operand_OR()
+gate_or = PLC_operand_OR()
 gate_or.add_input(in1)
 gate_or.add_input(in2)
 gate_or.add_input(in3)
 
-gate_and = Operand_AND()
+gate_and = PLC_operand_AND()
 gate_and.add_input(in1)
 gate_and.add_input(in2)
 
 
 sleep(3)
-timer_init()
+# timer_init()
 
 
-for test in range(10000):  
+for test in range(100):  
     in8 = exp8.read()
     in1._value = int(get_bit(in8,0))
     in2._value = int(get_bit(in8,1))
@@ -104,4 +109,27 @@ for test in range(10000):
     byte8 = set_bit(byte8,OUT3,not in2._value)
     exp8.write_8bit(byte8)
 
+    sleep(0.05)
+
+
+rs = PLC_element_RS(in1, in2)
+
+print("Init: ", rs.output)
+in1.value = True
+print("SET 1", rs.output)
+in1.value = False
+print("SET 0", rs.output)
+
+in2.value = True
+print("RESET 1", rs.output)
+
+in2.value = False
+print("RESET 0", rs.output)
+
+
+for test in range(10000):
+    in8 = exp8.read()
+    in1._value = int(get_bit(in8,0))
+    in2._value = int(get_bit(in8,1))
+    print("RS", rs.output)
     sleep(0.05)
