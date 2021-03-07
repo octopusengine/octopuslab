@@ -21,8 +21,9 @@ o1.add_input(plc_input_fixed_high)
 n1 = PLC_operand_NOT(i1)
 
 rs = PLC_element_RS(i1, i2)
+rsp = PLC_element_RS_pulse(i1, plc_input_fixed_low)
+rspn = PLC_element_RS_pulse(i1, PLC_operand_NOT(i1))
 
-rsp = PLC_element_RS_pulse(i1, i2)
 
 print("Init: ", rs.output)
 i1.value = True
@@ -41,7 +42,6 @@ print("AND: ", a1.output)
 print("OR: ", o1.output)
 print("NOT: ", n1.output)
 
-
 i1.value = True
 print("AND: ", a1.output)
 print("OR: ", o1.output)
@@ -49,7 +49,12 @@ print("NOT: ", n1.output)
 print("RS Pulse {}".format(rsp.output))
 print("RS Pulse {}".format(rsp.output))
 
-i1.value = False
-for i in range(0,20):
-    print("RS Pulse ({}): {}".format(i, rsp.output))
+print("RS Pulse N {}".format(rspn.output))
+print("RS Pulse N {}".format(rspn.output))
+
+for i in range(0, 20):
+    if i > 10:
+        i1.value = False
+
+    print("RS Pulse ({}): RS: {} RSN: {}".format(i, rsp.output, rspn.output))
     sleep(1)
