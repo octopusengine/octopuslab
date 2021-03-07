@@ -7,7 +7,8 @@ from utils.bits import neg, reverse, int2bin, get_bit, set_bit
 
 from components.plc.inputs.dummy import PLC_input_dummy
 from components.plc.inputs.fixed import plc_input_fixed_high, plc_input_fixed_low
-from components.plc.elements.rs import PLC_element_RS
+# from components.plc.elements.rs import PLC_element_RS
+from components.plc.elements.rs_pulse import PLC_element_RS_pulse
 from components.plc.operands.op_and import PLC_operand_AND
 from components.plc.operands.op_or import PLC_operand_OR
 
@@ -90,14 +91,15 @@ gate_and = PLC_operand_AND()
 gate_and.add_input(in1)
 gate_and.add_input(in2)
 
-rs = PLC_element_RS(in1, in2)
+rs = PLC_element_RS_pulse(in1,in2,pulse_s=5)
 
 
 sleep(3)
 # timer_init()
 
 
-for test in range(10000):  
+#for test in range(10000):  
+while True:
     in8 = exp8.read()
     in1._value = int(get_bit(in8,0))
     in2._value = int(get_bit(in8,1))
@@ -105,7 +107,7 @@ for test in range(10000):
         
     set_bit(byte8,OUT1,int(not gate_or.output))
     set_bit(byte8,OUT4,periodic)
-    print(periodic, byte8, in1.output, in2.output, in3.output, "->", gate_or.output, gate_and.output)
+    # print(periodic, byte8, in1.output, in2.output, in3.output, "->", gate_or.output, gate_and.output)
 
     byte8 = set_bit(byte8,OUT1,not gate_or.output)
     byte8 = set_bit(byte8,OUT2,not gate_and.output)
@@ -113,4 +115,4 @@ for test in range(10000):
     byte8 = set_bit(byte8,OUT3,not rs.output)
     exp8.write_8bit(byte8)
 
-    sleep(0.05)
+    sleep(0.01)
