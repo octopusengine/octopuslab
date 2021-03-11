@@ -4,16 +4,13 @@
 # e8 = Expander8(addr) addr default 000 > 0x20
 # e8.test()
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 from time import sleep_ms
 from micropython import const
-from utils.pinout import set_pinout
 from utils.bits import neg, reverse, set_bit, get_bit
-from machine import Pin, I2C
 
-pinout = set_pinout() 
-ADDRESS = 0x20
+DEFAULT_ADDRESS = 0x20
 
 # PCF8574           PCF8574A
 # AAA - hex (dec)
@@ -27,11 +24,6 @@ ADDRESS = 0x20
 # 110 - 0x26 (38)   0x3E (62)
 # 111 - 0x27 (39)   0x3F (63)
 # * ROBOTboard
-
-
-i2c_sda = Pin(pinout.I2C_SDA_PIN, Pin.IN,  Pin.PULL_UP)
-i2c_scl = Pin(pinout.I2C_SCL_PIN, Pin.OUT, Pin.PULL_UP)
-# 100kHz as Expander is slow
 
 tempByte = bytearray(1)
 
@@ -49,9 +41,19 @@ const(0b11111111)  #8
 
 
 class Expander8:
-    def __init__(self, addr=ADDRESS):
+    def __init__(self, addr=ADDRESS, i2c_bus=None):
         self.addr = addr
-        self.i2c = I2C(scl=i2c_scl, sda=i2c_sda, freq=100000)
+        self.i2c = i2c_bus
+
+        if self.i2c is None:
+            print("DEPRECATION WARNING: Use constructor with i2c parameter !!!")
+            from utils.pinout import set_pinout
+            from machine import Pin, I2C
+            pinout = set_pinout()
+
+            i2c_sda = Pin(pinout.I2C_SDA_PIN, Pin.IN,  Pin.PULL_UP)
+            i2c_scl = Pin(pinout.I2C_SCL_PIN, Pin.OUT, Pin.PULL_UP)
+            self.i2c = I2C(scl=i2c_scl, sda=i2c_sda, freq=100000)
 
 
     def write(self, data):
@@ -61,7 +63,7 @@ class Expander8:
     def write_8bit(self, dataInt): # (int) or 0b101010100
         # ...write(struct.pack('<B', 255)) # alternative
         tempByte[0] = dataInt
-        self.i2c.writeto(self.addr, tempByte)
+        self.write(self.addr, tempByte)
 
 
     def write_bar(self, dataInt): # 1-8
@@ -104,13 +106,8 @@ class Expander8:
         for i in range(255):
             self.write(255-i)
             sleep_ms(delay)
-            
-
-class Expander16:
-    def __init__(self, addr = ADDRESS):
-        self.addr = addr
-        self.i2c = I2C(scl=i2c_scl, sda=i2c_sda, freq=100000)
 
 
-    def write(self, data):
-        self.i2c.writeto(self.addr, data)
+class Expander16(Expander8):
+    def __init__(self, addr=ADDRESS, i2c_bus=None):
+        super().__init__(addr, i2c_bus)
