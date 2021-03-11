@@ -63,7 +63,7 @@ class Expander8:
     def write_8bit(self, dataInt): # (int) or 0b101010100
         # ...write(struct.pack('<B', 255)) # alternative
         tempByte[0] = dataInt
-        self.write(self.addr, tempByte)
+        self.write(tempByte)
 
 
     def write_bar(self, dataInt): # 1-8
