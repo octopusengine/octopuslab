@@ -41,7 +41,7 @@ const(0b11111111)  #8
 
 
 class Expander8:
-    def __init__(self, addr=ADDRESS, i2c_bus=None):
+    def __init__(self, addr=DEFAULT_ADDRESS, i2c_bus=None):
         self.addr = addr
         self.i2c = i2c_bus
 
@@ -109,5 +109,5 @@ class Expander8:
 
 
 class Expander16(Expander8):
-    def __init__(self, addr=ADDRESS, i2c_bus=None):
+    def __init__(self, addr=DEFAULT_ADDRESS, i2c_bus=None):
         super().__init__(addr, i2c_bus)
