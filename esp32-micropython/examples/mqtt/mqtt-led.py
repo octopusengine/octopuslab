@@ -13,7 +13,8 @@ from utils.mqtt.mqtt_connect import read_mqtt_config
 from umqtt.simple import MQTTClient
 from utils.pinout import set_pinout
 from components.led import Led
-from utils.octopus import w
+from utils.wifi_connect import WiFiConnect
+
 bd = bytes.decode
 
 pinout = set_pinout()
@@ -22,8 +23,9 @@ led = Led(pinout.BUILT_IN_LED)
 esp_id = ubinascii.hexlify(machine.unique_id()).decode()
 print(esp_id)
 
-mqtt_clientid_prefix = read_mqtt_config()["mqtt_prefix"]
+mqtt_client_id_prefix = read_mqtt_config()["mqtt_prefix"]
 mqtt_host = read_mqtt_config()["mqtt_broker_ip"]
+mqtt_psw = read_mqtt_config()["mqtt_psw"]
 mqtt_ssl  = read_mqtt_config()["mqtt_ssl"]
 
 
@@ -57,12 +59,14 @@ def mqtt_sub(topic, msg):
             led.value(0) 
 
 print("wifi_connect >")
-w()
+net = WiFiConnect()
+net.connect()
 
 print("mqtt_config >")
-mqtt_clientid = mqtt_clientid_prefix + esp_id
+mqtt_client_id = mqtt_client_id_prefix + esp_id
 
-c = MQTTClient(mqtt_clientid, mqtt_host)
+c = MQTTClient(mqtt_client_id, mqtt_host, password=mqtt_psw)
+
 c.set_callback(mqtt_sub)
 c.connect()
 c.subscribe("/octopus/device/{0}/#".format(esp_id))
