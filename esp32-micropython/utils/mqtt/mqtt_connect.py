@@ -1,5 +1,5 @@
 # include this in boot.py or main.py as WiFiConnect
-from utils.mqtt.mqtt_connect import read_mqtt_config
+# from utils.mqtt.mqtt_connect import read_mqtt_config
 
 """
 1) install mqtt:
@@ -7,7 +7,7 @@ connect to wifi
 >>> import upip
 >>> upip.install('micropython-umqtt.robust')
 2) setup:
->>> setup() 
+>>> setup()
 > mqtt config
 
 usage:
