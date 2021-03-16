@@ -1,4 +1,6 @@
 # include this in boot.py or main.py as WiFiConnect
+from utils.mqtt.mqtt_connect import read_mqtt_config
+
 """
 1) install mqtt:
 connect to wifi
@@ -9,7 +11,7 @@ connect to wifi
 > mqtt config
 
 usage:
-from utils.mqtt_connect import read_mqtt_config
+from utils.mqtt.mqtt_connect import read_mqtt_config
 b = read_mqtt_config()["mqtt_broker_ip"]
 
 TODO: connect()

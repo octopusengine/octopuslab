@@ -5,25 +5,24 @@
 #TODO DRY for filename
 import machine, time, uos, ubinascii, ujson
 from umqtt.simple import MQTTClient
-from utils.mqtt_connect import read_mqtt_config
+from utils.mqtt.mqtt_connect import read_mqtt_config
 from utils.wifi_connect import read_wifi_config, WiFiConnect
 from utils.pinout import set_pinout
-ver = "0.23 / 5.7.2019"
+from utils.octopus_lib import printOctopus
+ver = "0.25 / 10.3.2021"
 esp_id = ubinascii.hexlify(machine.unique_id()).decode()
 
 pinout = set_pinout()
 pin_led = machine.Pin(pinout.BUILT_IN_LED, machine.Pin.OUT)
 wifi_retries = 100  # for wifi connecting
 
-def mainOctopus():
-    from utils.Setup import mainOctopus as printOctopus
-    printOctopus()
 
 def simple_blink():
     pin_led.value(0)
     time.sleep(0.1)
     pin_led.value(1)
-    time.sleep(0.1)     
+    time.sleep(0.1)
+
 
 def setupMenu():
     print()
@@ -40,6 +39,7 @@ def setupMenu():
     sel = input("select: ")
     return sel
 
+
 # Define function callback for connecting event
 def connected_callback(sta):
     simple_blink()
@@ -48,18 +48,20 @@ def connected_callback(sta):
     simple_blink()
     print(sta.ifconfig())
 
+
 def connecting_callback(retries):
     #np[0] = (0, 0, 128)
     #np.write()
-    simple_blink()    
+    simple_blink()
+
 
 def mqtt():
-    mainOctopus()
+    printOctopus()
     print("Hello, this will help you initialize MQTT client")
     print("ver: " + ver + " (c)octopusLAB")
     print("id: " + esp_id)
     print("Press Ctrl+C to abort")
-    
+
     # TODO improve this
     # prepare directory
     if 'config' not in uos.listdir():
@@ -89,8 +91,8 @@ def mqtt():
             wc['mqtt'] = int(input("mqtt client [1/0]: "))
             wc['influx'] = int(input("send data to influx db [1/0]: "))
             if wc['influx']: wc['influxWriteURL'] = input("influx Write URL: ") 
-            wc['timer'] = int(input("timer: "))            
-                
+            wc['timer'] = int(input("timer: "))
+
             print("Writing to file config/mqtt_io.json")
             with open('config/mqtt_io.json', 'w') as f:
                 ujson.dump(wc, f)
@@ -113,11 +115,11 @@ def mqtt():
             with open('config/mqtt.json', 'w') as f:
                 ujson.dump(mq, f)
 
-        def mqtt_sub(topic, msg):  
-            print("MQTT Topic {0}: {1}".format(topic, msg))                
+        def mqtt_sub(topic, msg):
+            print("MQTT Topic {0}: {1}".format(topic, msg))
 
         if sele == "mt":
-            print("mqtt simple test:")   
+            print("mqtt simple test:")
 
             print("wifi_config >")
             wifi = WiFiConnect(250)
@@ -153,6 +155,4 @@ def mqtt():
            
             print(mqtt_log_topic)
             # mqtt_root_topic_temp = "octopus/device"
-            c.publish(mqtt_log_topic,esp_id) # topic, message (value) to publish      
-
-   
+            c.publish(mqtt_log_topic,esp_id) # topic, message (value) to publish
