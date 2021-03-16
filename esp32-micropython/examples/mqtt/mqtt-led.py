@@ -7,30 +7,32 @@ print("mqtt-led.py > mqtt 'hello world' example")
 
 from time import sleep
 from machine import Pin
-import machine
+import machine, ubinascii
 from utils.wifi_connect import read_wifi_config, WiFiConnect
 from utils.mqtt.mqtt_connect import read_mqtt_config
 from umqtt.simple import MQTTClient
-import ubinascii
-from util.pinout import set_pinout
-
+from utils.pinout import set_pinout
+from components.led import Led
+from utils.octopus import w
+bd = bytes.decode
 
 pinout = set_pinout()
-pin_led = Pin(pinout.BUILT_IN_LED, Pin.OUT)
+led = Led(pinout.BUILT_IN_LED)
+
 esp_id = ubinascii.hexlify(machine.unique_id()).decode()
 print(esp_id)
 
-bd = bytes.decode
-
-mqtt_clientid_prefix = "CHANGE PREFIX"
+mqtt_clientid_prefix = read_mqtt_config()["mqtt_prefix"]
 mqtt_host = read_mqtt_config()["mqtt_broker_ip"]
-mqtt_ssl  = True # Consider to use TLS!
+mqtt_ssl  = read_mqtt_config()["mqtt_ssl"]
+
 
 def simple_blink():
-    pin_led.value(1)
+    led.value(1)
     sleep(0.5)
-    pin_led.value(0)
+    led.value(0)
     sleep(0.5)
+
 
 # Define function callback for connecting event
 def connected_callback(sta):
@@ -40,7 +42,8 @@ def connected_callback(sta):
 def connecting_callback(retries):
     simple_blink()
 
-def mqtt_sub(topic, msg):    
+
+def mqtt_sub(topic, msg):
     print("MQTT Topic {0}: {1}".format(topic, msg))
     if "led" in topic:
         print("led:")
@@ -48,17 +51,13 @@ def mqtt_sub(topic, msg):
 
         if data[0] == 'N':  # oN
             print("-> on")
-            pin_led.value(1)
+            led.value(1)
         elif data[0] == 'F':  # ofF 
             print("-> off")
-            pin_led.value(0) 
+            led.value(0) 
 
-print("wifi_config >")
-wifi_config = read_wifi_config()
-wifi = WiFiConnect(wifi_config["wifi_retries"] if "wifi_retries" in wifi_config else 250 )
-wifi.events_add_connecting(connecting_callback)
-wifi.events_add_connected(connected_callback)
-wifi_status = wifi.connect(wifi_config["wifi_ssid"], wifi_config["wifi_pass"])
+print("wifi_connect >")
+w()
 
 print("mqtt_config >")
 mqtt_clientid = mqtt_clientid_prefix + esp_id

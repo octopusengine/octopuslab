@@ -36,7 +36,7 @@ ws_g = 0
 ws_b = 0
 bd = bytes.decode
 
-mqtt_clientid_prefix = "CHANGE PREFIX"
+mqtt_clientid_prefix = read_mqtt_config()["mqtt_prefix"]
 mqtt_host = read_mqtt_config()["mqtt_broker_ip"]
 mqtt_ssl  = read_mqtt_config()["mqtt_ssl"]
 
