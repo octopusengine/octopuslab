@@ -14,6 +14,7 @@ from umqtt.simple import MQTTClient
 from utils.pinout import set_pinout
 from components.led import Led
 from utils.wifi_connect import WiFiConnect
+from gc import mem_free
 
 bd = bytes.decode
 
@@ -25,8 +26,12 @@ print(esp_id)
 
 mqtt_client_id_prefix = read_mqtt_config()["mqtt_prefix"]
 mqtt_host = read_mqtt_config()["mqtt_broker_ip"]
+mqtt_user = read_mqtt_config()["mqtt_user"]
 mqtt_psw = read_mqtt_config()["mqtt_psw"]
 mqtt_ssl  = read_mqtt_config()["mqtt_ssl"]
+
+def ram_free():
+	print("--- RAM free ---> " + str(mem_free())) 
 
 
 def simple_blink():
@@ -58,6 +63,7 @@ def mqtt_sub(topic, msg):
             print("-> off")
             led.value(0) 
 
+ram_free()
 print("wifi_connect >")
 net = WiFiConnect()
 net.connect()
@@ -65,17 +71,18 @@ net.connect()
 print("mqtt_config >")
 mqtt_client_id = mqtt_client_id_prefix + esp_id
 
-c = MQTTClient(mqtt_client_id, mqtt_host, password=mqtt_psw)
+c = MQTTClient(mqtt_client_id, mqtt_host,ssl=mqtt_ssl,user=mqtt_user,password=mqtt_psw)
 
 c.set_callback(mqtt_sub)
 c.connect()
-c.subscribe("/octopus/device/{0}/#".format(esp_id))
+c.subscribe("octopus/device/{0}/#".format(esp_id))
 
 # 
 print("mqtt log and test blink")
-c.publish("log: /octopus/device/",esp_id) # topic, message (value) to publish
+c.publish("octopus/device",esp_id) # topic, message (value) to publish
 simple_blink()
 
+ram_free()
 print("> loop:")
 while True:
     c.check_msg()
