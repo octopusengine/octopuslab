@@ -15,9 +15,11 @@ from umqtt.simple import MQTTClient
 import ubinascii
 from neopixel import NeoPixel
 from util.pinout import set_pinout
-pinout = set_pinout()
+from components.led import Led
 
-pin_led = Pin(pinout.BUILT_IN_LED, Pin.OUT)
+pinout = set_pinout()
+led = Led(pinout.BUILT_IN_LED)
+
 pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
 pin_analog = 36
 
@@ -36,24 +38,14 @@ ws_g = 0
 ws_b = 0
 bd = bytes.decode
 
-mqtt_clientid_prefix = read_mqtt_config()["mqtt_prefix"]
-mqtt_host = read_mqtt_config()["mqtt_broker_ip"]
-mqtt_ssl  = read_mqtt_config()["mqtt_ssl"]
 
 def simple_blink():
-    pin_led.value(1)
+    led.value(1)
     sleep(0.25)
-    pin_led.value(0)
+    led.value(0)
     sleep(0.25)
 
-# Define function callback for connecting event
-def connected_callback(sta):
-    simple_blink()
-    print(sta.ifconfig())
 
-def connecting_callback(retries):
-    simple_blink()
-          
 def mqtt_sub(topic, msg):
     global ws_r
     global ws_g
@@ -87,34 +79,31 @@ def mqtt_sub(topic, msg):
             
         np[0] = (ws_r, ws_g, ws_b)
         np.write()
-    
 
-print("wifi_config >")
-wifi_config = read_wifi_config()
-wifi = WiFiConnect(wifi_config["wifi_retries"] if "wifi_retries" in wifi_config else 250 )
-wifi.events_add_connecting(connecting_callback)
-wifi.events_add_connected(connected_callback)
-wifi_status = wifi.connect(wifi_config["wifi_ssid"], wifi_config["wifi_pass"])
+# =====================================================
+
+print("wifi_connect >")
+net = WiFiConnect()
+net.connect()
 
 print("mqtt_config >")
-mqtt_clientid_prefix = read_mqtt_config()["mqtt_clientid_prefix"]
+mqtt_client_id_prefix = read_mqtt_config()["mqtt_prefix"]
 mqtt_host = read_mqtt_config()["mqtt_broker_ip"]
-mqtt_root_topic = read_mqtt_config()["mqtt_root_topic"]
+mqtt_user = read_mqtt_config()["mqtt_user"]
+mqtt_psw = read_mqtt_config()["mqtt_psw"]
+mqtt_ssl  = read_mqtt_config()["mqtt_ssl"]
+mqtt_client_id = mqtt_client_id_prefix + esp_id
 
-mqtt_clientid = mqtt_clientid_prefix + esp_id
-
-c = MQTTClient(mqtt_clientid, mqtt_host, ssl=mqtt_ssl)
+c = MQTTClient(mqtt_client_id, mqtt_host,ssl=mqtt_ssl,user=mqtt_user,password=mqtt_psw)
 c.set_callback(mqtt_sub)
+c.connect()
 
 
 def get_adc_value():
     aval = 0
-
     for i in range(0, ADC_SAMPLES):
         aval += adc.read()
-
     return aval // ADC_SAMPLES
-
 
 try:
     if c.connect() == 0:
