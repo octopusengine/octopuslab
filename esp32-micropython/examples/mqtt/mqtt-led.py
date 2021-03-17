@@ -6,17 +6,16 @@ upip.install('micropython-umqtt.robust')
 print("mqtt-led.py > mqtt 'hello world' example")
 
 from time import sleep
-from machine import Pin
 import machine, ubinascii
 from utils.wifi_connect import read_wifi_config, WiFiConnect
-from utils.mqtt.mqtt_connect import read_mqtt_config
-from umqtt.simple import MQTTClient
+from utils.mqtt.mqtt_connect import mqtt_connect_from_config
+# from umqtt.simple import MQTTClient
 from utils.pinout import set_pinout
 from components.led import Led
-from utils.wifi_connect import WiFiConnect
 from gc import mem_free
 
 bd = bytes.decode
+print("--- RAM free ---> " + str(mem_free())) 
 
 pinout = set_pinout()
 led = Led(pinout.BUILT_IN_LED)
@@ -24,30 +23,12 @@ led = Led(pinout.BUILT_IN_LED)
 esp_id = ubinascii.hexlify(machine.unique_id()).decode()
 print(esp_id)
 
-mqtt_client_id_prefix = read_mqtt_config()["mqtt_prefix"]
-mqtt_host = read_mqtt_config()["mqtt_broker_ip"]
-mqtt_user = read_mqtt_config()["mqtt_user"]
-mqtt_psw = read_mqtt_config()["mqtt_psw"]
-mqtt_ssl  = read_mqtt_config()["mqtt_ssl"]
-
-def ram_free():
-	print("--- RAM free ---> " + str(mem_free())) 
-
 
 def simple_blink():
     led.value(1)
     sleep(0.5)
     led.value(0)
     sleep(0.5)
-
-
-# Define function callback for connecting event
-def connected_callback(sta):
-    simple_blink()
-    print(sta.ifconfig())
-
-def connecting_callback(retries):
-    simple_blink()
 
 
 def mqtt_sub(topic, msg):
@@ -63,26 +44,23 @@ def mqtt_sub(topic, msg):
             print("-> off")
             led.value(0) 
 
-ram_free()
-print("wifi_connect >")
+
+print("--- wifi_connect >")
 net = WiFiConnect()
 net.connect()
 
-print("mqtt_config >")
-mqtt_client_id = mqtt_client_id_prefix + esp_id
-
-c = MQTTClient(mqtt_client_id, mqtt_host,ssl=mqtt_ssl,user=mqtt_user,password=mqtt_psw)
+print("--- mqtt_connnect >")
+c = mqtt_connect_from_config(esp_id)
 
 c.set_callback(mqtt_sub)
 c.connect()
 c.subscribe("octopus/device/{0}/#".format(esp_id))
-
-# 
+ 
 print("mqtt log and test blink")
 c.publish("octopus/device",esp_id) # topic, message (value) to publish
 simple_blink()
 
-ram_free()
-print("> loop:")
+print("--- RAM free ---> " + str(mem_free()))
+print("--- main loop >")
 while True:
     c.check_msg()

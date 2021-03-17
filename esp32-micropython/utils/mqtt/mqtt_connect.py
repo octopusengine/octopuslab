@@ -1,33 +1,8 @@
-# include this in boot.py or main.py as WiFiConnect
-# from utils.mqtt.mqtt_connect import read_mqtt_config
+# micropython-umqtt.robust
 
-"""
-1) install mqtt:
-connect to wifi
->>> import upip
->>> upip.install('micropython-umqtt.robust')
-2) setup:
->>> setup()
-> mqtt config
-
-usage:
-from utils.mqtt.mqtt_connect import read_mqtt_config
-b = read_mqtt_config()["mqtt_broker_ip"]
-
-TODO: connect()
-mqtt_clientid = mqtt_clientid_prefix + esp_id
-
-c = MQTTClient(mqtt_clientid, mqtt_host)
-c.set_callback(mqtt_sub)
-c.connect()
-
-3) config
-from config import Config
-conf = Config("mqtt") > config/mqtt.json
-...
-
-"""
 import json, ujson  # suspicious?
+from umqtt.simple import MQTTClient
+
 
 def read_mqtt_config():
     # TODO file does not exist
@@ -35,3 +10,18 @@ def read_mqtt_config():
     d = f.read()
     f.close()
     return json.loads(d)
+
+
+def mqtt_connect_from_config(esp_id="undefined"):
+    mqtt_config = read_mqtt_config()
+
+    mqtt_client_id_prefix = mqtt_config["mqtt_prefix"]
+    mqtt_host = mqtt_config["mqtt_broker_ip"]
+    mqtt_user = mqtt_config["mqtt_user"]
+    mqtt_psw =  mqtt_config["mqtt_psw"]
+    mqtt_ssl  = mqtt_config["mqtt_ssl"]
+
+    mqtt_client_id = mqtt_client_id_prefix + esp_id
+
+    c = MQTTClient(mqtt_client_id, mqtt_host,ssl=mqtt_ssl,user=mqtt_user,password=mqtt_psw)
+    return c
