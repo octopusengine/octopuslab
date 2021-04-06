@@ -1,8 +1,4 @@
 # mqtt lib.
-# octopusLAB 2019
+# octopusLAB 2021
 
-
-class Mqtt():
-
-    def __init__(self, test):
-       self.test = test
+from .mqtt import MQTT
