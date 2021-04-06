@@ -1,9 +1,5 @@
 # basic example: octopusLAB - ESP32 - WiFi - MQTT
-"""
-import upip
-upip.install('micropython-umqtt.robust')
-"""
-print("mqtt-led.py > mqtt 'hello world' example")
+print("mqtt-disp7.py > mqtt example")
 
 from time import sleep
 from utils.wifi_connect import read_wifi_config, WiFiConnect
@@ -77,4 +73,4 @@ print("--- RAM free ---> " + str(mem_free()))
 print("--- main loop >")
 while True:
     c.check_msg()
-    # sleep(5)
+    sleep(0.1)
