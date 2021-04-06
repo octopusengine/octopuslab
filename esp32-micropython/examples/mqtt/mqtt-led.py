@@ -7,9 +7,7 @@ print("mqtt-led.py > mqtt 'hello world' example")
 
 from time import sleep
 from utils.wifi_connect import read_wifi_config, WiFiConnect
-# from utils.mqtt.mqtt_connect import mqtt_connect_from_config
 from utils.mqtt import MQTT
-# from umqtt.simple import MQTTClient
 from utils.pinout import set_pinout
 from components.led import Led
 from gc import mem_free

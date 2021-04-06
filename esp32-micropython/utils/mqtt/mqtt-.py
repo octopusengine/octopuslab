@@ -28,8 +28,7 @@ class MQTT():
         if not murl:
             raise ValueError("MQTT config error: `mqtt_broker` is not set. Check configuration file '{}.json'".format(config_name))
         mssl = config.get("mqtt_ssl")
-        if not mssl:
-            mssl = 0
+        # if not mssl:
         #    raise ValueError("MQTT config error: `mqtt_ssl` is not set. Check configuration file '{}.json'".format(config_name))
         musr = config.get("mqtt_user")
         if not musr:
