@@ -1,0 +1,1 @@
+{"mqtt_user": "octopus", "mqtt_ssl": 0, "mqtt_broker": "broker.hivemq.com", "mqtt_client_prefix": "octopus-", "mqtt_pass": "abc"}
