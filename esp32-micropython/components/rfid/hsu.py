@@ -22,7 +22,7 @@ using UART.
 
 
 import utime as time
-from octopus_pn532 import PN532, BusyError
+from .octopus_pn532 import PN532, BusyError
 
 
 class PN532_UART(PN532):
