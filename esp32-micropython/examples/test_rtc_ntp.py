@@ -6,8 +6,9 @@ from machine import RTC
 from utils.octopus_lib import w, setlocal, get_hhmm
 
 
+print("--- octopusLAB: test_rtc_ntp ---")
 rtc = RTC()
-w()
+w(logD=False)
 settime()
 print(get_hhmm(rtc))
 
