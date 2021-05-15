@@ -107,13 +107,10 @@ def get_hh_mm(rtc):
 def time_init():
     from ntptime import settime
     from machine import RTC
-    # from utils.octopus_lib import get_hhmm
 
     rtc = RTC()
     # w()
     settime(zone=0)
-    # print(get_hhmm(rtc))
-    # print()
     print("--- time: " + get_hhmm(rtc))
 
 
