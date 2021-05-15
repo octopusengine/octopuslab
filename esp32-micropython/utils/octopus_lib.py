@@ -1,20 +1,15 @@
 # this module is basic library for OctopusLAB FrameWork
-#
+# Pert Kracik, Jan Copak
 # -----------------------------------------------------
 
-
-
-__version__ = "1.0.7" # format: N.N.N, N<10 ->
-libVerDate = "2020-11-22"
+__version__ = "1.0.8" # format: N.N.N, N<10 ->
+libVerDate = "2021-05-15"
 libVer100 = __version__[0] + __version__[2] + __version__[4]
-
 
 TW = 50 # terminal width
 
-
 def getOctopusLibVer():
     return "octopus lib.ver: " + __version__ + " | " + libVerDate
-
 
 octopusASCII = [
 "      ,'''`.",
@@ -240,7 +235,7 @@ def w(logD=True, echo=True):
     return w
 
 
-def ap_init(): #192.168.4.1
+def ap_init(): # default IP 192.168.4.1
     printTitle("--- AP init > ")
     from utils.wifi_connect import WiFiConnect
     import ubinascii
