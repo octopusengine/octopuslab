@@ -1,4 +1,6 @@
 __author__ = 'beau'
+__version__ = "1.0.0"
+
 from time import ticks_ms
 
 class PID:
