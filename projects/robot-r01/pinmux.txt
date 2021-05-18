@@ -1,0 +1,19 @@
+#define LMOTO_FORWARD MOTO1A
+#define LMOTO_BACKWARD MOTO2A
+#define LMOTO_PWM MOTO_12EN
+
+#define PMOTO_FORWARD MOTO3A
+#define PMOTO_BACKWARD MOTO4A
+#define PMOTO_PWM MOTO_34EN
+
+
+#define MOTO_12EN 25  // NA / 0
+
+#define MOTO_34EN 15  //  1 / 1 wpu (pull up)   1 (OUT)
+
+#define MOTO1A 26     // NA / 0
+#define MOTO2A 12     //  1 / 1 wpd (pull down) 0 (IN)
+
+#define MOTO3A 14     //  1 / 1 wpu (pull up)   1 (IN)
+#define MOTO4A 27     // NA / 1
+
