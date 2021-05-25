@@ -57,10 +57,10 @@ def mqtt_sub(topic, msg):
         print("led:")
         data = bd(msg)
 
-        if data[0] == 'N':  # oN
+        if data[0] == '1':  # on
             print("-> on")
             pin_led.value(1)
-        elif data[0] == 'F':  # ofF 
+        elif data[0] == '0':  # off
             print("-> off")
             pin_led.value(0) 
 

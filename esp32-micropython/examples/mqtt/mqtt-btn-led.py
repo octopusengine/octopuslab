@@ -28,11 +28,11 @@ def mqtt_handler(topic, msg):
         print("led:", end='')
         data = bytes.decode(msg)
 
-        if data[0] == '1':  # oN
+        if data[0] == '1':  # on
             print("-> on")
             built_in_led.value(1)
             press_togg = 1
-        elif data[0] == '0':  # ofF 
+        elif data[0] == '0':  # off
             print("-> off")
             built_in_led.value(0)
             press_togg = 0

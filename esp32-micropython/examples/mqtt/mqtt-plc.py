@@ -87,22 +87,22 @@ def mqtt_handler(topic, msg):
         print("led:", end='')
         data = bytes.decode(msg)
 
-        if data[0] == 'N':  # oN
+        if data[0] == '1':  # on
             print("-> on")
             exp8.write_8bit(set_bit(byte8,OUT2,0)) # inverse
             led.value(1)
-        elif data[0] == 'F':  # ofF 
+        elif data[0] == '0':  # off
             print("-> off")
             exp8.write_8bit(set_bit(byte8,OUT2,1))
             led.value(0) 
 
-        elif data[0] == 'D21':  # on 
+        elif data == 'D21':  # on 
             print("D2 -> 1")
             exp8.write_8bit(set_bit(byte8,OUT2,1))
             led.value(1)
             sleep(0.1)
 
-        elif data[0] == 'D20':  # off 
+        elif data == 'D20':  # off 
             print("D2 -> 0")
             exp8.write_8bit(set_bit(byte8,OUT2,0))
             led.value(0)
