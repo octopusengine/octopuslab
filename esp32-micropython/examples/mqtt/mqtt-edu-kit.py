@@ -6,8 +6,9 @@ https://docs.octopuslab.cz/basicdoc/#config
 
 DeviceID is used as part of the MQTT topic
 
-`octopus/device/98f4ab6f1b20/led` - accepts '0'/'1'
-`octopus/device/98f4ab6f1b20/rgb` - accepts '#FF00FF' or 'rgb(255,0,255)' or 'RGBA(255,0,255,255)
+`octopus/device/98f4ab6f1b20/led`   - accepts '0'/'1'
+`octopus/device/98f4ab6f1b20/rgb`   - accepts '#FF00FF' or 'rgb(255,0,255)' or 'RGBA(255,0,255,255)
+`octopus/device/98f4ab6f1b20/servo` - accepts '10'/'160' # min / max
 
 """
 
@@ -20,17 +21,18 @@ from utils.wifi_connect import read_wifi_config, WiFiConnect
 from utils.mqtt import MQTT
 from components.led import Led
 from components.rgb import Rgb
+from components.servo import Servo
 from components.button import Button
 from gc import mem_free
 
 
-print("--- RAM free ---> " + str(mem_free())) 
+print("--- RAM free ---> " + str(mem_free()))
 
 pinout = set_pinout()
 built_in_led = Led(pinout.BUILT_IN_LED)
 
 num_neo = 16 # 30 # number of Leds
-np = Rgb(pinout.WS_LED_PIN,neo) 
+np = Rgb(pinout.WS_LED_PIN,num_neo)
 
 ws_r = 0
 ws_g = 0
@@ -38,6 +40,8 @@ ws_b = 0
 
 boot_pin = Pin(0, Pin.IN)
 boot_button = Button(boot_pin, release_value=1)
+
+servo = Servo(pinout.PWM1_PIN)
 
 
 def parse_rgba_msg(msg):
@@ -120,6 +124,14 @@ def mqtt_handler(topic, msg):
         print("rgb:", data)
         rgb_color(data['RED'], data['GREEN'], data['BLUE'])
 
+    if "servo" in topic:
+        print("servo:", end='')
+        angle = int(bytes.decode(msg))
+        try:
+            servo.set_degree(angle)
+        except Exception as e:
+            print("rgb_err", e)
+
 
 press_togg = 0
 @boot_button.on_press
@@ -163,4 +175,3 @@ print("--- main loop >")
 while True:
     c.check_msg()
     # sleep(5)
-
