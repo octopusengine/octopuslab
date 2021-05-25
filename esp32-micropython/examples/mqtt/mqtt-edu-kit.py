@@ -3,11 +3,11 @@ print("mqtt-edu-kit.py > mqtt 'mqtt edu-kit' example")
 
 from time import sleep
 from machine import Pin
-from neopixel import NeoPixel
 from utils.pinout import set_pinout
 from utils.wifi_connect import read_wifi_config, WiFiConnect
 from utils.mqtt import MQTT
 from components.led import Led
+from components.rgb import Rgb
 from components.button import Button
 from gc import mem_free
 
@@ -17,8 +17,9 @@ print("--- RAM free ---> " + str(mem_free()))
 pinout = set_pinout()
 built_in_led = Led(pinout.BUILT_IN_LED)
 
-pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
-np = NeoPixel(pin_ws, 1)
+neo = 16 # 30 # number of Leds
+np = Rgb(pinout.WS_LED_PIN,neo) 
+
 ws_r = 0
 ws_g = 0
 ws_b = 0
@@ -27,10 +28,9 @@ boot_pin = Pin(0, Pin.IN)
 boot_button = Button(boot_pin, release_value=1)
 
 
-def rgb_color(r,g,b,num=16):
-    for i in range(num):
-        np[i] = (r, g, b)
-        np.write()
+def rgb_color(red,green,blue):
+    for i in range(neo):
+        np.color((red, green, blue),i)
 
 
 def mqtt_handler(topic, msg):
