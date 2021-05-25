@@ -1,4 +1,16 @@
-# basic example: octopusLAB - ESP32 - WiFi - MQTT
+"""
+# basic example: octopusLAB EDU kit - ESP32 - WiFi - MQTT
+
+This requires configuration of wifi and MQTT broker connection (`/config/mqtt.json`)
+https://docs.octopuslab.cz/basicdoc/#config
+
+DeviceID is used as part of the MQTT topic
+
+`octopus/device/98f4ab6f1b20/led` - accepts '0'/'1'
+`octopus/device/98f4ab6f1b20/rgb` - accepts '#FF00FF' or 'rgb(255,0,255)' or 'RGBA(255,0,255,255)
+
+"""
+
 print("mqtt-edu-kit.py > mqtt 'mqtt edu-kit' example")
 
 from time import sleep
@@ -28,6 +40,61 @@ boot_pin = Pin(0, Pin.IN)
 boot_button = Button(boot_pin, release_value=1)
 
 
+def parse_rgba_msg(msg):
+    """
+    parse rgba message to dict from following formats:
+    #ff00C3
+    #ff00C3FF
+    RGBA(255,0,200,255) or rgba(255,0,200,255)
+    RGB(255,0,200,255) or rgb(255,0,200)
+    [255,0,200,255]
+    [255,0,200]
+    """
+    ret = {
+        'RED': 0,
+        'GREEN': 0,
+        'BLUE': 0,
+        'ALPHA': 0
+    }
+
+    if msg.startswith('#'):
+        try:
+            #ff00C3
+            ret['RED'] = int(msg[1:3],16)
+            ret['GREEN'] = int(msg[3:5],16)
+            ret['BLUE'] = int(msg[5:7],16)
+            try:
+                # add alpha if present
+                ret['ALPHA'] = int(msg[7:9],16)
+            except (IndexError, ValueError):
+                ret['ALPHA'] = 255
+        except (IndexError, ValueError):
+            pass
+        else:
+            return ret
+    components = []
+    if (msg.startswith('rgb(') or  msg.startswith('RGB(')) and msg.endswith(')'):
+        components = msg[4:-1].split(',')
+    if (msg.startswith('rgba(') or  msg.startswith('RGBA(')) and msg.endswith(')'):
+        components = msg[5:-1].split(',')
+    try:
+        ret['RED'] = int(components[0])
+        ret['GREEN'] = int(components[1])
+        ret['BLUE'] = int(components[2])
+        try:
+            # add alpha if present
+            ret['ALPHA'] = int(components[3])
+        except (IndexError, ValueError):
+            ret['ALPHA'] = 255
+
+    except (IndexError, ValueError):
+        pass
+    else:
+        return ret
+    print("Unable to parse RGBA value", msg)
+    return ret
+
+
 def rgb_color(red,green,blue):
     for i in range(neo):
         np.color((red, green, blue),i)
@@ -37,28 +104,21 @@ def mqtt_handler(topic, msg):
     global press_togg
     print("MQTT handler {0}: {1}".format(topic, msg))
     if "led" in topic:
-        print("led:", end='')
         data = bytes.decode(msg)
+        print("led:", data)
 
-        if data[0] == '1':  # oN
-            print("-> on")
+        if data[0] == '1':  # on
             built_in_led.value(1)
             press_togg = 1
-        elif data[0] == '0':  # ofF 
-            print("-> off")
+        elif data[0] == '0':  # off
             built_in_led.value(0)
             press_togg = 0
      
     if "rgb" in topic:
-        print("rgb:", end='')
-        data = bytes.decode(msg)
-        try:
-            ws_r = int(data[1:3],16)
-            ws_g = int(data[3:5],16)
-            ws_b = int(data[5:7],16)
-            rgb_color(ws_r,ws_g,ws_b)
-        except Exception as e:
-            print("rgb_err", e)
+        # parse message to RGBA 0-255
+        data = parse_rgba_msg(bytes.decode(msg))
+        print("rgb:", data)
+        rgb_color(data['RED'], data['GREEN'], data['BLUE'])
 
 press_togg = 0
 @boot_button.on_press
