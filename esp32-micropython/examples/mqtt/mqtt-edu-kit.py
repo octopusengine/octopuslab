@@ -29,7 +29,7 @@ print("--- RAM free ---> " + str(mem_free()))
 pinout = set_pinout()
 built_in_led = Led(pinout.BUILT_IN_LED)
 
-neo = 16 # 30 # number of Leds
+num_neo = 16 # 30 # number of Leds
 np = Rgb(pinout.WS_LED_PIN,neo) 
 
 ws_r = 0
@@ -96,7 +96,7 @@ def parse_rgba_msg(msg):
 
 
 def rgb_color(red,green,blue):
-    for i in range(neo):
+    for i in range(num_neo):
         np.color((red, green, blue),i)
 
 
@@ -119,6 +119,7 @@ def mqtt_handler(topic, msg):
         data = parse_rgba_msg(bytes.decode(msg))
         print("rgb:", data)
         rgb_color(data['RED'], data['GREEN'], data['BLUE'])
+
 
 press_togg = 0
 @boot_button.on_press
