@@ -9,7 +9,7 @@ DeviceID is used as part of the MQTT topic
 `octopus/device/98f4ab6f1b20/led`   - accepts '0'/'1'
 `octopus/device/98f4ab6f1b20/rgb`   - accepts '#FF00FF' or 'rgb(255,0,255)' or 'RGBA(255,0,255,255)
 `octopus/device/98f4ab6f1b20/servo` - accepts '10'/'160' # min / max
-
+`octopus/device/98f4ab6f1b20/disp`   - accepts 'string' for 7-segments x 8
 """
 
 print("mqtt-edu-kit.py > mqtt 'mqtt edu-kit' example")
@@ -23,6 +23,7 @@ from components.led import Led
 from components.rgb import Rgb
 from components.servo import Servo
 from components.button import Button
+from utils.octopus import disp7_init
 from gc import mem_free
 
 
@@ -42,6 +43,7 @@ boot_pin = Pin(0, Pin.IN)
 boot_button = Button(boot_pin, release_value=1)
 
 servo = Servo(pinout.PWM1_PIN)
+d7 = disp7_init()
 
 
 def parse_rgba_msg(msg):
@@ -131,6 +133,14 @@ def mqtt_handler(topic, msg):
             servo.set_degree(angle)
         except Exception as e:
             print("rgb_err", e)
+
+    if "disp7" in topic:
+        print("display:", end='')
+        data = bytes.decode(msg)
+        try:
+            d7.show(data)
+        except Exception as e:
+            print("d7_err", e)
 
 
 press_togg = 0
