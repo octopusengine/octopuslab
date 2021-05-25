@@ -1,9 +1,21 @@
-# basic example: octopusLAB - ESP32 - WiFi - MQTT
 """
-import upip
-upip.install('micropython-umqtt.robust')
+# basic example: octopusLAB - ESP32 - WiFi - MQTT
+
+This requires configuration of wifi and MQTT broker connection (`/config/mqtt.json`)
+https://docs.octopuslab.cz/basicdoc/#config
+
+DeviceID is used as part of the MQTT topic
+
+e.g. `octopus/device/98f4ab6f1b20/led`
+
+If string '1' is sent, build-in LED will be turned on
+If string '0' is sent, build-in LED will be turned off
+
 """
 print("mqtt-led.py > mqtt 'hello world' example")
+
+# import upip
+# upip.install('micropython-umqtt.robust')
 
 from time import sleep
 from utils.wifi_connect import read_wifi_config, WiFiConnect
