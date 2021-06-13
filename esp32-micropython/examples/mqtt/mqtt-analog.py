@@ -1,131 +1,102 @@
+"""
 # basic example: octopusLAB - ESP32 - WiFi - MQTT
-"""
-import upip
-upip.install('micropython-umqtt.robust')
+
+This requires configuration of wifi and MQTT broker connection (`/config/mqtt.json`)
+https://docs.octopuslab.cz/basicdoc/#config
+
+DeviceID is used as part of the MQTT topic
+e.g. `octopus/device/98f4ab6f1b20/led`
+
+If string '1' is sent, build-in LED will be turned on
+If string '0' is sent, build-in LED will be turned off
+
+analog inputs: 34, 35
+octopus/device/98f4ab6f1b20/analog/x -> value x
+octopus/device/98f4ab6f1b20/analog/y -> value y
+sensitivity: abs(difference old-new)
 
 """
-print("mqtt-analog.py > mqtt 'hello world'")
+print("mqtt-analog.py > mqtt example")
 
-from time import sleep, ticks_ms
-from machine import Pin, ADC
-import machine, time
-from util.wifi_connect import read_wifi_config, WiFiConnect
-from util.mqtt_connect import read_mqtt_config
-from umqtt.simple import MQTTClient
-import ubinascii
-from neopixel import NeoPixel
-from util.pinout import set_pinout
+# import upip
+# upip.install('micropython-umqtt.robust')
+
+from time import sleep
+from utils.wifi_connect import read_wifi_config, WiFiConnect
+from utils.mqtt import MQTT
+from utils.pinout import set_pinout
 from components.led import Led
+from components.analog import Analog
+from gc import mem_free
+
+print("--- RAM free ---> " + str(mem_free())) 
 
 pinout = set_pinout()
 led = Led(pinout.BUILT_IN_LED)
-
-pin_ws = Pin(pinout.WS_LED_PIN, Pin.OUT)
-pin_analog = 36
-
-adc = ADC(Pin(pin_analog))
-adc.atten(ADC.ATTN_11DB)
-
-ADC_SAMPLES=500
-ADC_HYSTERESIS=50
-
-esp_id = ubinascii.hexlify(machine.unique_id()).decode()
-print(esp_id)
-
-np = NeoPixel(pin_ws, 1)
-ws_r = 0
-ws_g = 0
-ws_b = 0
-bd = bytes.decode
+an34 = Analog(34) # y
+an35 = Analog(35) # x
 
 
 def simple_blink():
     led.value(1)
-    sleep(0.25)
+    sleep(0.5)
     led.value(0)
-    sleep(0.25)
+    sleep(0.5)
 
 
-def mqtt_sub(topic, msg):
-    global ws_r
-    global ws_g
-    global ws_b
-
-    print("MQTT Topic {0}: {1}".format(topic, msg))
-
+def mqtt_handler(topic, msg):
+    print("MQTT handler {0}: {1}".format(topic, msg))
     if "led" in topic:
-        print("led:")
-        data = bd(msg)
+        print("led:", end='')
+        data = bytes.decode(msg)
 
         if data[0] == '1':  # on
             print("-> on")
-            pin_led.value(1)
-        elif data[0] == '0':  # off
+            led.value(1)
+        elif data[0] == '0':  # off 
             print("-> off")
-            pin_led.value(0) 
+            led.value(0) 
 
-    if "wsled" in topic:
-        data = bd(msg)
-        if data[0] == 'R':
-           ws_r = int(data[1:])
-        elif data[0] == 'G':
-           ws_g = int(data[1:])
-        elif data[0] == 'B':
-           ws_b = int(data[1:])
-        if data[0] == '#':  
-            ws_r = int(int(data[1:3], 16)/2)  
-            ws_g = int(int(data[3:5], 16)/2)  
-            ws_b = int(int(data[5:7], 16)/2)  
-            
-        np[0] = (ws_r, ws_g, ws_b)
-        np.write()
 
-# =====================================================
-
-print("wifi_connect >")
+print("--- wifi_connect >")
 net = WiFiConnect()
 net.connect()
 
-print("mqtt_config >")
-mqtt_client_id_prefix = read_mqtt_config()["mqtt_prefix"]
-mqtt_host = read_mqtt_config()["mqtt_broker_ip"]
-mqtt_user = read_mqtt_config()["mqtt_user"]
-mqtt_psw = read_mqtt_config()["mqtt_psw"]
-mqtt_ssl  = read_mqtt_config()["mqtt_ssl"]
-mqtt_client_id = mqtt_client_id_prefix + esp_id
+print("--- mqtt_connnect >")
+# c = mqtt_connect_from_config(esp_id)
+m = MQTT.from_config()
+c = m.client
 
-c = MQTTClient(mqtt_client_id, mqtt_host,ssl=mqtt_ssl,user=mqtt_user,password=mqtt_psw)
-c.set_callback(mqtt_sub)
+c.set_callback(mqtt_handler)
 c.connect()
+c.subscribe("octopus/device/{0}/#".format(m.client_id))
+ 
+print("testing blink")
+simple_blink()
 
+print("send alive message")
+c.publish("octopus/device", m.client_id) # topic, message (value) to publish
 
-def get_adc_value():
-    aval = 0
-    for i in range(0, ADC_SAMPLES):
-        aval += adc.read()
-    return aval // ADC_SAMPLES
+print("--- RAM free ---> " + str(mem_free()))
+print("--- main loop >")
+anx_old = 0
+any_old = 0
+diff = 12 # sensitivity
 
-try:
-    if c.connect() == 0:
-        subStr = mqtt_root_topic+esp_id+"/#"
-        c.subscribe(subStr)
-
-        print("mqtt log")
-        c.publish(mqtt_root_topic,esp_id) # topic, message (value) to publish
-
-        simple_blink()
-
-except Exception as e:
-    print("Error connecting to MQTT")
-
-aoldval=0
-
-print("> loop:")
 while True:
     c.check_msg()
 
-    aval = get_adc_value()
-    if abs(aoldval-aval) > ADC_HYSTERESIS:
-        aoldval = aval
-        print(aval)
-        c.publish("octopus/{0}/adc/{1}".format(esp_id, pin_analog), str(aval))
+    anx = an35.get_adc_aver()
+    if abs(anx_old-anx)>diff:
+        c.publish("octopus/device/{0}/analog/x".format(m.client_id), str(anx))
+        sleep(0.05)
+
+    any = an34.get_adc_aver()
+    if abs(any_old-any)>diff:
+        c.publish("octopus/device/{0}/analog/y".format(m.client_id), str(any))
+        sleep(0.05)
+
+    print("anx",anx,abs(anx_old-anx),"---","any",any,abs(any_old-any))
+    anx_old=anx
+    any_old=any
+    sleep(0.1)
