@@ -4,7 +4,7 @@
 
 from time import sleep
 from utils.octopus import i2c_init
-from utils.i2c_expander import Expander8
+from components.i2c_expander import Expander8
 from utils.bits import neg, reverse, int2bin, get_bit, set_bit
 # int2bin(reverse(b1))   >   '10011111'
 
