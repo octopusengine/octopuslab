@@ -2,7 +2,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek
 
-__version__ = "1.0.7"
+__version__ = "1.0.8"
 
 # from sys import modules
 from time import sleep, sleep_ms, ticks_ms, ticks_diff
@@ -21,8 +21,8 @@ io_conf = get_from_file() # read configuration for peripherals
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "1.07"  # version - log: num = ver*100
-    verDat = "22.11.2020 #755"
+    ver = "1.08"  # version - log: num = ver*100
+    verDat = "10.08.2021 #729"
     debug = True
     logDev = True
     autoInit = True
@@ -188,17 +188,6 @@ def logDevice(urlPOST = "https://www.octopusengine.org/iot17/add18.php"):
         print("Err.logDevice: {0}".format(e))
 
 
-def bme280_init():
-    from bme280 import BME280
-    try:
-        i2c = i2c_init(1)
-        bme = BME280(i2c=i2c)
-        print(bme.values)
-        return bme
-    except Exception as e:
-        print("bme280_init() Exception: {0}".format(e))
-
-
 def octopus(auto = True):
     if auto:
         # print("auto")
@@ -210,7 +199,6 @@ def octopus(auto = True):
     print("("+getVer()+")")
     collect()
     printInfo()
-    # print("This is basic library, type h() for help")
 
 
 def octopus_init():
@@ -437,7 +425,6 @@ if Env.autoInit:  # test
                 else:
                     active = 0
                 sleep_ms(1)
-
     print()
 
 
@@ -498,7 +485,6 @@ def web_server():
 
         data["sta_if"] = { "active": sta_active, "connected": sta_connected, "ssid": sta_ssid, "rssi": sta_rssi}
         data["ap_if"] = { "active": ap_active, "connected": ap_connected, "ssid": ap_ssid, "stations": ap_stations }
-
         httpResponse.WriteResponseJSONOk(data)
 
 
@@ -542,7 +528,6 @@ def web_server():
         print("Updating network {0}".format(data[0]))
         wc.add_network(ssid, psk)
         responseCode = 201
-
         httpResponse.WriteResponse( code=responseCode, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = content)
 
 
@@ -561,7 +546,6 @@ def web_server():
         ssid = data[0]
         wc.remove_network(ssid)
         responseCode = 201
-
         httpResponse.WriteResponse( code=responseCode, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = content)
 
 
@@ -581,8 +565,6 @@ def web_server():
         infoDict["freq"] = Env.freq
         infoDict["freeRAM"] = getFree()
         infoDict["freeFLASH"] = str(int(os.statvfs("/")[0])*int(os.statvfs("/")[3]))
-        ## infoJ = ujson.dumps(infoDict)
-
         httpResponse.WriteResponseJSONOk(infoDict)
 
 
@@ -599,7 +581,6 @@ def web_server():
             if val == 5: ws.color(ORANGE)
             if val == 6: ws.color((128,0,128))
             if val == 0: ws.color(BLACK)
-
         httpResponse.WriteResponseOk(None)
 
 
@@ -621,7 +602,6 @@ def web_server():
             raise
         finally:
             httpResponse.WriteResponseOk(None)
-
         httpResponse.WriteResponse(code=204, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = None)
 
 
@@ -654,7 +634,6 @@ def web_server():
                 dev = f.read()
         except:
             pass
-
         httpResponse.WriteResponseOk(contentType = "application/json", content = dev)
 
     @MicroWebSrv.route('/setup/device', "POST") # Set device
@@ -663,7 +642,6 @@ def web_server():
 
         with open('config/device.json', 'w') as f:
                 f.write(data)
-
         httpResponse.WriteResponseOk(None)
 
     @MicroWebSrv.route('/setup/io') # Get IO configuration
@@ -671,7 +649,6 @@ def web_server():
         from utils.io_config import io_conf_file, io_menu_layout, get_from_file as get_io_config_from_file
         io_conf = get_io_config_from_file()
         config = [ {'attr': item['attr'], 'descr': item['descr'], 'value': io_conf.get(item['attr'], None) } for item in io_menu_layout ]
-
         httpResponse.WriteResponseJSONOk(config)
 
     @MicroWebSrv.route('/setup/io', "POST") # Set IO configuration
@@ -688,7 +665,6 @@ def web_server():
 
         with open(io_conf_file, 'w') as f:
             json_dump(io_conf, f)
-
         httpResponse.WriteResponseOk(None)
 
     @MicroWebSrv.route('/file_list')
@@ -709,7 +685,6 @@ def web_server():
                 ]
         files.sort()
         content = ";".join(files)
-
         httpResponse.WriteResponseOk( headers = None, contentType = "text/html", contentCharset = "UTF-8", content = content )
 
     mws = MicroWebSrv(webPath='www/')      # TCP port 80 and files in /flash/www
