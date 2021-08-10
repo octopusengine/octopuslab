@@ -2,7 +2,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek
 
-__version__ = "1.0.8"
+__version__ = "1.0.9"
 
 # from sys import modules
 from time import sleep, sleep_ms, ticks_ms, ticks_diff
@@ -21,7 +21,7 @@ io_conf = get_from_file() # read configuration for peripherals
 class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
-    ver = "1.08"  # version - log: num = ver*100
+    ver = "1.09"  # version - log: num = ver*100
     verDat = "10.08.2021 #729"
     debug = True
     logDev = True
@@ -636,6 +636,7 @@ def web_server():
             pass
         httpResponse.WriteResponseOk(contentType = "application/json", content = dev)
 
+
     @MicroWebSrv.route('/setup/device', "POST") # Set device
     def _httpHandlerSetDevice(httpClient, httpResponse):
         data = httpClient.ReadRequestContent()
@@ -644,12 +645,14 @@ def web_server():
                 f.write(data)
         httpResponse.WriteResponseOk(None)
 
+
     @MicroWebSrv.route('/setup/io') # Get IO configuration
     def _httpHandlerIOConfigGet(httpClient, httpResponse):
         from utils.io_config import io_conf_file, io_menu_layout, get_from_file as get_io_config_from_file
         io_conf = get_io_config_from_file()
         config = [ {'attr': item['attr'], 'descr': item['descr'], 'value': io_conf.get(item['attr'], None) } for item in io_menu_layout ]
         httpResponse.WriteResponseJSONOk(config)
+
 
     @MicroWebSrv.route('/setup/io', "POST") # Set IO configuration
     def _httpHandlerIOConfigSet(httpClient, httpResponse):
@@ -666,6 +669,7 @@ def web_server():
         with open(io_conf_file, 'w') as f:
             json_dump(io_conf, f)
         httpResponse.WriteResponseOk(None)
+
 
     @MicroWebSrv.route('/file_list')
     def _httpHandlerTestGet(httpClient, httpResponse):
@@ -694,6 +698,7 @@ def web_server():
     webrepl.start()
     print("Web server started on http://{0}".format(wc.sta_if.ifconfig()[0]))
     return mws
+    
 
     @MicroWebSrv.route('/esp/control/relay', "POST")
     def _httpRelaySet(httpClient, httpResponse):
@@ -713,7 +718,6 @@ def web_server():
             raise
         finally:
             httpResponse.WriteResponseOk(None)
-
         httpResponse.WriteResponse(code=204, headers = None, contentType = "text/plain", contentCharset = "UTF-8", content = None)
 
 
