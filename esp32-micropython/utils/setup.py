@@ -7,14 +7,14 @@ import time, uos
 import ujson
 import machine # datetime
 
-ver = "0.71 / 22.11.2020"
+ver = "0.72 / 10.08.2021"
 
 devices = [
 ["oLAB Default","esp32"],
-["oLAB Witty","esp8266"],
+["oLAB DOIT adapter","esp32"],
 ["oLAB Tickernator","esp8266"],
+["oLAB Witty","esp8266"],
 ["oLAB BigDisplay3","esp8266"],
-["oLAB RobotBoard1 v1","esp32"],
 ["oLAB RobotBoard1","esp32"],
 ["oLAB IoTBoard1","esp8266"],
 ["oLAB IoTBoard1","esp32"],
