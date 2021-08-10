@@ -1,6 +1,6 @@
 # This file is part of the octopusLAB project
 # The MIT License (MIT)
-# Copyright (c) 2016-2020 Jan Copak, Petr Kracik, Vasek Chalupnicek
+# Copyright (c) 2016-2021 Jan Copak, Petr Kracik, Vasek Chalupnicek
 
 __version__ = "1.0.9"
 
@@ -22,7 +22,7 @@ class Env:  # for temporary global variables and config setup
     from ubinascii import hexlify
     from machine import unique_id, freq
     ver = "1.09"  # version - log: num = ver*100
-    verDat = "10.08.2021 #729"
+    verDat = "10.08.2021 #730"
     debug = True
     logDev = True
     autoInit = True
@@ -37,7 +37,6 @@ class Env:  # for temporary global variables and config setup
     timerLed = True
     timerBeep = False
 
-    # wsc = web_server control
     wscWS = True  # WS RGB LED
     wscPWM = False # PWM LED - IoT board / hydroponics
     wscRelay = False
@@ -515,7 +514,6 @@ def web_server():
         content = None
 
         print(data)
-
         if len(data) < 1:
             responseCode = 400
             content = "Missing ssid in request"
@@ -627,7 +625,6 @@ def web_server():
     @MicroWebSrv.route('/setup/device') # Get actual device
     def _httpHandlerGetDevice(httpClient, httpResponse):
         dev = "null"
-
         try:
             os.stat('config/device.json')
             with open('config/device.json', 'r') as f:
@@ -698,7 +695,7 @@ def web_server():
     webrepl.start()
     print("Web server started on http://{0}".format(wc.sta_if.ifconfig()[0]))
     return mws
-    
+
 
     @MicroWebSrv.route('/esp/control/relay', "POST")
     def _httpRelaySet(httpClient, httpResponse):
