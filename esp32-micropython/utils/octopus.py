@@ -376,7 +376,7 @@ if Env.autoInit:  # test
         def lcd2_init(addr = LCD_ADDR):
 
             printTitle("lcd2init()")
-            LCD_ROWS=2
+            LCD_ROWS=io_conf.get('lcd')
             LCD_COLS=16
             from lib.esp8266_i2c_lcd import I2cLcd
             lcd = I2cLcd(i2c, addr, LCD_ROWS, LCD_COLS)
