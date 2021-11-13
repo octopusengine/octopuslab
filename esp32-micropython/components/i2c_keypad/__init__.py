@@ -107,16 +107,19 @@ class Keypad16(Keypad):
         self.i2c = i2c
         self.address = address
 
-        if not invert:
-            self.KEYPAD = [
-            ['1', '2', '3', 'A'],
-            ['4', '5', '6', 'B'],
-            ['7', '8', '9', 'C'],
-            ['*', '0', '#', 'D']
-            ]
+        self.KEYPAD = [
+        ['1', '2', '3', 'A'],
+        ['4', '5', '6', 'B'],
+        ['7', '8', '9', 'C'],
+        ['*', '0', '#', 'D']
+        ]
 
-        self.ROW    = [0,1,2,3]
-        self.COLUMN = [4,5,6,7]
+        if invert:
+            self.ROW    = [7,6,5,4]
+            self.COLUMN = [3,2,1,0]
+        else:
+            self.ROW    = [0,1,2,3]
+            self.COLUMN = [4,5,6,7]
 
     def pin_read(self, pinNum):
         mask = 0x1 << pinNum
