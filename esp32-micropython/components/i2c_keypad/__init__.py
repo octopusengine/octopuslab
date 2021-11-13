@@ -97,7 +97,6 @@ class Keypad16(Keypad):
         mask = 0x1 << pinNum
 
         value = self.i2c.readfrom(self.address, 2)
-        print(value)
         pinVal = value[0]
         pinVal += value[1] << 8
 
