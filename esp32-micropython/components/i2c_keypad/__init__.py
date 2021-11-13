@@ -3,7 +3,7 @@
 
 # by Petr Kracik
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 
 class Keypad():
@@ -11,23 +11,19 @@ class Keypad():
         self.i2c = i2c
         self.address = address
 
-        if not invert:
-            self.KEYPAD = [
-            ['1', '2', '3', 'A'],
-            ['4', '5', '6', 'B'],
-            ['7', '8', '9', 'C'],
-            ['*', '0', '#', 'D']
-            ]
-        else:
-            self.KEYPAD = [
-            ['D', 'C', 'B', 'A'],
-            ['#', '9', '6', '3'],
-            ['0', '8', '5', '2'],
-            ['*', '7', '4', '1']
-            ]
+        self.KEYPAD = [
+        ['1', '2', '3', 'A'],
+        ['4', '5', '6', 'B'],
+        ['7', '8', '9', 'C'],
+        ['*', '0', '#', 'D']
+        ]
 
-        self.ROW         = [0,1,2,3]
-        self.COLUMN      = [4,5,6,7]
+        if not invert:
+            self.ROW    = [0,1,2,3]
+            self.COLUMN = [4,5,6,7]
+        else:
+            self.ROW    = [7,6,5,4]
+            self.COLUMN = [3,2,1,0]
 
 
     def pin_read(self, pinNum):
@@ -43,10 +39,13 @@ class Keypad():
 
     def getKey(self):
         c = 0
+        tmp = bytearray(1)
+
         for i in self.ROW:
             c += 1 << i
-        
-        self.i2c.writeto(self.address, bytearray(chr(c)))
+
+        tmp[0] = c
+        self.i2c.writeto(self.address, tmp)
 
         rowVal = -1
         for i in range(len(self.ROW)):
@@ -54,14 +53,15 @@ class Keypad():
             if tmpRead == 0:
                 rowVal = i
 
-        if rowVal <0 or rowVal > 3:
+        if rowVal < 0 or rowVal > len(self.ROW) - 1:
             return None
 
         c = 0
         for i in self.COLUMN:
             c += 1 << i
 
-        self.i2c.writeto(self.address, bytearray(chr(c)))
+        tmp[0] = c
+        self.i2c.writeto(self.address, tmp)
 
         colVal = -1
         for j in range(len(self.COLUMN)):
@@ -69,7 +69,7 @@ class Keypad():
             if tmpRead == 0:
                 colVal=j
 
-        if colVal <0 or colVal >3:
+        if colVal < 0 or colVal > len(self.COLUMN) - 1:
             return None
 
         # Return the value of the key pressed
