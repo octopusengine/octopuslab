@@ -29,19 +29,6 @@ class Keypad():
         self.ROW         = [0,1,2,3]
         self.COLUMN      = [4,5,6,7]
 
-        self.pinState = self.i2c.readfrom(self.address, 1)[0]
-
-    def pin_write(self, pinNum, level):
-        mask = 1 << pinNum
-
-        if(level):
-            self.pinState |= mask
-        else:
-            self.pinState &= ~mask
-
-        tmp = bytearray(1)
-        tmp[0] = self.pinState
-        self.i2c.writeto(self.address, tmp)
 
     def pin_read(self, pinNum):
         mask = 0x1 << pinNum
@@ -53,8 +40,13 @@ class Keypad():
         else:
             return 0
 
+
     def getKey(self):
-        self.i2c.writeto(self.address, b'\x0F')
+        c = 0
+        for i in self.ROW:
+            c += 1 << i
+        
+        self.i2c.writeto(self.address, bytearray(chr(c)))
 
         rowVal = -1
         for i in range(len(self.ROW)):
@@ -65,7 +57,11 @@ class Keypad():
         if rowVal <0 or rowVal > 3:
             return None
 
-        self.i2c.writeto(self.address, b'\xF0')
+        c = 0
+        for i in self.COLUMN:
+            c += 1 << i
+
+        self.i2c.writeto(self.address, bytearray(chr(c)))
 
         colVal = -1
         for j in range(len(self.COLUMN)):
@@ -74,6 +70,80 @@ class Keypad():
                 colVal=j
 
         if colVal <0 or colVal >3:
+            return None
+
+        # Return the value of the key pressed
+        return self.KEYPAD[rowVal][colVal]
+
+
+class Keypad16(Keypad):
+    def __init__(self, i2c, address=0x20, invert=False):
+        self.i2c = i2c
+        self.address = address
+
+        if not invert:
+            self.KEYPAD = [
+            ['F1', 'F2', '#', '*'],
+            ['1', '2', '3', '^'],
+            ['4', '5', '6', 'v'],
+            ['7', '8', '9', 'ESC'],
+            ['<', '0', '>', 'ENT']
+            ]
+
+        self.ROW    = [0,1,2,3,4]
+        self.COLUMN = [8,7,6,5]
+
+    def pin_read(self, pinNum):
+        mask = 0x1 << pinNum
+
+        value = self.i2c.readfrom(self.address, 2)
+        print(value)
+        pinVal = value[0]
+        pinVal += value[1] << 8
+
+        pinVal &= mask
+        if (pinVal == mask):
+            return 1
+        else:
+            return 0
+
+    def getKey(self):
+        c = 0
+        tmp = bytearray(2)
+
+        for i in self.ROW:
+            c += 1 << i
+
+        tmp[0] = c
+        tmp[1] = c >> 8
+
+        self.i2c.writeto(self.address, tmp)
+
+        rowVal = -1
+        for i in range(len(self.ROW)):
+            tmpRead = self.pin_read(self.ROW[i])
+            if tmpRead == 0:
+                rowVal = i
+
+        if rowVal < 0 or rowVal > len(self.ROW) - 1:
+            return None
+
+        c = 0
+        for i in self.COLUMN:
+            c += 1 << i
+
+        tmp[0] = c
+        tmp[1] = c >> 8
+
+        self.i2c.writeto(self.address, tmp)
+
+        colVal = -1
+        for j in range(len(self.COLUMN)):
+            tmpRead = self.pin_read(self.COLUMN[j])
+            if tmpRead == 0:
+                colVal=j
+
+        if colVal < 0 or colVal > len(self.COLUMN) - 1:
             return None
 
         # Return the value of the key pressed
