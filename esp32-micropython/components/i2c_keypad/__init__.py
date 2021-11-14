@@ -3,7 +3,7 @@
 
 # by Petr Kracik
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 
 class Keypad():
@@ -116,20 +116,5 @@ class Keypad():
 
 class Keypad16(Keypad):
     def __init__(self, i2c, address=0x20, invert=False):
-        self.i2c = i2c
-        self.address = address
+        super().__init__(i2c, address, invert)
         self.bussize = 16
-
-        self.KEYPAD = [
-        ['1', '2', '3', 'A'],
-        ['4', '5', '6', 'B'],
-        ['7', '8', '9', 'C'],
-        ['*', '0', '#', 'D']
-        ]
-
-        if invert:
-            self.ROW    = [7,6,5,4]
-            self.COLUMN = [3,2,1,0]
-        else:
-            self.ROW    = [0,1,2,3]
-            self.COLUMN = [4,5,6,7]
