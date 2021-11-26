@@ -114,7 +114,7 @@ class TFT(object) :
     self.tfa = 0                       #top fixed area
     self.bfa = 0                       #bottom fixed area
     self.dc  = machine.Pin(aDC, machine.Pin.OUT, machine.Pin.PULL_DOWN)
-    self.reset = machine.Pin(aReset, machine.Pin.OUT, machine.Pin.PULL_DOWN)
+    self.reset = None if aReset is None else machine.Pin(aReset, machine.Pin.OUT, machine.Pin.PULL_DOWN)
     self.cs = machine.Pin(aCS, machine.Pin.OUT, machine.Pin.PULL_DOWN)
     self.cs(1)
     self.spi = spi
@@ -503,6 +503,9 @@ class TFT(object) :
   #@micropython.native
   def _reset( self ) :
     '''Reset the device.'''
+    if not self.reset:
+      return
+
     self.dc(0)
     self.reset(1)
     time.sleep_us(500)
