@@ -64,6 +64,8 @@ class ST7735(DisplaySPI):
     >>> display.pixel(64, 64, 0)
 
     """
+    _ROTATIONS = [0x00, 0x60, 0xC0, 0xA0]
+    _RGB = 0x08
     _COLUMN_SET = _CASET
     _PAGE_SET = _RASET
     _RAM_WRITE = _RAMWR
@@ -72,9 +74,8 @@ class ST7735(DisplaySPI):
         (_SWRESET, None),
         (_SLPOUT, None),
 
-        (_MADCTL, b'\x08'), # bottom to top refresh
         (_COLMOD, b'\x05'), # 16bit color
-        (_INVCTR, b'0x00'), # line inversion
+        (_INVCTR, b'\x00'), # line inversion
 
         # 1 clk cycle nonoverlap, 2 cycle gate rise, 3 sycle osc equalie,
         # fix on VTL
@@ -103,16 +104,24 @@ class ST7735(DisplaySPI):
     _ENCODE_PIXEL = ">H"
     _ENCODE_POS = ">HH"
 
-    def __init__(self, spi, dc, cs, rst=None, width=128, height=128):
-        super().__init__(spi, dc, cs, rst, width, height)
+    def __init__(self, spi, dc, cs, rst=None, width=128, height=128, rotation=0):
+        if rotation in [1, 3]:
+            self._widht = height
+            self._height = width
+        else:
+            self._widht = width
+            self._height = height
+
+        super().__init__(spi, dc, cs, rst, self._widht, self._height)
+        super()._write(_MADCTL, bytearray([self._ROTATIONS[rotation] | self._RGB]))
 
 
 class ST7735R(ST7735):
+    _RGB = 0x00
     _INIT = (
         (_SWRESET, None),
         (_SLPOUT, None),
 
-        (_MADCTL, b'\x00'),
         (_COLMOD, b'\x05'), # 16bit color
         (_INVCTR, b'\x07'),
 
@@ -135,8 +144,8 @@ class ST7735R(ST7735):
                    b'\x2E\x2E\x37\x3F\x00\x00\x02\x10'),
     )
 
-    def __init__(self, spi, dc, cs, rst=None, width=128, height=160):
-        super().__init__(spi, dc, cs, rst, width, height)
+    def __init__(self, spi, dc, cs, rst=None, width=128, height=160, rotation=0):
+        super().__init__(spi, dc, cs, rst, width, height, rotation)
 
     def init(self):
         super().init()
