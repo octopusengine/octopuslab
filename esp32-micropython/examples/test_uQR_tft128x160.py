@@ -58,7 +58,7 @@ def draw_qr(pos_x, pos_y, qr, scale = 4, border = 10):
 
     for x in range(qr.width()):
         for y in range(qr.width()):
-            fb.fill_rect(pos_x+x*scale, pos_y+y*scale, scale, scale, color565(*BLACK) if qr.get(x,y) else color565(*WHITE))
+            fb.fill_rect(pos_x+x*scale, pos_y+y*scale, scale, scale, 0 if qr.get(x,y) else 65535)
 
     tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
 
