@@ -1,24 +1,21 @@
 # octopusLAB - TFT128x160 and ESP32board - 2020/06
-from machine import Pin, SPI, SDCard
+from machine import Pin, SPI
 from time import sleep, sleep_ms
 import urandom
-from utils.pinout import set_pinout
-pinout = set_pinout()
 from colors_brg import *
 
 import framebuf
-from lib import st7735
+from lib import st7735fb
 from lib.rgb import color565
 
 print("spi.TFT 128x160 init >")
 
-spi = SPI(1, baudrate=10000000, polarity=1, phase=0, sck=Pin(pinout.SPI_CLK_PIN), mosi=Pin(pinout.SPI_MOSI_PIN))
-ss = Pin(pinout.SPI_CS0_PIN, Pin.OUT)
+spi = SPI(2, baudrate=20000000, sck=Pin(18), mosi=Pin(23))
 
-cs = Pin(5, Pin.OUT)  #SCE0() > PWM3(25)
-dc = Pin(26, Pin.OUT)  #PWM2(16) > DEV2(33) //RAM > SPI_CS0_PIN(5)/ IO26?
-rst = Pin(27, Pin.OUT) #PWM1(17) > DEv3(27)
-tft = st7735.ST7735R(spi, cs = cs, dc = dc, rst = rst)
+cs = Pin(26, Pin.OUT)
+dc = Pin(25, Pin.OUT)
+
+tft = st7735fb.ST7735R(spi, cs = cs, dc = dc, rst = None)
 
 print("spi.TFT framebufer >")
 
