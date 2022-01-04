@@ -48,7 +48,8 @@ sleep(0.5)
 
 qr = uqr.make("OctopusLAB QR Code")
 
-def draw_qr(pos_x, pos_y, qr, scale = 4, border = 10):
+def draw_qr(pos_x, pos_y, qr, scale = 4, border = None):
+    border = border or scale * 2
     fb.fill_rect(
         pos_x-(border//2),
         pos_y-(border//2),
