@@ -20,7 +20,7 @@ spi = SPI(2, baudrate=20000000, sck=Pin(18), mosi=Pin(23))
 cs = Pin(26, Pin.OUT)
 dc = Pin(25, Pin.OUT)
 
-tft = st7735fb.ST7735R(spi, cs = cs, dc = dc, rst = None)
+tft = st7735fb.ST7735R(spi, cs = cs, dc = dc, rst = None, rotation=3)
 
 print("spi.TFT framebufer >")
 
@@ -59,12 +59,14 @@ def draw_qr(pos_x, pos_y, qr, scale = 4, border = None):
 
     for x in range(qr.width()):
         for y in range(qr.width()):
-            fb.fill_rect(pos_x+x*scale, pos_y+y*scale, scale, scale, 0 if qr.get(x,y) else 65535)
+            if qr.get(x,y):
+                fb.fill_rect(pos_x+x*scale, pos_y+y*scale, scale, scale, 0)
 
     tft.blit_buffer(fb, 0, 0, tft.width, tft.height)
 
-qr_pos_x = 15
-qr_pos_y = 20
+qr_pos_x = 30
+qr_pos_y = 15
 qr_scale = 4
 qr_border = 10
+
 draw_qr(qr_pos_x, qr_pos_y, qr, qr_scale, qr_border)
