@@ -1,3 +1,5 @@
+# Copyright OctopusLAB 2022
+# MIT License
 # include this in boot.py or main.py as WiFiConnect
 
 # Usage:
@@ -12,7 +14,9 @@
 # and then use for connect to known networks
 # w.connect()
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
+__license__ = "MIT"
+
 
 # Includes
 import network
@@ -21,67 +25,72 @@ from time import sleep, sleep_ms
 
 class WiFiConnect:
     def __init__(self, retries = 0):
-        self.sta_if = network.WLAN(network.STA_IF)
-        self.ap_if = network.WLAN(network.AP_IF)
-        self.events_connecting = []
-        self.events_connected = []
-        self.events_disconnected = []
-        self.events_timeout = []
-        self.retries = retries
-        self.__connected = False
-        self.config = None
+        self._sta_if = network.WLAN(network.STA_IF)
+        self._ap_if = network.WLAN(network.AP_IF)
+        self._events_connecting = []
+        self._events_connected = []
+        self._events_disconnected = []
+        self._events_timeout = []
+        self._retries = retries
+        self._connected = False
+        self._config = None
         try:
             self.load_config()
 
             # old config detection
-            if not "networks" in self.config:
+            if not "networks" in self._config:
                 # Upgrading to new version
-                self.config['version'] = 2
-                self.config['networks'] = dict()
+                self._config['version'] = 2
+                self._config['networks'] = dict()
 
-                ssid, psk = self.config['wifi_ssid'], self.config['wifi_pass']
-                del self.config['wifi_ssid']
-                del self.config['wifi_pass']
+                ssid, psk = self._config['wifi_ssid'], self._config['wifi_pass']
+                del self._config['wifi_ssid']
+                del self._config['wifi_pass']
                 self.save_config()
                 self.add_network(ssid, psk)
 
         except Exception as e:
-            self.config = dict()
-            self.config['version'] = 2
-            self.config['networks'] = dict()
+            self._config = dict()
+            self._config['version'] = 2
+            self._config['networks'] = dict()
             self.save_config()
 
-    def __call_events_connecting__(self, retry):
-        for f in self.events_connecting:
+
+    def _call_events_connecting(self, retry):
+        for f in self._events_connecting:
             f(retry)
 
-    def __call_events_connected__(self, sta):
-        for f in self.events_connected:
+
+    def _call_events_connected(self, sta):
+        for f in self._events_connected:
             f(sta)
 
-    def __call_events_disconnected__(self):
-        for f in self.events_disconnected:
+
+    def _call_events_disconnected(self):
+        for f in self._events_disconnected:
             f()
 
-    def __call_events_timeout__(self):
-        for f in self.events_timeout:
+
+    def _call_events_timeout(self):
+        for f in self._events_timeout:
             f()
 
-    def __connect__(self, ssid, password):
+
+    def _connect(self, ssid, password):
         retry = 1
 
         # activate interface
-        if not self.sta_if.active():
-            self.sta_if.active(True)
+        if not self._sta_if.active():
+            self._sta_if.active(True)
 
         # connect to network via provided ID
-        self.sta_if.connect(ssid, password)
+        self._sta_if.connect(ssid, password)
 
-        while not self.sta_if.isconnected():
-            if retry == self.retries:
+        while not self.connected:
+            if retry == self._retries:
                 break
 
-            self.__call_events_connecting__(retry)
+            self._call_events_connecting(retry)
             retry+=1
             sleep_ms(100)
 
@@ -89,91 +98,97 @@ class WiFiConnect:
         # print connection info - automatic
         # currently this prints out as if no connection was established - giving 0.0.0.0 sd ip
         # however, connection IS made and functional
-        self.__connected = self.sta_if.isconnected()
+        self._connected = self.connected
 
-        if self.sta_if.isconnected():
-            self.__call_events_connected__(self.sta_if)
+        if self._sta_if.isconnected():
+            self._call_events_connected(self._sta_if)
             return True
         else:
-            self.__call_events_timeout__()
-            self.sta_if.active(False)
+            self._call_events_timeout()
+            self._sta_if.active(False)
             return False
 
+
     def events_add_connecting(self, func):
-        self.events_connecting.append(func)
+        self._events_connecting.append(func)
+
 
     def events_add_connected(self, func):
-        self.events_connected.append(func)
+        self._events_connected.append(func)
+
 
     def events_add_disconnected(self, func):
-        self.events_disconnected.append(func)
+        self._events_disconnected.append(func)
+
 
     def events_add_timeout(self, func):
-        self.events_timeout.append(func)
+        self._events_timeout.append(func)
+
 
     def load_config(self):
          with open('config/wifi.json', 'r') as cfg_file:
-            self.config = json.loads(cfg_file.read())
+            self._config = json.loads(cfg_file.read())
+
 
     def save_config(self):
         with open('config/wifi.json', 'w') as cfg_file:
-            json.dump(self.config, cfg_file)
+            json.dump(self._config, cfg_file)
+
 
     def add_network(self, ssid, password):
         self.load_config()
-        self.config['networks'][ssid] = password
+        self._config['networks'][ssid] = password
         self.save_config()
+
 
     def remove_network(self, ssid):
         self.load_config()
-        if ssid in self.config['networks']:
-            del self.config['networks'][ssid]
+        if ssid in self._config['networks']:
+            del self._config['networks'][ssid]
             self.save_config()
+
 
     def connect(self, ssid=None, password=None):
         # check if we are already connected to a WiFi
-        if self.sta_if.isconnected():
-            self.__call_events_connected__(self.sta_if)
+        if self._sta_if.isconnected():
+            self._call_events_connected(self._sta_if)
             return True
 
         # Backward compatibility
         if ssid is not None:
-            return self.__connect__(ssid, password)
+            return self._connect(ssid, password)
 
-        if not self.sta_if.active():
-            self.sta_if.active(1)
+        if not self._sta_if.active():
+            self._sta_if.active(1)
 
-        nets = self.sta_if.scan()
+        nets = self._sta_if.scan()
 
         # Try find known / saved network and connect to it
         for n in nets:
             ssid = n[0].decode()
-            if ssid in self.config['networks']:
-                if self.__connect__(ssid, self.config['networks'][ssid]):
+            if ssid in self._config['networks']:
+                if self._connect(ssid, self._config['networks'][ssid]):
                     return True
 
         # Return false if we was not able to connect to any saved network
         return False
 
+
+    @property
+    def connected(self):
+        return self._sta_if.isconnected()
+
+
     def isconnected(self):
-        return self.sta_if.isconnected()
+        print("Deprecated, use property connected")
+        return self.connected
+
 
     def handle_wifi(self):
-        if self.__connected and not self.sta_if.isconnected():
-            self.__connected = False
-            self.__call_events_disconnected__()
+        if self._connected and not self.connected:
+            self._connected = False
+            self._call_events_disconnected()
 
-        if not self.__connected and self.sta_if.isconnected():
-            self.__connected = True
-            self.__call_events_connected__(self.sta_if)
-
-
-def read_wifi_config():
-    print("==============WARNING==============")
-    print("WARNING: This will be removed soon! ")
-    print("==============WARNING==============")
-    # TODO file does not exist
-    f = open('config/wifi.json', 'r')
-    d = f.read()
-    f.close()
-    return json.loads(d)
+        if not self._connected and self.connected:
+            self._connected = True
+            self._call_events_connected(self._sta_if)
