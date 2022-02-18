@@ -174,8 +174,12 @@ def w_connect():
 
 def lan_connect():
     from time import sleep_ms
-    from network import LAN, ETH_CLOCK_GPIO17_OUT, PHY_LAN8720
-    lan = LAN(mdc=Pin(23), mdio=Pin(18), phy_type=PHY_LAN8720, phy_addr=1, clock_mode=ETH_CLOCK_GPIO17_OUT)
+    import network
+    if "ETH_CLOCK_GPIO17_OUT" in dir(network)
+        lan = network.LAN(mdc = machine.Pin(23), mdio=machine.Pin(18), phy_type=network.PHY_LAN8720, phy_addr=1, clock_mode=network.ETH_CLOCK_GPIO17_OUT)
+    else:
+        lan = network.LAN(mdc = machine.Pin(23), mdio=machine.Pin(18), phy_type=network.PHY_LAN8720, phy_addr=1)
+
     lan.active(1)
 
     retry = 0
