@@ -175,7 +175,7 @@ def w_connect():
 def lan_connect():
     from time import sleep_ms
     import network
-    if "ETH_CLOCK_GPIO17_OUT" in dir(network)
+    if "ETH_CLOCK_GPIO17_OUT" in dir(network):
         lan = network.LAN(mdc = machine.Pin(23), mdio=machine.Pin(18), phy_type=network.PHY_LAN8720, phy_addr=1, clock_mode=network.ETH_CLOCK_GPIO17_OUT)
     else:
         lan = network.LAN(mdc = machine.Pin(23), mdio=machine.Pin(18), phy_type=network.PHY_LAN8720, phy_addr=1)
