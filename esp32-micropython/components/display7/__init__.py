@@ -109,10 +109,11 @@ class Display7:
 
     def write_to_buffer(self, toWrite):
         dotRemoved, dots = self.split_dots_chars(str(toWrite))
-        if(len(dotRemoved)) < 8:
-            dotRemoved   = "%-8s" % dotRemoved
-            dots         = "%-8s" % dots
-        for index in range(0,8):
+
+        dotRemoved   = self._rjust(dotRemoved, 8, ' ')
+        dots         = self._rjust(dots, 8, ' ')
+
+        for index in range(8):
             self.buffer[7-index] = self.decode_char(dotRemoved[index]) + self.decode_char(dots[index])
 
 
