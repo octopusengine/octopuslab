@@ -1,10 +1,9 @@
 # Display7 - 7segment x 8 digit
-# Display8 - 8x8 matrix
 # max7919
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
-REG_NO_OP           = 0x00
+REG_NOOP            = 0x00
 REG_DIGIT_BASE      = 0x01
 REG_DECODE_MODE     = 0x09
 REG_INTENSITY       = 0x0a
@@ -30,31 +29,51 @@ CHAR_DATA = {
 }
 
 class Display7:
-    def __init__(self, spi, ss, intensity=6):
+    def __init__(self, spi, ss, intensity=6, units=1):
         self.spi = spi
         self.ss = ss
+        self.units = units
         self.buffer = bytearray(8)
         self.intensity = intensity
         self.reset()
 
-    def reset(self):
-        self.set_register(REG_DECODE_MODE, 0)
-        self.set_register(REG_INTENSITY, self.intensity)
-        self.set_register(REG_SCAN_LIMIT, 7)
-        self.set_register(REG_DISPLAY_TEST, 0)
-        self.set_register(REG_SHUTDOWN, 1)
 
-    def set_register(self, register, value):
-        self.ss.value(0)
+    def reset(self):
+        self._command(REG_DECODE_MODE, 0)
+        self._command(REG_INTENSITY, self.intensity)
+        self._command(REG_SCAN_LIMIT, 7)
+        self._command(REG_DISPLAY_TEST, 0)
+        self._command(REG_SHUTDOWN, 1)
+
+
+    def _rjust(self, instr, num, char):
+        if len(instr) >= num:
+            return instr
+
+        return "{}{}".format(char*(num-len(instr)), instr)
+
+
+    def _ljust(self, instr, num, char):
+        if len(instr) >= num:
+            return instr
+
+        return "{}{}".format(instr, char*(num-len(instr)))
+
+
+    def _write_data(self, register, value):
         self.spi.write(bytearray([register, value]))
+
+
+    def _command(self, register, value):
+        self.ss.value(0)
+        self.spi.write(bytearray([register, value] * self.units))
         self.ss.value(1)
 
-    def intensity(self, i):
-        self.send(self.intensity, i)
 
     def decode_char(self, c):
         disp = CHAR_DATA.get(c)
         return disp if disp is not None else ' '
+
 
     def split_dots_chars(self, msg):
         dots  = dotRemoved = ""
@@ -87,6 +106,7 @@ class Display7:
                 dots       += " "
         return  dotRemoved,   dots
 
+
     def write_to_buffer(self, toWrite):
         dotRemoved, dots = self.split_dots_chars(str(toWrite))
         if(len(dotRemoved)) < 8:
@@ -95,10 +115,26 @@ class Display7:
         for index in range(0,8):
             self.buffer[7-index] = self.decode_char(dotRemoved[index]) + self.decode_char(dots[index])
 
-    def display(self):
-        for i in range(0,8):
-            self.set_register(REG_DIGIT_BASE + i, self.buffer[i])
 
-    def show(self, toDisplay):
+    def display(self, unit=1):
+        for i in range(8):
+            self.ss.value(0)
+            for d in range(self.units):
+                if d == unit - 1 or unit == 0:
+                    self._write_data(REG_DIGIT_BASE + i, self.buffer[i])
+                else:
+                    self._write_data(REG_NOOP, 0)
+            self.ss.value(1)
+
+
+    def show(self, toDisplay, unit=1):
         self.write_to_buffer(toDisplay)
-        self.display()
+        self.display(unit)
+
+
+    def clear(self, unit=0):
+        if unit == 0:
+            for u in range(self.units):
+                self.show("", u+1)
+        else:
+            self.show("", unit)
