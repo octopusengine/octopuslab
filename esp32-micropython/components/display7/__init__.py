@@ -36,6 +36,7 @@ class Display7:
         self.buffer = bytearray(8)
         self.intensity = intensity
         self.reset()
+        self.clear()
 
 
     def reset(self):
