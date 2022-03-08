@@ -7,7 +7,7 @@ import time, uos
 import ujson
 import machine #datetime
 
-ver = "0.1/ 13.8.2019"
+ver = "0.2/ 18.2.2022"
 
 octopusASCII = [
 "      ,'''`.",

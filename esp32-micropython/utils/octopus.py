@@ -2,7 +2,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2016-2021 Jan Copak, Petr Kracik, Vasek Chalupnicek
 
-__version__ = "1.0.10"
+__version__ = "1.0.11"
 
 # from sys import modules
 from time import sleep, sleep_ms, ticks_ms, ticks_diff

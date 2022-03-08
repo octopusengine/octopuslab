@@ -2,8 +2,8 @@
 # Pert Kracik, Jan Copak
 # -----------------------------------------------------
 
-__version__ = "1.0.8" # format: N.N.N, N<10 ->
-libVerDate = "2021-05-15"
+__version__ = "1.0.9" # format: N.N.N, N<10 ->
+libVerDate = "2022-02-18"
 libVer100 = __version__[0] + __version__[2] + __version__[4]
 
 TW = 50 # terminal width
