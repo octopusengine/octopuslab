@@ -1,7 +1,7 @@
 # Display7 - 7segment x 8 digit
 # max7919
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 REG_NOOP            = 0x00
 REG_DIGIT_BASE      = 0x01
@@ -23,7 +23,7 @@ CHAR_DATA = {
     'E': 0x4f, 'F': 0x47, 'G': 0x7b, 'H': 0x37, 'I': 0x30,
     'J': 0x3c, 'K': 0x57, 'L': 0x0e, 'M': 0x54, 'N': 0x15,
     'O': 0x1d, 'P': 0x67, 'Q': 0x73, 'R': 0x05, 'S': 0x5b,
-    'T': 0x0f, 'U': 0x1c, 'V': 0x3e, 'W': 0x2a, 'X': 0x37,
+    'T': 0x0f, 'U': 0x3e, 'V': 0x3e, 'W': 0x2a, 'X': 0x37,
     'Y': 0x3b, 'Z': 0x6d, ' ': 0x00, '-': 0x01,
     '\xb0': 0x63, '.': 0x80
 }
@@ -34,14 +34,13 @@ class Display7:
         self.ss = ss
         self.units = units
         self.buffer = bytearray(8)
-        self.intensity = intensity
+        self._intensity = self.intensity = intensity
         self.clear()
         self.reset()
 
 
     def reset(self):
         self._command(REG_DECODE_MODE, 0)
-        self._command(REG_INTENSITY, self.intensity)
         self._command(REG_SCAN_LIMIT, 7)
         self._command(REG_DISPLAY_TEST, 0)
         self._command(REG_SHUTDOWN, 1)
@@ -71,12 +70,12 @@ class Display7:
         self.ss.value(1)
 
 
-    def decode_char(self, c):
+    def _decode_char(self, c):
         disp = CHAR_DATA.get(c)
         return disp if disp is not None else ' '
 
 
-    def split_dots_chars(self, msg):
+    def _split_dots_chars(self, msg):
         dots  = dotRemoved = ""
         index              = 0
         while(index < len(msg)-1):
@@ -108,14 +107,28 @@ class Display7:
         return  dotRemoved,   dots
 
 
+    @property
+    def intensity(self):
+        return self._intensity
+
+
+    @intensity.setter
+    def intensity(self, value):
+        if value < 0 or value > 15:
+            raise ValueError("Intensity out of range (0-15)")
+
+        self._intensity = value
+        self._command(REG_INTENSITY, value)
+
+
     def write_to_buffer(self, toWrite):
-        dotRemoved, dots = self.split_dots_chars(str(toWrite))
+        dotRemoved, dots = self._split_dots_chars(str(toWrite))
 
         dotRemoved   = self._rjust(dotRemoved, 8, ' ')
         dots         = self._rjust(dots, 8, ' ')
 
         for index in range(8):
-            self.buffer[7-index] = self.decode_char(dotRemoved[index]) + self.decode_char(dots[index])
+            self.buffer[7-index] = self._decode_char(dotRemoved[index]) + self._decode_char(dots[index])
 
 
     def display(self, unit=1):

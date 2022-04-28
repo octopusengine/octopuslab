@@ -7,7 +7,7 @@ import time, uos
 import ujson
 import machine # datetime
 
-ver = "0.73 / 18.02.2022"
+ver = "0.74 / 15.04.2022"
 
 devices = [
 ["oLAB Default","esp32"],
@@ -91,8 +91,8 @@ def setupMenu():
     print(" [cw]   - connect wifi")
     print(" [cl]   - connect LAN")
     print(" [sd]   - system download > stable octopus modules from URL")
+    print(" [sdg]  - system download > Micro-GUI library")
     print(" [sde]  - system download > examples (from URL) /[sdh] hydroponics")
-    # print("[sdp] - system download > petrkr (Beta octopus modules from URL)")
     print(" [sdo]  - system download > octopus (Alfa octopus modules from URL)")
     print(" [ds]   - device setting")
     print(" [ios]  - I/O setting submenu")
@@ -326,6 +326,11 @@ def setup():
         if sele == "sdh":
             shutil()
             deplUrl = "https://octopusengine.org/download/hydroponics.tar"
+            deploy(deplUrl)
+
+        if sele == "sdg":
+            shutil()
+            deplUrl = "https://iot.petrkr.net/olab/micro-gui.tar"
             deploy(deplUrl)
 
         if sele == "wr":
