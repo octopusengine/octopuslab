@@ -36,3 +36,4 @@ RELAY_PIN = const(16) # PWM2
 # DEV pins
 DEV1_PIN = const(32)
 DEV2_PIN = const(33)
+DEV3_PIN = const(27)
