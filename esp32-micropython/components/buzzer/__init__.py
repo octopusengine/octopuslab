@@ -31,7 +31,7 @@ class Buzzer():
             print("WARN: Pin is None, this buzzer will be dummy")
             return
 
-        self.pwm = PWM(Pin(pin, Pin.OUT), 0, 0)
+        self.pwm = PWM(Pin(pin, Pin.OUT))
 
     def nosound(self):
         if self.pwm is None:
@@ -51,6 +51,8 @@ class Buzzer():
 
         # continuously
         self.pwm.duty(volume)
+        if freq == 0:
+            freq = 1
         self.pwm.freq(freq)
         sleep_ms(length_tone)
         self.pwm.duty(0)
