@@ -174,6 +174,16 @@ class TM1637(object):
             segments[1] |= 128
         self.write(segments[:4])
 
+    def show_right(self, value):
+        # write temperature on most right postition on the display
+        disp_list = [" ", " ", " ", " ", " "]
+        value_str = str(value)[0:5] # trim in case of more than 5 chars (one for decimal point)
+        # use negative index to access characters from the last
+        for i in range(1, len(value_str)+1):
+            disp_list[-i] = value_str[-i]
+
+        self.show("".join(disp_list))
+
     def scroll(self, string, delay=250):
         segments = string if isinstance(string, list) else self.encode_string(string)
         data = [0] * 8
