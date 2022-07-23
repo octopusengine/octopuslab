@@ -10,7 +10,7 @@ def yourFunc(): ...
 def octopus_duration(milis=True):
          
    def _octopus_duration(fnc):
-      import time
+      from time import ticks_ms
       print("--- decorator --- @octopus_duration:")
             
       try:
@@ -20,12 +20,12 @@ def octopus_duration(milis=True):
       
       def ff(*args, **kwargs):
          #start = time.time() # todo: if milis...
-         start = time.ticks_ms()
+         start = ticks_ms()
          result = fnc(*args, **kwargs)
-         end = time.ticks_ms() - start
+         end = ticks_ms() - start
                   
-         print("=== function: ", fname)
-         print("--> duration (milis.) --->", str(end))
+         print(".:. function: ", fname)
+         print("--> duration (milis.) -->", str(end))
          return result
 
       return ff
