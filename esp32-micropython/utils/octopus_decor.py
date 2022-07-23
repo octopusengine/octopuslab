@@ -1,7 +1,36 @@
 # this module is "decorators" library for Octopus FrameWork
-# usage:
-# @octopus_debug
-# def yourFunc(): ...
+"""
+usage:
+from utils.octopus_decor import octopus_duration, octopus_debug
+@octopus_duration
+def yourFunc(): ...
+"""
+
+
+def octopus_duration(milis=True):
+         
+   def _octopus_duration(fnc):
+      import time
+      print("--- decorator --- @octopus_duration:")
+            
+      try:
+            fname = fnc.__name__
+      except:
+            fname = "?"
+      
+      def ff(*args, **kwargs):
+         #start = time.time() # todo: if milis...
+         start = time.ticks_ms()
+         result = fnc(*args, **kwargs)
+         end = time.ticks_ms() - start
+                  
+         print("=== function: ", fname)
+         print("--> duration (milis.) --->", str(end))
+         return result
+
+      return ff
+   return _octopus_duration
+
 
 def octopus_debug(ledon=False,info=True):
    if ledon:
