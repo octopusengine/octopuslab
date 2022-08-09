@@ -14,7 +14,7 @@
 # and then use for connect to known networks
 # w.connect()
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 __license__ = "MIT"
 
 
@@ -24,6 +24,10 @@ import json
 from time import sleep, sleep_ms
 
 class WiFiConnect:
+    STA_IF = 0
+    AP_IF = 1
+    LAN_IF = 2
+
     def __init__(self, retries = 0):
         self._sta_if = network.WLAN(network.STA_IF)
         self._ap_if = network.WLAN(network.AP_IF)
@@ -172,6 +176,20 @@ class WiFiConnect:
 
         # Return false if we was not able to connect to any saved network
         return False
+
+
+    @property
+    def ifconfig(self, interface=STA_IF):
+        if interface == self.STA_IF:
+            return self._sta_if.ifconfig()
+
+        if interface == self.AP_IF:
+            return self._ap_if.ifconfig()
+
+        if interface == self.LAN_IF:
+            raise NotImplementedError()
+
+        raise ValueError()
 
 
     @property
