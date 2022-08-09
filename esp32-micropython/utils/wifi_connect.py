@@ -178,7 +178,6 @@ class WiFiConnect:
         return False
 
 
-    @property
     def ifconfig(self, interface=STA_IF):
         if interface == self.STA_IF:
             return self._sta_if.ifconfig()
@@ -190,6 +189,16 @@ class WiFiConnect:
             raise NotImplementedError()
 
         raise ValueError()
+
+
+    @property
+    def ap_ifconfig(self):
+        return self.ifconfig(self.AP_IF)
+
+
+    @property
+    def sta_ifconfig(self):
+        return self.ifconfig(self.STA_IF)
 
 
     @property
